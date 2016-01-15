@@ -638,7 +638,7 @@ Example of a 'common' filter that can be shared by all views
           installation: {
             host: host,
             websocketurl: 'ws://' + $location.host() + ':8010/',
-            httpurl: 'http://' + $location.host() + '/'
+            httpurl: 'http://' + $location.host() + ':8080/'
           }
         };
       }

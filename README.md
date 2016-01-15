@@ -21,17 +21,20 @@ FabScan PI is Free Software and released under the [GNU Affero General Public Li
 
 ## Quick Start
 
-[quote]
-#Notice
+
+## Notice!
 There ist no need to flash the Arduino firmware. It will be flashed with the current
 firmware version by the FabScan Pi server application.
-[/quote]
 
 
 ### With FabScanPI ISO image for SD card (recommended)
 Dowload the current FabScanPi Raspbian image and flash it to SD Card. 
 Follow the [hardware](doc/HARDWARE.md) Setup and boot the Raspberry Pi 2 
 and you are ready to go. 
+
+Latest: [fabscanpi_basic_jessie_2016-01-15-03-01.img]()
+SHA1: 2a58eae4f2e73595ce341aaf26fb235aa3037e9d
+MD5: 73f0b3cc2a83aafcf6a836952c8fb768
 
 ### With FabScanPI Raspbian Package 
 

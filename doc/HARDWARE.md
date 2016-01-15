@@ -1,4 +1,4 @@
-## Hardware
+# Hardware
 The FabScan PI case is the same as the FabScan (CUBE) case. The Logitech webcam is replaced by the a Raspberry PI
 camera module. The Logitech webcam will also work, but it is very slow in combination with the Raspberry PI. 
 The Raspberry PI camera module also provides a higher resolution what will increase the scan results. It is highly 
@@ -16,7 +16,7 @@ The "S" pin goes to DI of the LED ring/strip.
 Finally connect the 5V power supply to the Raspberry PI 2 and the 12V power supply to the Arduino. Turn both on.
 
 
-#### Part List ####
+### Part List ###
 
 All needed parts can be purchased at: [http://www.watterott.com](http://www.watterott.com)
 
@@ -35,5 +35,5 @@ There will be a release of the official FabScan PI - HAT soon. This HAT replaces
 Shield. Another benefit of using the FabScan HAT is that the whole setup needs only one 12V power supply. 
 
 
-<img src="doc/images/fabscanpi-hat.jpg" width="400" height="200">
+<img src="images/fabscanpi-hat.jpg" width="400" height="200">
 

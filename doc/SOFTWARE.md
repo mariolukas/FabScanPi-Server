@@ -1,18 +1,20 @@
-#### Software 
+# Software 
 
 ### Installation
 
-[quote]
-#Notice
+#### Notice!
 There ist no need to flash the Arduino firmware. It will be flashed with the current
 firmware version by the FabScan Pi server application.
-[/quote]
 
 #### Installation ISO Image (recommended)
 
 The fastest way to start working with FabScan PI is to use the FabScan PI Raspbian Image. 
 Dowload the image and install it to a SD-Card. After the image is flashed and the Raspberry
 Pi is up and runnig follow the instructions in the [Usage Section](Readme.md#usage)
+
+Latest: [fabscanpi_basic_jessie_2016-01-15-03-01.img]()
+SHA1: 2a58eae4f2e73595ce341aaf26fb235aa3037e9d
+MD5: 73f0b3cc2a83aafcf6a836952c8fb768
 
 Ready to use images can be downloaded here or build by using the FabScanPi rasbian build
 scipt (Debian/Ubuntu Linux only).
