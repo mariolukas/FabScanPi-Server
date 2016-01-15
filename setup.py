@@ -29,7 +29,7 @@ def package_data_dirs(source, sub_folders):
 
 
 def params():
-    version = "0.1.4"
+    version = "0.1.4r1"
     name = "FabScanPi"
     description = "FabScanPi is a Stand-alone Web-enabled Open-Source 3D Laser Scanner Software"
     long_description = open("README.md").read()
