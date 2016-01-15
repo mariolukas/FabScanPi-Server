@@ -7,26 +7,17 @@
 
 
 (function() {
-  var m, mods, routesConfigFn;
+  var m, mods;
 
-  mods = ['common.services.envProvider', 'common.filters.currentStateFilter', 'common.filters.toLabelFilter', 'common.filters.toResolutionValue', 'fabscan.directives.FSWebglDirective', 'fabscan.directives.FSMJPEGStream', 'fabscan.directives.FSModalDialog', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSEnumService', 'fabscan.services.FSWebsocketConnectionFactory', 'fabscan.services.FSScanService', 'common.filters.scanDataAvailableFilter', 'common.services.Configuration', 'common.services.toastrWrapperSvc', 'fabscan.controller.FSPreviewController', 'fabscan.controller.FSAppController', 'fabscan.controller.FSSettingsController', 'fabscan.controller.FSScanController', 'fabscan.controller.FSLoadingController', 'fabscan.controller.FSShareController', 'ngTouch', '720kb.tooltips', 'ngProgress', 'ngRoute', 'vr.directives.slider', 'slick'];
-
-  /*
-  */
-
+  mods = ['common.services.envProvider', 'common.filters.currentStateFilter', 'common.filters.toLabelFilter', 'common.filters.toResolutionValue', 'fabscan.directives.FSWebglDirective', 'fabscan.directives.FSMJPEGStream', 'fabscan.directives.FSModalDialog', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSEnumService', 'fabscan.services.FSWebsocketConnectionFactory', 'fabscan.services.FSScanService', 'common.filters.scanDataAvailableFilter', 'common.services.Configuration', 'common.services.toastrWrapperSvc', 'fabscan.controller.FSPreviewController', 'fabscan.controller.FSAppController', 'fabscan.controller.FSSettingsController', 'fabscan.controller.FSScanController', 'fabscan.controller.FSLoadingController', 'fabscan.controller.FSShareController', 'ngTouch', '720kb.tooltips', 'ngProgress', 'vr.directives.slider', 'slick'];
 
   /*
   */
 
 
-  routesConfigFn = function($routeProvider) {
-    $routeProvider.when('/', {
-      templateUrl: '/'
-    });
-    return $routeProvider.otherwise({
-      redirectTo: '/'
-    });
-  };
+  /*
+  */
+
 
   /*
   */
@@ -37,8 +28,6 @@
 
 
   m = angular.module('fabscan', mods);
-
-  m.config(['$routeProvider', routesConfigFn]);
 
   m.config([
     'common.services.envProvider', function(envProvider) {
@@ -539,10 +528,8 @@ Example of a 'common' filter that can be shared by all views
     '$log', 'fabscan.services.FSScanService', function($log, FSScanService) {
       return function() {
         if (FSScanService.getScanId() !== null) {
-          $log.info("YES");
           return true;
         } else {
-          $log.info("YES");
           return false;
         }
       };
@@ -637,12 +624,12 @@ Example of a 'common' filter that can be shared by all views
       localDebug = $location.host() === 'localhost';
       config = null;
       if (localDebug) {
-        host = $location.host();
+        host = "fabscanpi.local";
         config = {
           installation: {
             host: host,
-            websocketurl: 'ws://' + $location.host() + ':8010/',
-            httpurl: 'http://' + $location.host() + ':8080/'
+            websocketurl: 'ws://' + host + ':8010/',
+            httpurl: 'http://' + host + ':8080/'
           }
         };
       } else {
@@ -651,7 +638,7 @@ Example of a 'common' filter that can be shared by all views
           installation: {
             host: host,
             websocketurl: 'ws://' + $location.host() + ':8010/',
-            httpurl: 'http://' + $location.host() + ':8080/'
+            httpurl: 'http://' + $location.host() + '/'
           }
         };
       }
@@ -1065,7 +1052,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       });
       $scope.$on(FSEnum.events.ON_INFO_MESSAGE, function(event, data) {
         if (data['message'] === 'SCANNING_TEXTURE') {
-          $scope.streamUrl = Configuration.installation.httpurl + 'stream/texture.mjpeg';
+          $scope.streamUrl = Configuration.installation.httpurl + '/stream/texture.mjpeg';
           $scope.showTextureScan = true;
         }
         if (data['message'] === 'SCANNING_OBJECT') {

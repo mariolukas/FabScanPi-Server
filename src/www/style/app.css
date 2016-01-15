@@ -271,11 +271,10 @@ html, body {
 .texture-preview img{
     height: 70%;
     width: 70%;
-    opacity: 0.6
+    opacity: 0.6;
     border-radius: 70px;
    /* -webkit-mask-box-image: -webkit-linear-gradient(left,transparent, transparent 15%, white 50%, white 50%, transparent 85%);*/
     -webkit-mask-box-image:  -webkit-radial-gradient(white,transparent 69%);
-
     display: block;
     margin: 0 auto;
     top: 0;

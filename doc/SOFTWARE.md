@@ -2,6 +2,12 @@
 
 ### Installation
 
+[quote]
+#Notice
+There ist no need to flash the Arduino firmware. It will be flashed with the current
+firmware version by the FabScan Pi server application.
+[/quote]
+
 #### Installation ISO Image (recommended)
 
 The fastest way to start working with FabScan PI is to use the FabScan PI Raspbian Image. 

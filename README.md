@@ -19,6 +19,38 @@ FabScan PI is Free Software and released under the [GNU Affero General Public Li
 * [Hardware](doc/HARDWARE.md)
 * [Software](doc/SOFTWARE.md)
 
+## Quick Start
+
+[quote]
+#Notice
+There ist no need to flash the Arduino firmware. It will be flashed with the current
+firmware version by the FabScan Pi server application.
+[/quote]
+
+
+### With FabScanPI ISO image for SD card (recommended)
+Dowload the current FabScanPi Raspbian image and flash it to SD Card. 
+Follow the [hardware](doc/HARDWARE.md) Setup and boot the Raspberry Pi 2 
+and you are ready to go. 
+
+### With FabScanPI Raspbian Package 
+
+```
+echo "deb http://archive.fabscan.org/ jessie main" >> /etc/apt/source.list
+```
+
+Then add the FabScan PI repository key to your key chain.
+
+```
+wget https://archive.fabscan.org/fabscan.public.key -O - | sudo apt-key add -
+```
+
+Finish the installation with the needed packages.
+
+```
+apt-get isntall fabscanpi-server opencv-tbb python-serial python-pykka python-picamera avrdude
+```
+
 ## Useage
 
 FabScan Pi is tested on: 
@@ -32,7 +64,7 @@ FabScan Pi is tested on:
 
 By default the FabScan PI server binds to all interfaces on port 8080. Pointing your browser to 
 http://<ip-of-your-raspbrry-pi>:8080 will open the user interface. If your computer supports bonjour
-you can point yout browser to http://fabscanpi.local
+you can point yout browser to http://fabscanpi.local:8080
 
 Most Apple devices support bonjour by default. On Windows you can install [Bonjour Print Services for Windows 2.0.2|
 (http://support.apple.com/kb/DL999). You will find more detailed information about this topic for the most common 
