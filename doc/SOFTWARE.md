@@ -8,6 +8,8 @@ The fastest way to start working with FabScan PI is to use the FabScan PI Raspbi
 Dowload the image and install it to a SD-Card. After the image is flashed and the Raspberry
 Pi is up and runnig follow the instructions in the [Usage Section](Readme.md#usage)
 
+Ready to use images can be downloaded here or build by using the FabScanPi rasbian build
+scipt (Debian/Ubuntu Linux only).
 
 #### Installation clean Raspbian with FabScan PI repository
 
