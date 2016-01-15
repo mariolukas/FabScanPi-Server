@@ -38,7 +38,7 @@ wget https://archive.fabscan.org/fabscan.public.key -O - | sudo apt-key add -
 Finish the installation with the needed packages.
 
 ```
-apt-get isntall fabscanpi-server opencv-tbb python-serial python-pykka python-picamera avrdude
+apt-get install fabscanpi-server opencv-tbb python-serial python-pykka python-picamera avrdude
 ```
 
 The FabScan PI server can be started with 
