@@ -1,0 +1,24 @@
+fabscanpi-server (0.1.3) unstable; urgency=medium
+
+  * Fixed Firefox mjpeg stream issue
+  * Fixed pi camera exposure issue
+
+ -- Mario Lukas  <info@mariolukas.de>  Mon, 11 Jan 2016 17:40:30 +0000
+
+fabscanpi-server (0.1.2) unstable; urgency=medium
+
+  * New User Interface added
+
+ -- Mario Lukas  <info@mariolukas.de>  Sat, 02 Jan 2016 16:40:30 +0000
+
+fabscanpi-server (0.1.1) unstable; urgency=medium
+
+  * BUGFIX: scan data folders
+
+ -- Mario Lukas  <info@mariolukas.de>  Sat, 02 Jan 2016 00:01:40 +0000
+
+fabscanpi-server (0.1.0) unstable; urgency=medium
+
+  * First Release of FabScanPi-Server.
+
+ -- Mario Lukas <info@mariolukas.de>  Fri, 01 Jan 2016 21:48:08 +0000

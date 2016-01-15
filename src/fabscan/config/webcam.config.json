@@ -1,0 +1,54 @@
+{
+   "serial" : {
+     "baudrate" : "115200",
+     "port": "/dev/tty.usbmodem1421",
+     "virtual": "false"
+   },
+   "camera" : {
+     "type" : "webcam",
+     "device" : 1,
+     "preview_resolution":{
+        "width": 426,
+        "height": 240
+     },
+     "resolution":{
+          "width": 1280,
+          "height": 720
+      },
+      "position":{
+          "x": 0.0,
+          "y": 4.68,
+          "z": 29.6
+      },
+      "frame":{
+          "dimension": 23.6
+      }
+   },
+   "laser": {
+      "position":{
+        "x": 14.0,
+        "y": 7.3,
+        "z": 28.8
+      },
+      "angle": 33.0,
+      "rotation_steps": 5,
+      "steps": 3200
+   },
+   "turntable":{
+     "position": {
+       "x": 0.0,
+       "y": 0.0,
+       "z": 7.5
+     },
+     "steps":3200
+   },
+   "scanner": {
+      "origin":{
+        "y" : 0.75
+      }
+   },
+   "process_number": 4,
+   "meshlab":{
+     "path": "/usr/bin/"
+   }
+}

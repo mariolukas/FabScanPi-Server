@@ -1,0 +1,14 @@
+#!/bin/sh
+# postinst script for fabscanpi-server
+#
+# see: dh_installdeb(1)
+
+set -e
+
+if [ -f /var/run/fabscanpi-server.pid ];then
+    /etc/init.d/fabscanpi-server stop
+fi
+
+/etc/init.d/fabscanpi-server start
+
+exit 0

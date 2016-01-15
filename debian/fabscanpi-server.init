@@ -1,0 +1,77 @@
+# /etc/init.d/fabscanpi-server
+### BEGIN INIT INFO
+# Provides:          fabscanpi-server
+# Required-Start:    $network $syslog
+# Required-Stop:     $network $syslog
+# Should-Start:      $time
+# Should-Stop:       $time
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start and stop the fabscanpi-server daemon
+# Description:       fabscanpi-server daemon
+### END INIT INFO
+
+DAEMONUSER=pi
+DESC="FabScanPi Daemon"
+NAME="fabscanpi-server"
+DAEMON=/usr/bin/fabscanpi-server
+PIDFILE=/var/run/$NAME.pid
+PKGNAME=fabscanpi-server
+SCRIPTNAME=/etc/init.d/$PKGNAME
+LOG=/var/log/$PKGNAME/$PKGNAME.log
+
+
+# Read configuration variable file if it is present
+[ -r /etc/default/$PKGNAME ] && . /etc/default/$PKGNAME
+
+
+start() {
+    echo "Starting fabscanpi-server..."
+
+    start-stop-daemon --start --quiet --user $DAEMONUSER    \
+            --make-pidfile --pidfile $PIDFILE --background       \
+            --exec /bin/bash -- -c "$DAEMON $DAEMON_ARGS"
+
+    echo "Started for user: $DAEMONUSER."
+}
+
+stop() {
+    echo "Stopping fabscanpi-server..."
+    kill -9 `cat $PIDFILE`
+}
+
+status() {
+    if [ -z `cat $PIDFILE` ];
+    then
+        echo "fabscanpi-server: not running."
+    else
+        echo "fabscanpi-server: running."
+    fi
+}
+
+
+case "$1" in
+  start)
+    start
+    ;;
+
+  stop)
+    stop
+    ;;
+
+  restart|reload|force-reload)
+    stop
+    start
+    ;;
+
+  status)
+    status
+    ;;
+
+  *)
+    echo "Usage: /etc/init.d/fabscanpi-server {start|stop|reload|force-reload|restart|status}"
+    exit 1
+
+esac
+
+exit 0

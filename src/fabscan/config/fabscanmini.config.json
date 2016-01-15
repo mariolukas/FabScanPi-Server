@@ -1,0 +1,53 @@
+{
+   "serial" : {
+     "baudrate" : 115200,
+     "port": "/dev/ttyAMA0"
+   },
+   "camera" : {
+     "type" : "picam",
+     "device" : 1,
+     "preview_resolution":{
+        "width": 320,
+        "height": 240
+     },
+     "resolution":{
+          "width": 640,
+          "height": 480
+      },
+      "position":{
+          "x": 0.0,
+          "y": 5.5,
+          "z": 27.6
+      },
+      "frame":{
+          "dimension": 23.5
+      }
+   },
+   "laser": {
+      "position":{
+        "x": 10.0,
+        "y": 7.3,
+        "z": 24.5
+      },
+      "angle": 33.0,
+      "rotation_steps": 5,
+      "steps": 3200
+   },
+   "turntable":{
+     "position": {
+       "x": 0.0,
+       "y": 0.0,
+       "z": 7.5
+     },
+     "steps":3200
+   },
+   "scanner": {
+      "origin":{
+        "y" : 0.75
+      }
+   },
+   "process_number": 4,
+   "meshlab":{
+     "path": "/usr/bin/"
+   }
+}

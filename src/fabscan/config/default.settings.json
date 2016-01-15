@@ -1,0 +1,32 @@
+{
+     "led":{
+       "red": 0,
+       "green": 0,
+       "blue": 0
+     },
+     "line_coords_buffer": 5,
+     "percent_top_pixels": 0.1,
+     "center": 0.50,
+     "threshold": 240,
+     "crop": {
+       "upper": -128,
+       "lower": -810
+     },
+     "backwall": {
+       "laser_pixel_position" : 400,
+       "laser": {
+         "x": 0.0,
+         "y": 11.0,
+         "z": 0.0
+       },
+       "margin": 15,
+       "offset": 100
+     },
+     "camera":{
+       "brightness" : 50,
+       "contrast": 0
+     },
+     "resolution": 8,
+     "laser_positions": 1,
+     "color" : "True"
+}

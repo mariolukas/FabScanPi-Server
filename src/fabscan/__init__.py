@@ -1,0 +1,109 @@
+__author__ = "Mario Lukas"
+__copyright__ = "Copyright 2015"
+__license__ = "AGPL"
+__maintainer__ = "Mario Lukas"
+__email__ = "info@mariolukas.de"
+
+from fabscan.server import FSServer
+from fabscan.daemon import Daemon
+import logging
+import logging.handlers
+import optparse
+import sys
+
+
+class Main(Daemon):
+	def __init__(self, pidfile, configfile, basedir, host, port, debug, allowRoot, logConf):
+		Daemon.__init__(self, pidfile)
+
+		self._configfile = configfile
+		self._basedir = basedir
+		self._host = host
+		self._port = port
+		self._debug = debug
+		self._allowRoot = allowRoot
+		self._logConf = logConf
+
+
+	def run(self):
+        #server = FSServer(config_file)
+        #fabscan = FSServer(self._configfile, self._basedir, self._host, self._port, self._debug, self._allowRoot)
+
+		fabscan = FSServer(self._configfile)
+		fabscan.run()
+
+def main():
+
+    import argparse
+
+    parser = argparse.ArgumentParser(prog="fabscanpi-server")
+
+    parser.add_argument("-v", "--version", action="store_true", dest="version",
+                       help="Output FabScan Pi's version and exit")
+
+    parser.add_argument("-d", "--debug", action="store_true", dest="debug",
+                        help="Enable debug mode")
+
+    parser.add_argument("-C", "--camera", action="store", type=str, dest="camera_type",
+                        help="Specify the Camera type to use for FabScan Pi")
+
+    parser.add_argument("--host", action="store", type=str, dest="host",
+                        help="Specify the host on which to bind the server")
+    parser.add_argument("--port", action="store", type=int, dest="port",
+                        help="Specify the port on which to bind the server")
+
+    parser.add_argument("-c", "--config", action="store", required=True, dest="config",
+                        help="Specify the config file to use. FabScan Pi needs to have write access for the config dialog to work. Defaults to /etc/fabscanpi/default.config.json")
+
+    parser.add_argument("-s", "--settings", required=True, action="store", dest="settings",
+                        help="Specify the config file to use. FabScan Pi needs to have write access for the settings dialog to work. Defaults to /etc/fabscanpi/default.settings.json")
+
+    parser.add_argument("--logging", action="store", dest="logConf", default=None,
+                        help="Specify the config file to use for configuring logging. Defaults to /var/log/fabscanpi/fabscan.log")
+
+    parser.add_argument("--daemon", action="store", type=str, choices=["start", "stop", "restart"],
+                        help="Daemonize/control daemonized FabScan Pi instance (only supported under Linux right now)")
+    parser.add_argument("--pid", action="store", type=str, dest="pidfile", default="/tmp/fabscanpi.pid",
+                        help="Pidfile to use for daemonizing, defaults to /tmp/fabscanpi.pid")
+
+    parser.add_argument("--iknowwhatimdoing", action="store_true", dest="allowRoot",
+                        help="Allow FabScan Pi to fabscanpi-server as user root")
+
+    args = parser.parse_args()
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logger=logging.getLogger("fabscan")
+
+    if args.logConf != None:
+        fh=logging.handlers.RotatingFileHandler(args.logConf, maxBytes=5000000, backupCount=5)
+        fh.setLevel(logging.DEBUG)
+        fh.setFormatter(formatter)
+        logger.addHandler(fh)
+    else:
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.DEBUG)
+        ch.setFormatter(formatter)
+        logger.addHandler(ch)
+
+    if args.version:
+        print "FabScan Pi version %s" % 1.1
+        sys.exit(0)
+
+    if args.daemon:
+        if sys.platform == "darwin" or sys.platform == "win32":
+            print >> sys.stderr, "Sorry, daemon mode is only supported under Linux right now"
+            sys.exit(2)
+
+        daemon = Main(args.pidfile, args.config, args.basedir, args.host, args.port, args.debug, args.allowRoot, args.logConf)
+        if "start" == args.daemon:
+            daemon.start()
+        elif "stop" == args.daemon:
+            daemon.stop()
+        elif "restart" == args.daemon:
+            daemon.restart()
+    else:
+        fabscan = FSServer(args.config, args.settings)
+        fabscan.run()
+
+if __name__ == "__main__":
+    main()

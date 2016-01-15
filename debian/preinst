@@ -1,0 +1,28 @@
+#!/bin/sh
+# preinst script for script for fabscanpi-server
+#
+# see: dh_installdeb(1)
+
+set -e
+
+LOG_DIR=/var/log/fabscanpi
+CONF_DIR=/etc/fabscanpi
+SCANS_DIR=/usr/local/fabscanpi/scans
+
+if [ ! -d $LOG_DIR ];then
+    mkdir $LOG_DIR
+    chown -R pi:pi $LOG_DIR
+fi
+
+if [ ! -d $CONF_DIR ];then
+    mkdir $CONF_DIR
+    chown -R pi:pi $CONF_DIR
+fi
+
+if [ ! -d $SCANS_DIR ];then
+    mkdir -p $SCANS_DIR
+    chown -R pi:pi $SCANS_DIR
+fi
+
+
+exit 0

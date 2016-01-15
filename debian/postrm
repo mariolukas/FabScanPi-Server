@@ -1,0 +1,14 @@
+#!/bin/sh
+# postrm script for script for fabscanpi-server
+#
+# see: dh_installdeb(1)
+
+set -e
+
+LOG_DIR=/var/log/fabscanpi
+
+if [ ! -d $LOG_DIR ];then
+    rm -R LOG_DIR
+fi
+
+exit 0
