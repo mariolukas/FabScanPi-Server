@@ -32,7 +32,7 @@ Dowload the current FabScanPi Raspbian image and flash it to SD Card.
 Follow the [hardware](doc/HARDWARE.md) Setup and boot the Raspberry Pi 2 
 and you are ready to go. 
 
-Latest: [https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest](https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest)
+Latest image release: [https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest](https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest)
 
 
 ### With FabScanPI Raspbian Package 
