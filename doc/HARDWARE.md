@@ -3,8 +3,12 @@ The FabScan PI case is the same as the FabScan (CUBE) case. The Logitech webcam 
 camera module. The Logitech webcam will also work, but it is very slow in combination with the Raspberry PI. 
 The Raspberry PI camera module also provides a higher resolution what will increase the scan results. It is highly 
 recommended to use a Raspberry PI 2 because of its four CPU core (FabScan PI provides multicore support). 
-Connect the Arduino with the FabScan Shield mounted on it to the Raspberry PI 2 and mount the camera in front of 
-the turntable. 
+Connect the Arduino with the FabScan Shield mounted on it to one of the Raspberry Pi's USB ports and mount the camera 
+in front of the turntable. 
+
+If you are not using the FabScan Shield, you can find the pinout of the Arduino in the firmware repository.
+
+https://github.com/mariolukas/FabScanPi-Firmware/blob/master/configuration.h
 
 For a smoother turntable movement it is better to use a silent step stick motor driver. With a silent step stick 
 motor driver there is no need to glue the object to the turntable. It will not slip/slide anymore.
