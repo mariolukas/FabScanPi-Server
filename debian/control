@@ -2,7 +2,7 @@ Source: fabscanpi-server
 Section: net
 Priority: optional
 Maintainer: Mario Lukas (info@mariolukas.de) 
-Build-Depends: debhelper (>=7.0.50~), python (>= 2.7), python-support, cdbs, python-support, python-all
+Build-Depends: debhelper (>=7.0.50~), python (>= 2.7), python-support, cdbs
 XS-Python-Version: >=2.4
 Standards-Version: 3.8.4
 
