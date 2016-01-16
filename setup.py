@@ -1,4 +1,8 @@
-__author__ = 'mariolukas'
+__author__ = "Mario Lukas"
+__copyright__ = "Copyright 2015"
+__license__ = "AGPL"
+__maintainer__ = "Mario Lukas"
+__email__ = "info@mariolukas.de"
 from distutils.core import setup
 from setuptools import find_packages
 import sys
@@ -53,7 +57,7 @@ def params():
         "Topic :: System :: Networking :: Monitoring"
     ]
     author = "Mario Lukas"
-    author_email = "mario@fabscan.org"
+    author_email = "info@mariolukas.de"
     url = "http://www.fabscan.org"
     license = "AGPLv3"
 
