@@ -23,7 +23,7 @@ FabScan PI is Free Software and released under the [GNU Affero General Public Li
 
 
 ## Notice!
-There ist no need to flash the Arduino firmware. It will be flashed automatically with the current
+There ist no need to flash the Arduino firmware. The Arduino will be flashed automatically with the current
 firmware version after the server is started.
 
 
