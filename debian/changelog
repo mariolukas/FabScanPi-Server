@@ -1,3 +1,11 @@
+fabscanpi-server (0.1.6) unstable; urgency=medium
+
+  * switched to firmware v.20160204 which supports custom boards and fixes some issues
+  * added motor enable/disable commands before and after scans to prevent hot motors
+  * closed issue #4 added auto flash enable/disable option to config file
+
+ -- Mario Lukas  <info@mariolukas.de>  Thu, 04 Feb 2016 23:55:05 +0000
+
 fabscanpi-server (0.1.5) unstable; urgency=medium
 
   * Added new Frontend version.

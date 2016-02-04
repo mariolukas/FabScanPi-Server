@@ -39,14 +39,26 @@ class Turntable:
             #steps = get_step_interval(rotation_intervals)
             self.step(steps, speed)
 
+    def enable_motors(self):
+        if self.serial_connection != None:
+            self.serial_connection.send("M17;\n")
+            self.serial_connection.wait()
+
+    def disable_motors(self):
+        if self.serial_connection != None:
+            self.serial_connection.send("M18;\n")
+            self.serial_connection.wait()
+
 
     def start_turning(self):
         if self.serial_connection != None:
+            self.enable_motors()
             self.serial_connection.send("G06;\n")
             self.serial_connection.wait()
 
     def stop_turning(self):
         if self.serial_connection != None:
+            self.disable_motors()
             self.serial_connection.send("G07;\n")
             self.serial_connection.wait()
 

@@ -1,0 +1,9 @@
+v0.1.6 : - switched to firmware v.20160204 which supports custom boards and fixes some issues
+         - added motor enable/disable commands before and after scans to prevent hot motors
+         - closed issue #4 added auto flash enable/disable option to config file
+
+v0.1.5 : - Added new Frontend version
+
+v0.1.4 : - Fixed frontend issues
+
+v0.1.3 : - initial version

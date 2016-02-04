@@ -5,7 +5,8 @@
    },
    "serial" : {
      "baudrate" : 115200,
-     "port": "/dev/ttyACM0"
+     "port": "/dev/ttyACM0",
+     "autoflash": "True"
    },
    "camera" : {
      "type" : "PICAM",

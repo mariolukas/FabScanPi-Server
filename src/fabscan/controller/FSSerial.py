@@ -124,25 +124,27 @@ class FSSerialCom():
         basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 
-        for file in os.listdir(basedir+"/firmware"):
-                 if file.endswith(".hex"):
-                     flash_file_version = os.path.splitext(file)[0]
-                 else:
-                    flash_file_version = None
+        flash_file_version = max(glob.iglob(basedir+'/firmware/*.[Hh][Ee][Xx]'), key=os.path.getctime)
+        flash_version_number = os.path.basename(os.path.normpath(os.path.splitext(flash_file_version)[0]))
+
+
+        self._logger.debug("Found Firmware Version: "+flash_version_number)
+
+
         try:
 
            self._connect()
 
-           current_version = self.checkVersion()
-
-           if not current_version == flash_file_version:
-               self._logger.info("Flashing new Firmware...")
-               self.avr_flash(basedir+"/firmware/"+flash_file_version+".hex")
-               self._logger.info("FabScan Firmware Version: "+flash_file_version)
-               self._connect()
-           else:
-               self._logger.info("FabScan is using Firmware Version: "+current_version)
-               self._connect()
+           if self.config.serial.autoflash == "True":
+               current_version = self.checkVersion()
+               if not current_version == flash_version_number:
+                   self._logger.info("Flashing new Firmware...")
+                   self.avr_flash(flash_file_version)
+                   self._logger.info("FabScan Firmware Version: "+flash_file_version)
+                   self._connect()
+               else:
+                   self._logger.info("FabScan is using Firmware Version: "+current_version)
+                   self._connect()
 
         except:
 

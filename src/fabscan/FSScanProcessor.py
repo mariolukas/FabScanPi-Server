@@ -79,6 +79,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self._stop_scan = False
         self.hardwareController.laser.off()
         self.hardwareController.turntable.stop_turning()
+        self.hardwareController.turntable.enable_motors()
         self._resolution = int(self.settings.resolution)
         self._laser_positions = int(self.settings.laser_positions)
         self._is_color_scan = bool(self.settings.color)
@@ -289,6 +290,7 @@ class FSScanProcessor(pykka.ThreadingActor):
     def reset_scanner_state(self):
         self.hardwareController.laser.off()
         self.hardwareController.led.off()
+        self.hardwareController.turntable.disable_motors()
         self._command = None
         self._progress = 0
         self.current_position = 0
