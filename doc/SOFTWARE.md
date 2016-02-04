@@ -30,7 +30,7 @@ echo "deb http://archive.fabscan.org/ jessie main" >> /etc/apt/source.list
 Then add the FabScan PI repository key to your key chain.
 
 ```
-wget https://archive.fabscan.org/fabscan.public.key -O - | sudo apt-key add -
+wget http://archive.fabscan.org/fabscan.public.key -O - | sudo apt-key add -
 ```
 
 Finish the installation with the needed packages.
