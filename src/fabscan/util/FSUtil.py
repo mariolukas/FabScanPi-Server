@@ -45,5 +45,5 @@ def delete_scan(scan_id,ignore_errors=True):
     if os.path.isdir(folder):
         shutil.rmtree(folder, ignore_errors=True)
     else:
-         print "no scan directory found"
+         print "Nothing to delete..."
 

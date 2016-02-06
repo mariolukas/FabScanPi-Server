@@ -66,17 +66,23 @@ class ImageProcessor():
 
     def calculate_laser_angle(self, calibration_image):
 
+
         point = self.detect_laser(calibration_image)
 
-        self.settings.backwall.laser.x = point.x
-        self.settings.backwall.laser.y = point.y
-        self.settings.backwall.laser.z = point.z
+        if point != None:
+            self._logger.debug("Found a point for laser angle calculation")
+            self.settings.backwall.laser.x = point.x
+            self.settings.backwall.laser.y = point.y
+            self.settings.backwall.laser.z = point.z
 
-        b = self.config.laser.position.x - point.x
-        a = self.config.laser.position.z - point.z
-        angle = math.atan(b/a) * 180.0 / math.pi
-        self.config.laser.angle = angle
-        return  angle
+            b = self.config.laser.position.x - point.x
+            a = self.config.laser.position.z - point.z
+            angle = math.atan(b/a) * 180.0 / math.pi
+            self.config.laser.angle = angle
+            return  angle
+        else:
+            self._logger.debug("No laser angle calculated")
+            return None
 
 
 
@@ -91,34 +97,39 @@ class ImageProcessor():
 
         x, image = self.line_coords(image, filter=False, fast=True, x_center_delta=x_center_delta)
 
-        x = x[:,0]
-        new_x = []
+        if x != []:
+            x = x[:,0]
+            new_x = []
 
-        for i in xrange(1,20):
-            new_x.append(x[i])
-
-
-        x = np.sort(new_x)
-        point = FSPoint( x[len(x)/2] , 0.0, 0.0)
-
-        # save pixel position of laser line x direction
-        self.settings.backwall.laser_pixel_position = point.x
-
-        # make a camera system point of laser line on backwall
-        laser_backwall = FSPoint()
-        laser_backwall.x = point.x
-        laser_backwall = self.convertCvPointToPoint(laser_backwall)
+            for i in xrange(1,20):
+                new_x.append(x[i])
 
 
-        self.settings.backwall.laser.x = laser_backwall.x
-        self.settings.backwall.laser.y = laser_backwall.y
-        self.settings.backwall.laser.z = laser_backwall.z
+            x = np.sort(new_x)
+            point = FSPoint( x[len(x)/2] , 0.0, 0.0)
 
-        self._logger.debug("Laser Backwall x: %d" % (point.x, ))
+            # save pixel position of laser line x direction
+            self.settings.backwall.laser_pixel_position = point.x
 
-        fs_point = self.convertCvPointToPoint(point)
+            # make a camera system point of laser line on backwall
+            laser_backwall = FSPoint()
+            laser_backwall.x = point.x
+            laser_backwall = self.convertCvPointToPoint(laser_backwall)
 
-        return fs_point
+
+            self.settings.backwall.laser.x = laser_backwall.x
+            self.settings.backwall.laser.y = laser_backwall.y
+            self.settings.backwall.laser.z = laser_backwall.z
+
+            self._logger.debug("Laser Backwall x: %d" % (point.x, ))
+
+            fs_point = self.convertCvPointToPoint(point)
+
+            return fs_point
+
+        else:
+            self._logger.debug("Can not detect laser line on backwall.")
+            return None
 
     def get_grey(self, image):
         hsv_img = cv2.cvtColor(image, cv2.cv.CV_BGR2HSV)

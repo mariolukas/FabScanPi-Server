@@ -112,6 +112,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self._scan_brightness = self.settings.camera.brightness
         self._scan_contrast =  self.settings.camera.contrast
 
+        self.hardwareController.camera.device.textureExposure()
         self.settings.camera.brightness = 50
         self.settings.camera.contrast = 0
         self.hardwareController.led.on(50,50,50)
@@ -148,12 +149,9 @@ class FSScanProcessor(pykka.ThreadingActor):
 
 
     def init_object_scan(self):
-        message = FSUtil.new_message()
-        message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "SCANNING_OBJECT"
+        self._logger.debug("Started object scan initialisation")
 
         self.current_position = 0
-        self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
         self._laser_positions = self.settings.laser_positions
         self.hardwareController.led.on(self.settings.led.red,self.settings.led.green,self.settings.led.blue)
@@ -167,11 +165,29 @@ class FSScanProcessor(pykka.ThreadingActor):
         # Workaround for Logitech webcam. We have to wait a loooong time until the logitech cam is ready...
         #time.sleep(3)
 
+
         self.hardwareController.camera.device.objectExposure()
+        self.hardwareController.camera.device.flushStream()
+        time.sleep(2)
+
         self._laser_angle = self.image_processor.calculate_laser_angle(self.hardwareController.camera.device.getStream())
 
-        self._logger.debug("Detected Laser Angle at: %f deg" %(self._laser_angle, ))
-        self._worker_pool.create(self.config.process_number)
+        self._logger.debug(self._laser_angle)
+        if self._laser_angle == None:
+            event = FSEvent()
+            event.command = '_LASER_DETECTION_FAILED'
+            self.eventManager.publish(FSEvents.COMMAND,event)
+            self.on_laser_detection_failed()
+            self._logger.debug("Send laser detection failure event")
+        else:
+            message = FSUtil.new_message()
+            message['type'] = FSEvents.ON_INFO_MESSAGE
+            message['data']['message'] = "SCANNING_OBJECT"
+            self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
+
+            self._logger.debug("Detected Laser Angle at: %f deg" %(self._laser_angle, ))
+            self._worker_pool.create(self.config.process_number)
+
 
 
     def finish_object_scan(self):
@@ -196,6 +212,15 @@ class FSScanProcessor(pykka.ThreadingActor):
 
             else:
                 self.finish_object_scan()
+
+
+    def on_laser_detection_failed(self):
+
+        self._logger.debug("Send laser detection failed message to frontend")
+        message = FSUtil.new_message()
+        message['type'] = FSEvents.ON_INFO_MESSAGE
+        message['data']['message'] = "NO_LASER_DETECTED"
+        self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
 
     def stop_scan(self):

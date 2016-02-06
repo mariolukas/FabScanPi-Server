@@ -128,7 +128,7 @@ class FSSerialCom():
         flash_version_number = os.path.basename(os.path.normpath(os.path.splitext(flash_file_version)[0]))
 
 
-        self._logger.debug("Found Firmware Version: "+flash_version_number)
+        self._logger.debug("Latest available firmware version is: "+flash_version_number)
 
 
         try:
@@ -143,7 +143,7 @@ class FSSerialCom():
                    self._logger.info("FabScan Firmware Version: "+flash_file_version)
                    self._connect()
                else:
-                   self._logger.info("FabScan is using Firmware Version: "+current_version)
+                   self._logger.info("FabScan is using firmware version: "+current_version)
                    self._connect()
 
         except:

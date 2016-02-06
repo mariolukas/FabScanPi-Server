@@ -26,6 +26,7 @@ class FSCommand(object):
     STOP = "STOP"
     UPDATE_SETTINGS = "UPDATE_SETTINGS"
     _COMPLETE = "_COMPLETE"
+    _LASER_DETECTION_FAILED = "_LASER_DETECTION_FAILED"
 
 class FSScanner(threading.Thread):
 
@@ -94,6 +95,15 @@ class FSScanner(threading.Thread):
         elif command == FSCommand._COMPLETE:
             self.set_state(FSState.IDLE)
             self._logger.info("Scan complete")
+
+        elif command == FSCommand._LASER_DETECTION_FAILED:
+            #self.scanProcessor.ask({FSEvents.COMMAND:FSCommand.STOP})
+            self._logger.info("No Laser detected, returning to settings dialog.")
+            #self.scanProcessor.ask({FSEvents.COMMAND:FSCommand.STOP})
+            #self.scanProcessor.stop()
+
+            self.set_state(FSState.SETTINGS)
+            self.hardwareController.settings_mode_on()
 
 
     def _on_client_connected(self,eventManager, event):
