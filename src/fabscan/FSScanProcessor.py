@@ -115,7 +115,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.hardwareController.camera.device.textureExposure()
         self.settings.camera.brightness = 50
         self.settings.camera.contrast = 0
-        self.hardwareController.led.on(50,50,50)
+        self.hardwareController.led.on(60,60,60)
         time.sleep(2)
         self.hardwareController.camera.device.flushStream()
         time.sleep(1)
@@ -313,6 +313,8 @@ class FSScanProcessor(pykka.ThreadingActor):
         return self._prefix
 
     def reset_scanner_state(self):
+        self.hardwareController.camera.device.objectExposure()
+        self.hardwareController.camera.device.flushStream()
         self.hardwareController.laser.off()
         self.hardwareController.led.off()
         self.hardwareController.turntable.disable_motors()

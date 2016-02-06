@@ -221,7 +221,7 @@ class PiCam(threading.Thread):
 
     def textureExposure(self):
 
-        self.camera.exposure_mode = 'auto'
+        #self.camera.exposure_mode = 'auto'
         self.camera.awb_gains = self.awb_default_gain
         self.camera.awb_mode = 'flash'
 
