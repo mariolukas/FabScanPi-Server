@@ -7,6 +7,10 @@ from distutils.core import setup
 from setuptools import find_packages
 import sys
 import os
+import commands
+import subprocess
+
+
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "src"))
 
@@ -30,10 +34,17 @@ def package_data_dirs(source, sub_folders):
 
 	return dirs
 
-
+def version_number():
+    # get latest version number out of debian/changelog file
+    version = subprocess.Popen("head -1 debian/changelog | awk -F'[()]' '{print $2}'", shell=True, stdout=subprocess.PIPE).stdout.read()
+    # write version file in www folder for delivery
+    with open("src/fabscan/FSVersion.py","a+") as version_file:
+        version_file.write("__version__ = 'v."+str(version)+"'")
+    return version
 
 def params():
-    version = "0.1.5"
+
+    version = version_number()
     name = "FabScanPi"
     description = "FabScanPi is a Stand-alone Web-enabled Open-Source 3D Laser Scanner Software"
     long_description = open("README.md").read()
@@ -87,6 +98,7 @@ def params():
         ('/usr/local/fabscanpi/www/', ['src/www/index.html']),
         ('/usr/local/fabscanpi/www/style/',['src/www/style/app.css', 'src/www/style/lib.css']),
         ('/usr/local/fabscanpi/www/js/',['src/www/js/app.js', 'src/www/js/lib.js']),
+        ('/usr/local/fabscanpi/www/',['src/www/version.txt']),
         ('/usr/local/fabscanpi/www/icons/', ['src/www/icons/favicon.png'])
     ]
 

@@ -6,6 +6,7 @@ __email__ = "info@mariolukas.de"
 
 from fabscan.server import FSServer
 from fabscan.daemon import Daemon
+from fabscan.FSVersion import __version__
 import logging
 import logging.handlers
 import optparse
@@ -86,7 +87,7 @@ def main():
         logger.addHandler(ch)
 
     if args.version:
-        print "FabScan Pi version %s" % 1.1
+        print "FabScan Pi version %s" % __version__
         sys.exit(0)
 
     if args.daemon:

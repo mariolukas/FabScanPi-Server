@@ -23,6 +23,15 @@ class FSPointCloud():
     def get_size(self):
         return len(self.points)
 
+    def writeHeader(self):
+        pass
+
+    def writePointsToFile(self):
+        pass
+
+    def calculateNormals(self):
+        pass
+
     def saveAsFile(self, file_name):
 
         basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))

@@ -9,6 +9,7 @@ import threading
 import logging
 import json
 
+from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManager, FSEvents
 from fabscan.controller import HardwareController
 from fabscan.util import FSUtil
@@ -32,6 +33,7 @@ class FSScanner(threading.Thread):
 
     def __init__(self):
 
+
         threading.Thread.__init__(self)
         self._state = FSState.IDLE
         self._logger =  logging.getLogger(__name__)
@@ -46,6 +48,7 @@ class FSScanner(threading.Thread):
         self.eventManager.subscribe(FSEvents.COMMAND, self._on_command)
 
     def run(self):
+        self._logger.info("FabScanPi-Server "+str(__version__))
         while not self._exit_requested:
             self.eventManager.handle_event_q()
 
@@ -111,6 +114,7 @@ class FSScanner(threading.Thread):
         message['type'] = FSEvents.ON_CLIENT_INIT
         message['data']['client'] = event['client']
         message['data']['state'] = self._state
+        message['data']['server_version'] = str(__version__)
         #message['data']['points'] = self.pointcloud
         message['data']['settings'] = self.settings.todict(self.settings)
         #message['data']['settings'] = dict()

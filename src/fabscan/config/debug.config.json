@@ -1,0 +1,58 @@
+{
+   "folders" : {
+    "www": "/home/pi/fabscan/src/www/",
+    "scans": "/usr/local/fabscanpi/scans/"
+   },
+   "serial" : {
+     "baudrate" : 115200,
+     "port": "/dev/ttyACM0",
+     "autoflash": "True"
+   },
+   "camera" : {
+     "type" : "PICAM",
+     "device" : 1,
+     "preview_resolution":{
+        "width": 320,
+        "height": 240
+     },
+     "resolution":{
+          "width": 1296,
+          "height":972
+      },
+      "position":{
+          "x": 0.0,
+          "y": 5.5,
+          "z": 27.6
+      },
+      "frame":{
+          "dimension": 23.5
+      }
+   },
+   "laser": {
+      "position":{
+        "x": 10.0,
+        "y": 7.3,
+        "z": 24.5
+      },
+      "angle": 33.0,
+      "rotation_steps": 5,
+      "steps": 3200
+   },
+   "turntable":{
+     "position": {
+       "x": 0.0,
+       "y": 0.0,
+       "z": 7.5
+     },
+     "steps":3200
+   },
+   "scanner": {
+      "origin":{
+        "y" : 0.75
+      }
+   },
+   "process_number": 4,
+   "meshlab":{
+     "path": "/usr/bin/"
+   }
+}

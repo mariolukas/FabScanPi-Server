@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 *.pyc
 
+src/fabscan/FSVersion.py
+
 # C extensions
 *.so
 
@@ -24,6 +26,8 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+
+src/www/version.txt
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

@@ -19,7 +19,7 @@ from fabscan.FSEvents import FSEventManager
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
 from fabscan.controller import HardwareController
-from fabscan.vision.FSSettingsPreviewProcessor import FSSettingsPreviewProcessor
+from fabscan.FSVersion import __version__
 
 
 class FSServer():
@@ -31,10 +31,14 @@ class FSServer():
         self.config_file = config_file
         self.settings_file = settings_file
 
+
+
     def run(self):
+
 
         try:
             # create Singleton instances
+
 
             _config = Config.instance(self.config_file)
             _settings = Settings.instance(self.settings_file)

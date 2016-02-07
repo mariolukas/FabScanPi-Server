@@ -975,6 +975,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         var _settings;
 
         $log.info("State: " + data['state']);
+        document.title = "FabScanPi " + data['server_version'];
         _settings = data['settings'];
         _settings.resolution *= -1;
         angular.copy(_settings, $scope.settings);

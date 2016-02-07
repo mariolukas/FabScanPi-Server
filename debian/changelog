@@ -1,3 +1,13 @@
+fabscanpi-server (0.1.7) unstable; urgency=medium
+
+  * fixed versioning in frontend
+  * fixed some camera parameters for better color scan results
+  * fixed issue #3
+  * added auto versioning to setup.py
+  * changed ui files
+
+ -- Mario Lukas  <info@mariolukas.de>  Mon, 08 Feb 2016 00:20:13 +0000
+
 fabscanpi-server (0.1.6) unstable; urgency=medium
 
   * switched to firmware v.20160204 which supports custom boards and fixes some issues
