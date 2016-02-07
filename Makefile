@@ -35,4 +35,5 @@ clean:
 	$(PYTHON) setup.py clean
 	$(MAKE) -f $(CURDIR)/debian/rules clean
 	rm -rf build/ MANIFEST
+	rm src/fabscan/FSVersion.py
 	find . -name '*.pyc' -delete
