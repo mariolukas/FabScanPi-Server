@@ -37,9 +37,10 @@ def package_data_dirs(source, sub_folders):
 def version_number():
     # get latest version number out of debian/changelog file
     version = subprocess.Popen("head -1 debian/changelog | awk -F'[()]' '{print $2}'", shell=True, stdout=subprocess.PIPE).stdout.read()
+    version = version.rstrip(os.linesep)
     # write version file in www folder for delivery
-    with open("src/fabscan/FSVersion.py","a+") as version_file:
-        version_file.write("__version__ = 'v."+str(version)+"'")
+    with open("src/fabscan/FSVersion.py","w+") as version_file:
+        version_file.write('__version__ = "v.%s"\n ' % str(version))
     return version
 
 def params():
