@@ -5,11 +5,9 @@ __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 from distutils.core import setup
 from setuptools import find_packages
-import sys
 import os
-import commands
+import sys
 import subprocess
-
 
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "src"))
@@ -45,7 +43,7 @@ def version_number():
 
 def params():
 
-    version = version_number()
+    version = str(version_number())
     name = "FabScanPi"
     description = "FabScanPi is a Stand-alone Web-enabled Open-Source 3D Laser Scanner Software"
     long_description = open("README.md").read()

@@ -5,9 +5,14 @@ __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
+import sys
+sys.path.append('/usr/share/pyshared')
+
 import fabscan
 
+
 def main():
+
     fabscan.main()
 
 if __name__ == "__main__":

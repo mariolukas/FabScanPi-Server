@@ -5,7 +5,7 @@ PYTHON=`which python`
 DESTDIR=/
 BUILDIR=$(CURDIR)/debian/fabscanpi-server
 PROJECT=fabscanpi-server
-VERSION=0.0.1
+VERSION=0.1.8
 
 all:
 	@echo "make source - Create source package"
