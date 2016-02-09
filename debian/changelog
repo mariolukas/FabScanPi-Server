@@ -1,3 +1,9 @@
+fabscanpi-server (0.1.9) unstable; urgency=medium
+
+  * fixed debian package installer scripts
+
+ -- Mario Lukas  <info@mariolukas.de>  Mon, 08 Feb 2016 23:21:19 +0000
+
 fabscanpi-server (0.1.8) unstable; urgency=medium
 
   * fixed python package path error

@@ -1,0 +1,14 @@
+#!/bin/bash
+# postrm script for script for fabscanpi-server
+#
+# see: dh_installdeb(1)
+
+set -e
+
+SERVICE=fabscanpi-server
+INIT_SCRIPT=/etc/init.d/$SERVICE
+
+if ps ax | grep -v grep | grep -v $0 | grep $SERVICE > /dev/null
+then
+        $INIT_SCRIPT stop
+fi

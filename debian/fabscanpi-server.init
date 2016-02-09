@@ -36,8 +36,10 @@ start() {
 }
 
 stop() {
-    echo "Stopping fabscanpi-server..."
-    kill -9 `cat $PIDFILE`
+
+     echo "Stopping fabscanpi-server..."
+     kill -9 `cat $PIDFILE`
+
 }
 
 status() {

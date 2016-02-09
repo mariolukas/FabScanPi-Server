@@ -12,6 +12,7 @@ import subprocess
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "src"))
 
+
 DEPENDENCY_LINKS = []
 INSTALL_REQUIRES = []
 EXTRA_REQUIRES = dict()
@@ -38,7 +39,8 @@ def version_number():
     version = version.rstrip(os.linesep)
     # write version file in www folder for delivery
     with open("src/fabscan/FSVersion.py","w+") as version_file:
-        version_file.write('__version__ = "v.%s"\n ' % str(version))
+            version_file.write('__version__ = "v.%s"\n ' % str(version))
+
     return version
 
 def params():

@@ -1,9 +1,20 @@
-#!/bin/sh
+#!/bin/bash
 # preinst script for script for fabscanpi-server
 #
 # see: dh_installdeb(1)
 
 set -e
+
+SERVICE=fabscanpi-server
+INIT_SCRIPT=/etc/init.d/$SERVICE
+
+if ps ax | grep -v grep | grep -v $0 | grep $SERVICE > /dev/null
+then
+        if [ -f $INIT_SCRIPT ];then
+            echo "$SERVICE is running shutting down..."
+            $INIT_SCRIPT stop
+        fi
+fi
 
 LOG_DIR=/var/log/fabscanpi
 CONF_DIR=/etc/fabscanpi
