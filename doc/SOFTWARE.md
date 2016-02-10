@@ -165,7 +165,7 @@ After you changed the file you can restart your network daemon.
 sudo /etc/init.d/networking restart
 ```
 
-#### Configuration File
+### FabScan Pi Configuration
 
 A configuration file can be found in /etc/fabscanpi/default.config.json. The content of this file 
 is in JSON format and can be edited with an editor of your choice (e.g. nano). Be careful and don't
