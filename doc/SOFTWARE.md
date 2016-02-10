@@ -71,3 +71,73 @@ Afterwards the package can be installed by
 ```
 dpkg -i fabscabpi-server<package-version>.deb
 ```
+
+### Setting up a WIFI connection
+
+This description explains howto setup a wifi stick for raspbian. I prefer to use an EDIMAX dongle, it worked best for me. 
+First plug in your wifi dongle and log in via ssh with password "raspberry" (without quotes):
+
+```
+ssh pi@<your-fabscanpi-ip>
+```
+
+Your fasbcanpi image is ready to go. The only thing you have to do is open wpa_supplicant.conf and 
+insert your wifi ssid and your wifi secret.
+
+```
+sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+```
+
+Save the file and try to connect to your wifi by typing the following command.
+```
+sudo ifup wlan0
+```
+
+In some cases you have to reboot the Raspberry Pi. Check if the wifi dongle's led is bliking.
+If you want to change your Raspberry Pi to a fix wifi IP address you have to change the interfaces file
+to get a static wifi connection.
+
+```
+sudo nano /etc/network/interfaces
+```
+
+Change the files content from 
+
+```
+auto lo
+iface lo inet loopback
+
+allow-hotplug eth0
+iface eth0 inet dhcp
+
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
+```
+
+to 
+
+```
+auto lo
+iface lo inet loopback
+
+allow-hotplug eth0
+iface eth0 inet dhcp
+
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet static
+address <ip in your network>
+netmask <your netmask>
+gateway <your gateway>
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
+```
+
+After you changed the file you can restart your network daemon.
+
+```
+sudo /etc/init.d/networking restart
+```
