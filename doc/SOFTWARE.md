@@ -219,7 +219,7 @@ of the FabScan setups. This value is used for tansforming image coordinates to w
           "dimension": 23.5
       }
    }
-``   
+```   
 
 ##### Laser 
 This section describes the laser position and laser stepper motor values. I mentioned position values in the section 
@@ -279,4 +279,4 @@ Meshlab is not supported in the curren verision of fabscan pi. So you can leave 
 }
 ```
 
-<img src=images/fabscan-dimensions.png>
+<img src="images/fabscan-dimensions.png">
