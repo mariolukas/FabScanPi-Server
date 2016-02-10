@@ -101,7 +101,7 @@ Now restart your network adapters.
 sudo nano /etc/init.d/networking
 ```
 
-If you type ```sudo ifconfi``` there should be a wlan0 connection in the list. 
+If you type ```sudo ifconfig``` there should be a wlan0 connection in the list. 
 
 Your fasbcanpi image is ready to go. The only things you have to do is open wpa_supplicant.conf and 
 insert your wifi ssid and your wifi secret.
