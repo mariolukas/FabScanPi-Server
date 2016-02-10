@@ -80,13 +80,36 @@ First plug in your wifi dongle and log in via ssh with password "raspberry" (wit
 ```
 ssh pi@<your-fabscanpi-ip>
 ```
+First you have to activate the wifi option in your networking setup. 
 
-Your fasbcanpi image is ready to go. The only thing you have to do is open wpa_supplicant.conf and 
+```
+sudo nano /etc/network/interfaces
+```
+
+Uncomment the folling lines and save the changes. 
+
+``` 
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
+```
+
+Now restart your network adapters. 
+```
+sudo nano /etc/init.d/networking
+```
+
+If you type ```sudo ifconfi``` there should be a wlan0 connection in the list. 
+
+Your fasbcanpi image is ready to go. The only things you have to do is open wpa_supplicant.conf and 
 insert your wifi ssid and your wifi secret.
 
 ```
 sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
 ```
+
 
 Save the file and try to connect to your wifi by typing the following command.
 ```
