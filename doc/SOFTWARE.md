@@ -141,3 +141,142 @@ After you changed the file you can restart your network daemon.
 ```
 sudo /etc/init.d/networking restart
 ```
+
+#### Configuration File
+
+A configuration file can be found in /etc/fabscanpi/default.config.json. The content of this file 
+is in JSON format and can be edited with an editor of your choice (e.g. nano). Be careful and don't
+miss brackets. JSON is really sensitive in it's format.
+
+##### Folders
+In this section you can change the scan output folder and the folder where the ui is located. If 
+you don't know what you are doing, it is a good decision to keep this section untouched.
+
+```
+   "folders" : {
+    "www": "/home/pi/fabscan/src/www/",
+    "scans": "/usr/local/fabscanpi/scans/"
+   }
+```
+
+##### Serial 
+In this section you can set your port. Some Arduino and compatible boards differ in the port name.
+Due the FabScanPi is made to use the FabScanPi HAT the default value is /dev/ttyACM0. In most cases
+this also works with an Arduino or compatible. 
+
+The autoflash option is True by default, that means that the firmware is flashed automatically to 
+the Arduino or FabScanPi HAT. If you want to use a custom board e.g. sanguinololu, you can set this
+to False and flash the Firmware manually to your board. 
+   
+```
+   "serial" : {
+     "baudrate" : 115200,
+     "port": "/dev/ttyACM0",
+     "autoflash": "True"
+   }
+``` 
+
+##### Camera 
+
+In this section some camera values are set. The type can be set to PICAM which is default value. There is 
+also an experimental mode for a C270 webcam. But this mode is not further developed. I used it in early 
+versions of fabscanpi. 
+
+The device is not used for the PICAM. Only if a webcam is used, you have to set the device to the count number
+of your webcam if you have one or more cameras connected to your pi.
+
+Preview Resolution is the resolution value for the settings window. 
+Resolution is the resolution for the picamera python module. You can have a look to the documentation of 
+picamera. If you set this to other values please be sure what you are doing, not all resolutions are supported
+by the picam. Some might lead to slower image capturing. 
+
+The position values are used to define where the camera is located in the case. All values are in cm. 
+Thre is an image later in this documentation which explains all the dimension related meassures. 
+
+Frame dimension is what your camera sees in the case. An easy way to validate this value is to put a 
+ruler to the backwall of the fabscan ( i used a paper one from IKEA ). Then activate the settings mode
+and read the last value you can read in the image. The default is 23.5 cm. The default value fits most
+of the FabScan setups. This value is used for tansforming image coordinates to world coordinates. 
+
+```
+   "camera" : {
+     "type" : "PICAM",
+     "device" : 1,
+     "preview_resolution":{
+        "width": 320,
+        "height": 240
+     },
+     "resolution":{
+          "width": 1296,
+          "height":972
+      },
+      "position":{
+          "x": 0.0,
+          "y": 5.5,
+          "z": 27.6
+      },
+      "frame":{
+          "dimension": 23.5
+      }
+   }
+``   
+
+##### Laser 
+This section describes the laser position and laser stepper motor values. I mentioned position values in the section 
+before (Camera), have a look at the image. 
+
+The angle is set to the angle which was used in the last scan. The rotation_steps value should be used for a laser 
+angle change (not implemented yet).Steps defines how many steps the motor can do. In the default case the motor is 
+set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps. 
+
+``` 
+   "laser": {
+      "position":{
+        "x": 10.0,
+        "y": 7.3,
+        "z": 24.5
+      },
+      "angle": 33.0,
+      "rotation_steps": 5,
+      "steps": 3200
+   }
+```
+   
+   
+##### Turntable
+In this section some turntable related values are set. For positioning have a look to the image. 
+Steps defines how many steps can be perfomed for a full rotation. This value depends on your motor and driver.
+In the default case the motor is set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps.
+
+```
+   "turntable":{
+     "position": {
+       "x": 0.0,
+       "y": 0.0,
+       "z": 7.5
+     },
+     "steps":3200
+   },
+```
+   
+##### Scanner 
+This section defines global scanner related values. Origin is defined as the green horizontal line in the settings
+preview window. It is a also here a good idea to keep that value untouched. Process number defines how many processes
+should be used for calculating the scan data. Due the Raspberry Pi2 serves 4 cores it is a good idea to keep this
+value. Increasing the proccess number does not mean inrceasing speed in all cases. 
+Meshlab is not supported in the curren verision of fabscan pi. So you can leave this value. 
+
+```
+   "scanner": {
+      "origin":{
+        "y" : 0.75
+      }
+   },
+   "process_number": 4,
+   "meshlab":{
+     "path": "/usr/bin/"
+   }
+}
+```
+
+<img src=images/fabscan-dimensions.png>
