@@ -63,7 +63,7 @@ sudo apt-get install build-essential dpkg-dev debhelper devscripts fakeroot cdbs
 The package is build by calling
 
 ```
-make builddeb
+make deb
 ```
 
 Afterwards the package can be installed by 

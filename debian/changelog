@@ -1,3 +1,9 @@
+fabscanpi-server (0.1.10) unstable; urgency=medium
+
+  * new firmware version
+
+ -- Mario Lukas  <info@mariolukas.de>  Thu, 10 Feb 2016 00:39:10 +0000
+
 fabscanpi-server (0.1.9) unstable; urgency=medium
 
   * fixed debian package installer scripts
