@@ -3,4 +3,6 @@
 # export DH_VERBOSE=1
 
 %:
-        dh $@ --with python2 --buildsystem=python_distutils --install-layout=deb
+	dh $@ --with python2 --buildsystem=python_distutils --install-layout=deb
+
+override_dh_usrlocal:

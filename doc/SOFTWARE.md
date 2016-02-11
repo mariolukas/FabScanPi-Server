@@ -58,7 +58,10 @@ fabscan repository to your apt source list.
 
 ### Build Debian package
 Install dependencies
+
+```
 sudo apt-get install build-essential dpkg-dev debhelper devscripts fakeroot cdbs python-setuptools python-support
+```
 
 The package is build by calling
 
