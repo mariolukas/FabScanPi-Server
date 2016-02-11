@@ -72,98 +72,14 @@ Afterwards the package can be installed by
 dpkg -i fabscabpi-server<package-version>.deb
 ```
 
-### Setting up a WIFI connection
-
-This description explains howto setup a wifi stick for raspbian. I prefer to use an EDIMAX dongle, it worked best for me. 
-First plug in your wifi dongle and log in via ssh with password "raspberry" (without quotes):
-
-```
-ssh pi@<your-fabscanpi-ip>
-```
-First you have to activate the wifi option in your networking setup. 
+### Updates
+Updates can be installed with debian's apt-get package manager. You can check for updates and install
+those by typing the following command.
 
 ```
-sudo nano /etc/network/interfaces
-```
-
-Uncomment the folling lines and save the changes. 
-
+sudo apt-get update && apt-get upgrade
 ``` 
-auto wlan0
-allow-hotplug wlan0
-iface wlan0 inet dhcp
-wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-iface default inet dhcp
-```
 
-Now restart your network adapters. 
-```
-sudo nano /etc/init.d/networking
-```
-
-If you type ```sudo ifconfig``` there should be a wlan0 connection in the list. 
-
-Your fasbcanpi image is ready to go. The only things you have to do is open wpa_supplicant.conf and 
-insert your wifi ssid and your wifi secret.
-
-```
-sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
-```
-
-
-Save the file and try to connect to your wifi by typing the following command.
-```
-sudo ifup wlan0
-```
-
-In some cases you have to reboot the Raspberry Pi. Check if the wifi dongle's led is bliking.
-If you want to change your Raspberry Pi to a fix wifi IP address you have to change the interfaces file
-to get a static wifi connection.
-
-```
-sudo nano /etc/network/interfaces
-```
-
-Change the files content from 
-
-```
-auto lo
-iface lo inet loopback
-
-allow-hotplug eth0
-iface eth0 inet dhcp
-
-auto wlan0
-allow-hotplug wlan0
-iface wlan0 inet dhcp
-wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-iface default inet dhcp
-```
-
-to 
-
-```
-auto lo
-iface lo inet loopback
-
-allow-hotplug eth0
-iface eth0 inet dhcp
-
-auto wlan0
-allow-hotplug wlan0
-iface wlan0 inet static
-address <ip in your network>
-netmask <your netmask>
-gateway <your gateway>
-wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-iface default inet dhcp
-```
-
-After you changed the file you can restart your network daemon.
-
-```
-sudo /etc/init.d/networking restart
-```
 
 ### FabScan Pi Configuration
 
@@ -303,3 +219,97 @@ Meshlab is not supported in the curren verision of fabscan pi. So you can leave 
 ```
 
 <img src="images/fabscan-dimensions.png">
+
+### Setting up a WIFI connection
+
+This description explains howto setup a wifi stick for raspbian. I prefer to use an EDIMAX dongle, it worked best for me. 
+First plug in your wifi dongle and log in via ssh with password "raspberry" (without quotes):
+
+```
+ssh pi@<your-fabscanpi-ip>
+```
+First you have to activate the wifi option in your networking setup. 
+
+```
+sudo nano /etc/network/interfaces
+```
+
+Uncomment the folling lines and save the changes. 
+
+``` 
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
+```
+
+Now restart your network adapters. 
+```
+sudo nano /etc/init.d/networking
+```
+
+If you type ```sudo ifconfig``` there should be a wlan0 connection in the list. 
+
+Your fasbcanpi image is ready to go. The only things you have to do is open wpa_supplicant.conf and 
+insert your wifi ssid and your wifi secret.
+
+```
+sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+```
+
+
+Save the file and try to connect to your wifi by typing the following command.
+```
+sudo ifup wlan0
+```
+
+In some cases you have to reboot the Raspberry Pi. Check if the wifi dongle's led is bliking.
+If you want to change your Raspberry Pi to a fix wifi IP address you have to change the interfaces file
+to get a static wifi connection.
+
+```
+sudo nano /etc/network/interfaces
+```
+
+Change the files content from 
+
+```
+auto lo
+iface lo inet loopback
+
+allow-hotplug eth0
+iface eth0 inet dhcp
+
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
+```
+
+to 
+
+```
+auto lo
+iface lo inet loopback
+
+allow-hotplug eth0
+iface eth0 inet dhcp
+
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet static
+address <ip in your network>
+netmask <your netmask>
+gateway <your gateway>
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
+```
+
+After you changed the file you can restart your network daemon.
+
+```
+sudo /etc/init.d/networking restart
+```
+

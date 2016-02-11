@@ -63,6 +63,7 @@ case "$1" in
 
   restart|reload|force-reload)
     stop
+    sleep 2
     start
     ;;
 
