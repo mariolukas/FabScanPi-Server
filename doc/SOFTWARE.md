@@ -73,8 +73,10 @@ dpkg -i fabscabpi-server<package-version>.deb
 ```
 
 ### Updates
-Updates can be installed with debian's apt-get package manager. You can check for updates and install
-those by typing the following command.
+Updates can be installed with debian's apt-get package manager. Log in via ssh and check/install 
+updates with the following command.
+
+
 
 ```
 sudo apt-get update && apt-get upgrade
