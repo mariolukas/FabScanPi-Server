@@ -17,6 +17,21 @@ DEPENDENCY_LINKS = []
 INSTALL_REQUIRES = []
 EXTRA_REQUIRES = dict()
 
+def version_number():
+    # get latest version number out of debian/changelog file
+    version = subprocess.Popen("head -1 debian/changelog | awk -F'[()]' '{print $2}'", shell=True, stdout=subprocess.PIPE).stdout.read()
+    version = version.rstrip(os.linesep)
+    # write version file in www folder for delivery
+
+    return version
+
+def create_verion_file():
+    with open("src/fabscan/FSVersion.py","w+") as version_file:
+        version_file.write('__version__ = "v.%s"\n ' % str(version_number()))
+
+create_verion_file()
+
+
 def package_data_dirs(source, sub_folders):
 	import os
 	dirs = []
@@ -33,15 +48,8 @@ def package_data_dirs(source, sub_folders):
 
 	return dirs
 
-def version_number():
-    # get latest version number out of debian/changelog file
-    version = subprocess.Popen("head -1 debian/changelog | awk -F'[()]' '{print $2}'", shell=True, stdout=subprocess.PIPE).stdout.read()
-    version = version.rstrip(os.linesep)
-    # write version file in www folder for delivery
-    with open("src/fabscan/FSVersion.py","w+") as version_file:
-            version_file.write('__version__ = "v.%s"\n ' % str(version))
 
-    return version
+
 
 def params():
 

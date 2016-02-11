@@ -1,3 +1,10 @@
+fabscanpi-server (0.1.12) unstable; urgency=medium
+
+  * switched from depricated python-support to dh_python2 package builder
+  * modified makefile to fit the new builder
+
+ -- Mario Lukas  <info@mariolukas.de>  Thu, 10 Feb 2016 23:03:40 +0000
+
 fabscanpi-server (0.1.11) unstable; urgency=medium
 
   * modified init script

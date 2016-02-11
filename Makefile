@@ -1,11 +1,10 @@
-# $Id: Makefile,v 1.6 2008/10/29 01:01:35 Mario Lukas Exp $
+# $Id: Makefile,v 1.6 2014/10/29 01:01:35 Mario Lukas Exp $
 #
 
 PYTHON=`which python`
 DESTDIR=/
 BUILDIR=$(CURDIR)/debian/fabscanpi-server
 PROJECT=fabscanpi-server
-VERSION=0.1.8
 
 all:
 	@echo "make source - Create source package"
@@ -26,8 +25,8 @@ rpm:
 deb:
 	# build the source package in the parent directory
 	# then rename it to project_version.orig.tar.gz
-	$(PYTHON) setup.py sdist $(COMPILE) --dist-dir=../
-	rename -f 's/$(PROJECT)-(.*)\.tar\.gz/$(PROJECT)_$$1\.orig\.tar\.gz/' ../*
+	#$(PYTHON) setup.py sdist $(COMPILE) --dist-dir=../
+	#rename -f 's/$(PROJECT)-(.*)\.tar\.gz/$(PROJECT)_$$1\.orig\.tar\.gz/' ../*
 	# build the package
 	dpkg-buildpackage -uc -i -I -rfakeroot
 
