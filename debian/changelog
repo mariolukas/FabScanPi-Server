@@ -1,3 +1,11 @@
+fabscanpi-server (0.1.11) unstable; urgency=medium
+
+  * modified init script
+  * added update instructions do documentation
+
+ -- Mario Lukas  <info@mariolukas.de>  Thu, 10 Feb 2016 08:24:40 +0000
+
+
 fabscanpi-server (0.1.10) unstable; urgency=medium
 
   * new firmware version
