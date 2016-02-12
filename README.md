@@ -1,7 +1,7 @@
 # FabScan PI - An Open-Source 3D Laser Scanner
 
 [![Python Support](https://img.shields.io/badge/Python-2.7-green.svg)](https://www.python.org/)
-[![Python Support](https://img.shields.io/badge/License-AGPL v3-blue.svg)](https://www.python.org/)
+[![Python Support](https://img.shields.io/badge/License-AGPL v3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.de.html)
 [![Build Status](https://travis-ci.org/mariolukas/FabScanPi-Server.svg?branch=master)](https://travis-ci.org/mariolukas/FabScanPi-Server)
 
 <img src="doc/images/fabscanpi.png" width="400" height="200">
