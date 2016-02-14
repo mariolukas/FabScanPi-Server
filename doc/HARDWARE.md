@@ -2,6 +2,9 @@
 
 <img width="500" src="images/FabScanCube.jpg">
 
+The laser cut files can be found at : <a href="https://github.com/mariolukas/FabScan-Case">https://github.com/mariolukas/FabScan-Case</a>
+
+
 The FabScan PI case is the same as the FabScan (CUBE) case. The Logitech webcam is replaced by the a Raspberry PI
 camera module. The Logitech webcam will also work, but it is very slow in combination with the Raspberry PI. 
 The Raspberry PI camera module also provides a higher resolution what will increase the scan results. It is highly 
@@ -22,6 +25,7 @@ The "S" pin goes to DI of the LED ring/strip.
 
 Finally connect the 5V power supply to the Raspberry PI 2 and the 12V power supply to the Arduino. Turn both on.
 
+Developers can find the firmware source at: <a href="https://github.com/mariolukas/FabScan-Case">https://github.com/mariolukas/FabScanPi-Firmware</a>
 
 ### Part List ###
 
