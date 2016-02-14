@@ -107,7 +107,8 @@ def params():
         ('/usr/local/fabscanpi/www/', ['src/www/index.html']),
         ('/usr/local/fabscanpi/www/style/',['src/www/style/app.css', 'src/www/style/lib.css']),
         ('/usr/local/fabscanpi/www/js/',['src/www/js/app.js', 'src/www/js/lib.js']),
-        ('/usr/local/fabscanpi/www/icons/', ['src/www/icons/favicon.png'])
+        ('/usr/local/fabscanpi/www/icons/', ['src/www/icons/favicon.png']),
+        ('/usr/local/fabscanpi/www/fonts/', ['src/www/fonts/fontawesome-webfont.woff', 'src/www/fonts/fontawesome-webfont.ttf'])
     ]
 
     scripts=['src/fabscanpi-server']
