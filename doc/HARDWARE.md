@@ -1,4 +1,7 @@
 # Hardware
+
+<img width="500" src="images/FabScanCube.jpg">
+
 The FabScan PI case is the same as the FabScan (CUBE) case. The Logitech webcam is replaced by the a Raspberry PI
 camera module. The Logitech webcam will also work, but it is very slow in combination with the Raspberry PI. 
 The Raspberry PI camera module also provides a higher resolution what will increase the scan results. It is highly 

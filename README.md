@@ -78,6 +78,9 @@ operating systems [here](https://learn.adafruit.com/bonjour-zeroconf-networking-
 
 The main view provides a camera symbol. By clicking this symbol the live settings dialog appears. On the left side
 is a laser detection preview. Best scan results can be reached, when the red laser line is covered by a blue line.
+
+<img width="500" src="doc/images/main-view.png">
+
 The coverage of the lines can be improved by using the different slider settings. A good point to start is the 
 threshold slider. If the environment light is bright, try to set a lower value. If the environment light is low, 
 you should better use a higher slider value. After chnangig the slider have a look at the preview image. The video
@@ -86,11 +89,15 @@ settings are the camera brightness and contrast settings and if you are using an
 RGB light setting, which can be used to increase the objects contrast level. A scan can be performed by clicking
 the scan button in the first settings tab where the threshold and resolution slider are located.
 
+<img width="500" src="doc/images/settings.png">
+
 The resolution slider can be used to set the scan resolution. Sometimes it is better to start with a low resolution
 to control the selected settings result. If the result is nice you can perform a higher resolution scan with the 
 same settings. The current settings are persistent as long as the pi is up and running. The settings are also saved
 with the scan data after a successful scan. They can be loaded to scan another object with the same settings. E.g. an 
 object what consists of the same material, color etc. 
+
+<img width="500" src="doc/images/loading-view.png">
 
 The sharing dialog can be used to handle the current loaded scan. The sharing dialog provides options to download or 
 delete a scan, and as already mentioned to load the scan settings. 
