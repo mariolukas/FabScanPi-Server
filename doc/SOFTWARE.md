@@ -142,6 +142,8 @@ ruler to the backwall of the fabscan ( i used a paper one from IKEA ). Then acti
 and read the last value you can read in the image. The default is 23.5 cm. The default value fits most
 of the FabScan setups. This value is used for tansforming image coordinates to world coordinates. 
 
+<img src="images/measure_dimension.png">
+
 ```
    "camera" : {
      "type" : "PICAM",
@@ -222,6 +224,12 @@ Meshlab is not supported in the curren verision of fabscan pi. So you can leave 
    }
 }
 ```
+
+Note that the values in the image differ from the values of the default config. Please measure the values in your
+setup and modify them in your default.conf.json file if needed. 
+
+The y values are not present in the image because they declare the height of the components related to the turntable
+plane.
 
 <img src="images/fabscan-dimensions.png">
 
