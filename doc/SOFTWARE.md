@@ -142,7 +142,7 @@ ruler to the backwall of the fabscan ( i used a paper one from IKEA ). Then acti
 and read the last value you can read in the image. The default is 23.5 cm. The default value fits most
 of the FabScan setups. This value is used for tansforming image coordinates to world coordinates. 
 
-<img src="images/measure_dimension.png">
+<img src="images/measure_dimension.jpg">
 
 ```
    "camera" : {
