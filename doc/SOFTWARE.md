@@ -233,7 +233,7 @@ setup and modify the values in your default.conf.json file if needed.
 <img src="images/fabscan_dimensions_3.jpg">
 
 #### X and Z values
-<img src="images/fabscan_dimensions_2.jpg">
+<img src="images/fabscan_dimensons_2.jpg">
 
 ### Setting up a WIFI connection
 
