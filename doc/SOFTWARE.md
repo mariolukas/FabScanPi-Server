@@ -225,13 +225,14 @@ Meshlab is not supported in the curren verision of fabscan pi. So you can leave 
 }
 ```
 
-Note that the values in the image differ from the values of the default config. Please measure the values in your
-setup and modify them in your default.conf.json file if needed. 
+For a first try the default values should be fine. But the values in your setup may be different. To be sure measure your
+setup and modify the values in your default.conf.json file if needed. 
 
-The y values are not present in the image because they declare the height of the components related to the turntable
-plane.
+#### Y values
+<img src="images/fabscan-dimensions_3.jpg">
 
-<img src="images/fabscan-dimensions_2.png">
+#### X and Z values
+<img src="images/fabscan-dimensions_2.jpg">
 
 ### Setting up a WIFI connection
 
