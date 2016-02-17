@@ -44,7 +44,10 @@ class FSSettingsPreviewProcessor(pykka.ThreadingActor):
         return image
 
     def create_camera_preview(self):
-        image = self.hardwareController.get_picture()
-        image = self._image_processor.get_preview_image(image)
-
-        return image
+        try:
+            image = self.hardwareController.get_picture()
+            image = self._image_processor.get_preview_image(image)
+            return image
+        except:
+            ## catch image process error, e.g. when mjpeg stream is interupted
+            pass

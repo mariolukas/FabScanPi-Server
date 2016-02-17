@@ -23,7 +23,7 @@ class FSImageWorkerPool():
         self._task_q = task_q
         self._event_q = event_q
         self.workers = []
-        self._number_of_workers = 4
+        self._number_of_workers = multiprocessing.cpu_count()
         self._workers_active = False
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
@@ -34,6 +34,7 @@ class FSImageWorkerPool():
         '''
 
         self.set_number_of_workers(number_of_workers)
+        self._logger.info("Creating %i image worker processes." % number_of_workers)
 
         for _ in range(self._number_of_workers):
             worker = FSImageWorkerProcess(Settings.instance(), Config.instance(), self._task_q, self._event_q)
