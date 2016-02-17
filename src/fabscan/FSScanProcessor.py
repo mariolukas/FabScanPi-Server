@@ -76,6 +76,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
 
     def start_scan(self):
+        self._logger.info("Scan started")
         self._stop_scan = False
         self.hardwareController.laser.off()
         self.hardwareController.turntable.stop_turning()
@@ -123,6 +124,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
 
     def finish_texture_scan(self):
+        self._logger.info("Finishing texture scan.")
         self.current_position = 0
         self.hardwareController.led.off()
         self.settings.camera.brightness = self._scan_brightness
@@ -191,6 +193,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
 
     def finish_object_scan(self):
+        self._logger.info("Finishing object scan.")
         self._worker_pool.kill()
         self.hardwareController.laser.off()
         self.hardwareController.led.off()
@@ -216,7 +219,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
     def on_laser_detection_failed(self):
 
-        self._logger.debug("Send laser detection failed message to frontend")
+        self._logger.info("Send laser detection failed message to frontend")
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
         message['data']['message'] = "NO_LASER_DETECTED"
@@ -224,14 +227,17 @@ class FSScanProcessor(pykka.ThreadingActor):
 
 
     def stop_scan(self):
+
        self._stop_scan = True
        self._worker_pool.kill()
        time.sleep(1)
        FSUtil.delete_scan(self._prefix)
        self.reset_scanner_state()
+       self._logger.info("Scan stoped")
 
 
     def on_stop(self):
+
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
         message['data']['message'] = "SCAN_CANCELED"
@@ -313,6 +319,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         return self._prefix
 
     def reset_scanner_state(self):
+        self._logger.info("Reseting scanner states ... ")
         self.hardwareController.camera.device.objectExposure()
         self.hardwareController.camera.device.flushStream()
         self.hardwareController.laser.off()

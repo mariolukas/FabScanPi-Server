@@ -15,7 +15,7 @@ import re
 import base64
 from BaseHTTPServer import BaseHTTPRequestHandler
 from SimpleHTTPServer import SimpleHTTPRequestHandler
-
+import logging
 
 from fabscan.util.FSUtil import json2obj
 from fabscan.server.FSapi import FSapi
@@ -29,7 +29,8 @@ from fabscan.FSScanner import FSCommand
 class RequestHandler(SimpleHTTPRequestHandler):
 
     def __init__(self,*args):
-
+        self._logger =  logging.getLogger(__name__)
+        self._logger.setLevel(logging.DEBUG)
         self.api = FSapi()
         self._eventManager = FSEventManager.instance()
         self.close_mjpeg_stream = False
@@ -45,7 +46,11 @@ class RequestHandler(SimpleHTTPRequestHandler):
             ['',          self.config.folders.www],  # empty string for the 'default' match
 
         )
-        SimpleHTTPRequestHandler.__init__(self, *args)
+        try:
+            SimpleHTTPRequestHandler.__init__(self, *args)
+        except:
+            self._logger.info("http socket disconnect")
+            pass
 
     def do_OPTIONS(self):
         self.send_response(200)
