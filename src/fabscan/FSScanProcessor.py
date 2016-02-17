@@ -39,7 +39,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self._progress = 0
         self._is_color_scan = True
         self.point_cloud = None
-        self.image_task_q = multiprocessing.Queue(5)
+        self.image_task_q = multiprocessing.Queue(multiprocessing.cpu_count()+1)
         self.current_position = 0
         self._laser_angle = 33.0
         self._stop_scan = False
