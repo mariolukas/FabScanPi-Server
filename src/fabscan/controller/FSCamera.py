@@ -88,10 +88,12 @@ class C270(threading.Thread):
 
         # auto exposure mode for logitech C270 can not be controlled by opencv, with this work
         # around the exposer mode can be set direcly by v4l2
+        # a value of 1 deactivates auto exposure
         subprocess.call(["v4l2-ctl", "--set-ctrl", "exposure_auto=1"])
 
         self.camera = cv2.VideoCapture(self.config.camera.device)
 
+        # this sets the resolution of the C270 which is 1280x720 by default
         self.camera.set(3,1280)
         self.camera.set(4,720)
         self._logger.debug("Selected Camera Device %i" % (int(self.config.camera.device)))
