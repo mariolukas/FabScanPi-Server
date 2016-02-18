@@ -992,7 +992,22 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         return $scope.$apply();
       });
       $scope.$on(FSEnumService.events.ON_INFO_MESSAGE, function(event, data) {
-        toastr.info(data['message']);
+        switch (data['level']) {
+          case "info":
+            toastr.info(data['message']);
+            break;
+          case "warn":
+            toastr.warning(data['message']);
+            break;
+          case "error":
+            toastr.error(data['message']);
+            break;
+          case "success":
+            toastr.success(data['message']);
+            break;
+          default:
+            toastr.info(data['message']);
+        }
         return $scope.$apply();
       });
       return FSMessageHandlerService.connectToScanner($scope);
@@ -1213,7 +1228,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         return FSScanService.startSettings();
       };
       $scope.stopStream = function() {
-        return $scope.streamUrl = " ";
+        return $scope.streamUrl = "icons/spinner.gif";
       };
       return $scope.manviewhandler = function() {
         if ($scope.showSettings) {

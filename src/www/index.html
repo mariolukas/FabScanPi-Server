@@ -44,8 +44,7 @@
                 <div class="settingsWindow" ng-class="{'open':('SETTINGS' | currentState)}">
                     <div ng-if="('SETTINGS' | currentState)" ng-controller="fabscan.controller.FSSettingsController" >
                     <div class="preview-image">
-
-                        <img style="width:320px; height:240px;border: 1px solid black; float:left; background-color:black;"  ng-src="{{streamUrl}}" >
+                        <img ng-if="('SETTINGS' | currentState)" style="position:absolute; width:320px; height:240px;border: 1px solid black; float:left; background-color:black;"  ng-src="{{streamUrl}}">
                     </div>
                     <div class="settings-content">
                         <div style="height: 40px;">
@@ -115,7 +114,7 @@
 
                <!-- Scan View -->
                  <div  ng-controller="fabscan.controller.FSPreviewController"  style="margin: 0 auto; z-index:-100;">
-                     <div ng-show="showTextureScan" class="texture-preview">
+                     <div ng-if="showTextureScan" class="texture-preview">
                          <img ng-src="{{streamUrl}}" >
                      </div>
                      <div ng-click="manviewhandler()">
