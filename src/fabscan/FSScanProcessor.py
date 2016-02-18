@@ -105,7 +105,8 @@ class FSScanProcessor(pykka.ThreadingActor):
     def init_texture_scan(self):
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "SCANNING_TEXTURE"
+        message['data']['message'] = "Scanning texture"
+        message['data']['level'] = "info"
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
         self._worker_pool.create(self.config.process_number)
 
@@ -184,7 +185,8 @@ class FSScanProcessor(pykka.ThreadingActor):
         else:
             message = FSUtil.new_message()
             message['type'] = FSEvents.ON_INFO_MESSAGE
-            message['data']['message'] = "SCANNING_OBJECT"
+            message['data']['message'] = "Scanning object"
+            message['data']['level'] = "info"
             self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
             self._logger.debug("Detected Laser Angle at: %f deg" %(self._laser_angle, ))
@@ -222,7 +224,8 @@ class FSScanProcessor(pykka.ThreadingActor):
         self._logger.info("Send laser detection failed message to frontend")
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "NO_LASER_DETECTED"
+        message['data']['message'] = "No laser detected. Try other settings"
+        message['data']['level'] = "warn"
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
 
@@ -240,7 +243,8 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "SCAN_CANCELED"
+        message['data']['message'] = "Scan canceled"
+        message['data']['level'] = "error"
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
         #self.eventManager.unsubscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
 
@@ -284,8 +288,9 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "SCAN_COMPLETE"
+        message['data']['message'] = "Scan complete"
         message['data']['scan_id'] = self._prefix
+        message['data']['level'] = "success"
 
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
