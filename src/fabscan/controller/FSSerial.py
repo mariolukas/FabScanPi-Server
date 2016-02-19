@@ -35,7 +35,9 @@ class FSSerialCom():
         self._port = self.config.serial.port
         self._baudrate = self.config.serial.baudrate
         self._serial = None
+        self._connected = False
         self._openSerial()
+
 
 
     # Code modified from function serialList obtained from https://github.com/foosel/OctoPrint/blob/master/src/octoprint/util/comm.py
@@ -108,59 +110,58 @@ class FSSerialCom():
 
 
     def _connect(self):
-        '''Serial communications: get a response'''
-
         # open serial port
         try:
             self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=1)
 
+
         except self._serial.SerialException as e:
-            self._logger.error("could not open serial port '{}': {}".format(str(self._port), e))
-
-
+            self._logger.error("Could not open serial port '{}': {}".format(str(self._port), e))
 
 
     def _openSerial(self):
         basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
-
         flash_file_version = max(glob.iglob(basedir+'/firmware/*.[Hh][Ee][Xx]'), key=os.path.getctime)
         flash_version_number = os.path.basename(os.path.normpath(os.path.splitext(flash_file_version)[0]))
-
-
         self._logger.debug("Latest available firmware version is: "+flash_version_number)
-
 
         try:
 
+           # try to connect, if connection works check for firmware...
            self._connect()
 
-           if self.config.serial.autoflash == "True":
-               current_version = self.checkVersion()
-               if not current_version == flash_version_number:
-                   self._logger.info("Flashing new Firmware...")
-                   self.avr_flash(flash_file_version)
-                   self._logger.info("FabScan Firmware Version: "+flash_file_version)
-                   self._connect()
-               else:
-                   self._logger.info("FabScan is using firmware version: "+current_version)
-                   self._connect()
+           # check if port is open and check if autoflash is set...
+           if self._serial.isOpen():
+
+                   current_version = self.checkVersion()
+
+                   if self.config.serial.autoflash == "True":
+                       ## check for curront firmware version
+                       if not current_version == flash_version_number:
+                           self._logger.info("Flashing new Firmware...")
+                           self.avr_flash(flash_file_version)
+                           self._logger.info("FabScan Firmware Version: "+flash_file_version)
+
+                       self._connect()
+
+                   if self._serial.isOpen():
+                       self._logger.info("FabScanPi server is connected to Arduino")
+                       self._connected = True
+
+           # if connection fails, no firmware on device?...
+           else:
+
+              if self.config.serial.autoflash == "True":
+                    self.avr_flash(flash_file_version)
+                    self._connect()
+
+                    if self._serial.isOpen():
+                        self._connected = True
 
         except:
-
-            if flash_file_version:
-                self._logger.info("Connection failed trying to flash Firmware...")
-                #self.avr_flash(basedir+"/firmware/"+flash_file_version+".hex")
-                self._logger.info("FabScan Firmware Version: "+flash_file_version)
-            else:
-                self._logger.error("No firmware file found.")
-            try:
-                self._logger.debug("Trying to connect ... ")
-                self._connect()
-            except:
-                self._logger.exception("Serial Connection Error.")
-
-            self._logger.debug("abbort")
+            self._logger.error("Can not connect to Arduino.")
+            self._connected = False
 
 
     def checkVersion(self):
@@ -181,7 +182,6 @@ class FSSerialCom():
         if self._serial:
             self._serial.write(message)
 
-
     def flush(self):
        self._serial.flushInput()
        self._serial.flushOutput()
@@ -192,4 +192,6 @@ class FSSerialCom():
             self.flush()
             return value
 
+    def is_connected(self):
+        return self._connected
 

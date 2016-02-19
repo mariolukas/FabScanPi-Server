@@ -81,6 +81,11 @@ class HardwareController(SingletonMixin):
         angle = self._image_processor.calculate_laser_angle(image)
         return angle
 
+    def arduino_is_connected(self):
+        return self.serial_connection.is_connected()
+
+    def camera_is_connected(self):
+       return self.camera.is_connected()
 
     def calibrate_laser(self):
         self.laser.on()

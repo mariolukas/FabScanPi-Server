@@ -119,8 +119,21 @@ class FSScanner(threading.Thread):
         message['data']['settings'] = self.settings.todict(self.settings)
         #message['data']['settings'] = dict()
 
-
         eventManager.publish(FSEvents.ON_SOCKET_SEND, message)
+
+        if not self.hardwareController.arduino_is_connected():
+            message = FSUtil.new_message()
+            message['type'] = FSEvents.ON_INFO_MESSAGE
+            message['data']['message'] = "No connection to Arduino"
+            message['data']['level'] = "error"
+            self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
+
+        if not self.hardwareController.camera_is_connected():
+            message = FSUtil.new_message()
+            message['type'] = FSEvents.ON_INFO_MESSAGE
+            message['data']['message'] = "Camera is not connected"
+            message['data']['level'] = "error"
+            self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
 
     def set_state(self, state):

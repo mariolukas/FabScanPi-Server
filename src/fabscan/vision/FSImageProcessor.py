@@ -121,7 +121,7 @@ class ImageProcessor():
             self.settings.backwall.laser.y = laser_backwall.y
             self.settings.backwall.laser.z = laser_backwall.z
 
-            self._logger.debug("Laser Backwall x: %d" % (point.x, ))
+            self._logger.debug("Laser on backwall detected at x-pixel position: %d" % (point.x, ))
 
             fs_point = self.convertCvPointToPoint(point)
 

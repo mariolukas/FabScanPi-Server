@@ -31,6 +31,7 @@ class FSCamera():
 
         self.camera_buffer = FSRingBuffer(10)
         config = Config.instance()
+        self._connected = False
 
         if config.camera.type  == 'PICAM':
             self.device = PiCam(self.camera_buffer)
@@ -40,6 +41,9 @@ class FSCamera():
 
         if config.camera.type == 'C270':
             self.device = C270(self.camera_buffer)
+
+    def is_connected(self):
+        return self.device.isAlive()
 
 
 class FSRingBuffer(threading.Thread):
@@ -91,7 +95,11 @@ class C270(threading.Thread):
         # a value of 1 deactivates auto exposure
         subprocess.call(["v4l2-ctl", "--set-ctrl", "exposure_auto=1"])
 
-        self.camera = cv2.VideoCapture(self.config.camera.device)
+        try:
+            self.camera = cv2.VideoCapture(self.config.camera.device)
+        except:
+            self._logger.error("Can not create camera device.")
+            return
 
         # this sets the resolution of the C270 which is 1280x720 by default
         self.camera.set(3,1280)
@@ -169,7 +177,10 @@ class PiCam(threading.Thread):
     def run(self):
         try:
             if(self.camera == None):
-                self.camera = picamera.PiCamera()
+                try:
+                    self.camera = picamera.PiCamera()
+                except:
+                    self._logger.error("Can not create camera device.")
                 self.awb_default_gain = self.camera.awb_gains
                 #self.camera.led = False
 
@@ -208,7 +219,6 @@ class PiCam(threading.Thread):
             self._logger.debug("Runtime error in camera handler")
 
         finally:
-            self.camera.close()
             self.camera = None
             pass
 

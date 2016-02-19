@@ -175,7 +175,6 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         self._laser_angle = self.image_processor.calculate_laser_angle(self.hardwareController.camera.device.getStream())
 
-        self._logger.debug(self._laser_angle)
         if self._laser_angle == None:
             event = FSEvent()
             event.command = '_LASER_DETECTION_FAILED'
