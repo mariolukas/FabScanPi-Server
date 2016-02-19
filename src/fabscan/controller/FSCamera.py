@@ -31,7 +31,6 @@ class FSCamera():
 
         self.camera_buffer = FSRingBuffer(10)
         config = Config.instance()
-        self._connected = False
 
         if config.camera.type  == 'PICAM':
             self.device = PiCam(self.camera_buffer)
