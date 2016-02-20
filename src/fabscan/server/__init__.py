@@ -38,8 +38,6 @@ class FSServer():
 
         try:
             # create Singleton instances
-
-
             _config = Config.instance(self.config_file)
             _settings = Settings.instance(self.settings_file)
 
@@ -53,7 +51,6 @@ class FSServer():
             _scanner = FSScanner()
             _scanner.start()
 
-            _hardwareController.laser.turn(105)
             # Web Server
             self.fsWebServer = WebServer()
             self.fsWebServer.serve_forever()

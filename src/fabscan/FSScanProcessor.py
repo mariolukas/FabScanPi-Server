@@ -107,7 +107,7 @@ class FSScanProcessor(pykka.ThreadingActor):
     def init_texture_scan(self):
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "Scanning texture"
+        message['data']['message'] = "SCANNING_TEXTURE"
         message['data']['level'] = "info"
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
         self._worker_pool.create(self.config.process_number)
