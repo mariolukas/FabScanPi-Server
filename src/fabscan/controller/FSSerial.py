@@ -135,6 +135,7 @@ class FSSerialCom():
            if self._serial.isOpen():
 
                    current_version = self.checkVersion()
+                   self._logger.debug("Installed firmware version: "+current_version)
 
                    if self.config.serial.autoflash == "True":
                        ## check for curront firmware version
