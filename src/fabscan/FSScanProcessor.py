@@ -190,7 +190,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         else:
             message = FSUtil.new_message()
             message['type'] = FSEvents.ON_INFO_MESSAGE
-            message['data']['message'] = "Scanning object"
+            message['data']['message'] = "SCANNING_OBJECT"
             message['data']['level'] = "info"
             self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
@@ -229,7 +229,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self._logger.info("Send laser detection failed message to frontend")
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "No laser detected. Try other settings"
+        message['data']['message'] = "NO_LASER_FOUND"
         message['data']['level'] = "warn"
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
@@ -248,7 +248,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "Scan canceled"
+        message['data']['message'] = "SCAN_CANCELED"
         message['data']['level'] = "error"
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
         #self.eventManager.unsubscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
@@ -283,7 +283,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.settings.saveAsFile(self._prefix)
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "Saving Point Cloud please wait..."
+        message['data']['message'] = "SAVING_POINT_CLOUD"
         message['data']['scan_id'] = self._prefix
         message['data']['level'] = "info"
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
@@ -299,7 +299,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "Scan complete"
+        message['data']['message'] = "SCAN_COMPLETE"
         message['data']['scan_id'] = self._prefix
         message['data']['level'] = "success"
 
