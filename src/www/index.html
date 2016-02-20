@@ -16,9 +16,8 @@
 		<![endif]-->
 
 		<script src="js/lib.js"></script>
+        <script src="js/locales/en/i18n.js"></script>
 		<script src="js/app.js"></script>
-
-
 
     </head>
     <div ng-controller="fabscan.controller.FSAppController">
@@ -81,6 +80,11 @@
                         </div>
                         <div class="tab-content" ng-show="(selectedTab == 'camera')">
                             <div>
+                                <div ng-class="{'fadeOut':!showContrastValue}" class="slider-value-label" >{{settings.camera.saturation}}</div>
+                                <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Saturation</div>
+                                <slider style="width:70%; margin-left:1em;" floor="-100" ceiling="100" step="1" precision="1" ng-model="settings.camera.saturation"></slider>
+                            </div>
+                            <div>
                                 <div ng-class="{'fadeOut':!showBrightnessValue}" class="slider-value-label" >{{settings.camera.brightness}}</div>
                                 <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Brightness</div>
                                 <slider style="width:70%; margin-left:1em;" floor="0" ceiling="100" step="1" precision="1" ng-model="settings.camera.brightness"></slider>
@@ -90,6 +94,7 @@
                                <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Contrast</div>
                                <slider style="width:70%; margin-left:1em;" floor="-100" ceiling="100" step="1" precision="1" ng-model="settings.camera.contrast"></slider>
                             </div>
+
                         </div>
                         <div class="tab-content" ng-show="(selectedTab == 'light')">
                             <div>

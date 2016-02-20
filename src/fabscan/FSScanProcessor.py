@@ -249,7 +249,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
         message['data']['message'] = "SCAN_CANCELED"
-        message['data']['level'] = "error"
+        message['data']['level'] = "info"
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
         #self.eventManager.unsubscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
 

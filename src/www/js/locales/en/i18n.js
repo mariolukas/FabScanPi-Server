@@ -1,6 +1,6 @@
 (function(){ window.i18n || (window.i18n = {}) 
 var MessageFormat = { locale: {} };
-MessageFormat.locale.de=function(n){return n===1?"one":"other"}
+MessageFormat.locale.en=function(n){return n===1?"one":"other"}
 
 window.i18n["main"] = {}
 window.i18n["main"]["FABSCAN"] = function(d){return "Fabscan"}
@@ -12,4 +12,5 @@ window.i18n["main"]["SAVING_POINT_CLOUD"] = function(d){return "Saving Point Clo
 window.i18n["main"]["SCAN_COMPLETE"] = function(d){return "Scan complete"}
 window.i18n["main"]["NO_SERIAL_CONNECTION"] = function(d){return "No connection to Arduino"}
 window.i18n["main"]["NO_CAMERA_CONNECTION"] = function(d){return "Camera is not connected"}
+window.i18n["main"]["CONNECTED_TO_SERVER"] = function(d){return "Connected to FabScanPi-Server"}
 })();

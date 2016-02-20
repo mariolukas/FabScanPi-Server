@@ -7,6 +7,7 @@ fabscanpi-server (0.1.13) unstable; urgency=medium
   * fixed some bugs in FSCamera.py
   * added new frontend with saturation slider
   * added funtions to support camera saturation adjustment
+  * prepared multilingual support (en only until now)
 
  -- Mario Lukas  <info@mariolukas.de>  Thu, 20 Feb 2016 00:18:22 +0000
 
