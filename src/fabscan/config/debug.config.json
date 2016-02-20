@@ -5,7 +5,7 @@
    },
    "serial" : {
      "baudrate" : 115200,
-     "port": "/dev/ttyACM0",
+     "port": "/dev/ttyACM1",
      "autoflash": "True"
    },
    "camera" : {
