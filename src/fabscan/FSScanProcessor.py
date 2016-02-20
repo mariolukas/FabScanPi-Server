@@ -50,6 +50,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.semaphore = multiprocessing.BoundedSemaphore()
         self._contrast = 0.5
         self._brightness = 0.5
+        self._saturation = 0.5
 
 
         self.event_q = self.eventManager.get_event_q()
@@ -59,6 +60,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.eventManager.subscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
         self._scan_brightness = self.settings.camera.brightness
         self._scan_contrast =  self.settings.camera.contrast
+        self._scan_saturation = self.settings.camera.saturation
 
 
     def on_receive(self, event):
@@ -113,10 +115,12 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         self._scan_brightness = self.settings.camera.brightness
         self._scan_contrast =  self.settings.camera.contrast
+        self._scan_saturation = self.settings.camera.saturation
 
         self.hardwareController.camera.device.textureExposure()
         self.settings.camera.brightness = 50
         self.settings.camera.contrast = 0
+        self.settings.camera.saturation = 0
         self.hardwareController.led.on(60,60,60)
         time.sleep(2)
         self.hardwareController.camera.device.flushStream()
@@ -130,6 +134,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.hardwareController.led.off()
         self.settings.camera.brightness = self._scan_brightness
         self.settings.camera.contrast = self._scan_contrast
+        self.settings.camera.saturation = self._scan_saturation
         self._worker_pool.kill()
 
     def scan_next_texture_position(self):
@@ -163,6 +168,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         self.settings.camera.brightness = self._scan_brightness
         self.settings.camera.contrast = self._scan_contrast
+        self.settings.camera.saturation = self._scan_saturation
 
         # TODO: solve this timing issue!
         # Workaround for Logitech webcam. We have to wait a loooong time until the logitech cam is ready...

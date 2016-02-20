@@ -92,7 +92,7 @@ class C270(threading.Thread):
         # auto exposure mode for logitech C270 can not be controlled by opencv, with this work
         # around the exposer mode can be set direcly by v4l2
         # a value of 1 deactivates auto exposure
-        subprocess.call(["v4l2-ctl", "--set-ctrl", "exposure_auto=1"])
+        #subprocess.call(["v4l2-ctl", "--set-ctrl", "exposure_auto=1"])
 
         try:
             self.camera = cv2.VideoCapture(self.config.camera.device)
@@ -126,7 +126,7 @@ class C270(threading.Thread):
                 #self.semaphore.release()
 
         finally:
-            subprocess.call(["v4l2-ctl", "--set-ctrl", "exposure_auto=3"])
+            #subprocess.call(["v4l2-ctl", "--set-ctrl", "exposure_auto=3"])
             self.camera.release()
             self.camera = None
             pass
@@ -200,6 +200,7 @@ class PiCam(threading.Thread):
 
                     self.camera.contrast = self.settings.camera.contrast
                     self.camera.brightness = self.settings.camera.brightness
+                    self.camera.saturation = self.settings.camera.saturation
                     stream.seek(0)
                     data = np.fromstring(stream.getvalue(), dtype=np.uint8)
                     data = cv2.imdecode(data, 1)

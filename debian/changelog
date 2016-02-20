@@ -5,6 +5,8 @@ fabscanpi-server (0.1.13) unstable; urgency=medium
   * scanner does start even if serial or camera connection fails, a message is shown in frontend now
   * fixed mjepeg connection error bug, stack trace is not longer shown in log
   * fixed some bugs in FSCamera.py
+  * added new frontend with saturation slider
+  * added funtions to support camera saturation adjustment
 
  -- Mario Lukas  <info@mariolukas.de>  Thu, 20 Feb 2016 00:18:22 +0000
 

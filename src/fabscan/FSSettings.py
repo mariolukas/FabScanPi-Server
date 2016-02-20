@@ -45,6 +45,7 @@ class Settings(SingletonMixin):
         self.threshold = settings.threshold
         self.camera.brightness = settings.camera.brightness
         self.camera.contrast = settings.camera.contrast
+        self.camera.saturation = settings.camera.saturation
         self.resolution = settings.resolution
         self.color = settings.color
         self.led.blue = settings.led.blue

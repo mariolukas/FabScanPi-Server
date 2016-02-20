@@ -24,7 +24,8 @@
      },
      "camera":{
        "brightness" : 50,
-       "contrast": 0
+       "contrast": 0,
+       "saturation": 0
      },
      "resolution": 8,
      "laser_positions": 1,

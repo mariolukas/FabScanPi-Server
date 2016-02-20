@@ -10,7 +10,7 @@
    },
    "camera" : {
      "type" : "PICAM",
-     "device" : 1,
+     "device" : 0,
      "preview_resolution":{
         "width": 320,
         "height": 240
