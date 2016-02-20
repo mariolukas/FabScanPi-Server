@@ -117,7 +117,7 @@ class FSScanner(threading.Thread):
         message['data']['server_version'] = str(__version__)
         #message['data']['points'] = self.pointcloud
         message['data']['settings'] = self.settings.todict(self.settings)
-        #message['data']['settings'] = dict()
+
 
         eventManager.publish(FSEvents.ON_SOCKET_SEND, message)
 
