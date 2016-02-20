@@ -275,6 +275,12 @@ class FSScanProcessor(pykka.ThreadingActor):
         self._logger.debug("Scan complete writing pointcloud files with %i points." % (self.point_cloud.get_size(),))
         self.point_cloud.saveAsFile(self._prefix)
         self.settings.saveAsFile(self._prefix)
+        message = FSUtil.new_message()
+        message['type'] = FSEvents.ON_INFO_MESSAGE
+        message['data']['message'] = "Saving Point Cloud please wait..."
+        message['data']['scan_id'] = self._prefix
+        message['data']['level'] = "info"
+        self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
 
         FSUtil.delete_image_folders(self._prefix)
