@@ -4,6 +4,7 @@
 # see: dh_installdeb(1)
 
 set -e
+chown -R pi:pi /usr/local/fabscanpi/www/
 
 /etc/init.d/fabscanpi-server start
 

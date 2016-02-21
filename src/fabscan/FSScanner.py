@@ -8,6 +8,7 @@ import time
 import threading
 import logging
 import json
+import multiprocessing
 
 from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManager, FSEvents
@@ -43,6 +44,7 @@ class FSScanner(threading.Thread):
         self.hardwareController = HardwareController.instance()
         self._exit_requested = False
 
+        self._logger.debug("Number of cpu cores: "+str( multiprocessing.cpu_count()))
         self.eventManager = FSEventManager.instance()
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self._on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self._on_command)
@@ -78,6 +80,7 @@ class FSScanner(threading.Thread):
         ## Start Scan Process
         elif command == FSCommand.START:
             if self._state is FSState.SETTINGS:
+                self._logger.debug("Start command received...")
                 self.set_state(FSState.SCANNING)
                 self.hardwareController.settings_mode_off()
                 self.scanProcessor = FSScanProcessor.start()
@@ -138,6 +141,7 @@ class FSScanner(threading.Thread):
 
     def set_state(self, state):
         self._state = state
+        message = FSUtil.new_message()
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_STATE_CHANGED
         message['data']['state'] = state

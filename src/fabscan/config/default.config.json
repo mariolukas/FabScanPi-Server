@@ -51,6 +51,7 @@
         "y" : 0.75
       }
    },
+  "process_numbers": 4,
    "meshlab":{
      "path": "/usr/bin/"
    }

@@ -29,8 +29,14 @@ class FSScanProcessor(pykka.ThreadingActor):
 
     def __init__(self):
         super(FSScanProcessor, self).__init__()
+
+        self.eventManager = FSEventManager.instance()
+        self.settings = Settings.instance()
+        self.config = Config.instance()
+
         self._logger =  logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
+
         self._prefix = None
         self._resolution = 16
         self._number_of_pictures = 0
@@ -39,20 +45,13 @@ class FSScanProcessor(pykka.ThreadingActor):
         self._progress = 0
         self._is_color_scan = True
         self.point_cloud = None
-        self.image_task_q = multiprocessing.Queue(multiprocessing.cpu_count()+1)
+        self.image_task_q = multiprocessing.Queue(self.config.process_numbers+1)
         self.current_position = 0
         self._laser_angle = 33.0
         self._stop_scan = False
         self._current_laser_position = 1
-        self.eventManager = FSEventManager.instance()
-        self.settings = Settings.instance()
-        self.config = Config.instance()
+
         self.semaphore = multiprocessing.BoundedSemaphore()
-        self._contrast = 0.5
-        self._brightness = 0.5
-        self._saturation = 0.5
-
-
         self.event_q = self.eventManager.get_event_q()
 
         self._worker_pool = FSImageWorkerPool(self.image_task_q,self.event_q)
@@ -110,7 +109,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         message['data']['message'] = "SCANNING_TEXTURE"
         message['data']['level'] = "info"
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
-        self._worker_pool.create(self.config.process_number)
+        self._worker_pool.create(self.config.process_numbers)
 
 
         self._scan_brightness = self.settings.camera.brightness
@@ -195,8 +194,7 @@ class FSScanProcessor(pykka.ThreadingActor):
             self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
             self._logger.debug("Detected Laser Angle at: %f deg" %(self._laser_angle, ))
-            self._worker_pool.create(self.config.process_number)
-
+            self._worker_pool.create(self.config.process_numbers)
 
 
     def finish_object_scan(self):

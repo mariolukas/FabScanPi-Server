@@ -37,8 +37,14 @@ start() {
 
 stop() {
 
-     echo "Stopping fabscanpi-server..."
-     kill -9 `cat $PIDFILE`
+    if ps ax | grep -v grep | grep -v $0 | grep $NAME > /dev/null
+    then
+            if [ -f $INIT_SCRIPT ];then
+                echo "$SERVICE is running shutting down..."
+                killall $NAME
+            fi
+    fi
+
 
 }
 

@@ -11,6 +11,8 @@ import sys
 from WebServer import WebServer
 import webbrowser
 import os
+import multiprocessing
+
 
 
 from fabscan.server.websockets import FSWebSocketServer
@@ -37,6 +39,7 @@ class FSServer():
 
 
         try:
+
             # create Singleton instances
             _config = Config.instance(self.config_file)
             _settings = Settings.instance(self.settings_file)

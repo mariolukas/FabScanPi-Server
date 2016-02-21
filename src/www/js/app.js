@@ -999,6 +999,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         _settings.resolution *= -1;
         angular.copy(_settings, $scope.settings);
         FSScanService.setScannerState(data['state']);
+        $log.debug("Show Server connection message");
         toastr.info(FSi18nService.translateKey('main', 'CONNECTED_TO_SERVER'));
         return $scope.$apply();
       });
