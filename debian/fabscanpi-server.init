@@ -40,8 +40,14 @@ stop() {
     if ps ax | grep -v grep | grep -v $0 | grep $NAME > /dev/null
     then
             if [ -f $INIT_SCRIPT ];then
-                echo "$SERVICE is running shutting down..."
-                killall $NAME
+                if [ -f $PIDFILE ];then
+                    PID=`cat $PIDFILE`
+                    if ps -p $PID > /dev/null
+                    then
+                        echo "$NAME is running shutting down..."
+                        kill -9 $PID
+                    fi
+                fi
             fi
     fi
 

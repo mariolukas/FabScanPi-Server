@@ -7,7 +7,6 @@ set -e
 
 SERVICE=fabscanpi-server
 LOG_DIR=/var/log/fabscanpi
-PYSHARED_DIR=/usr/share/pyshared/fabscan
 PIDFILE=/var/run/$SERVICE.pid
 
 INIT_SCRIPT=/etc/init.d/$SERVICE

@@ -3,8 +3,26 @@
 #
 # see: dh_installdeb(1)
 
+
+
 set -e
-chown -R pi:pi /usr/local/fabscanpi/www/
+
+LOG_DIR=/var/log/fabscanpi
+SCANS_DIR=/usr/local/fabscanpi/scans
+
+if [ -d /usr/local/fabscanpi/www/ ];then
+    chown -R pi:pi /usr/local/fabscanpi/www/
+fi
+
+if [ ! -d $LOG_DIR ];then
+    mkdir $LOG_DIR
+    chown -R pi:pi $LOG_DIR
+fi
+
+if [ ! -d $SCANS_DIR ];then
+    mkdir -p $SCANS_DIR
+    chown -R pi:pi $SCANS_DIR
+fi
 
 /etc/init.d/fabscanpi-server start
 
