@@ -1,3 +1,10 @@
+fabscanpi-server (0.1.14) unstable; urgency=medium
+
+  * fixed issue #3 server hangs when laser not detected
+  * fixed serial connection error for custom arduino installations.
+
+ -- Mario Lukas  <info@mariolukas.de>  Thu, 23 Feb 2016 07:42:10 +0000
+
 fabscanpi-server (0.1.13) unstable; urgency=medium
 
   * fixed issue #3 server hangs when laser not detected
