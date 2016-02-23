@@ -146,17 +146,24 @@ class FSSerialCom():
 
                        self._connect()
 
+                   if self._serial.isOpen():
+                       self._connected = True
+
+
            # if connection fails, no firmware on device?...
            else:
-
+              self._connected = False
               if self.config.serial.autoflash == "True":
                     self.avr_flash(flash_file_version)
                     self._connect()
 
 
+
            if self._serial.isOpen():
               self._logger.info("FabScanPi is connected to Arduino")
               self._connected = True
+           else:
+              self._connected = False
 
         except:
             self._logger.error("Can not connect to Arduino.")
