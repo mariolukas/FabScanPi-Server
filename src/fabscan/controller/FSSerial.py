@@ -166,8 +166,15 @@ class FSSerialCom():
               self._connected = False
 
         except:
-            self._logger.error("Can not connect to Arduino.")
-            self._connected = False
+            ## try to connect for installations where arduino is custom but
+            ## autoflash is still active...
+            self._connect()
+            if self._serial.isOpen():
+                self._logger.info("FabScanPi is connected to Arduino")
+                self._connected = True
+            else:
+                self._logger.error("Can not connect to Arduino.")
+                self._connected = False
 
 
     def checkVersion(self):
