@@ -28,7 +28,7 @@ class FSServer():
     def __init__(self,config_file, settings_file):
 
         self._logger = logging.getLogger(__name__)
-        #self._logger.setLevel(logging.INFO)
+        self._logger.setLevel(logging.DEBUG)
         self.hardwareController = None
         self.config_file = config_file
         self.settings_file = settings_file
@@ -36,7 +36,7 @@ class FSServer():
 
 
     def run(self):
-
+        self._logger.info("FabScanPi-Server "+str(__version__))
 
         try:
 

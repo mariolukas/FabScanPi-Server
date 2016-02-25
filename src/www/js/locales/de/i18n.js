@@ -14,4 +14,6 @@ window.i18n["main"]["SCAN_COMPLETE"] = function(d){return "Scan complete"}
 window.i18n["main"]["NO_SERIAL_CONNECTION"] = function(d){return "No connection to Arduino"}
 window.i18n["main"]["NO_CAMERA_CONNECTION"] = function(d){return "Camera is not connected"}
 window.i18n["main"]["CONNECTED_TO_SERVER"] = function(d){return "Connected to FabScanPi-Server"}
+window.i18n["main"]["SERIAL_CONNECTION_READY"] = function(d){return "Arduino/ FabScanPI HAT connected"}
+window.i18n["main"]["CAMERA_READY"] = function(d){return "Camera ready"}
 })();

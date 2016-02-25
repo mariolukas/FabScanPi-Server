@@ -178,6 +178,7 @@ class PiCam(threading.Thread):
             if(self.camera == None):
                 try:
                     self.camera = picamera.PiCamera()
+                    self._logger.info("Camera module ready...")
                 except:
                     self._logger.error("Can not create camera device.")
                 self.awb_default_gain = self.camera.awb_gains

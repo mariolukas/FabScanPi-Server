@@ -89,6 +89,7 @@ class FSSerialCom():
 
         if status != 0:
             self._logger.error("Failed to flash firmware")
+
         return status == 0
 
     def receiving(self):
@@ -122,7 +123,7 @@ class FSSerialCom():
     def _openSerial(self):
         basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
-        flash_file_version = max(glob.iglob(basedir+'/firmware/*.[Hh][Ee][Xx]'), key=os.path.getctime)
+        flash_file_version = max(sorted(glob.iglob(basedir+'/firmware/*.hex'), key=os.path.getctime))
         flash_version_number = os.path.basename(os.path.normpath(os.path.splitext(flash_file_version)[0]))
         self._logger.debug("Latest available firmware version is: "+flash_version_number)
 
@@ -141,22 +142,19 @@ class FSSerialCom():
                        ## check for curront firmware version
                        if not current_version == flash_version_number:
                            self._logger.info("Flashing new Firmware...")
-                           self.avr_flash(flash_file_version)
-                           self._logger.info("FabScan Firmware Version: "+flash_file_version)
-
-                       self._connect()
-
-                   if self._serial.isOpen():
-                       self._connected = True
-
+                           if self.avr_flash(flash_file_version):
+                                self._logger.info("FabScan Firmware Version: "+flash_file_version)
+                                ## reconnect to new firmware version
+                                self._connect()
+                           else:
+                               self._connected = False
+                               return
 
            # if connection fails, no firmware on device?...
            else:
-              self._connected = False
               if self.config.serial.autoflash == "True":
                     self.avr_flash(flash_file_version)
                     self._connect()
-
 
 
            if self._serial.isOpen():

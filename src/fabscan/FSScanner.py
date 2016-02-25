@@ -50,7 +50,7 @@ class FSScanner(threading.Thread):
         self.eventManager.subscribe(FSEvents.COMMAND, self._on_command)
 
     def run(self):
-        self._logger.info("FabScanPi-Server "+str(__version__))
+
         while not self._exit_requested:
             self.eventManager.handle_event_q()
 
@@ -124,19 +124,27 @@ class FSScanner(threading.Thread):
 
         eventManager.publish(FSEvents.ON_SOCKET_SEND, message)
 
+        message = FSUtil.new_message()
+        message['type'] = FSEvents.ON_INFO_MESSAGE
+
         if not self.hardwareController.arduino_is_connected():
-            message = FSUtil.new_message()
-            message['type'] = FSEvents.ON_INFO_MESSAGE
             message['data']['message'] = "NO_SERIAL_CONNECTION"
             message['data']['level'] = "error"
-            self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
+        else:
+            message['data']['message'] = "SERIAL_CONNECTION_READY"
+            message['data']['level'] = "info"
+
+        self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
         if not self.hardwareController.camera_is_connected():
-            message = FSUtil.new_message()
-            message['type'] = FSEvents.ON_INFO_MESSAGE
             message['data']['message'] = "NO_CAMERA_CONNECTION"
             message['data']['level'] = "error"
             self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
+        else:
+            message['data']['message'] = "CAMERA_READY"
+            message['data']['level'] = "info"
+
+        self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
 
     def set_state(self, state):
