@@ -4,6 +4,7 @@ fabscanpi-server (0.1.15) unstable; urgency=medium
   * fixed firmware autoflash bug, it finds the correct hex file now.
   * refactored and cleaned FSSerial.py
   * removed serial port from default config
+  * added some additional connection messages to frontend
 
  -- Mario Lukas  <info@mariolukas.de>  Thu, 25 Feb 2016 20:54:11 +0000
 
