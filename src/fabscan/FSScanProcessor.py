@@ -58,7 +58,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.hardwareController = HardwareController.instance()
         self.eventManager.subscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
         self._scan_brightness = self.settings.camera.brightness
-        self._scan_contrast =  self.settings.camera.contrast
+        self._scan_contrast = self.settings.camera.contrast
         self._scan_saturation = self.settings.camera.saturation
 
 
