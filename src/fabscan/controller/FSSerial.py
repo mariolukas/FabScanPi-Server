@@ -119,9 +119,9 @@ class FSSerialCom():
 
 
     def checkVersion(self):
-        if self._serial.isOpen():
+        if self._serial:
             self.send("\r\n\r\n")
-            time.sleep(2) # Wait for open exposer to initialize
+            time.sleep(2) # Wait for FabScan to initialize
             self._serial.flushInput() # Flush startup text in serial input
             self.send("M200;\n")
             self._serial.readline()
