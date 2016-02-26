@@ -88,7 +88,7 @@ class FSSerialCom():
                            self._logger.info("Old firmare detected trying to flash new firmware...")
                            self.avr_flash(flash_file_version)
                            self._logger.info("FabScan Firmware Version: "+flash_file_version)
-                                ## reconnect to new firmware version
+                           ## reconnect to new firmware version
                            self._connect()
 
            # if connection fails, no firmware on device?...
@@ -100,7 +100,7 @@ class FSSerialCom():
 
 
            if self._serial.isOpen() and (current_version != "None"):
-              self._logger.info("FabScanPi is connected to Arduino or FabScanPi HAT")
+              self._logger.info("FabScanPi is connected to Arduino or FabScanPi HAT on port: "+str(self._port))
               self._connected = True
            else:
               self._logger.error("Can not find Arduino or FabScanPi HAT")

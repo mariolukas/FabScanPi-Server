@@ -244,6 +244,9 @@ class RequestHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         return f
 
+    def log_message(self, format, *args):
+        self._logger.debug("%s - %s" % (self.client_address[0],format%args))
+
     def translate_path(self, path):
         """translate path given routes"""
 
