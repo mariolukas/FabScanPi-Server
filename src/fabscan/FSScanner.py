@@ -8,6 +8,7 @@ import time
 import threading
 import logging
 import json
+import multiprocessing
 
 from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManager, FSEvents
@@ -43,13 +44,14 @@ class FSScanner(threading.Thread):
         self.hardwareController = HardwareController.instance()
         self._exit_requested = False
 
+        self._logger.debug("Number of cpu cores: "+str( multiprocessing.cpu_count()))
         self.eventManager = FSEventManager.instance()
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self._on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self._on_command)
 
 
     def run(self):
-        self._logger.info("FabScanPi-Server "+str(__version__))
+
         while not self._exit_requested:
             self.eventManager.handle_event_q()
 
@@ -79,6 +81,7 @@ class FSScanner(threading.Thread):
         ## Start Scan Process
         elif command == FSCommand.START:
             if self._state is FSState.SETTINGS:
+                self._logger.debug("Start command received...")
                 self.set_state(FSState.SCANNING)
                 self.hardwareController.settings_mode_off()
                 self.scanProcessor = FSScanProcessor.start()
@@ -118,27 +121,36 @@ class FSScanner(threading.Thread):
         message['data']['server_version'] = str(__version__)
         #message['data']['points'] = self.pointcloud
         message['data']['settings'] = self.settings.todict(self.settings)
-        #message['data']['settings'] = dict()
+
 
         eventManager.publish(FSEvents.ON_SOCKET_SEND, message)
 
+        message = FSUtil.new_message()
+        message['type'] = FSEvents.ON_INFO_MESSAGE
+
         if not self.hardwareController.arduino_is_connected():
-            message = FSUtil.new_message()
-            message['type'] = FSEvents.ON_INFO_MESSAGE
-            message['data']['message'] = "No connection to Arduino"
+            message['data']['message'] = "NO_SERIAL_CONNECTION"
             message['data']['level'] = "error"
-            self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
+        else:
+            message['data']['message'] = "SERIAL_CONNECTION_READY"
+            message['data']['level'] = "info"
+
+        self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
         if not self.hardwareController.camera_is_connected():
-            message = FSUtil.new_message()
-            message['type'] = FSEvents.ON_INFO_MESSAGE
-            message['data']['message'] = "Camera is not connected"
+            message['data']['message'] = "NO_CAMERA_CONNECTION"
             message['data']['level'] = "error"
             self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
+        else:
+            message['data']['message'] = "CAMERA_READY"
+            message['data']['level'] = "info"
+
+        self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
 
     def set_state(self, state):
         self._state = state
+        message = FSUtil.new_message()
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_STATE_CHANGED
         message['data']['state'] = state

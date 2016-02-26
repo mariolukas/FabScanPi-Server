@@ -5,7 +5,6 @@
    },
    "serial" : {
      "baudrate" : 115200,
-     "port": "/dev/ttyACM0",
      "autoflash": "True"
    },
    "camera" : {
@@ -51,6 +50,7 @@
         "y" : 0.75
       }
    },
+  "process_numbers": 4,
    "meshlab":{
      "path": "/usr/bin/"
    }

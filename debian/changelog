@@ -1,3 +1,22 @@
+fabscanpi-server (0.1.15) unstable; urgency=medium
+
+  * added auto detection for arduino
+  * fixed firmware autoflash bug, it finds the correct hex file now.
+  * refactored and cleaned FSSerial.py
+  * removed serial port from default config
+  * added some additional connection messages to frontend
+  * added override function for bassehttp logger to get cleaner logs
+
+ -- Mario Lukas  <info@mariolukas.de>  Thu, 25 Feb 2016 20:54:11 +0000
+
+
+fabscanpi-server (0.1.14) unstable; urgency=medium
+
+  * fixed firmware motor reverse issue
+  * fixed serial connection error for custom arduino installations.
+
+ -- Mario Lukas  <info@mariolukas.de>  Thu, 23 Feb 2016 07:42:10 +0000
+
 fabscanpi-server (0.1.13) unstable; urgency=medium
 
   * fixed issue #3 server hangs when laser not detected
@@ -5,6 +24,9 @@ fabscanpi-server (0.1.13) unstable; urgency=medium
   * scanner does start even if serial or camera connection fails, a message is shown in frontend now
   * fixed mjepeg connection error bug, stack trace is not longer shown in log
   * fixed some bugs in FSCamera.py
+  * added new frontend with saturation slider
+  * added funtions to support camera saturation adjustment
+  * prepared multilingual support (en only until now)
 
  -- Mario Lukas  <info@mariolukas.de>  Thu, 20 Feb 2016 00:18:22 +0000
 

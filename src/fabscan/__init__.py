@@ -17,6 +17,8 @@ class Main(Daemon):
 	def __init__(self, pidfile, configfile, basedir, host, port, debug, allowRoot, logConf):
 		Daemon.__init__(self, pidfile)
 
+                self._logger =  logging.getLogger(__name__)
+                self._logger.setLevel(logging.DEBUG)
 		self._configfile = configfile
 		self._basedir = basedir
 		self._host = host

@@ -9,7 +9,7 @@
 (function() {
   var m, mods;
 
-  mods = ['common.services.envProvider', 'common.filters.currentStateFilter', 'common.filters.toLabelFilter', 'common.filters.toResolutionValue', 'fabscan.directives.FSWebglDirective', 'fabscan.directives.FSMJPEGStream', 'fabscan.directives.FSModalDialog', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSEnumService', 'fabscan.services.FSWebsocketConnectionFactory', 'fabscan.services.FSScanService', 'common.filters.scanDataAvailableFilter', 'common.services.Configuration', 'common.services.toastrWrapperSvc', 'fabscan.controller.FSPreviewController', 'fabscan.controller.FSAppController', 'fabscan.controller.FSSettingsController', 'fabscan.controller.FSScanController', 'fabscan.controller.FSLoadingController', 'fabscan.controller.FSShareController', 'ngTouch', '720kb.tooltips', 'ngProgress', 'vr.directives.slider', 'slick'];
+  mods = ['common.services.envProvider', 'common.filters.currentStateFilter', 'common.filters.toLabelFilter', 'common.filters.toResolutionValue', 'fabscan.directives.FSWebglDirective', 'fabscan.directives.FSMJPEGStream', 'fabscan.directives.FSModalDialog', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSEnumService', 'fabscan.services.FSWebsocketConnectionFactory', 'fabscan.services.FSScanService', 'fabscan.services.FSi18nService', 'common.filters.scanDataAvailableFilter', 'common.services.Configuration', 'common.services.toastrWrapperSvc', 'fabscan.controller.FSPreviewController', 'fabscan.controller.FSAppController', 'fabscan.controller.FSSettingsController', 'fabscan.controller.FSScanController', 'fabscan.controller.FSLoadingController', 'fabscan.controller.FSShareController', 'ngTouch', '720kb.tooltips', 'ngProgress', 'vr.directives.slider', 'slick'];
 
   /*
   */
@@ -851,6 +851,25 @@ Example of a 'common' filter that can be shared by all views
 
 }).call(this);
 
+(function() {
+  var name;
+
+  name = 'fabscan.services.FSi18nService';
+
+  angular.module(name, []).factory(name, [
+    '$log', '$rootScope', 'fabscan.services.FSEnumService', function($log, $rootScope, FSEnumService) {
+      var service;
+
+      service = {};
+      service.translateKey = function(key, value) {
+        return window.i18n[key][value]();
+      };
+      return service;
+    }
+  ]);
+
+}).call(this);
+
 /*
 Example of a service shared across views.
 Wrapper around the data layer for the app.
@@ -955,7 +974,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
   name = 'fabscan.controller.FSAppController';
 
   angular.module(name, []).controller(name, [
-    '$log', '$scope', '$http', '$rootScope', 'ngProgress', 'common.services.toastrWrapperSvc', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSEnumService', 'fabscan.services.FSScanService', function($log, $scope, $http, $rootScope, ngProgress, toastr, FSMessageHandlerService, FSEnumService, FSScanService) {
+    '$log', '$scope', '$http', '$rootScope', 'ngProgress', 'common.services.toastrWrapperSvc', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSEnumService', 'fabscan.services.FSScanService', 'fabscan.services.FSi18nService', function($log, $scope, $http, $rootScope, ngProgress, toastr, FSMessageHandlerService, FSEnumService, FSScanService, FSi18nService) {
       $scope.streamUrl = " ";
       $scope.settings = {};
       $scope.scanComplete = false;
@@ -980,6 +999,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         _settings.resolution *= -1;
         angular.copy(_settings, $scope.settings);
         FSScanService.setScannerState(data['state']);
+        $log.debug("WebSocket connection ready...");
         return $scope.$apply();
       });
       $scope.$on(FSEnumService.events.ON_STATE_CHANGED, function(event, data) {
@@ -992,21 +1012,24 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         return $scope.$apply();
       });
       $scope.$on(FSEnumService.events.ON_INFO_MESSAGE, function(event, data) {
+        var message;
+
+        message = FSi18nService.translateKey('main', data['message']);
         switch (data['level']) {
           case "info":
-            toastr.info(data['message']);
+            toastr.info(message);
             break;
           case "warn":
-            toastr.warning(data['message']);
+            toastr.warning(message);
             break;
           case "error":
-            toastr.error(data['message']);
+            toastr.error(message);
             break;
           case "success":
-            toastr.success(data['message']);
+            toastr.success(message);
             break;
           default:
-            toastr.info(data['message']);
+            toastr.info(message);
         }
         return $scope.$apply();
       });

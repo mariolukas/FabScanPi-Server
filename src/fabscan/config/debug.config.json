@@ -5,12 +5,11 @@
    },
    "serial" : {
      "baudrate" : 115200,
-     "port": "/dev/ttyACM1",
      "autoflash": "True"
    },
    "camera" : {
      "type" : "PICAM",
-     "device" : 1,
+     "device" : 0,
      "preview_resolution":{
         "width": 320,
         "height": 240
@@ -51,7 +50,7 @@
         "y" : 0.75
       }
    },
-   "process_number": 4,
+  "process_numbers": 4,
    "meshlab":{
      "path": "/usr/bin/"
    }

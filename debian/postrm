@@ -7,24 +7,16 @@ set -e
 
 SERVICE=fabscanpi-server
 LOG_DIR=/var/log/fabscanpi
-PYSHARED_DIR=/usr/share/pyshared/fabscan
 PIDFILE=/var/run/$SERVICE.pid
 
 INIT_SCRIPT=/etc/init.d/$SERVICE
 
-#if ps ax | grep -v grep | grep -v $0 | grep $SERVICE > /dev/null
-#then
-#        kill -9 `cat $PIDFILE`
-#fi
-
-if [ -d $PYSHARED_DIR ];then
-    rm -R $PYSHARED_DIR
+if [ -d /usr/local/fabscanpi/www/ ];then
+    rm -R /usr/local/fabscanpi/www/
 fi
 
 if [ -d $LOG_DIR ];then
     rm -R $LOG_DIR
 fi
-
-
 
 exit 0

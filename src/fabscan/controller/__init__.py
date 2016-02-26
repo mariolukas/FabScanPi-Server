@@ -41,6 +41,7 @@ class HardwareController(SingletonMixin):
         self.laser.off()
         self.led.off()
         self.turntable.stop_turning()
+        self.turntable.disable_motors()
 
     def settings_mode_on(self):
         self.led.on(0,0,20)

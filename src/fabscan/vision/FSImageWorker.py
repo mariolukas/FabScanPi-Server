@@ -23,7 +23,9 @@ class FSImageWorkerPool():
         self._task_q = task_q
         self._event_q = event_q
         self.workers = []
-        self._number_of_workers = multiprocessing.cpu_count()
+        self.config = Config.instance()
+
+        self._number_of_workers = self.config.process_numbers
         self._workers_active = False
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)

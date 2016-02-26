@@ -1,6 +1,6 @@
 (function(){ window.i18n || (window.i18n = {}) 
 var MessageFormat = { locale: {} };
-MessageFormat.locale.de=function(n){return n===1?"one":"other"}
+MessageFormat.locale.en=function(n){return n===1?"one":"other"}
 
 window.i18n["main"] = {}
 window.i18n["main"]["FABSCAN"] = function(d){return "Fabscan"}

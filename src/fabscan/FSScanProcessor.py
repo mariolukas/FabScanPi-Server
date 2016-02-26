@@ -29,8 +29,14 @@ class FSScanProcessor(pykka.ThreadingActor):
 
     def __init__(self):
         super(FSScanProcessor, self).__init__()
+
+        self.eventManager = FSEventManager.instance()
+        self.settings = Settings.instance()
+        self.config = Config.instance()
+
         self._logger =  logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
+
         self._prefix = None
         self._resolution = 16
         self._number_of_pictures = 0
@@ -39,19 +45,13 @@ class FSScanProcessor(pykka.ThreadingActor):
         self._progress = 0
         self._is_color_scan = True
         self.point_cloud = None
-        self.image_task_q = multiprocessing.Queue(multiprocessing.cpu_count()+1)
+        self.image_task_q = multiprocessing.Queue(self.config.process_numbers+1)
         self.current_position = 0
         self._laser_angle = 33.0
         self._stop_scan = False
         self._current_laser_position = 1
-        self.eventManager = FSEventManager.instance()
-        self.settings = Settings.instance()
-        self.config = Config.instance()
+
         self.semaphore = multiprocessing.BoundedSemaphore()
-        self._contrast = 0.5
-        self._brightness = 0.5
-
-
         self.event_q = self.eventManager.get_event_q()
 
         self._worker_pool = FSImageWorkerPool(self.image_task_q,self.event_q)
@@ -59,6 +59,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.eventManager.subscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
         self._scan_brightness = self.settings.camera.brightness
         self._scan_contrast =  self.settings.camera.contrast
+        self._scan_saturation = self.settings.camera.saturation
 
 
     def on_receive(self, event):
@@ -105,18 +106,20 @@ class FSScanProcessor(pykka.ThreadingActor):
     def init_texture_scan(self):
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "Scanning texture"
+        message['data']['message'] = "SCANNING_TEXTURE"
         message['data']['level'] = "info"
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
-        self._worker_pool.create(self.config.process_number)
+        self._worker_pool.create(self.config.process_numbers)
 
 
         self._scan_brightness = self.settings.camera.brightness
         self._scan_contrast =  self.settings.camera.contrast
+        self._scan_saturation = self.settings.camera.saturation
 
         self.hardwareController.camera.device.textureExposure()
         self.settings.camera.brightness = 50
         self.settings.camera.contrast = 0
+        self.settings.camera.saturation = 0
         self.hardwareController.led.on(60,60,60)
         time.sleep(2)
         self.hardwareController.camera.device.flushStream()
@@ -130,6 +133,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.hardwareController.led.off()
         self.settings.camera.brightness = self._scan_brightness
         self.settings.camera.contrast = self._scan_contrast
+        self.settings.camera.saturation = self._scan_saturation
         self._worker_pool.kill()
 
     def scan_next_texture_position(self):
@@ -163,6 +167,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         self.settings.camera.brightness = self._scan_brightness
         self.settings.camera.contrast = self._scan_contrast
+        self.settings.camera.saturation = self._scan_saturation
 
         # TODO: solve this timing issue!
         # Workaround for Logitech webcam. We have to wait a loooong time until the logitech cam is ready...
@@ -188,13 +193,13 @@ class FSScanProcessor(pykka.ThreadingActor):
         else:
             message = FSUtil.new_message()
             message['type'] = FSEvents.ON_INFO_MESSAGE
-            message['data']['message'] = "SCANING_OBJECT"
+
+            message['data']['message'] = "SCANNING_OBJECT"
             message['data']['level'] = "info"
             self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
-            self._logger.debug("Laser Angle at: %f deg" %(self._laser_angle, ))
-            self._worker_pool.create(self.config.process_number)
-
+            self._logger.debug("Detected Laser Angle at: %f deg" %(self._laser_angle, ))
+            self._worker_pool.create(self.config.process_numbers)
 
 
     def finish_object_scan(self):
@@ -234,7 +239,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self._logger.info("Send laser detection failed message to frontend")
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "No laser detected. Try other settings"
+        message['data']['message'] = "NO_LASER_FOUND"
         message['data']['level'] = "warn"
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
@@ -253,8 +258,8 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "Scan canceled"
-        message['data']['level'] = "error"
+        message['data']['message'] = "SCAN_CANCELED"
+        message['data']['level'] = "info"
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
         #self.eventManager.unsubscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
 
@@ -287,6 +292,12 @@ class FSScanProcessor(pykka.ThreadingActor):
         self._logger.debug("Scan complete writing pointcloud files with %i points." % (self.point_cloud.get_size(),))
         self.point_cloud.saveAsFile(self._prefix)
         self.settings.saveAsFile(self._prefix)
+        message = FSUtil.new_message()
+        message['type'] = FSEvents.ON_INFO_MESSAGE
+        message['data']['message'] = "SAVING_POINT_CLOUD"
+        message['data']['scan_id'] = self._prefix
+        message['data']['level'] = "info"
+        self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
 
         FSUtil.delete_image_folders(self._prefix)
@@ -299,7 +310,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "Scan complete"
+        message['data']['message'] = "SCAN_COMPLETE"
         message['data']['scan_id'] = self._prefix
         message['data']['level'] = "success"
 

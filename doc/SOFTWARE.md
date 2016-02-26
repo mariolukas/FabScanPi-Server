@@ -85,6 +85,18 @@ updates with the following command.
 sudo apt-get update && apt-get upgrade
 ``` 
 
+### Troubleshooting
+
+#### Can not connect to Arduino.
+Is the Arduino connected to the USB port. Check the port in your fabscanpi-server configuration
+file. Try another port e.g. /dev/ttyUSB0. 
+More information about changing the configuration can be found in "FabScan Pi Configuration"
+section.
+
+#### Camera is not connected. 
+Check the cable from the Raspberry Pi to the camera module. Be careful the cable can be very
+fragil. Try another camera application for checking camera functionality e.g. [raspistill](https://www.raspberrypi.org/documentation/usage/camera/raspicam/raspistill.md).
+
 
 ### FabScan Pi Configuration
 
@@ -104,9 +116,11 @@ you don't know what you are doing, it is a good decision to keep this section un
 ```
 
 ##### Serial 
-In this section you can set your port. Some Arduino and compatible boards differ in the port name.
-Due the FabScanPi is made to use the FabScanPi HAT the default value is /dev/ttyACM0. In most cases
-this also works with an Arduino or compatible. 
+In this section you can set your port. By default this value is not set, because the
+FabScanPi Server software autodetcts the correct port. Some Arduino and compatible boards differ 
+in the port name. The port can be set if you are not using an Arduino UNO or compatible Board. 
+In case that your Arduino is not detected and you can see an error in the /var/log/fabscanpi/fabscan.log
+you should add the "port" attribute to your config.
 
 The autoflash option is True by default, that means that the firmware is flashed automatically to 
 the Arduino or FabScanPi HAT. If you want to use a custom board e.g. sanguinololu, you can set this

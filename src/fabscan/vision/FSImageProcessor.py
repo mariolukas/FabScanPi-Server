@@ -97,39 +97,44 @@ class ImageProcessor():
 
         x, image = self.line_coords(image, filter=False, fast=True, x_center_delta=x_center_delta)
 
-        if x != []:
-            x = x[:,0]
-            new_x = []
+        try:
+            if x != []:
+                x = x[:,0]
+                new_x = []
 
-            for i in xrange(1,20):
-                new_x.append(x[i])
-
-
-            x = np.sort(new_x)
-            point = FSPoint( x[len(x)/2] , 0.0, 0.0)
-
-            # save pixel position of laser line x direction
-            self.settings.backwall.laser_pixel_position = point.x
-
-            # make a camera system point of laser line on backwall
-            laser_backwall = FSPoint()
-            laser_backwall.x = point.x
-            laser_backwall = self.convertCvPointToPoint(laser_backwall)
+                for i in xrange(1,20):
+                    new_x.append(x[i])
 
 
-            self.settings.backwall.laser.x = laser_backwall.x
-            self.settings.backwall.laser.y = laser_backwall.y
-            self.settings.backwall.laser.z = laser_backwall.z
+                x = np.sort(new_x)
+                point = FSPoint( x[len(x)/2] , 0.0, 0.0)
 
-            self._logger.debug("Laser on backwall detected at x-pixel position: %d" % (point.x, ))
+                # save pixel position of laser line x direction
+                self.settings.backwall.laser_pixel_position = point.x
 
-            fs_point = self.convertCvPointToPoint(point)
+                # make a camera system point of laser line on backwall
+                laser_backwall = FSPoint()
+                laser_backwall.x = point.x
+                laser_backwall = self.convertCvPointToPoint(laser_backwall)
 
-            return fs_point
 
-        else:
-            self._logger.debug("Can not detect laser line on backwall.")
-            return None
+                self.settings.backwall.laser.x = laser_backwall.x
+                self.settings.backwall.laser.y = laser_backwall.y
+                self.settings.backwall.laser.z = laser_backwall.z
+
+                self._logger.debug("Laser on backwall detected at x-pixel position: %d" % (point.x, ))
+
+                fs_point = self.convertCvPointToPoint(point)
+
+                return fs_point
+
+            else:
+                self._logger.debug("Can not detect laser line on backwall.")
+                return None
+
+        except:
+                self._logger.debug("Can not detect laser line on backwall.")
+                return None
 
     def get_grey(self, image):
         hsv_img = cv2.cvtColor(image, cv2.cv.CV_BGR2HSV)
