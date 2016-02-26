@@ -28,6 +28,6 @@
        "saturation": 0
      },
      "resolution": 8,
-     "laser_positions": 1,
+     "laser_positions": 3,
      "color" : "True"
 }

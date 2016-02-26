@@ -96,10 +96,10 @@ class FSScanProcessor(pykka.ThreadingActor):
 
 
         if self._is_color_scan:
-            self._total = self._number_of_pictures*2
+            self._total = self._number_of_pictures*2*self.settings.laser_positions
             self.actor_ref.tell({FSEvents.COMMAND:'SCAN_NEXT_TEXTURE_POSITION'})
         else:
-            self._total = self._number_of_pictures
+            self._total = self._number_of_pictures*self.settings.laser_positions
             self.actor_ref.tell({FSEvents.COMMAND:'SCAN_NEXT_OBJECT_POSITION'})
 
 
@@ -129,7 +129,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
     def finish_texture_scan(self):
         self._logger.info("Finishing texture scan.")
-        self.current_position = 0
+        self.current_position = 1
         self.hardwareController.led.off()
         self.settings.camera.brightness = self._scan_brightness
         self.settings.camera.contrast = self._scan_contrast
@@ -178,7 +178,11 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.hardwareController.camera.device.flushStream()
         time.sleep(2)
 
-        self._laser_angle = self.image_processor.calculate_laser_angle(self.hardwareController.camera.device.getStream())
+        if self._current_laser_position == 1:
+            self._laser_angle = self.image_processor.calculate_laser_angle(self.hardwareController.camera.device.getStream())
+        else:
+            self._laser_angle = self._laser_angle + (360/3200)
+            #self._logger.debug("Calculated laser Angle is: "+str(self._laser_angle))
 
         if self._laser_angle == None:
             event = FSEvent()
@@ -189,6 +193,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         else:
             message = FSUtil.new_message()
             message['type'] = FSEvents.ON_INFO_MESSAGE
+
             message['data']['message'] = "SCANNING_OBJECT"
             message['data']['level'] = "info"
             self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
@@ -218,7 +223,14 @@ class FSScanProcessor(pykka.ThreadingActor):
                 self.current_position +=1
                 self.actor_ref.tell({FSEvents.COMMAND:'SCAN_NEXT_OBJECT_POSITION'})
 
+            elif self._current_laser_position <= self.settings.laser_positions:
+                self.current_position = 0
+                self._current_laser_position +=1;
+                self.hardwareController.laser.step(-1, 100)
+                self.scan_next_object_position()
+
             else:
+                self._logger.debug("End of scan_next_object reached.")
                 self.finish_object_scan()
 
 
@@ -274,6 +286,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
 
     def scan_complete(self):
+
 
 
         self._logger.debug("Scan complete writing pointcloud files with %i points." % (self.point_cloud.get_size(),))
@@ -334,6 +347,8 @@ class FSScanProcessor(pykka.ThreadingActor):
 
     def reset_scanner_state(self):
         self._logger.info("Reseting scanner states ... ")
+        if self.settings.laser_positions > 1:
+            self.hardwareController.laser.step(self.settings.laser_positions, 100)
         self.hardwareController.camera.device.objectExposure()
         self.hardwareController.camera.device.flushStream()
         self.hardwareController.laser.off()
@@ -344,3 +359,4 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.current_position = 0
         self._number_of_pictures = 0
         self._total = 0
+        self._current_laser_position = 0

@@ -49,6 +49,7 @@ class FSScanner(threading.Thread):
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self._on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self._on_command)
 
+
     def run(self):
 
         while not self._exit_requested:

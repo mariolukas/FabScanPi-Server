@@ -29,9 +29,7 @@ class Laser:
             #self.serial_connection.write("\n".encode('ascii'))
             self.serial_connection.wait()
 
-    def turn(self, steps):
+    def step(self, steps, speed):
 
-        signal = "G04 L"+str(steps)
-
-        self.serial_connection.send(signal+'\n')
+        self.serial_connection.send("G04 L"+str(steps)+" F"+str(speed)+";\n")
         self.serial_connection.wait()
