@@ -31,7 +31,7 @@ class Laser:
 
     def turn(self, steps):
 
-        signal = "G04 L"+str(steps)
+        signal = "G04 L"+str(steps)+" F200"
 
         self.serial_connection.send(signal+'\n')
         self.serial_connection.wait()

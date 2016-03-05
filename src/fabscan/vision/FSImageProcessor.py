@@ -137,12 +137,17 @@ class ImageProcessor():
                 return None
 
     def get_grey(self, image):
-        hsv_img = cv2.cvtColor(image, cv2.cv.CV_BGR2HSV)
-        h, s, v = cv2.split(hsv_img)
-        height, width, channels = image.shape
+        #hsv_img = cv2.cvtColor(image, cv2.cv.CV_BGR2HSV)
+        #h, s, v = cv2.split(hsv_img)
+        #height, width, channels = image.shape
+        b,g,r  = cv2.split(image)
+        blur = cv2.GaussianBlur(r,(11,11),0)
+        open_value = 2
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (open_value, open_value))
+        image_open = cv2.morphologyEx(r, cv2.MORPH_OPEN, kernel)
+        tres =cv2.threshold(image_open, self.settings.threshold, 255.0, cv2.THRESH_TOZERO)[1]
 
-        blur = cv2.GaussianBlur(v,(11,11),0)
-        return blur
+        return tres
 
 
     def line_coords(self, image,  filter=True, fast=False, x_center_delta=None):

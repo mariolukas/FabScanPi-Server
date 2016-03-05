@@ -44,6 +44,7 @@ class FSScanner(threading.Thread):
         self.hardwareController = HardwareController.instance()
         self._exit_requested = False
 
+
         self._logger.debug("Number of cpu cores: "+str( multiprocessing.cpu_count()))
         self.eventManager = FSEventManager.instance()
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self._on_client_connected)
