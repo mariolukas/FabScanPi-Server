@@ -4,7 +4,7 @@
 [![Python Support](https://img.shields.io/badge/License-AGPL v3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.de.html)
 [![Build Status](https://travis-ci.org/mariolukas/FabScanPi-Server.svg?branch=master)](https://travis-ci.org/mariolukas/FabScanPi-Frontend.svg?branch=master)
 
-<img src="doc/images/logo.jpeg" width="400">
+<img src="doc/images/logo.jpg" width="400">
 
 ## What is FabScan PI
 
