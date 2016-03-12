@@ -306,7 +306,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
     def create_mesh(self, prefix):
         _meshlabTask = FSMeshlabTask(self._prefix)
-        _meshlabTask.run()
+        _meshlabTask.start()
 
 
     def append_points(self, point_set):
