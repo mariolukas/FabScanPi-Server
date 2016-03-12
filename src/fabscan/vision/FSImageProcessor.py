@@ -33,16 +33,44 @@ class ImageProcessor():
     def get_texture_preview_image(self,cam_image):
         return cam_image
 
+    def r_rgb(self, image):
+        return cv2.split(image)[0]
+
 
     def get_preview_image(self, cam_image, type='CAMERA'):
 
         x_center = cam_image.shape[1] * self.settings.center
         x_center_delta = cam_image.shape[1] * 0.5 - x_center
 
-        sub_pixel, cam_image = self.line_coords(cam_image,filter=True, fast=False ,x_center_delta=x_center_delta) #np.argmax(line[ 0: width])
 
-        cv2.line(cam_image, (0,int(self.config.scanner.origin.y*cam_image.shape[0])), (cam_image.shape[1],int(0.75*cam_image.shape[0])), (0,255,0), thickness=1, lineType=8, shift=0)
-        cv2.line(cam_image, (int(0.5*cam_image.shape[1]),0), (int(0.5*cam_image.shape[1]), cam_image.shape[0]), (0,255,0), thickness=1, lineType=8, shift=0)
+        #b,g,cam_image = cv2.split(cam_image)
+        red_channel = cam_image
+        red_channel[2,2,:] = 0
+        open_value = 2
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (open_value, open_value))
+        image_open = cv2.morphologyEx(red_channel, cv2.MORPH_OPEN, kernel)
+        image_threshold =cv2.threshold(red_channel, self.settings.threshold, 255.0, cv2.THRESH_TOZERO)[1]
+
+        #cam_image = image_threshold
+        #h, w = image_threshold.shape
+        #weight_matrix = np.array((np.matrix(np.linspace(0, w - 1, w)).T * np.matrix(np.ones(h))).T)
+
+        # Compute center of mass
+        #s = image_threshold.sum(axis=1)
+        #v = np.where(s > 0)[0]
+        #u = (weight_matrix * image_threshold).sum(axis=1)[v] / s[v]
+        #image_line = np.zeros_like(image_threshold)
+        #cam_image[v, u.astype(int)] = [255.0,0]
+
+
+
+        _, cam_image = self.line_coords(image_threshold,  filter=True, fast=True, x_center_delta=None)
+        #cam_image = tres
+
+        #cam_image = cv2.addWeighted(tres,1.0,cam_image,0.8,0)
+        #cam_image = cv2.merge((cam_image,tres,red_channel))
+        #cam_image = np.concatenate((red_channel, cam_image), axis=1)
+
 
         r = 320.0 / cam_image.shape[1]
         dim = (320, int(cam_image.shape[0] * r))
@@ -136,18 +164,27 @@ class ImageProcessor():
                 self._logger.debug("Can not detect laser line on backwall.")
                 return None
 
-    def get_grey(self, image):
+    def trheshold_image(self, image):
         #hsv_img = cv2.cvtColor(image, cv2.cv.CV_BGR2HSV)
         #h, s, v = cv2.split(hsv_img)
         #height, width, channels = image.shape
-        b,g,r  = cv2.split(image)
-        blur = cv2.GaussianBlur(r,(11,11),0)
+
+        red_channel = image
+        red_channel[2,2,:] = 0
         open_value = 2
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (open_value, open_value))
-        image_open = cv2.morphologyEx(r, cv2.MORPH_OPEN, kernel)
-        tres =cv2.threshold(image_open, self.settings.threshold, 255.0, cv2.THRESH_TOZERO)[1]
+        image_open = cv2.morphologyEx(red_channel, cv2.MORPH_OPEN, kernel)
+        image_threshold =cv2.threshold(image_open, self.settings.threshold, 255.0, cv2.THRESH_TOZERO)[1]
 
-        return tres
+        gray_image = cv2.cvtColor(image_threshold, cv2.COLOR_BGR2GRAY)
+       # b,g,r  = cv2.split(image)
+        #gray_image = cv2.GaussianBlur(gray_image,(5,5),0)
+
+
+
+        #tres =cv2.threshold(image_open, self.settings.threshold, 255.0, cv2.THRESH_TOZERO)[1]
+
+        return gray_image
 
 
     def line_coords(self, image,  filter=True, fast=False, x_center_delta=None):
@@ -156,7 +193,8 @@ class ImageProcessor():
         If x_center given, transforms coordinates so that
             the axis of rotation is x=0.
         '''
-        grey = self.get_grey(image)
+        grey = self.trheshold_image(image)
+
 
         pixels = []
         if filter:
@@ -167,8 +205,9 @@ class ImageProcessor():
         if fast:
 
             for y, line in enumerate(grey):
-                    sub_pixel =  np.argmax(line[ start: image.shape[1]]) + start
-                    if line[sub_pixel] > self.settings.threshold:
+                    sub_pixel =  np.argmax(line[ start: grey.shape[1]]) + start
+
+                    if line[sub_pixel] > self.settings.threshold/3:
                         cv2.line(image, (int(sub_pixel)-5,int(y)), (int(sub_pixel)+5,int(y)), (255,0,0), thickness=1, lineType=8, shift=0)
                         pixels.append(( sub_pixel, y))
 
@@ -178,7 +217,7 @@ class ImageProcessor():
             start = self.settings.backwall.laser_pixel_position+20
             id = np.indices((image.shape[0],image.shape[1]))[1]
 
-            grey[grey < self.settings.threshold] = 0
+            grey[grey <  self.settings.threshold/3] = 0
 
             id_mul = id[:,start:]*grey[:,start:]
 

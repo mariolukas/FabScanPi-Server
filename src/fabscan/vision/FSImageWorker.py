@@ -74,7 +74,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
         self.image_task_q = image_task_q
         self.settings = settings
         self.config = config
-
+        self.exit = False
         self.event_q = event_q
 
         self.log = logging.getLogger('IMAGE_PROCESSOR THREAD')
@@ -90,7 +90,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
         #print "process "+str(self.pid)+" started"
 
-        while True:
+        while not self.exit:
             if not self.image_task_q.empty():
                 #print "process "+str(self.pid)+" handle image"
 
@@ -103,6 +103,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                         # we got a kill pill
                         if image_task.task_type == "KILL":
                             self._logger.debug("Killed Worker Process with PID "+str(self.pid))
+                            self.exit = True
                             break
 
                         #print "process "+str(self.pid)+" task "+str(image_task.progress)
@@ -140,6 +141,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             self.event_q.put(event)
 
                 except Empty:
+                    time.sleep(0.05)
                     pass
             else:
                 # thread idle

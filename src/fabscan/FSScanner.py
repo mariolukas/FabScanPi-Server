@@ -17,6 +17,7 @@ from fabscan.util import FSUtil
 from fabscan.FSScanProcessor import FSScanProcessor
 from fabscan.FSSettings import Settings
 
+
 class FSState(object):
     IDLE = "IDLE"
     SCANNING = "SCANNING"
@@ -33,17 +34,14 @@ class FSCommand(object):
 class FSScanner(threading.Thread):
 
     def __init__(self):
-
-
         threading.Thread.__init__(self)
         self._state = FSState.IDLE
-        self._logger =  logging.getLogger(__name__)
+        self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
         self.settings = Settings.instance()
         self.daemon = True
         self.hardwareController = HardwareController.instance()
         self._exit_requested = False
-
 
         self._logger.debug("Number of cpu cores: "+str( multiprocessing.cpu_count()))
         self.eventManager = FSEventManager.instance()
@@ -54,6 +52,7 @@ class FSScanner(threading.Thread):
 
         while not self._exit_requested:
             self.eventManager.handle_event_q()
+            time.sleep(0.05)
 
     def request_exit(self):
             self._exit_requested = True
@@ -101,6 +100,7 @@ class FSScanner(threading.Thread):
 
         elif command == FSCommand._COMPLETE:
             self.set_state(FSState.IDLE)
+            self.scanProcessor.stop()
             self._logger.info("Scan complete")
 
         elif command == FSCommand._LASER_DETECTION_FAILED:

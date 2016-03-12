@@ -1,3 +1,19 @@
+fabscanpi-server (0.1.16) unstable; urgency=medium
+
+  * fixed issue #2, heavy CPU load
+  * refactored system callings, introduced new utils for system calls
+  * system call stdouts are in logs now
+  * added meshalabserver support by calling via xvfb
+  * fixed mpjeg close stream bug in chrome and firefox
+  * added spinner to stream preview window
+  * prepared frontend for laser stepper support
+  * replaced threejs v70 by a newer version v74
+  * refactored webgl directive, added support for switching between mesh and pointcloud (experimental)
+  * refactored laser detection algorithm, it is more stable now.
+
+ -- Mario Lukas  <info@mariolukas.de>  Sat, 12 Mar 2016 01:11:11 +0000
+
+
 fabscanpi-server (0.1.15) unstable; urgency=medium
 
   * added auto detection for arduino

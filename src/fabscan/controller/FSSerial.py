@@ -11,7 +11,7 @@ import traceback
 import sys
 import time
 import logging
-import subprocess
+from fabscan.util.FSUtil import FSSystem
 
 from fabscan.FSConfig import Config
 
@@ -46,11 +46,10 @@ class FSSerialCom():
 
 
     def avr_flash(self,fname):
-        status = subprocess.call(["wc -l %s" % (fname)], shell=True)
-        status = subprocess.call(["avrdude -U flash:w:%s:i -p atmega328 -b 115200 -carduino -patmega328p -P%s" % (fname,self._port)], shell=True, stdout=subprocess.PIPE)
+        FSSystem.run_command("wc -l "+str(fname))
+        status = FSSystem.run_command("avrdude -U flash:w:"+str(fname)+":i -p atmega328 -b 115200 -carduino -patmega328p -P"+str(self._port))
         if status != 0:
             self._logger.error("Failed to flash firmware")
-
         return status == 0
 
 

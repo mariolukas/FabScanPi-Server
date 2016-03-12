@@ -2,14 +2,37 @@ __author__ = 'mariolukas'
 import os
 import json
 import shutil
+import subprocess
+import shlex
+import logging
+
 from collections import namedtuple
 from fabscan.FSConfig import Config
 
-def isRaspberryPi():
-    if os.uname()[4].startswith("arm"):
-        return True
-    else:
-        return False
+class FSSystem(object):
+    def __init__(self):
+        self._logger =  logging.getLogger(__name__)
+        self._logger.setLevel(logging.DEBUG)
+
+    @staticmethod
+    def run_command(command):
+            process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
+            while True:
+                output = process.stdout.readline()
+                if output == '' and process.poll() is not None:
+                    break
+                if output:
+                    logging.getLogger(__name__).setLevel(logging.DEBUG)
+                    logging.getLogger(__name__).debug(output.strip())
+            rc = process.poll()
+            return rc
+
+    @staticmethod
+    def isRaspberryPi(self):
+        if os.uname()[4].startswith("arm"):
+            return True
+        else:
+            return False
 
 def _json_object_hook(d):
     return namedtuple('X', d.keys())(*d.values())

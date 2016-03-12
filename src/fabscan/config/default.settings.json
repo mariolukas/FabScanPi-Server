@@ -7,13 +7,13 @@
      "line_coords_buffer": 5,
      "percent_top_pixels": 0.1,
      "center": 0.50,
-     "threshold": 240,
+     "threshold": 100,
      "crop": {
        "upper": -128,
        "lower": -810
      },
      "backwall": {
-       "laser_pixel_position" : 400,
+       "laser_pixel_position" : 500,
        "laser": {
          "x": 0.0,
          "y": 11.0,

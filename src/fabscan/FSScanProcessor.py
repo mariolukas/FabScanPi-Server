@@ -8,16 +8,15 @@ import pykka
 import time
 import datetime
 import multiprocessing
-import subprocess
-import os
+
 import logging
 
 from fabscan.util import FSUtil
 from fabscan.file.FSPointCloud import FSPointCloud
 from fabscan.vision.FSImageProcessor import ImageProcessor
-from fabscan.vision.FSImageWorker import FSImageWorkerPool
 from fabscan.FSEvents import FSEventManager, FSEvents, FSEvent
-from fabscan.vision.FSImageTask import ImageTask, FSTaskType
+from fabscan.vision.FSImageTask import ImageTask
+from fabscan.vision.FSMeshlab import FSMeshlabTask
 from fabscan.vision.FSImageWorker import FSImageWorkerPool
 from fabscan.controller import HardwareController
 from fabscan.FSConfig import Config
@@ -293,6 +292,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         event = FSEvent()
         event.command = '_COMPLETE'
         #TODO: generate MESH Here!
+        self.create_mesh(self._prefix)
         self.eventManager.publish(FSEvents.COMMAND,event)
 
         message = FSUtil.new_message()
@@ -304,17 +304,9 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
 
-
     def create_mesh(self, prefix):
-
-        basedir = os.path.dirname(os.path.dirname(__file__))
-        input =  self.config.folders.scans+str(prefix)+"/"+str(prefix)+".ply"
-        output = self.config.folders.scans+str(prefix)+"/"+str(prefix)+".stl"
-        mlx = basedir+"/fabscan/static/data/mlx/default_mesh.mlx"
-        os.environ["DISPLAY"]=":0"
-        subprocess.call([self.config.meshlab.path+"/meshlabserver -i "+input+" -o "+output+" -s "+mlx],shell=True)
-        self._logger.debug("STL File written.")
-
+        _meshlabTask = FSMeshlabTask(self._prefix)
+        _meshlabTask.run()
 
 
     def append_points(self, point_set):
