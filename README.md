@@ -121,4 +121,11 @@ review the [guidelines for contributing](CONTRIBUTING.md).
 * [Feature requests](CONTRIBUTING.md#features)
 * [Pull requests](CONTRIBUTING.md#pull-requests)
 
-
+## Contributions from
+* Watterott electronic
+* Beckmann Mediendesign (FabScanPi Logo)
+* Doug LaRue 
+* Jan Thar
+* Rene Bohne
+* Christoph Emonds
+* Jan Borchers
