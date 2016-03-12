@@ -47,7 +47,8 @@ class HardwareController(SingletonMixin):
         self.led.on(0,0,20)
         self.laser.on()
         self.turntable.start_turning()
-        pass
+        self.camera.device.startStream()
+
 
 
     def settings_mode_off(self):
@@ -55,9 +56,11 @@ class HardwareController(SingletonMixin):
         self.led.off()
         self.laser.off()
         self.camera.device.flushStream()
+        self.camera.device.stopStream()
+
 
     def get_picture(self):
-        img = self.camera.device.getStream()
+        img = self.camera.device.getFrame()
         return img
 
     def scan_at_position(self, steps=180, color=False):
@@ -73,17 +76,20 @@ class HardwareController(SingletonMixin):
 
 
         self.turntable.step_interval(steps, speed)
-        img = self.camera.device.getStream()
+        img = self.camera.device.getFrame()
         return img
 
 
     def get_laser_angle(self):
-        image = self.camera.device.getStream()
+        image = self.camera.device.getFrame()
         angle = self._image_processor.calculate_laser_angle(image)
         return angle
 
     def arduino_is_connected(self):
         return self.serial_connection.is_connected()
+
+    def get_firmware_version(self):
+        return self.serial_connection.get_firmware_version()
 
     def camera_is_connected(self):
        return self.camera.is_connected()

@@ -52,8 +52,8 @@ class FSapi():
         if os.path.exists(basedir+id+"/thumbnail_"+id+".png"):
             scan['thumbnail'] = thumbnail_file
 
-        mesh_file = str("http://"+headers['host']+"/scans/"+id+"/"+id+".stl")
-        if os.path.exists(basedir+id+"/"+id+".stl"):
+        mesh_file = str("http://"+headers['host']+"/scans/"+id+"/"+id+"_meshed.ply")
+        if os.path.exists(basedir+id+"/"+id+"_meshed.ply"):
             scan['mesh'] = mesh_file
 
         settings_file = str("http://"+headers['host']+"/scans/"+id+"/"+id+".fab")

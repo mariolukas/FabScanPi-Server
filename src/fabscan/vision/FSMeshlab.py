@@ -23,7 +23,7 @@ class FSMeshlabTask(threading.Thread):
             basedir = os.path.dirname(os.path.dirname(__file__))
             print basedir
             input =  self.config.folders.scans+str(self.prefix)+"/"+str(self.prefix)+".ply"
-            output = self.config.folders.scans+str(self.prefix)+"/"+str(self.prefix)+".ply"
+            output = self.config.folders.scans+str(self.prefix)+"/"+str(self.prefix)+"_meshed.ply"
             mlx = basedir+"/mlx/test.mlx"
             FSSystem.run_command("xvfb-run meshlabserver -i "+input+" -o "+output+" -s "+str(mlx)+" -om vc vn")
             self.message_event()

@@ -170,6 +170,7 @@ class PiCam(threading.Thread):
         self.settings = Settings.instance()
         self.camera_buffer = cambuffer
         self.awb_default_gain = 0
+        self.is_idle = True
 
         self._logger =  logging.getLogger(__name__)
 
@@ -195,24 +196,37 @@ class PiCam(threading.Thread):
                 #self.camera.hflip = True
 
                 self._logger.debug("PI Camera Moule ready.")
+                while True:
 
-                stream = io.BytesIO()
-                for foo in self.camera.capture_continuous(stream, format='jpeg', use_video_port=True):
+                    if not self.is_idle:
+                        stream = io.BytesIO()
+                        for foo in self.camera.capture_continuous(stream, format='jpeg', use_video_port=True):
 
-                    self.camera.contrast = self.settings.camera.contrast
-                    self.camera.brightness = self.settings.camera.brightness
-                    self.camera.saturation = self.settings.camera.saturation
-                    stream.seek(0)
-                    data = np.fromstring(stream.getvalue(), dtype=np.uint8)
-                    data = cv2.imdecode(data, 1)
+                            self.camera.contrast = self.settings.camera.contrast
+                            self.camera.brightness = self.settings.camera.brightness
+                            self.camera.saturation = self.settings.camera.saturation
+                            stream.seek(0)
+                            data = np.fromstring(stream.getvalue(), dtype=np.uint8)
+                            data = cv2.imdecode(data, 1)
 
-                    try:
-                        self.semaphore.acquire()
-                        self.camera_buffer.append(data)
-                    finally:
-                        self.semaphore.release()
-                    stream.truncate()
-                    stream.seek(0)
+                            try:
+                                self.semaphore.acquire()
+                                self.camera_buffer.append(data)
+                            finally:
+                                self.semaphore.release()
+                            stream.truncate()
+                            stream.seek(0)
+
+                            if self.is_idle:
+                                self.semaphore.acquire()
+                                self.is_idle = True
+                                self.semaphore.release()
+                                break
+
+                            print "running"
+                    else:
+                        time.sleep(0.05)
+
 
 
         except(RuntimeError, TypeError, NameError):
@@ -256,16 +270,26 @@ class PiCam(threading.Thread):
     def setResolution(self, width, height):
         self.camera.resolution = (width, height)
 
-    def getStream(self, first=False):
+    def getFrame(self):
+        return self.camera_buffer.get()
 
+    def startStream(self, first=False):
         try:
             self.semaphore.acquire()
-            return self.camera_buffer.get()
+            self.is_idle = False
+            #return self.camera_buffer.get()
         finally:
             pass
             self.semaphore.release()
 
+    def stopStream(self):
+        print "stop called "+str(self.is_idle)
+        self.semaphore.acquire()
+        self.is_idle = True
+        self.semaphore.release()
+
     def flushStream(self):
+
         self.camera_buffer.flush()
 
     def setContrast(self, contrast):

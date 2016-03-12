@@ -27,6 +27,7 @@ class FSSerialCom():
         self._baudrate = self.config.serial.baudrate
         self._serial = None
         self._connected = False
+        self._firmware_version = None
         self._openSerial()
 
 
@@ -100,6 +101,7 @@ class FSSerialCom():
 
            if self._serial.isOpen() and (current_version != "None"):
               self._logger.info("FabScanPi is connected to Arduino or FabScanPi HAT on port: "+str(self._port))
+              self._firmware_version = current_version
               self._connected = True
            else:
               self._logger.error("Can not find Arduino or FabScanPi HAT")
@@ -151,3 +153,5 @@ class FSSerialCom():
     def is_connected(self):
         return self._connected
 
+    def get_firmware_version(self):
+        return self._firmware_version

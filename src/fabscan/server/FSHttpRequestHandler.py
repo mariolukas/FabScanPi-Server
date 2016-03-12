@@ -171,6 +171,8 @@ class RequestHandler(SimpleHTTPRequestHandler):
                         time.sleep(0.05)
 
                 self.close_mjpeg_stream = False
+                self._settingsPreviewProcessor.stop()
+
                 time.sleep(0.05)
 
            except IOError as e:

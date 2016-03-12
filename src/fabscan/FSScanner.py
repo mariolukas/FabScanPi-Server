@@ -88,19 +88,23 @@ class FSScanner(threading.Thread):
 
         ## Stop Scan Process or Stop Settings Mode
         elif command == FSCommand.STOP:
+
             if self._state is FSState.SCANNING:
                 self.scanProcessor.ask({FSEvents.COMMAND:FSCommand.STOP})
                 self.scanProcessor.stop()
-                #self.set_state(FSState.IDLE)
 
             if self._state is FSState.SETTINGS:
                 self.hardwareController.settings_mode_off()
+                #self.scanProcessor.stop()
 
+            self.hardwareController.camera.device.stopStream()
             self.set_state(FSState.IDLE)
+
 
         elif command == FSCommand._COMPLETE:
             self.set_state(FSState.IDLE)
-            self.scanProcessor.stop()
+            self.hardwareController.camera.device.stopStream()
+            #self.scanProcessor.stop()
             self._logger.info("Scan complete")
 
         elif command == FSCommand._LASER_DETECTION_FAILED:
@@ -119,6 +123,7 @@ class FSScanner(threading.Thread):
         message['data']['client'] = event['client']
         message['data']['state'] = self._state
         message['data']['server_version'] = str(__version__)
+        message['data']['firmware_version'] = str(self.hardwareController.get_firmware_version())
         #message['data']['points'] = self.pointcloud
         message['data']['settings'] = self.settings.todict(self.settings)
 

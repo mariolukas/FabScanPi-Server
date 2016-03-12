@@ -81,6 +81,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.hardwareController.laser.off()
         self.hardwareController.turntable.stop_turning()
         self.hardwareController.turntable.enable_motors()
+        self.hardwareController.camera.device.startStream()
         self._resolution = int(self.settings.resolution)
         self._laser_positions = int(self.settings.laser_positions)
         self._is_color_scan = bool(self.settings.color)
@@ -123,7 +124,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         time.sleep(2)
         self.hardwareController.camera.device.flushStream()
         time.sleep(1)
-        self.hardwareController.camera.device.getStream()
+        
 
 
     def finish_texture_scan(self):
@@ -177,7 +178,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.hardwareController.camera.device.flushStream()
         time.sleep(2)
 
-        self._laser_angle = self.image_processor.calculate_laser_angle(self.hardwareController.camera.device.getStream())
+        self._laser_angle = self.image_processor.calculate_laser_angle(self.hardwareController.camera.device.getFrame())
 
         if self._laser_angle == None:
             event = FSEvent()
@@ -292,7 +293,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         event = FSEvent()
         event.command = '_COMPLETE'
         #TODO: generate MESH Here!
-        self.create_mesh(self._prefix)
+        #self.create_mesh(self._prefix)
         self.eventManager.publish(FSEvents.COMMAND,event)
 
         message = FSUtil.new_message()
