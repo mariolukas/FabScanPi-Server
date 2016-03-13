@@ -62,14 +62,15 @@
 
   name = 'fabscan.directives.FSMJPEGStream';
 
-  angular.module(name, []).directive("mjpeg", [
+  angular.module(name, []).directive('mjpeg', [
     '$log', function($log) {
       return {
         restrict: 'E',
         replace: true,
         template: '<span></span>',
         scope: {
-          'url': '='
+          'url': '=',
+          'mode': '='
         },
         link: function(scope, element, attrs) {
           scope.$watch('url', (function(newVal, oldVal) {
@@ -77,11 +78,19 @@
 
             if (newVal) {
               iframe = document.createElement('iframe');
-              iframe.setAttribute('width', '100%');
               iframe.setAttribute('frameborder', '0');
               iframe.setAttribute('scrolling', 'no');
+              iframe.setAttribute('style', "height:100%;  position:absolute;");
               element.replaceWith(iframe);
-              iframeHtml = '<html><head><base target="_parent" /><style type="text/css">html, body { margin: 0; padding: 0; height: 100%; width: 100%; }</style><script> function resizeParent() { var ifs = window.top.document.getElementsByTagName("iframe"); for (var i = 0, len = ifs.length; i < len; i++) { var f = ifs[i]; var fDoc = f.contentDocument || f.contentWindow.document; if (fDoc === document) { f.height = 0; f.height = document.body.scrollHeight; } } }</script></head><body onresize="resizeParent()"><img src="' + newVal + '" style="width: 100%; height: auto" onload="resizeParent()" /></body></html>';
+              if (scope.mode === "texture") {
+                iframe.setAttribute('width', '100%');
+                iframeHtml = '<html><head><base target="_parent" /><style type="text/css">html, body { margin: 0; padding: 0; height: 100%; width: 100%; }</style><script> function resizeParent() { var ifs = window.top.document.getElementsByTagName("iframe"); for (var i = 0, len = ifs.length; i < len; i++) { var f = ifs[i]; var fDoc = f.contentDocument || f.contentWindow.document; if (fDoc === document) { f.height = 0; f.height = document.body.scrollHeight; } } }</script></head><body style="" onresize="resizeParent()"><img src="' + newVal + '" style="z-index:1000; opacity: 0.4; width: 60%; bottom:70px; left:20%;  position:absolute;" onload="resizeParent()" /></body></html>';
+              }
+              if (scope.mode === "preview") {
+                iframe.setAttribute('width', '320px');
+                iframe.setAttribute('height', '240px');
+                iframeHtml = '<html><head><base target="_parent" /><style type="text/css">html, body { margin: 0; padding: 0; height: 320px; width: 240px; }</style><script> function resizeParent() { var ifs = window.top.document.getElementsByTagName("iframe"); for (var i = 0, len = ifs.length; i < len; i++) { var f = ifs[i]; var fDoc = f.contentDocument || f.contentWindow.document; if (fDoc === document) { f.height = 0; f.height = document.body.scrollHeight; } } }</script></head><body onresize="resizeParent()"><img src="' + newVal + '" style="z-index:1000; opacity: 1.0; width: 320px; height:240px; position:absolute;" onload="resizeParent()" /><div style="position:absolute;  text-align:center; width:320px; height:240px; float:left; z-index:-1000; left:0;"><img style="margin-top:100px; width:50px; height:50px;" src="icons/spinner.gif" /></div></body></html>';
+              }
               doc = iframe.document;
               if (iframe.contentDocument) {
                 doc = iframe.contentDocument;
@@ -92,7 +101,7 @@
               doc.writeln(iframeHtml);
               doc.close();
             } else {
-              element.html('<span></span>');
+              element.html('<span>Hier Nachricht<img src="icons/spinner.gif"</span>');
             }
           }), true);
         }
@@ -165,7 +174,7 @@
       return {
         restrict: "A",
         link: postLink = function(scope, element, attrs) {
-          var camera, cameraTarget, colors, contH, contW, controls, currentPointcloudAngle, current_point, materials, mouseX, mouseY, mousedown, pointcloud, positions, rad, renderer, scanLoaded, scene, windowHalfX, windowHalfY;
+          var camera, cameraTarget, colors, contH, contW, controls, currentPointcloudAngle, current_point, materials, mesh, mouseX, mouseY, mousedown, pointcloud, positions, rad, renderer, scanLoaded, scene, windowHalfX, windowHalfY;
 
           camera = void 0;
           scene = void 0;
@@ -175,6 +184,7 @@
           colors = void 0;
           controls = void 0;
           pointcloud = void 0;
+          mesh = void 0;
           cameraTarget = void 0;
           currentPointcloudAngle = 0;
           mousedown = false;
@@ -185,10 +195,12 @@
           scope.width = window.innerWidth;
           scope.fillcontainer = true;
           scope.materialType = 'lambert';
+          scope.objectGeometry = null;
           scope.setPointHandlerCallback(scope.addPoints);
           scope.setClearViewHandlerCallback(scope.clearView);
           scope.loadPLYHandlerCallback(scope.loadPLY);
           scope.getRendererCallback(renderer);
+          scope.setRenderTypeCallback(scope.renderObjectAsType);
           mouseX = 0;
           mouseY = 0;
           contW = (scope.fillcontainer ? element[0].clientWidth : scope.width);
@@ -222,17 +234,15 @@
             directionalLight.position.set(x, y, z);
             scene.add(directionalLight);
             directionalLight.castShadow = true;
-            d = 1;
-            directionalLight.shadowCameraLeft = -d;
-            directionalLight.shadowCameraRight = d;
-            directionalLight.shadowCameraTop = d;
-            directionalLight.shadowCameraBottom = -d;
-            directionalLight.shadowCameraNear = 1;
-            directionalLight.shadowCameraFar = 4;
-            directionalLight.shadowMapWidth = 1024;
-            directionalLight.shadowMapHeight = 1024;
-            directionalLight.shadowBias = -0.005;
-            return directionalLight.shadowDarkness = 0.15;
+            d = 3;
+            directionalLight.shadow.camera.left = -d;
+            directionalLight.shadow.camera.right = d;
+            directionalLight.shadow.camera.top = d;
+            directionalLight.shadow.camera.bottom = -d;
+            directionalLight.shadow.camera.near = 1;
+            directionalLight.shadow.camera.far = 4;
+            directionalLight.shadow.bias = -0.005;
+            return directionalLight.shadow.darkness = 0.35;
           };
           scope.init = function() {
             var axes, cylinder, geometry, material, plane;
@@ -253,7 +263,7 @@
             scene.add(plane);
             plane.receiveShadow = true;
             scene.add(new THREE.AmbientLight(0x777777));
-            scope.addShadowedLight(1, 1, 1, 0xffffff, 1.35);
+            scope.addShadowedLight(1, 1, 1, 0xffffff, 0.35);
             scope.addShadowedLight(0.5, 1, -1, 0xffaa00, 1);
             axes = new THREE.AxisHelper(10);
             geometry = new THREE.CylinderGeometry(7, 7, 0.2, 32);
@@ -318,7 +328,10 @@
                 pointcloud.rotation.z += d;
               }
               if (pointcloud && scope.scanComplete) {
-                return pointcloud.rotation.y += d;
+                pointcloud.rotation.y += d;
+              }
+              if (mesh) {
+                return mesh.rotation.z += d;
               }
             }
           };
@@ -372,6 +385,45 @@
             result.set(second, firstLength);
             return result;
           };
+          scope.renderMesh = function() {
+            var material;
+
+            scope.clearView();
+            scope.objectGeometry.computeFaceNormals();
+            material = new THREE.MeshBasicMaterial({
+              color: 0x696969,
+              wireframe: true
+            });
+            mesh = new THREE.Mesh(scope.objectGeometry, material);
+            mesh.position.set(0, -0.25, 0);
+            mesh.rotation.set(-Math.PI / 2, 0, 0);
+            mesh.scale.set(0.1, 0.1, 0.1);
+            return scene.add(mesh);
+          };
+          scope.renderPLY = function() {
+            var material;
+
+            pointcloud = new THREE.Object3D;
+            material = new THREE.PointsMaterial({
+              size: 0.15,
+              vertexColors: THREE.FaceColors
+            });
+            pointcloud = new THREE.Points(scope.objectGeometry, material);
+            pointcloud.position.set(0, -0.25, 0);
+            pointcloud.rotation.set(-Math.PI / 2, 0, 0);
+            pointcloud.scale.set(0.1, 0.1, 0.1);
+            return scene.add(pointcloud);
+          };
+          scope.renderObjectAsType = function(type) {
+            if (type === "MESH") {
+              scope.clearView();
+              scope.renderMesh();
+            }
+            if (type === "POINTCLOUD") {
+              scope.clearView();
+              return scope.renderPLY();
+            }
+          };
           scope.loadPLY = function(file) {
             var loader;
 
@@ -383,20 +435,13 @@
             loader.addEventListener('progress', function(item) {
               return scope.progressHandler(item);
             });
-            pointcloud = new THREE.Object3D;
-            return loader.load(file, function(geometry) {
-              var material;
-
-              $log.info(geometry);
-              material = new THREE.PointCloudMaterial({
-                size: 0.15,
-                vertexColors: THREE.FaceColors
-              });
-              pointcloud = new THREE.PointCloud(geometry, material);
-              pointcloud.position.set(0, -0.25, 0);
-              pointcloud.rotation.set(-Math.PI / 2, 0, 0);
-              pointcloud.scale.set(0.1, 0.1, 0.1);
-              scene.add(pointcloud);
+            return loader.load(file, function(objectGeometry) {
+              scope.objectGeometry = objectGeometry;
+              if (file.indexOf("mesh") > -1) {
+                scope.renderMesh();
+              } else {
+                scope.renderPLY();
+              }
             });
           };
           scope.addPoints = function(points, progress, resolution) {
@@ -434,11 +479,11 @@
               }
               geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
               geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
-              material = new THREE.PointCloudMaterial({
+              material = new THREE.PointsMaterial({
                 size: 0.2,
                 vertexColors: THREE.VertexColors
               });
-              pointcloud = new THREE.PointCloud(geometry, material);
+              pointcloud = new THREE.Points(geometry, material);
               degree = 360 / resolution;
               $log.info(degree);
               scope.rad = degree * (Math.PI / 180);
@@ -456,7 +501,8 @@
             if (pointcloud) {
               positions = void 0;
               colors = void 0;
-              return scene.remove(pointcloud);
+              scene.remove(pointcloud);
+              return scene.remove(mesh);
             }
           };
           scope.animate = function() {
@@ -674,7 +720,8 @@ Example of a 'common' filter that can be shared by all views
       SCAN: 'SCAN',
       START: 'START',
       STOP: 'STOP',
-      UPDATE_SETTINGS: 'UPDATE_SETTINGS'
+      UPDATE_SETTINGS: 'UPDATE_SETTINGS',
+      MESHING: 'MESHING'
     };
     return FSEnumService;
   });
@@ -801,6 +848,19 @@ Example of a 'common' filter that can be shared by all views
         };
         FSMessageHandlerService.sendData(message);
         return $rootScope.$broadcast(FSEnumService.commands.STOP);
+      };
+      service.runMeshing = function(scan_id) {
+        var message;
+
+        message = {};
+        message = {
+          event: FSEnumService.events.COMMAND,
+          data: {
+            command: FSEnumService.commands.MESHING,
+            scan_id: scan_id
+          }
+        };
+        return FSMessageHandlerService.sendData(message);
       };
       service.exitScan = function() {
         var message;
@@ -980,6 +1040,8 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       $scope.scanComplete = false;
       $scope.scanLoaded = false;
       $scope.remainingTime = [];
+      $scope.server_version = void 0;
+      $scope.firmware_version = void 0;
       $scope.scanDataIsAvailable = function() {
         if (FSScanService.getScanId() !== null) {
           return true;
@@ -995,6 +1057,8 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
 
         $log.info("State: " + data['state']);
         document.title = "FabScanPi " + data['server_version'];
+        $scope.server_version = data['server_version'];
+        $scope.firmware_version = data['firmware_version'];
         _settings = data['settings'];
         _settings.resolution *= -1;
         angular.copy(_settings, $scope.settings);
@@ -1017,13 +1081,17 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         message = FSi18nService.translateKey('main', data['message']);
         switch (data['level']) {
           case "info":
-            toastr.info(message);
+            toastr.info(message, {
+              timeOut: 5000
+            });
             break;
           case "warn":
             toastr.warning(message);
             break;
           case "error":
-            toastr.error(message);
+            toastr.error(message, {
+              timeOut: 0
+            });
             break;
           case "success":
             toastr.success(message);
@@ -1101,13 +1169,17 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         if (data['message'] === 'SCAN_COMPLETE') {
           FSScanService.setScanId(data['scan_id']);
           $scope.scanComplete = true;
+          $scope.showTextureScan = false;
           $scope.remainingTime = [];
           $scope.startTime = null;
+          $scope.sampledRemainingTime = 0;
         }
-        if (data['message'] === 'SCAN_CANCELED') {
+        if (data['message'] === 'SCAN_CANCELED' || data['message'] === 'SCAN_STOPED') {
           $scope.remainingTime = [];
+          $scope.showTextureScan = false;
           $scope.startTime = null;
-          return $scope.progress = 0;
+          $scope.progress = 0;
+          return $scope.sampledRemainingTime = 0;
         }
       });
       $scope.$on(FSEnum.events.ON_NEW_PROGRESS, function(event, data) {
@@ -1167,6 +1239,9 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
           return (values[half - 1] + values[half]) / 2.0;
         }
       };
+      $scope.setRenderTypeCallback = function(callback) {
+        return $scope.renderObjectAsType = callback;
+      };
       $scope.loadPLYHandlerCallback = function(callback) {
         return $scope.loadPLY = callback;
       };
@@ -1208,6 +1283,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         $scope.scanComplete = false;
         $scope.scanLoaded = false;
         $scope.remainingTime = [];
+        $scope.stopStream();
         return FSScanService.stopScan();
       };
       $scope.toggleShareDialog = function() {
@@ -1251,7 +1327,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         return FSScanService.startSettings();
       };
       $scope.stopStream = function() {
-        return $scope.streamUrl = "icons/spinner.gif";
+        return $scope.streamUrl = " ";
       };
       return $scope.manviewhandler = function() {
         if ($scope.showSettings) {
@@ -1329,6 +1405,16 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
           }), 600);
         }
       }, true);
+      $scope.$watch('settings.laser_positions', function(newVal, oldVal) {
+        if (newVal !== oldVal) {
+          updateSettings();
+          $timeout.cancel($scope.timeout);
+          $scope.showPositionValue = true;
+          return $scope.timeout = $timeout((function() {
+            $scope.showPositionValue = false;
+          }), 600);
+        }
+      }, true);
       $scope.$watch('settings.threshold', function(newVal, oldVal) {
         if (newVal !== oldVal) {
           updateSettings();
@@ -1336,6 +1422,16 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
           $scope.showThresholdValue = true;
           return $scope.timeout = $timeout((function() {
             $scope.showThresholdValue = false;
+          }), 200);
+        }
+      }, true);
+      $scope.$watch('settings.camera.saturation', function(newVal, oldVal) {
+        if (newVal !== oldVal) {
+          updateSettings();
+          $timeout.cancel($scope.timeout);
+          $scope.showSaturationValue = true;
+          return $scope.timeout = $timeout((function() {
+            $scope.showSaturationValue = false;
           }), 200);
         }
       }, true);
@@ -1407,15 +1503,19 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       $scope.ply = null;
       $scope.settings = null;
       $scope.id = FSScanService.getScanId();
+      $scope.selectedTab = 'download';
+      $scope.selectTab = function(tab) {
+        return $scope.selectedTab = tab;
+      };
       $log.info($scope.shareDialog);
       promise = $http.get(Configuration.installation.httpurl + 'api/v1/scans/' + FSScanService.getScanId());
       promise.then(function(payload) {
         $log.info(payload);
-        $scope.stl = payload.data.mesh;
+        $scope.mesh = payload.data.mesh;
         $scope.ply = payload.data.pointcloud;
         return $scope.settings = payload.data.settings;
       });
-      return $scope.deleteScan = function() {
+      $scope.deleteScan = function() {
         $scope.toggleShareDialog();
         promise = $http.get(Configuration.installation.httpurl + 'api/v1/delete/' + FSScanService.getScanId());
         return promise.then(function(payload) {
@@ -1424,6 +1524,16 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
           FSScanService.setScanId(null);
           return $rootScope.$broadcast('clearView');
         });
+      };
+      $scope.loadPointCloud = function(pointcloud) {
+        $scope.toggleShareDialog();
+        $scope.scanComplete = false;
+        toastr.info("Loading file...");
+        return $scope.loadPLY(pointcloud);
+      };
+      return $scope.runMeshlab = function() {
+        $scope.toggleShareDialog();
+        return FSScanService.runMeshing(FSScanService.getScanId());
       };
     }
   ]);

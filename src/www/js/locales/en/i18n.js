@@ -16,4 +16,6 @@ window.i18n["main"]["NO_CAMERA_CONNECTION"] = function(d){return "Camera is not 
 window.i18n["main"]["CONNECTED_TO_SERVER"] = function(d){return "Connected to FabScanPi-Server"}
 window.i18n["main"]["SERIAL_CONNECTION_READY"] = function(d){return "Arduino/ FabScanPI HAT connected"}
 window.i18n["main"]["CAMERA_READY"] = function(d){return "Camera ready"}
+window.i18n["main"]["MESHING_STARTED"] = function(d){return "Meshing started."}
+window.i18n["main"]["MESHING_DONE"] = function(d){return "Meshed file is available now"}
 })();

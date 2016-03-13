@@ -2,7 +2,9 @@
 <div lang="en" class="ng-cloak">
 	<head>
 		<title>FabScanPi</title>
-        <link rel="icon" type="image/png" href="icons/favicon.png" />
+        <link rel="icon"
+              type="image/png"
+              href="icons/favicon.png">
 		<meta charset="utf-8">
         <meta name=viewport content="width=device-width, initial-scale=1, maximum-scale=1">
         <meta name=apple-mobile-web-app-capable content=yes>
@@ -27,23 +29,16 @@
     </div>
     <div ng-controller="fabscan.controller.FSScanController">
           <div class="header row" id="header">
-                <!--
-               <div style="margin-left:2em;"> <h2>WebScan</h2></div>
-                <div style="margin-left:2em;" class="version">
-                    Version 0.0.2
-                </div>
-                -->
           </div>
 
            <div id="mainview"  class="row scroll-y">
-               <!-- No Connection -->
-               <!--ng-show="('UPDATING_SETTINGS' | currentState)"-->
-
                <!-- Settings View -->
                 <div class="settingsWindow" ng-class="{'open':('SETTINGS' | currentState)}">
                     <div ng-if="('SETTINGS' | currentState)" ng-controller="fabscan.controller.FSSettingsController" >
+
                     <div class="preview-image">
-                        <img ng-if="('SETTINGS' | currentState)" style="position:absolute; width:320px; height:240px;border: 1px solid black; float:left; background-color:black;"  ng-src="{{streamUrl}}">
+                        <div style="background-color: black; width:320px; height:240px; position:absolute; left:0px;"></div>
+                        <mjpeg mode="'preview'" url="streamUrl"></mjpeg>
                     </div>
                     <div class="settings-content">
                         <div style="height: 40px;">
@@ -71,16 +66,21 @@
                                 <div  style="display:inline-block; width:5em; color:white; padding-left:1em;">Resolution</div>
                             <slider class="resolution" style="width:70%; margin-left:1em;"  show-steps="true" floor="-16" ceiling="-1" step="4" precision="1" ng-model="settings.resolution"></slider>
                             </div>
-
+                            <!--
                             <div>
-                                <div style="display:inline-block; width:5em; color:white; padding-left:1em;" >Color Scan</div><input  style="width:1em; height:1em; margin-left:1.5em; margin-top:2.5em;" type="checkbox"  ng-change="setColor()" ng-checked="colorIsSelected()" ng-model="settings.color">
-
-                                <a class="hvr-grow" style="margin-right: 13%; margin-top:1em; text-decoration:none; float:right; color:white; font-size:1.5em;" ng-click="startScan()" href="#">Start Scan</a>
+                                <div ng-class="{'longFadeOut':!showResolutionValue}" class="slider-value-label" >{{settings.laser_positions}}</div>
+                                <div  style="display:inline-block; width:5em; color:white; padding-left:1em;">Positions</div>
+                                <slider class="resolution" style="width:70%; margin-left:1em;"  floor="1" ceiling="4" step="1" precision="1" ng-model="settings.laser_positions"></slider>
+                            </div>
+                            -->
+                            <div>
+                                <div style="display:inline-block; width:5em; color:white; padding-left:1em;" >Color Scan</div><input  style="width:1em; height:1em; margin-left:1.5em; margin-top:0.5em;" type="checkbox"  ng-change="setColor()" ng-checked="colorIsSelected()" ng-model="settings.color">
+                                <a class="hvr-grow" style="margin-right: 13%; margin-top:0.2em; text-decoration:none; float:right; color:white; font-size:1.5em;" ng-click="startScan()" href="#">Start Scan</a>
                             </div>
                         </div>
                         <div class="tab-content" ng-show="(selectedTab == 'camera')">
                             <div>
-                                <div ng-class="{'fadeOut':!showContrastValue}" class="slider-value-label" >{{settings.camera.saturation}}</div>
+                                <div ng-class="{'fadeOut':!showSaturationValue}" class="slider-value-label" >{{settings.camera.saturation}}</div>
                                 <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Saturation</div>
                                 <slider style="width:70%; margin-left:1em;" floor="-100" ceiling="100" step="1" precision="1" ng-model="settings.camera.saturation"></slider>
                             </div>
@@ -120,7 +120,7 @@
                <!-- Scan View -->
                  <div  ng-controller="fabscan.controller.FSPreviewController"  style="margin: 0 auto; z-index:-100;">
                      <div ng-if="showTextureScan" class="texture-preview">
-                         <img ng-src="{{streamUrl}}" >
+                         <mjpeg mode="'texture'" url="streamUrl"></mjpeg>
                      </div>
                      <div ng-click="manviewhandler()">
                          <div
@@ -132,7 +132,16 @@
                          scale="scale"
                          material-type="materialType"
                          new-points="newPoints"
-                         ></div>
+                         >
+                             <div style="position:absolute; right:10px;">
+                                 <span>Server: {{server_version}} <br> Firmware: {{firmware_version}}</span>
+                             </div>
+                         <!--<div style="position:absolute;">
+                             <a href="#" ng-click="renderObjectAsType('MESH')">Show Mesh</a>
+                             <a href="#" ng-click="renderObjectAsType('POINTCLOUD')">Show Pointcloud</a>
+                         </div>-->
+
+                         </div>
 
                      </div>
                      <!-- Load View -->
@@ -150,32 +159,73 @@
                      </div>
                      <!-- Scan Context View -->
                      <div class="optionsWindow" ng-class="{'open':shareDialog}" >
-                         <div ng-if="shareDialog" class="options" ng-controller="fabscan.controller.FSShareController">
-                           <div class="icon" ng-if="ply">
-                               <i class="fa fa-cloud-download fa-1x"></i>
-                               <a href="{{ply}}">Download PLY</a>
-                           </div>
-                             <!--
-                             <div class="icon" ng-if="stl">
-                                   <i class="fa fa-cloud-download fa-1x"></i>
-                               <a href="{{stl}}">Download STL</a>
-                           </div>
-                           -->
-                           <div class="icon" ng-if="settings">
-                               <i class="fa fa-gear fa-1x"></i>
-                               <a href="#">Load settings</a>
-                           </div>
-                           <div class="icon">
-                               <i class="fa fa-trash fa-1x"></i>
-                               <a href="#" ng-click="deleteScan()">Delete</a>
-                          </div>
-                             <!--
-                             <div class="icon">
-                                 <i class="fa fa-cloud-upload fa-1x"></i>
-                                 <a href="#">Upload to Thingiverse</a>
+                         <div ng-if="shareDialog" ng-controller="fabscan.controller.FSShareController">
+
+                             <div class="options-content">
+                                 <div style="height: 40px;">
+                                     <div ng-click="selectTab('download')" class="tab icon settings" ng-class="{'active':(selectedTab == 'download')}">
+                                         <i class="fa fa-cloud-download fa-2x"></i>
+                                     </div>
+                                     <div ng-click="selectTab('load')" class="tab icon settings" ng-class="{'active':(selectedTab == 'load')}">
+                                         <i class="fa fa-folder-open fa-2x"></i>
+                                     </div>
+                                     <div ng-click="selectTab('options')" class="tab icon settings" ng-class="{'active':(selectedTab == 'options')}">
+                                         <i class="fa fa-gear fa-2x"></i>
+                                     </div>
+                                     <div class="tab" sytle="width:100%">
+                                     </div>
+                                 </div>
+
+                                 <div class="tab-content " ng-show="(selectedTab == 'download')">
+
+                                     <div class="options">
+                                         <div class="icon" ng-if="ply">
+                                             <i class="fa fa-download fa-1x"></i>
+                                             <a href="{{ply}}">Download raw PLY</a>
+                                         </div>
+                                         <div class="icon" ng-if="mesh">
+                                             <i class="fa fa-download fa-1x"></i>
+                                             <a href="{{mesh}}">Download meshed PLY</a>
+                                         </div>
+
+                                     </div>
+                                 </div>
+                                 <div class="tab-content" ng-show="(selectedTab == 'load')">
+                                     <div class="options">
+                                         <div class="icon" ng-if="ply">
+                                             <i class="fa fa-file fa-1x"></i>
+                                             <a href="#" ng-click="loadPointCloud('{{ply}}')">Load raw PLY</a>
+                                         </div>
+                                         <div class="icon" ng-if="mesh">
+                                             <i class="fa fa-file fa-1x"></i>
+                                             <a href="#" ng-click="loadPointCloud('{{mesh}}')">Load meshed PLY</a>
+                                         </div>
+                                         <!--
+                                         <div class="icon" ng-if="settings">
+                                             <a href="#">Load settings</a>
+                                         </div>
+                                         -->
+                                     </div>
+
+                                 </div>
+
+                                 <div class="tab-content" ng-show="(selectedTab == 'options')">
+                                     <div class="options">
+                                         <div class="icon">
+                                             <i class="fa fa-trash fa-1x"></i>
+                                             <a href="#" ng-click="deleteScan()">Delete Scan</a>
+                                         </div>
+                                         <div class="icon">
+                                             <i class="fa fa-trash fa-1x"></i>
+                                             <a href="#" ng-click="runMeshlab('{{ply}}')">Execute Meshlab</a>
+                                         </div>
+                                     </div>
+
+                                 </div>
+
                              </div>
-                             -->
-                        </div>
+
+                         </div>
                      </div>
                      <div ng-if="sampledRemainingTime > 0 && ('SCANNING' | currentState)"  class="timeRemaining">About {{sampledRemainingTime}} seconds remaining</div>
            </div>
@@ -215,8 +265,8 @@
 
             <!-- Right Icon Group -->
             <div class="icongroup right">
-                <a class="icon" tooltips title="Share Scan" tooltip-side="top"  ng-if="(scanDataIsAvailable() && !('SETTINGS' | currentState))"  ng-click="toggleShareDialog()"  href="#">
-                    <span  class="hvr-grow">
+                <a class="icon"   ng-if="(scanDataIsAvailable() && !('SETTINGS' | currentState))"  ng-click="toggleShareDialog()"  href="#">
+                    <span tooltips title="Share Scan" tooltip-side="top" class="hvr-grow">
                         <i class="fa fa-share-alt fa-3x"></i>
                     </span>
                 </a>

@@ -151,7 +151,7 @@ a:active .icon{
 }
 
 .optionsWindow.open{
-    height:220px;
+    height:240px;
     bottom: 60px;
     transition: height 0.3s;
     border-top: 2px solid rgb(73, 73, 73);
@@ -162,6 +162,11 @@ a:active .icon{
 .settings-content{
     height: 100%;
     margin-left: 320px;
+}
+
+.options-content{
+    height: 100%;
+
 }
 
 .settingsWindow.open{
@@ -315,7 +320,7 @@ html, body {
 .tab-content{
     background-color: rgba(53, 53, 53, 0.4);
     height:200px;
-    padding-top: 0.8em;
+    /*padding-top: 0.8em;*/
 }
 
 .options{
