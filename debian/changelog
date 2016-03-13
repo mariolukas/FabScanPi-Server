@@ -1,6 +1,6 @@
 fabscanpi-server (0.1.16) unstable; urgency=medium
 
-  * fixed issue #2, heavy CPU load
+  * fixed issue #5, heavy CPU load
   * refactored system callings, introduced new utils for system calls
   * system call stdouts are in logs now
   * added meshalabserver support by calling via xvfb
@@ -10,6 +10,8 @@ fabscanpi-server (0.1.16) unstable; urgency=medium
   * replaced threejs v70 by a newer version v74
   * refactored webgl directive, added support for switching between mesh and pointcloud (experimental)
   * refactored laser detection algorithm, it is more stable now.
+  * refactored and extended share dialog options
+  * made version number of firmware and server visible in main window
 
  -- Mario Lukas  <info@mariolukas.de>  Sat, 12 Mar 2016 01:11:11 +0000
 

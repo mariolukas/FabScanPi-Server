@@ -16,7 +16,7 @@ from fabscan.file.FSPointCloud import FSPointCloud
 from fabscan.vision.FSImageProcessor import ImageProcessor
 from fabscan.FSEvents import FSEventManager, FSEvents, FSEvent
 from fabscan.vision.FSImageTask import ImageTask
-from fabscan.vision.FSMeshlab import FSMeshlabTask
+
 from fabscan.vision.FSImageWorker import FSImageWorkerPool
 from fabscan.controller import HardwareController
 from fabscan.FSConfig import Config
@@ -124,7 +124,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         time.sleep(2)
         self.hardwareController.camera.device.flushStream()
         time.sleep(1)
-        
+
 
 
     def finish_texture_scan(self):
@@ -303,11 +303,6 @@ class FSScanProcessor(pykka.ThreadingActor):
         message['data']['level'] = "success"
 
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
-
-
-    def create_mesh(self, prefix):
-        _meshlabTask = FSMeshlabTask(self._prefix)
-        _meshlabTask.start()
 
 
     def append_points(self, point_set):

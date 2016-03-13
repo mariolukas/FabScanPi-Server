@@ -222,8 +222,6 @@ class PiCam(threading.Thread):
                                 self.is_idle = True
                                 self.semaphore.release()
                                 break
-
-                            print "running"
                     else:
                         time.sleep(0.05)
 
@@ -283,7 +281,6 @@ class PiCam(threading.Thread):
             self.semaphore.release()
 
     def stopStream(self):
-        print "stop called "+str(self.is_idle)
         self.semaphore.acquire()
         self.is_idle = True
         self.semaphore.release()

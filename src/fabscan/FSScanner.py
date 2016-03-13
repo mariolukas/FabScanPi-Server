@@ -15,6 +15,7 @@ from fabscan.FSEvents import FSEventManager, FSEvents
 from fabscan.controller import HardwareController
 from fabscan.util import FSUtil
 from fabscan.FSScanProcessor import FSScanProcessor
+from fabscan.vision.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import Settings
 
 
@@ -28,6 +29,7 @@ class FSCommand(object):
     START = "START"
     STOP = "STOP"
     UPDATE_SETTINGS = "UPDATE_SETTINGS"
+    MESHING = "MESHING"
     _COMPLETE = "_COMPLETE"
     _LASER_DETECTION_FAILED = "_LASER_DETECTION_FAILED"
 
@@ -42,6 +44,7 @@ class FSScanner(threading.Thread):
         self.daemon = True
         self.hardwareController = HardwareController.instance()
         self._exit_requested = False
+        self.meshingTaskRunning = False
 
         self._logger.debug("Number of cpu cores: "+str( multiprocessing.cpu_count()))
         self.eventManager = FSEventManager.instance()
@@ -116,6 +119,16 @@ class FSScanner(threading.Thread):
             self.set_state(FSState.SETTINGS)
             self.hardwareController.settings_mode_on()
 
+        elif command == FSCommand.MESHING:
+            _meshlabTask = FSMeshlabTask(event.scan_id)
+            _meshlabTask.start()
+            message = FSUtil.new_message()
+            message['type'] = FSEvents.ON_INFO_MESSAGE
+            message['data']['message'] = "MESHING_STARTED"
+            message['data']['level'] = "info"
+            self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
+
+
 
     def _on_client_connected(self,eventManager, event):
         message = FSUtil.new_message()
@@ -155,7 +168,7 @@ class FSScanner(threading.Thread):
 
     def set_state(self, state):
         self._state = state
-        message = FSUtil.new_message()
+
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_STATE_CHANGED
         message['data']['state'] = state

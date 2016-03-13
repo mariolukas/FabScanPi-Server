@@ -19,19 +19,29 @@ class FSMeshlabTask(threading.Thread):
             self.prefix = prefix
 
         def run(self):
-            self._logger.info("Meshlab Process Started...")
-            basedir = os.path.dirname(os.path.dirname(__file__))
-            print basedir
-            input =  self.config.folders.scans+str(self.prefix)+"/"+str(self.prefix)+".ply"
-            output = self.config.folders.scans+str(self.prefix)+"/"+str(self.prefix)+"_meshed.ply"
-            mlx = basedir+"/mlx/test.mlx"
-            FSSystem.run_command("xvfb-run meshlabserver -i "+input+" -o "+output+" -s "+str(mlx)+" -om vc vn")
-            self.message_event()
-            self._logger.info("Meshlab Process finished.")
+            try:
+                self._logger.info("Meshlab Process Started...")
+                basedir = os.path.dirname(os.path.dirname(__file__))
+                print self.prefix
+                input =  self.config.folders.scans+str(self.prefix)+"/"+str(self.prefix)+".ply"
+                output = self.config.folders.scans+str(self.prefix)+"/"+str(self.prefix)+"_meshed.ply"
+                mlx = basedir+"/mlx/test.mlx"
+                FSSystem.run_command("xvfb-run meshlabserver -i "+input+" -o "+output+" -s "+str(mlx)+" -om vc vn")
+                self.message_event()
+                self._logger.info("Meshlab Process finished.")
+            except:
+                self._logger.error("Meshing Task crashed.")
+                message = FSUtil.new_message()
+                message['type'] = FSEvents.ON_INFO_MESSAGE
+                message['data']['message'] = "MESHING_FAILED"
+                message['data']['level'] = "error"
+                self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
+
 
         def message_event(self):
             message = FSUtil.new_message()
             message['type'] = FSEvents.ON_INFO_MESSAGE
-            message['data']['message'] = "MESHLABTASK_DONE"
+            message['data']['message'] = "MESHING_DONE"
             message['data']['scan_id'] = self.prefix
             message['data']['level'] = "success"
+            self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
