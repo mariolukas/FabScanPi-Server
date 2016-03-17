@@ -30,14 +30,25 @@ class ImageProcessor():
         self.config = config
 
 
-    def get_texture_preview_image(self,cam_image):
+    def get_texture_stream_frame(self,cam_image):
         return cam_image
+
+    def get_calibration_stream_frame(self,cam_image):
+
+        r = 320.0 / cam_image.shape[1]
+        dim = (320, int(cam_image.shape[0] * r))
+        cam_image = cv2.resize(cam_image, dim, interpolation = cv2.INTER_AREA)
+        cv2.line(cam_image, (0,int(self.config.scanner.origin.y*cam_image.shape[0])), (cam_image.shape[1],int(0.75*cam_image.shape[0])), (0,255,0), thickness=1, lineType=8, shift=0)
+        cv2.line(cam_image, (int(0.5*cam_image.shape[1]),0), (int(0.5*cam_image.shape[1]), cam_image.shape[0]), (0,255,0), thickness=1, lineType=8, shift=0)
+
+        return cam_image
+
 
     def r_rgb(self, image):
         return cv2.split(image)[0]
 
 
-    def get_preview_image(self, cam_image, type='CAMERA'):
+    def get_laser_stream_frame(self, cam_image, type='CAMERA'):
 
         x_center = cam_image.shape[1] * self.settings.center
         x_center_delta = cam_image.shape[1] * 0.5 - x_center
@@ -54,7 +65,6 @@ class ImageProcessor():
         #cam_image = image_threshold
         #h, w = image_threshold.shape
         #weight_matrix = np.array((np.matrix(np.linspace(0, w - 1, w)).T * np.matrix(np.ones(h))).T)
-
         # Compute center of mass
         #s = image_threshold.sum(axis=1)
         #v = np.where(s > 0)[0]
@@ -70,6 +80,8 @@ class ImageProcessor():
         #cam_image = cv2.addWeighted(tres,1.0,cam_image,0.8,0)
         #cam_image = cv2.merge((cam_image,tres,red_channel))
         #cam_image = np.concatenate((red_channel, cam_image), axis=1)
+        #cv2.line(cam_image, (0,int(self.config.scanner.origin.y*cam_image.shape[0])), (cam_image.shape[1],int(0.75*cam_image.shape[0])), (0,255,0), thickness=1, lineType=8, shift=0)
+        #cv2.line(cam_image, (int(0.5*cam_image.shape[1]),0), (int(0.5*cam_image.shape[1]), cam_image.shape[0]), (0,255,0), thickness=1, lineType=8, shift=0)
 
 
         r = 320.0 / cam_image.shape[1]

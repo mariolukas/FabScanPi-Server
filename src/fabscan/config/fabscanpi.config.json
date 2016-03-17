@@ -1,12 +1,12 @@
 {
    "folders" : {
-    "www": "/usr/local/fabscanpi/www",
+    "www": "/home/pi/fabscan/src/www/",
     "scans": "/usr/local/fabscanpi/scans/"
    },
    "serial" : {
      "baudrate" : 115200,
-     "port": "/dev/ttyAMA0",
-     "autoflash": "True"
+     "autoflash": "True",
+     "port": "/dev/ttyAMA0"
    },
    "camera" : {
      "type" : "PICAM",
@@ -21,18 +21,18 @@
       },
       "position":{
           "x": 0.0,
-          "y": 5.5,
-          "z": 27.6
+          "y": 5,
+          "z": 29.5
       },
       "frame":{
-          "dimension": 23.5
+          "dimension": 27.5
       }
    },
    "laser": {
       "position":{
-        "x": 10.0,
-        "y": 7.3,
-        "z": 24.5
+        "x": 8.0,
+        "y": 6.5,
+        "z": 27.5
       },
       "angle": 33.0,
       "rotation_steps": 5,

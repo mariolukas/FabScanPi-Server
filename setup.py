@@ -109,7 +109,7 @@ def params():
         ('/usr/local/fabscanpi/www/js/',['src/www/js/app.js', 'src/www/js/lib.js']),
         ('/usr/local/fabscanpi/www/js/locales/en/',['src/www/js/locales/en/i18n.js']),
         ('/usr/local/fabscanpi/www/js/locales/de/',['src/www/js/locales/de/i18n.js']),
-        ('/usr/local/fabscanpi/www/icons/', ['src/www/icons/favicon.png']),
+        ('/usr/local/fabscanpi/www/icons/', ['src/www/icons/favicon.png', 'src/www/icons/spinner.gif']),
         ('/usr/local/fabscanpi/www/fonts/', ['src/www/fonts/fontawesome-webfont.woff2', 'src/www/fonts/fontawesome-webfont.woff', 'src/www/fonts/fontawesome-webfont.ttf'])
     ]
 

@@ -28,7 +28,7 @@ LOG=/var/log/$PKGNAME/$PKGNAME.log
 start() {
     echo "Starting fabscanpi-server..."
 
-    start-stop-daemon --start --quiet --user $DAEMONUSER    \
+    /sbin/start-stop-daemon --start --quiet --user $DAEMONUSER    \
             --make-pidfile --pidfile $PIDFILE --background       \
             --exec /bin/bash -- -c "$DAEMON $DAEMON_ARGS"
 

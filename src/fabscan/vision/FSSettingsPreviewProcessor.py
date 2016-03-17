@@ -25,28 +25,34 @@ class FSSettingsPreviewProcessor(pykka.ThreadingActor):
 
     def on_receive(self, event):
 
-        if event['type'] == 'THRESHOLD':
-            return self.create_threshold_preview()
+        if event['type'] == "CALIBRATION_STREAM":
+            return self.create_calibration_stream()
 
-        if event['type'] == 'CAMERA_PREVIEW':
-            return self.create_camera_preview()
+        if event['type'] == "LASER_STREAM":
+            return self.create_laser_stream()
 
-        if event['type'] == 'TEXTURE_PREVIEW':
-            return self.create_texture_preview()
+        if event['type'] == "TEXTURE_STREAM":
+            return self.create_texture_stream()
 
     def create_threshold_preview(self):
         return None
 
-    def create_texture_preview(self):
+    def create_texture_stream(self):
         image = self.hardwareController.get_picture()
-        image = self._image_processor.get_texture_preview_image(image)
+        image = self._image_processor.get_texture_stream_frame(image)
 
         return image
 
-    def create_camera_preview(self):
+    def create_calibration_stream(self):
+        image = self.hardwareController.get_picture()
+        image = self._image_processor.get_calibration_stream_frame(image)
+
+        return image
+
+    def create_laser_stream(self):
         try:
             image = self.hardwareController.get_picture()
-            image = self._image_processor.get_preview_image(image)
+            image = self._image_processor.get_laser_stream_frame(image)
             return image
         except:
             ## catch image process error, e.g. when mjpeg stream is interupted

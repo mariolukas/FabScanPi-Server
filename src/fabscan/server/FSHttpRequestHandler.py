@@ -8,21 +8,17 @@ import os
 import posixpath
 import urllib
 import time
-import socket
 from PIL import Image
 import StringIO
 import re
-import base64
 from BaseHTTPServer import BaseHTTPRequestHandler
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 import logging
 
-from fabscan.util.FSUtil import json2obj
 from fabscan.server.FSapi import FSapi
 from fabscan.vision.FSSettingsPreviewProcessor import FSSettingsPreviewProcessor
 from fabscan.FSEvents import FSEventManager, FSEvents
 from fabscan.FSConfig import Config
-from fabscan.FSScanner import FSCommand
 
 
 
@@ -104,14 +100,14 @@ class RequestHandler(SimpleHTTPRequestHandler):
          elif None != re.search('/stream/*', self.path):
 
              stream_id = self.path.split('/')[-1]
-             if stream_id == 'preview.mjpeg':
-                 self.get_stream('CAMERA_PREVIEW')
+             if stream_id == 'laser.mjpeg':
+                 self.get_stream("LASER_STREAM")
 
              elif stream_id == 'texture.mjpeg':
-                 self.get_stream('TEXTURE_PREVIEW')
+                 self.get_stream("TEXTURE_STREAM")
 
-             elif stream_id == 'threshold.mjpeg':
-                pass
+             elif stream_id == 'calibration.mjpeg':
+                self.get_stream("CALIBRATION_STREAM")
              else:
 
                 self.stream_does_not_exist()
@@ -142,14 +138,8 @@ class RequestHandler(SimpleHTTPRequestHandler):
                         self._settingsPreviewProcessor.stop()
                         break
 
-                    if type == 'TEXTURE_PREVIEW':
-                        future_image = self._settingsPreviewProcessor.ask({'command': FSEvents.MPJEG_IMAGE,'type':'TEXTURE_PREVIEW'}, block=False)
 
-                    if type == 'THRESHOLD':
-                        future_image = self._settingsPreviewProcessor.ask({'command': FSEvents.MPJEG_IMAGE,'type':'THRESHOLD'}, block=False)
-
-                    if type == 'CAMERA_PREVIEW':
-                        future_image = self._settingsPreviewProcessor.ask({'command': FSEvents.MPJEG_IMAGE,'type':'CAMERA_PREVIEW'}, block=False)
+                    future_image = self._settingsPreviewProcessor.ask({'command': FSEvents.MPJEG_IMAGE,'type':type}, block=False)
 
                     image = future_image.get()
 
@@ -163,6 +153,7 @@ class RequestHandler(SimpleHTTPRequestHandler):
 
                         self.wfile.write('--jpgboundary\n\r')
                         self.send_header('Content-Type:','image/jpeg')
+                        self.send_header('Content-length',str(tmpFile.len))
                         BaseHTTPRequestHandler.end_headers(self)
                         stream.save(self.wfile,'JPEG')
 

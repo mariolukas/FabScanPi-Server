@@ -25,7 +25,7 @@ class FSMeshlabTask(threading.Thread):
                 print self.prefix
                 input =  self.config.folders.scans+str(self.prefix)+"/"+str(self.prefix)+".ply"
                 output = self.config.folders.scans+str(self.prefix)+"/"+str(self.prefix)+"_meshed.ply"
-                mlx = basedir+"/mlx/test.mlx"
+                mlx = basedir+"/mlx/default_meshing.mlx"
                 FSSystem.run_command("xvfb-run meshlabserver -i "+input+" -o "+output+" -s "+str(mlx)+" -om vc vn")
                 self.message_event()
                 self._logger.info("Meshlab Process finished.")
