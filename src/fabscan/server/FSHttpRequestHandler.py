@@ -113,6 +113,14 @@ class RequestHandler(SimpleHTTPRequestHandler):
                 self.stream_does_not_exist()
                 self.end_headers()
 
+         elif None != re.search('/api/v1/filters/*', self.path):
+             filter_id = self.path.split('/')[-1]
+             if len(filter_id) == 0:
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(self.api.get_list_of_meshlab_filters())
+
          else:
             """Serve a GET request."""
             f = self.send_head()

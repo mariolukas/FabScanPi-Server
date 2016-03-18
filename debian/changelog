@@ -1,4 +1,4 @@
-fabscanpi-server (0.1.16) unstable; urgency=medium
+fabscanpi-server (0.2.0) unstable; urgency=medium
 
   * fixed issue #5, heavy CPU load
   * refactored system callings, introduced new utils for system calls
@@ -12,6 +12,9 @@ fabscanpi-server (0.1.16) unstable; urgency=medium
   * refactored laser detection algorithm, it is more stable now.
   * refactored and extended share dialog options
   * made version number of firmware and server visible in main window
+  * added calibration stream option
+  * refactored httpRequestHandler
+
 
  -- Mario Lukas  <info@mariolukas.de>  Sat, 12 Mar 2016 01:11:11 +0000
 

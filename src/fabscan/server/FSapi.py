@@ -16,6 +16,24 @@ class FSapi():
     def __init__(self):
         self.config = Config.instance()
 
+    def get_list_of_meshlab_filters(self):
+        basedir = os.path.dirname(os.path.dirname(__file__))
+
+        filters = dict()
+        filters['filters'] = []
+        for file in os.listdir(basedir+"/mlx"):
+            if file.endswith(".mlx"):
+                if os.path.os.path.exists(basedir+"/mlx/"+file):
+                    filter = dict()
+                    name, extension = os.path.splitext(file)
+                    print name
+                    filter['name'] = name
+                    filter['file_name'] = file
+
+                    filters['filters'].append(filter)
+
+        encoded_json = json.dumps(filters)
+        return encoded_json
 
     def get_list_of_scans(self, headers):
         basedir = self.config.folders.scans
@@ -26,7 +44,6 @@ class FSapi():
 
         for dir in subdirectories:
             if dir != "debug":
-                pointcloud_file = str("http://"+headers['host']+"/scans/"+dir+"/"+dir+".ply")
                 if os.path.os.path.exists(basedir+dir+"/"+dir+".ply"):
                     scan = dict()
                     scan['id'] = str(dir)
@@ -44,17 +61,27 @@ class FSapi():
         scan = dict()
         scan['id'] = id
 
-        pointcloud_file = str("http://"+headers['host']+"/scans/"+id+"/"+id+".ply")
-        if os.path.exists(basedir+id+"/"+id+".ply"):
-            scan['pointcloud'] = pointcloud_file
+        file_list = []
+        for file in os.listdir(basedir+"/"+id):
+            if file.endswith(".ply") or file.endswith(".stl"):
+                object = dict()
+                name, extension = os.path.splitext(file)
+                object['type'] = extension.replace(".","")
+                object['name'] = name
+
+                object['url'] = str("http://"+headers['host']+"/scans/"+id+"/"+file)
+                if len(name) > 16:
+                    object['filter_name'] = name[16:]
+                else:
+                    object['filter_name'] = "raw pointcloud"
+
+                file_list.append(object)
+
+        scan['objects'] = file_list
 
         thumbnail_file = str("http://"+headers['host']+"/scans/"+id+"/thumbnail_"+id+".png")
         if os.path.exists(basedir+id+"/thumbnail_"+id+".png"):
             scan['thumbnail'] = thumbnail_file
-
-        mesh_file = str("http://"+headers['host']+"/scans/"+id+"/"+id+"_meshed.ply")
-        if os.path.exists(basedir+id+"/"+id+"_meshed.ply"):
-            scan['mesh'] = mesh_file
 
         settings_file = str("http://"+headers['host']+"/scans/"+id+"/"+id+".fab")
         if os.path.exists(basedir+id+"/"+id+".fab"):

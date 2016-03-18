@@ -22,10 +22,13 @@ class FSMeshlabTask(threading.Thread):
             try:
                 self._logger.info("Meshlab Process Started...")
                 basedir = os.path.dirname(os.path.dirname(__file__))
-                print self.prefix
+
+                script_name = "default_meshing.mlx"
+                mlx = basedir+"/mlx/"+script_name
+
                 input =  self.config.folders.scans+str(self.prefix)+"/"+str(self.prefix)+".ply"
-                output = self.config.folders.scans+str(self.prefix)+"/"+str(self.prefix)+"_meshed.ply"
-                mlx = basedir+"/mlx/default_meshing.mlx"
+                output = self.config.folders.scans+str(self.prefix)+"/"+str(self.prefix)+"_"+script_name+".ply"
+
                 FSSystem.run_command("xvfb-run meshlabserver -i "+input+" -o "+output+" -s "+str(mlx)+" -om vc vn")
                 self.message_event()
                 self._logger.info("Meshlab Process finished.")
