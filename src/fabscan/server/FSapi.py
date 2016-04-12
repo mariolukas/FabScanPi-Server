@@ -26,7 +26,7 @@ class FSapi():
                 if os.path.os.path.exists(basedir+"/mlx/"+file):
                     filter = dict()
                     name, extension = os.path.splitext(file)
-                    print name
+
                     filter['name'] = name
                     filter['file_name'] = file
 
@@ -44,10 +44,10 @@ class FSapi():
 
         for dir in subdirectories:
             if dir != "debug":
-                if os.path.os.path.exists(basedir+dir+"/"+dir+".ply"):
+                if os.path.os.path.exists(basedir+dir+"/scan_"+dir+".ply"):
                     scan = dict()
                     scan['id'] = str(dir)
-                    scan['pointcloud'] =  str("http://"+headers['host']+"/scans/"+dir+"/"+dir+".ply")
+                    scan['pointcloud'] =  str("http://"+headers['host']+"/scans/"+dir+"/scan_"+dir+".ply")
                     scan['thumbnail'] = str("http://"+headers['host']+"/scans/"+dir+"/thumbnail_"+dir+".png")
                     scans['scans'].append(scan)
 
@@ -61,23 +61,25 @@ class FSapi():
         scan = dict()
         scan['id'] = id
 
-        file_list = []
+        raw_scan_list = []
+        mesh_list = []
+
         for file in os.listdir(basedir+"/"+id):
-            if file.endswith(".ply") or file.endswith(".stl"):
-                object = dict()
-                name, extension = os.path.splitext(file)
-                object['type'] = extension.replace(".","")
-                object['name'] = name
+            prefix = file.split("_")[0]
+            if 'scan' in prefix:
+                raw_scan = dict()
+                raw_scan['name'] = file
+                raw_scan['url'] = str("http://"+headers['host']+"/scans/"+id+"/"+file)
+                raw_scan_list.append(raw_scan)
 
-                object['url'] = str("http://"+headers['host']+"/scans/"+id+"/"+file)
-                if len(name) > 16:
-                    object['filter_name'] = name[16:]
-                else:
-                    object['filter_name'] = "raw pointcloud"
+            elif 'mesh' in prefix:
+                mesh = dict()
+                mesh['name'] = file
+                mesh['url'] = str("http://"+headers['host']+"/scans/"+id+"/"+file)
+                mesh_list.append(mesh)
 
-                file_list.append(object)
-
-        scan['objects'] = file_list
+        scan['raw_scans'] = raw_scan_list
+        scan['meshes'] = mesh_list
 
         thumbnail_file = str("http://"+headers['host']+"/scans/"+id+"/thumbnail_"+id+".png")
         if os.path.exists(basedir+id+"/thumbnail_"+id+".png"):

@@ -26,12 +26,13 @@ class FSMeshlabTask(threading.Thread):
                 script_name = "default_meshing.mlx"
                 mlx = basedir+"/mlx/"+script_name
 
-                input =  self.config.folders.scans+str(self.prefix)+"/"+str(self.prefix)+".ply"
-                output = self.config.folders.scans+str(self.prefix)+"/"+str(self.prefix)+"_"+script_name+".ply"
+                input =  self.config.folders.scans+str(self.prefix)+"/scan_"+str(self.prefix)+".ply"
+                output = self.config.folders.scans+str(self.prefix)+"/mesh_"+str(self.prefix)+"_"+script_name.split(".")[0]+".ply"
 
                 FSSystem.run_command("xvfb-run meshlabserver -i "+input+" -o "+output+" -s "+str(mlx)+" -om vc vn")
                 self.message_event()
                 self._logger.info("Meshlab Process finished.")
+
             except:
                 self._logger.error("Meshing Task crashed.")
                 message = FSUtil.new_message()

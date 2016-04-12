@@ -292,7 +292,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         event = FSEvent()
         event.command = '_COMPLETE'
-        #TODO: generate MESH Here!
+        #TODO: generate MESH Here if option is selected in scan settings!
         #self.create_mesh(self._prefix)
         self.eventManager.publish(FSEvents.COMMAND,event)
 

@@ -40,7 +40,7 @@ class FSPointCloud():
         if not os.path.exists(self._dir_name):
             os.makedirs(self._dir_name)
 
-        with open(self._dir_name +'/' +file_name + '.ply', 'w') as f:
+        with open(self._dir_name +'/scan_' +file_name + '.ply', 'w') as f:
             f.write("ply\nformat ascii 1.0\n")
             f.write("element vertex {0}\n".format(len(self.points)))
             f.write("property float x\nproperty float y\nproperty float z\nproperty uchar red\nproperty uchar green\nproperty uchar blue\n")
