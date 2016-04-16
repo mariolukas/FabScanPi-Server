@@ -23,7 +23,7 @@ class FSMeshlabTask(threading.Thread):
                 self._logger.info("Meshlab Process Started...")
                 basedir = os.path.dirname(os.path.dirname(__file__))
 
-                script_name = "default_meshing.mlx"
+                script_name = "simple_meshing.mlx"
                 mlx = basedir+"/mlx/"+script_name
 
                 input =  self.config.folders.scans+str(self.prefix)+"/scan_"+str(self.prefix)+".ply"
