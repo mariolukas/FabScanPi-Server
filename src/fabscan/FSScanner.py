@@ -120,7 +120,7 @@ class FSScanner(threading.Thread):
             self.hardwareController.settings_mode_on()
 
         elif command == FSCommand.MESHING:
-            _meshlabTask = FSMeshlabTask(event.scan_id)
+            _meshlabTask = FSMeshlabTask(event.scan_id, event.filter, event.format)
             _meshlabTask.start()
             message = FSUtil.new_message()
             message['type'] = FSEvents.ON_INFO_MESSAGE

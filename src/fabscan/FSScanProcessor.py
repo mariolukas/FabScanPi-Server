@@ -120,7 +120,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.settings.camera.brightness = 50
         self.settings.camera.contrast = 0
         self.settings.camera.saturation = 0
-        self.hardwareController.led.on(60,60,60)
+        self.hardwareController.led.on(30,30,30)
         time.sleep(2)
         self.hardwareController.camera.device.flushStream()
         time.sleep(1)

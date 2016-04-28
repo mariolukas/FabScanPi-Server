@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import shlex
 import logging
+import glob
 
 from collections import namedtuple
 from fabscan.FSConfig import Config
@@ -62,11 +63,17 @@ def delete_image_folders(scan_id):
 
 def delete_scan(scan_id,ignore_errors=True):
 
+
+
     #basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     folder =  Config.instance().folders.scans+scan_id+"/"
 
-    if os.path.isdir(folder):
-        shutil.rmtree(folder, ignore_errors=True)
-    else:
-         print "Nothing to delete..."
+    mask = Config.instance().folders.scans+scan_id+"/"'*.[pso][ltb][lyj]'
+    number_of_files = len(glob.glob(mask))
+
+
+    #if os.path.isdir(folder):
+    #    shutil.rmtree(folder, ignore_errors=True)
+    #else:
+    #     print "Nothing to delete..."
 

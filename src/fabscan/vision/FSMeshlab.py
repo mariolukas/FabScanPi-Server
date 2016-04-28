@@ -9,28 +9,34 @@ from fabscan.util import FSUtil
 
 
 class FSMeshlabTask(threading.Thread):
-        def __init__(self, prefix):
+        def __init__(self, id, filter, format):
             threading.Thread.__init__(self)
             self.eventManager = FSEventManager.instance()
             self._logger =  logging.getLogger(__name__)
             self._logger.setLevel(logging.DEBUG)
             self.settings = Settings.instance()
             self.config = Config.instance()
-            self.prefix = prefix
+            self.scan_id = id
+            self.filter = filter
+            self.format = format
 
         def run(self):
             try:
                 self._logger.info("Meshlab Process Started...")
+
                 basedir = os.path.dirname(os.path.dirname(__file__))
 
-                script_name = "simple_meshing.mlx"
-                mlx = basedir+"/mlx/"+script_name
+                mlx_script_path = basedir+"/mlx/"+self.filter
 
-                input =  self.config.folders.scans+str(self.prefix)+"/scan_"+str(self.prefix)+".ply"
-                output = self.config.folders.scans+str(self.prefix)+"/mesh_"+str(self.prefix)+"_"+script_name.split(".")[0]+".ply"
+                input =  self.config.folders.scans+str(self.scan_id)+"/scan_"+str(self.scan_id)+".ply"
+                output = self.config.folders.scans+str(self.scan_id)+"/mesh_"+str(self.scan_id)+"_"+str(self.filter).split(".")[0]+"."+self.format
+                self._logger.info(output)
 
-                FSSystem.run_command("xvfb-run meshlabserver -i "+input+" -o "+output+" -s "+str(mlx)+" -om vc vn")
+                FSSystem.run_command("xvfb-run meshlabserver -i "+input+" -o "+output+" -s "+str(mlx_script_path)+" -om vc vn")
+                #FSSystem.run_command("xvfb-run meshlabserver -i "+input+" -o "+output+" -s "+str(mlx_script_path))
+
                 self.message_event()
+
                 self._logger.info("Meshlab Process finished.")
 
             except:

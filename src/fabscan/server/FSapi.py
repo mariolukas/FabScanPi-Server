@@ -11,10 +11,88 @@ from fabscan.util.FSUtil import json2obj
 from fabscan.FSConfig import Config
 import base64
 import shutil
+import logging
 
-class FSapi():
+
+class FSRest():
     def __init__(self):
+        self._logger =  logging.getLogger(__name__)
+        self._logger.setLevel(logging.DEBUG)
         self.config = Config.instance()
+
+    def call(self, path, data):
+
+        path_elements = path.split("/")
+        path_length = len(path_elements)
+
+        action = data.get('Access-Control-Request-Method')
+        action = "GET" if not action else action
+
+
+        if path_length == 4:
+            root_property = path_elements[-1]
+
+            # /api/<version>/scans
+            if "scans" == root_property:
+                output = self.get_list_of_scans(data)
+
+            # /api/<version>/filters
+            elif "filters" == root_property:
+                output = self.get_list_of_meshlab_filters()
+
+        elif path_length == 5:
+            root_property = path_elements[-2]
+            root_id = path_elements[-1]
+
+            # /api/<version>/scans/<scan_id>
+            if "scans" == root_property:
+                if "GET" == action:
+                    output = self.get_scan_by_id(data, root_id)
+                elif "DELETE" == action:
+                    output = self.delete_scan(data, root_id)
+
+            # /api/<version>/filer/<name>
+            if "filter" == root_property:
+                if "GET" == action:
+                    pass
+                elif "DELETE" == action:
+                    pass
+
+        elif path_elements == 6:
+            root_property = path_elements[-4]
+            root_id = path_elements[-3]
+            node_property = [-2]
+
+            #/api/<version>/scans/<scan_id>/files
+            if "files" == node_property:
+                pass
+
+        elif path_elements == 7:
+            root_property = path_elements[-4]
+            root_id = path_elements[-3]
+            node_property = [-2]
+            node_id = path_elements[-1]
+
+            # /api/<version>/scans/<scan_id>/files/<file_id>
+            if "scans" == root_property:
+                if "files" == node_property:
+                    if "GET" == action:
+                        pass
+                    elif "DELETE" == action:
+                        output = self.delete_file(root_id, node_id)
+
+
+        else:
+            output = self.not_valid()
+
+        return json.dumps(output)
+
+
+    def not_valid(self):
+        json = dict()
+        json['response'] = "Not Valid"
+        return json
+
 
     def get_list_of_meshlab_filters(self):
         basedir = os.path.dirname(os.path.dirname(__file__))
@@ -32,8 +110,8 @@ class FSapi():
 
                     filters['filters'].append(filter)
 
-        encoded_json = json.dumps(filters)
-        return encoded_json
+        #encoded_json = json.dumps(filters)
+        return filters
 
     def get_list_of_scans(self, headers):
         basedir = self.config.folders.scans
@@ -51,8 +129,8 @@ class FSapi():
                     scan['thumbnail'] = str("http://"+headers['host']+"/scans/"+dir+"/thumbnail_"+dir+".png")
                     scans['scans'].append(scan)
 
-        encoded_json = json.dumps(scans)
-        return encoded_json
+        #encoded_json = json.dumps(scans)
+        return scans
 
     def get_scan_by_id(self, headers, id):
 
@@ -89,8 +167,8 @@ class FSapi():
         if os.path.exists(basedir+id+"/"+id+".fab"):
             scan['settings'] = settings_file
 
-        encoded_json = json.dumps(scan)
-        return encoded_json
+        #encoded_json = json.dumps(scan)
+        return scan
 
     def delete_scan(self, headers, id):
 
@@ -100,9 +178,9 @@ class FSapi():
         response = dict()
         response['scan_id'] = id
         response['response'] = "SCAN DELETED"
-        encoded_json = json.dumps(response)
+        #encoded_json = json.dumps(response)
 
-        return encoded_json
+        return response
 
     def save_preview_content(self, data, scan_id):
         print scan_id

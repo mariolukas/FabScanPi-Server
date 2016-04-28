@@ -14,8 +14,9 @@ import re
 from BaseHTTPServer import BaseHTTPRequestHandler
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 import logging
+import json
 
-from fabscan.server.FSapi import FSapi
+from fabscan.server.FSapi import FSRest
 from fabscan.vision.FSSettingsPreviewProcessor import FSSettingsPreviewProcessor
 from fabscan.FSEvents import FSEventManager, FSEvents
 from fabscan.FSConfig import Config
@@ -27,7 +28,7 @@ class RequestHandler(SimpleHTTPRequestHandler):
     def __init__(self,*args):
         self._logger =  logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
-        self.api = FSapi()
+        self.api = FSRest()
         self._eventManager = FSEventManager.instance()
         self.close_mjpeg_stream = False
         self.config = Config.instance()
@@ -48,7 +49,12 @@ class RequestHandler(SimpleHTTPRequestHandler):
             self._logger.info("http socket disconnect")
             pass
 
+
+
     def do_OPTIONS(self):
+
+        #self._logger.debug(self.headers.get('Access-Control-Request-Method'))
+        self.api.call(self.path, self.headers)
         self.send_response(200)
         self.end_headers()
 
@@ -68,36 +74,14 @@ class RequestHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
 
-         if None != re.search('/api/v1/scans/*', self.path):
+         if "api" in self.path:
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            json = self.api.call(self.path, self.headers)
+            self.wfile.write(json)
 
-             scan_id = self.path.split('/')[-1]
-             # return a full list of all scans
-             if len(scan_id) == 0:
-                self.send_response(200)
-                self.send_header('Content-Type', 'application/json')
-                self.end_headers()
-                self.wfile.write(self.api.get_list_of_scans(self.headers))
-
-             # return all information about a scan with given id
-             elif len(scan_id) >0:
-                # load a scan representation here !
-                self.send_response(200)
-                self.send_header('Content-Type', 'application/json')
-                self.end_headers()
-                self.wfile.write(self.api.get_scan_by_id(self.headers, scan_id))
-
-         elif None != re.search('/api/v1/delete/*', self.path):
-
-              scan_id = self.path.split('/')[-1]
-
-              if len(scan_id) > 0:
-                self.send_response(200)
-                self.send_header('Content-Type', 'application/json')
-                self.end_headers()
-                self.wfile.write(self.api.delete_scan(self.headers, scan_id))
-
-
-         elif None != re.search('/stream/*', self.path):
+         elif "stream" in self.path:
 
              stream_id = self.path.split('/')[-1]
              if stream_id == 'laser.mjpeg':
@@ -112,14 +96,6 @@ class RequestHandler(SimpleHTTPRequestHandler):
 
                 self.stream_does_not_exist()
                 self.end_headers()
-
-         elif None != re.search('/api/v1/filters/*', self.path):
-             filter_id = self.path.split('/')[-1]
-             if len(filter_id) == 0:
-                self.send_response(200)
-                self.send_header('Content-Type', 'application/json')
-                self.end_headers()
-                self.wfile.write(self.api.get_list_of_meshlab_filters())
 
          else:
             """Serve a GET request."""
@@ -139,7 +115,6 @@ class RequestHandler(SimpleHTTPRequestHandler):
            self.send_header('Content-Type','multipart/x-mixed-replace;boundary=--jpgboundary')
            BaseHTTPRequestHandler.end_headers(self)
 
-
            try:
                 while True:
                     if self.close_mjpeg_stream:
@@ -148,9 +123,7 @@ class RequestHandler(SimpleHTTPRequestHandler):
 
 
                     future_image = self._settingsPreviewProcessor.ask({'command': FSEvents.MPJEG_IMAGE,'type':type}, block=False)
-
                     image = future_image.get()
-
 
                     if image != None:
                         image = image[:, :, ::-1]
@@ -164,7 +137,6 @@ class RequestHandler(SimpleHTTPRequestHandler):
                         self.send_header('Content-length',str(tmpFile.len))
                         BaseHTTPRequestHandler.end_headers(self)
                         stream.save(self.wfile,'JPEG')
-
 
                     else:
                         time.sleep(0.05)
