@@ -49,37 +49,33 @@ class RequestHandler(SimpleHTTPRequestHandler):
             self._logger.info("http socket disconnect")
             pass
 
+    def do_API_CALL(self, action, data=None):
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        json = self.api.call(action, self.path, self.headers, data)
+        self._logger.debug(json)
 
+        self.wfile.write(json)
+
+    def do_DELETE(self):
+        if "api" in self.path:
+            self.do_API_CALL("DELETE")
 
     def do_OPTIONS(self):
-
-        #self._logger.debug(self.headers.get('Access-Control-Request-Method'))
-        self.api.call(self.path, self.headers)
         self.send_response(200)
         self.end_headers()
 
     def do_POST(self):
-         if None != re.search('/api/v1/scan/preview/add/*', self.path):
-            scanID = self.path.split('/')[-1]
-
-            if len(scanID) >0:
-                content_len = int(self.headers.getheader('content-length', 0))
-                data = self.rfile.read(content_len)
-                self.api.save_preview_content(data, scanID)
-                self.send_response(200)
-                self.end_headers()
-            else:
-                self.scan_does_not_exist()
-                self.end_headers()
+         if "api" in self.path:
+            content_len = int(self.headers.getheader('content-length', 0))
+            data = self.rfile.read(content_len)
+            self.do_API_CALL("POST", data)
 
     def do_GET(self):
 
          if "api" in self.path:
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            json = self.api.call(self.path, self.headers)
-            self.wfile.write(json)
+             self.do_API_CALL("GET")
 
          elif "stream" in self.path:
 
@@ -94,7 +90,7 @@ class RequestHandler(SimpleHTTPRequestHandler):
                 self.get_stream("CALIBRATION_STREAM")
              else:
 
-                self.stream_does_not_exist()
+                self.bad_request()
                 self.end_headers()
 
          else:
@@ -158,16 +154,12 @@ class RequestHandler(SimpleHTTPRequestHandler):
 
     def end_headers (self):
         self.send_header('Access-Control-Allow-Origin','*')
-        self.send_header('Access-Control-Allow-Methods','GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Methods','GET, POST, OPTIONS, DELETE, PUT, PATCH')
         self.send_header("Access-Control-Allow-Headers","X-Requested-With, Content-Type")
         BaseHTTPRequestHandler.end_headers(self)
 
-    def scan_does_not_exist(self):
-        self.send_response(400, 'Bad Request: record does not exist')
-        self.send_header('Content-Type', 'application/json')
-
-    def stream_does_not_exist(self):
-        self.send_response(400, 'Bad Request: stream does not exist')
+    def bad_request(self):
+        self.send_response(400, 'Bad Request: no valid api call')
         self.send_header('Content-Type', 'application/json')
 
     def send_head(self):

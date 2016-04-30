@@ -12,6 +12,7 @@ from fabscan.FSConfig import Config
 import base64
 import shutil
 import logging
+import glob
 
 
 class FSRest():
@@ -20,21 +21,19 @@ class FSRest():
         self._logger.setLevel(logging.DEBUG)
         self.config = Config.instance()
 
-    def call(self, path, data):
+    def call(self,action, path, headers, data=None):
+
+        output = dict()
 
         path_elements = path.split("/")
         path_length = len(path_elements)
-
-        action = data.get('Access-Control-Request-Method')
-        action = "GET" if not action else action
-
 
         if path_length == 4:
             root_property = path_elements[-1]
 
             # /api/<version>/scans
             if "scans" == root_property:
-                output = self.get_list_of_scans(data)
+                output = self.get_list_of_scans(headers)
 
             # /api/<version>/filters
             elif "filters" == root_property:
@@ -47,30 +46,35 @@ class FSRest():
             # /api/<version>/scans/<scan_id>
             if "scans" == root_property:
                 if "GET" == action:
-                    output = self.get_scan_by_id(data, root_id)
+                    output = self.get_scan_by_id(headers, root_id)
                 elif "DELETE" == action:
-                    output = self.delete_scan(data, root_id)
+                    output = self.delete_scan(root_id)
 
-            # /api/<version>/filer/<name>
-            if "filter" == root_property:
-                if "GET" == action:
-                    pass
-                elif "DELETE" == action:
-                    pass
+            # /api/<version>/filter/<name>
+            #if "filter" == root_property:
+            #    if "GET" == action:
+            #        pass
+            #    elif "DELETE" == action:
+            #        pass
 
-        elif path_elements == 6:
-            root_property = path_elements[-4]
-            root_id = path_elements[-3]
-            node_property = [-2]
+        elif path_length == 6:
+            root_property = path_elements[-3]
+            root_id = path_elements[-2]
+            node_property = path_elements[-1]
+
 
             #/api/<version>/scans/<scan_id>/files
             if "files" == node_property:
                 pass
+            #/api/<version>/scans/<scan_id>/previews
+            if "previews" == node_property:
+                if "POST" == action:
+                    output = self.create_preview_image(data, root_id)
 
-        elif path_elements == 7:
+        elif path_length == 7:
             root_property = path_elements[-4]
             root_id = path_elements[-3]
-            node_property = [-2]
+            node_property = path_elements[-2]
             node_id = path_elements[-1]
 
             # /api/<version>/scans/<scan_id>/files/<file_id>
@@ -80,7 +84,6 @@ class FSRest():
                         pass
                     elif "DELETE" == action:
                         output = self.delete_file(root_id, node_id)
-
 
         else:
             output = self.not_valid()
@@ -92,6 +95,11 @@ class FSRest():
         json = dict()
         json['response'] = "Not Valid"
         return json
+
+    def get_scan_files(self, scan_id):
+        scan_dir = self.config.folders.scans+scan_id
+        files = glob.glob(scan_dir+'/scan_*.[p][l][y]')
+        return files
 
 
     def get_list_of_meshlab_filters(self):
@@ -110,15 +118,14 @@ class FSRest():
 
                     filters['filters'].append(filter)
 
-        #encoded_json = json.dumps(filters)
         return filters
 
     def get_list_of_scans(self, headers):
         basedir = self.config.folders.scans
 
-        subdirectories = os.listdir(str(basedir))
-        scans = dict()
-        scans['scans'] = []
+        subdirectories = sorted(os.listdir(str(basedir)))
+        response = dict()
+        response['scans'] = []
 
         for dir in subdirectories:
             if dir != "debug":
@@ -127,10 +134,9 @@ class FSRest():
                     scan['id'] = str(dir)
                     scan['pointcloud'] =  str("http://"+headers['host']+"/scans/"+dir+"/scan_"+dir+".ply")
                     scan['thumbnail'] = str("http://"+headers['host']+"/scans/"+dir+"/thumbnail_"+dir+".png")
-                    scans['scans'].append(scan)
+                    response['scans'].append(scan)
 
-        #encoded_json = json.dumps(scans)
-        return scans
+        return response
 
     def get_scan_by_id(self, headers, id):
 
@@ -167,23 +173,37 @@ class FSRest():
         if os.path.exists(basedir+id+"/"+id+".fab"):
             scan['settings'] = settings_file
 
-        #encoded_json = json.dumps(scan)
         return scan
 
-    def delete_scan(self, headers, id):
+    def delete_file(self, scan_id, file_name):
+        file = self.config.folders.scans+scan_id+"/"+file_name
 
-        dir_name = self.config.folders.scans+id
-        print dir_name
-        shutil.rmtree(dir_name, ignore_errors=True)
-        response = dict()
-        response['scan_id'] = id
-        response['response'] = "SCAN DELETED"
-        #encoded_json = json.dumps(response)
+        os.unlink(file)
+
+        if len(self.get_scan_files(scan_id)) == 0:
+            response = self.delete_scan(scan_id)
+        else:
+            response = dict()
+            response['file_name'] = file_name
+            response['scan_id'] = scan_id
+            response['response'] = "FILE_DELETED"
 
         return response
 
-    def save_preview_content(self, data, scan_id):
-        print scan_id
+    def delete_scan(self, id):
+
+        dir_name = self.config.folders.scans+id
+        shutil.rmtree(dir_name, ignore_errors=True)
+
+        response = dict()
+        response['scan_id'] = id
+        response['response'] = "SCAN_DELETED"
+
+        return response
+
+    def create_preview_image(self, data, scan_id):
+        self._logger.debug("####### Image Creation ##########")
+
         object = json2obj(str(data))
 
         dir_name =  self.config.folders.scans
@@ -191,7 +211,17 @@ class FSRest():
         image_file = open(dir_name+scan_id+"/"+scan_id+".png", "w")
         image_file.write(png)
 
+        preview_image = dir_name+scan_id+"/"+scan_id+".png"
+        thumbnail_image = dir_name+scan_id+"/thumbnail_"+scan_id+".png"
+
         image_file.close()
-        image_file = Image.open(dir_name+scan_id+"/"+scan_id+".png")
+        image_file = Image.open(preview_image)
         image_file.thumbnail((160,120),Image.ANTIALIAS)
-        image_file.save(dir_name+scan_id+"/thumbnail_"+scan_id+".png")
+        image_file.save(thumbnail_image)
+
+        response = dict()
+        response['preview_image'] = preview_image
+        response['thumbnail_image'] = thumbnail_image
+        response['response'] = {'PREVIEW_IMAGE_SAVED'}
+
+        return response

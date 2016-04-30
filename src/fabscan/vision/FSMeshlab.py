@@ -21,7 +21,7 @@ class FSMeshlabTask(threading.Thread):
             self.format = format
 
         def run(self):
-            try:
+            #try:
                 self._logger.info("Meshlab Process Started...")
 
                 basedir = os.path.dirname(os.path.dirname(__file__))
@@ -39,13 +39,13 @@ class FSMeshlabTask(threading.Thread):
 
                 self._logger.info("Meshlab Process finished.")
 
-            except:
-                self._logger.error("Meshing Task crashed.")
-                message = FSUtil.new_message()
-                message['type'] = FSEvents.ON_INFO_MESSAGE
-                message['data']['message'] = "MESHING_FAILED"
-                message['data']['level'] = "error"
-                self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
+            #except:
+            #    self._logger.error("Meshing Task crashed.")
+            #    message = FSUtil.new_message()
+            #    message['type'] = FSEvents.ON_INFO_MESSAGE
+            #    message['data']['message'] = "MESHING_FAILED"
+            #    message['data']['level'] = "error"
+            #    self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
 
         def message_event(self):

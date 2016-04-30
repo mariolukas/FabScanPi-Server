@@ -5,7 +5,7 @@ fabscanpi-server (0.2.0) unstable; urgency=medium
   * system call stdouts are in logs now
   * added meshalabserver support by calling via xvfb
   * fixed mpjeg close stream bug in chrome and firefox
-  * added spinner to stream preview window
+  * added idle spinner to stream preview window
   * prepared frontend for laser stepper support
   * replaced threejs v70 by a newer version v74
   * refactored webgl directive, added support for switching between mesh and pointcloud (experimental)
@@ -14,7 +14,12 @@ fabscanpi-server (0.2.0) unstable; urgency=medium
   * made version number of firmware and server visible in main window
   * added calibration stream option
   * refactored httpRequestHandler
-
+  * refactored REST api
+  * replaced angular-slick
+  * added meshlab support to frontend
+  * refactored file handling
+  * fixed status bar
+  * added new icons
 
  -- Mario Lukas  <info@mariolukas.de>  Sat, 12 Mar 2016 01:11:11 +0000
 
