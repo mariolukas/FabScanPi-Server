@@ -24,13 +24,19 @@ This description assumes that you have a SD card with a fresh Raspbian image on 
 First add the fabscan repository to your source list. 
 
 ```
-echo "deb http://archive.fabscan.org/ jessie main" >> /etc/apt/source.list
+echo "deb http://archive.fabscan.org/ jessie main" >> /etc/apt/sources.list
 ```
 
 Then add the FabScan PI repository key to your key chain.
 
 ```
 wget http://archive.fabscan.org/fabscan.public.key -O - | sudo apt-key add -
+```
+
+Update the package list.
+
+```
+apt-get update
 ```
 
 Finish the installation with the needed packages.

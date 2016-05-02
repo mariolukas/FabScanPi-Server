@@ -42,19 +42,25 @@ Latest image release: [https://github.com/mariolukas/FabScanPi-Build-Raspbian/re
 ### With FabScanPI Raspbian Package 
 
 ```
-echo "deb http://archive.fabscan.org/ jessie main" >> /etc/apt/source.list
+echo "deb http://archive.fabscan.org/ jessie main" >> /etc/apt/sources.list
 ```
 
 Then add the FabScan PI repository key to your key chain.
 
 ```
-wget https://archive.fabscan.org/fabscan.public.key -O - | sudo apt-key add -
+wget http://archive.fabscan.org/fabscan.public.key -O - | sudo apt-key add -
+```
+
+Update the package list.
+
+```
+apt-get update
 ```
 
 Finish the installation with the needed packages.
 
 ```
-apt-get isntall fabscanpi-server opencv-tbb python-serial python-pykka python-picamera avrdude
+apt-get isntall fabscanpi-server python-opencv-tbb libtbb2  python-pil python-serial python-pykka python-picamera avrdude
 ```
 
 ## Useage
