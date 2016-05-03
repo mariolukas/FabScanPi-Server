@@ -51,7 +51,7 @@ The FabScan PI server can be started with
 sudo /etc/init.d/fabscanpi-server start
 ```
 
-Read [Usage](../Readme.md#usage) section for the next steps.
+Read [Usage](https://github.com/mariolukas/FabScanPi-Server/Readme.md#usage) section for the next steps.
 
 #### Installation form source
 
