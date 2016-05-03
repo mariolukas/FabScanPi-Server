@@ -63,7 +63,7 @@ Finish the installation with the needed packages.
 apt-get isntall fabscanpi-server python-opencv-tbb libtbb2  python-pil python-serial python-pykka python-picamera avrdude
 ```
 
-## Useage
+##<a name="useage"></a> Useage
 
 FabScan Pi is tested on: 
 
