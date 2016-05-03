@@ -75,8 +75,10 @@ FabScan Pi is tested on:
 
 
 By default the FabScan PI server binds to all interfaces on port 8080. Pointing your browser to 
-http://ip-of-your-raspbrry-pi:8080 will open the user interface. If your computer supports bonjour
-you can point yout browser to http://fabscanpi.local:8080
+[http://ip-of-your-raspbrry-pi:8080](http://ip-of-your-raspbrry-pi:8080) will open the user interface. If your computer supports bonjour
+you can point yout browser to [http://fabscanpi.local:8080](http://fabscanpi.local:8080), you can omit the port if you used the SD-Card
+image.
+
 
 Most Apple devices support bonjour by default. On Windows you can install [Bonjour Print Services for Windows 2.0.2|
 (http://support.apple.com/kb/DL999). You will find more detailed information about this topic for the most common 
