@@ -36,10 +36,12 @@
                 <div class="settingsWindow" ng-class="{'open':('SETTINGS' | currentState)}">
                     <div ng-if="('SETTINGS' | currentState)" ng-controller="fabscan.controller.FSSettingsController" >
 
-                    <div class="preview-image">
-                        <div style="background-color: black; width:320px; height:240px; position:absolute; left:0px;"></div>
+
+                     <!--   <div style="background-color: black; height:240px; position:absolute; left:0px;"></div>-->
+                    <div>
                         <mjpeg mode="'preview'" url="streamUrl"></mjpeg>
                     </div>
+
                     <div class="settings-content">
                         <div style="height: 40px;">
                             <div ng-click="selectTab('general')" class="tab icon settings" ng-class="{'active':(selectedTab == 'general')}">
@@ -117,10 +119,24 @@
                             </div>
                         </div>
                         <div class="tab-content" ng-if="(selectedTab == 'calibration')">
-                            Calibration Mode...
+                            <div style="display:inline-block; width:100%; margin-top:1em; color:white; padding-left:1em;">
+                                Calibration Stream <br>
+                                <br>
+                                Can be used to calibrate the camera alignment. The vertical green line should be in one line
+                                with the turntable center. <br>
+                                <br>
+                                The horizontal green line should be in one line with the back of the turntable.<br>
+                                <br>
+                                The red line should be in an area where the laser hits the backline. Best setting is a
+                                few pixels under the top edge of the backwall. It can be set in the config.json
+                                "detection_limit" , default is 0.3 what is 0.3% from the top of the image
+
+
+                            </div>
                         </div>
                         </div>
                     </div>
+
                 </div>
 
                <!-- Scan View -->
@@ -266,20 +282,22 @@
                                              </ul>
                                          </div>
                                          <div class="meshlabfilter" style="outline:none;  border:none; padding:1em 5em 0 5em; font-size:1.2em; color:white; height:100%">
+                                             <div style="font-size:16px; margin-bottom:1em; font-weight: bold" >Meshlab Filter:</div>
                                              <slick settings="slickFilterConfig">
                                                  <div data-value="{{m_filter.file_name}}" ng-repeat="m_filter in m_filters" style="text-align:center;margin:0 auto; height:20px">
                                                      {{m_filter.file_name}}
                                                  </div>
                                              </slick>
 
-                                             <slick settings="slickFormatConfig">
+                                             <div style="font-size:16px; margin-top:1em; margin-bottom:1em; font-weight: bold" >Output Format:</div>
+                                             <slick  settings="slickFormatConfig">
                                                  <div data-value="{{format}}" ng-repeat="format in file_formats" style="text-align:center;margin:0 auto; height:20px">
                                                      {{format}}
                                                  </div>
                                              </slick>
-                                             <div>
-                                                <i style="margin-left: -3em; margin-top: 2em;" tooltips title="Back" tooltip-side="right" ng-click="previewsSubSelection()" class="hvr-grow fa fa-chevron-left fa-1x"></i>
-                                                 <a class="hvr-grow" style="margin-left: -3em; margin-top: 1em; text-decoration:none; float:right; color:white; font-size:20px;" ng-click="runMeshing()" href="#">Start Meshing</a>
+                                             <div style="margin-top:1em;">
+                                                <i style="margin-right: 1em;" tooltips title="Back" tooltip-side="right" ng-click="previewsSubSelection()" class="hvr-grow fa fa-chevron-left fa-1x"></i>
+                                                 <a class="hvr-grow" style="text-decoration:none; float:right; color:white;font-size:20px;" ng-click="runMeshing()" href="#">Start Meshing</a>
                                              </div>
                                          </div>
                                      </slick>
@@ -291,7 +309,7 @@
                                      <div style="outline:none;  border:none; padding:1em 5em 0 5em; font-size:1.2em; color:white; height:100%">
                                          <ul>
                                              <li ng-repeat="mesh in meshes track by $index" style="padding:0.2em;">
-                                                 <a href="#" ng-click="loadPointCloud(mesh.url)" style="text-decoration: none;">{{mesh.name}}</a>
+                                                 <a href="#" ng-click="loadMesh(mesh.url)" style="text-decoration: none;">{{mesh.name}}</a>
                                                  <a href="#" ng-click="deleteFile(mesh.name)"><i tooltips title="Delete Mesh" class="hvr-grow fa fa-trash fa-1x" style="float:right;"></i></a>
                                                  <a href="{{mesh.url}}"><i tooltips title="Donwload Mesh" tooltip-side="top" class="hvr-grow fa fa-download fa-1x" style="float:right;"></i></a>
                                              </li>
@@ -302,7 +320,7 @@
 
                          </div>
                      </div>
-                     <div ng-if="sampledRemainingTime > 0 && ('SCANNING' | currentState)"  class="timeRemaining">About {{sampledRemainingTime}} seconds remaining</div>
+                     <div style="font-size:1.2em; color:white;" ng-if="sampledRemainingTime > 0 && ('SCANNING' | currentState)"  class="timeRemaining">About {{sampledRemainingTime}} seconds remaining</div>
            </div>
 
         <div id="controlpanel" class="footer row" style="background-color: grey">
