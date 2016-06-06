@@ -119,6 +119,7 @@
                             </div>
                         </div>
                         <div class="tab-content" ng-if="(selectedTab == 'calibration')">
+<<<<<<< HEAD
                             <div style="display:inline-block; width:100%; margin-top:1em; color:white; padding-left:1em;">
                                 Calibration Stream <br>
                                 <br>
@@ -133,6 +134,9 @@
 
 
                             </div>
+=======
+                            Calibration Mode...
+>>>>>>> d40ca7112543dd671c58d91732615f88abd6f1fa
                         </div>
                         </div>
                     </div>
@@ -282,22 +286,35 @@
                                              </ul>
                                          </div>
                                          <div class="meshlabfilter" style="outline:none;  border:none; padding:1em 5em 0 5em; font-size:1.2em; color:white; height:100%">
+<<<<<<< HEAD
                                              <div style="font-size:16px; margin-bottom:1em; font-weight: bold" >Meshlab Filter:</div>
+=======
+>>>>>>> d40ca7112543dd671c58d91732615f88abd6f1fa
                                              <slick settings="slickFilterConfig">
                                                  <div data-value="{{m_filter.file_name}}" ng-repeat="m_filter in m_filters" style="text-align:center;margin:0 auto; height:20px">
                                                      {{m_filter.file_name}}
                                                  </div>
                                              </slick>
 
+<<<<<<< HEAD
                                              <div style="font-size:16px; margin-top:1em; margin-bottom:1em; font-weight: bold" >Output Format:</div>
                                              <slick  settings="slickFormatConfig">
+=======
+                                             <slick settings="slickFormatConfig">
+>>>>>>> d40ca7112543dd671c58d91732615f88abd6f1fa
                                                  <div data-value="{{format}}" ng-repeat="format in file_formats" style="text-align:center;margin:0 auto; height:20px">
                                                      {{format}}
                                                  </div>
                                              </slick>
+<<<<<<< HEAD
                                              <div style="margin-top:1em;">
                                                 <i style="margin-right: 1em;" tooltips title="Back" tooltip-side="right" ng-click="previewsSubSelection()" class="hvr-grow fa fa-chevron-left fa-1x"></i>
                                                  <a class="hvr-grow" style="text-decoration:none; float:right; color:white;font-size:20px;" ng-click="runMeshing()" href="#">Start Meshing</a>
+=======
+                                             <div>
+                                                <i style="margin-left: -3em; margin-top: 2em;" tooltips title="Back" tooltip-side="right" ng-click="previewsSubSelection()" class="hvr-grow fa fa-chevron-left fa-1x"></i>
+                                                 <a class="hvr-grow" style="margin-left: -3em; margin-top: 1em; text-decoration:none; float:right; color:white; font-size:20px;" ng-click="runMeshing()" href="#">Start Meshing</a>
+>>>>>>> d40ca7112543dd671c58d91732615f88abd6f1fa
                                              </div>
                                          </div>
                                      </slick>
@@ -309,7 +326,11 @@
                                      <div style="outline:none;  border:none; padding:1em 5em 0 5em; font-size:1.2em; color:white; height:100%">
                                          <ul>
                                              <li ng-repeat="mesh in meshes track by $index" style="padding:0.2em;">
+<<<<<<< HEAD
                                                  <a href="#" ng-click="loadMesh(mesh.url)" style="text-decoration: none;">{{mesh.name}}</a>
+=======
+                                                 <a href="#" ng-click="loadPointCloud(mesh.url)" style="text-decoration: none;">{{mesh.name}}</a>
+>>>>>>> d40ca7112543dd671c58d91732615f88abd6f1fa
                                                  <a href="#" ng-click="deleteFile(mesh.name)"><i tooltips title="Delete Mesh" class="hvr-grow fa fa-trash fa-1x" style="float:right;"></i></a>
                                                  <a href="{{mesh.url}}"><i tooltips title="Donwload Mesh" tooltip-side="top" class="hvr-grow fa fa-download fa-1x" style="float:right;"></i></a>
                                              </li>

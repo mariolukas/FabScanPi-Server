@@ -42,22 +42,28 @@ Latest image release: [https://github.com/mariolukas/FabScanPi-Build-Raspbian/re
 ### With FabScanPI Raspbian Package 
 
 ```
-echo "deb http://archive.fabscan.org/ jessie main" >> /etc/apt/source.list
+echo "deb http://archive.fabscan.org/ jessie main" >> /etc/apt/sources.list
 ```
 
 Then add the FabScan PI repository key to your key chain.
 
 ```
-wget https://archive.fabscan.org/fabscan.public.key -O - | sudo apt-key add -
+wget http://archive.fabscan.org/fabscan.public.key -O - | sudo apt-key add -
+```
+
+Update the package list.
+
+```
+apt-get update
 ```
 
 Finish the installation with the needed packages.
 
 ```
-apt-get isntall fabscanpi-server opencv-tbb python-serial python-pykka python-picamera avrdude
+apt-get isntall fabscanpi-server python-opencv-tbb libtbb2  python-pil python-serial python-pykka python-picamera avrdude
 ```
 
-## Useage
+##<a name="useage"></a> Useage
 
 FabScan Pi is tested on: 
 
@@ -69,8 +75,10 @@ FabScan Pi is tested on:
 
 
 By default the FabScan PI server binds to all interfaces on port 8080. Pointing your browser to 
-http://<ip-of-your-raspbrry-pi>:8080 will open the user interface. If your computer supports bonjour
-you can point yout browser to http://fabscanpi.local:8080
+[http://ip-of-your-raspbrry-pi:8080](http://ip-of-your-raspbrry-pi:8080) will open the user interface. If your computer supports bonjour
+you can point yout browser to [http://fabscanpi.local:8080](http://fabscanpi.local:8080), you can omit the port if you used the SD-Card
+image.
+
 
 Most Apple devices support bonjour by default. On Windows you can install [Bonjour Print Services for Windows 2.0.2|
 (http://support.apple.com/kb/DL999). You will find more detailed information about this topic for the most common 

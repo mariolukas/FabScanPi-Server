@@ -10,7 +10,7 @@ firmware version after the server is started.
 
 The fastest way to start working with FabScan PI is to use the FabScan PI Raspbian Image. 
 Dowload the image and install it to a SD-Card. After the image is flashed and the Raspberry
-Pi is up and runnig follow the instructions in the [Usage Section](Readme.md#usage)
+Pi is up and runnig follow the instructions in the [Usage section](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage)
 
 Latest image release: [https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest](https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest)
 
@@ -24,13 +24,19 @@ This description assumes that you have a SD card with a fresh Raspbian image on 
 First add the fabscan repository to your source list. 
 
 ```
-echo "deb http://archive.fabscan.org/ jessie main" >> /etc/apt/source.list
+echo "deb http://archive.fabscan.org/ jessie main" >> /etc/apt/sources.list
 ```
 
 Then add the FabScan PI repository key to your key chain.
 
 ```
 wget http://archive.fabscan.org/fabscan.public.key -O - | sudo apt-key add -
+```
+
+Update the package list.
+
+```
+apt-get update
 ```
 
 Finish the installation with the needed packages.
@@ -45,7 +51,7 @@ The FabScan PI server can be started with
 sudo /etc/init.d/fabscanpi-server start
 ```
 
-Read [Usage](Readme.md#usage) section for the next steps.
+Read [Usage](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage) section for the next steps.
 
 #### Installation form source
 
