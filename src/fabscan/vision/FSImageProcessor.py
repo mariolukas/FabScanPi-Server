@@ -38,8 +38,9 @@ class ImageProcessor():
         r = 320.0 / cam_image.shape[1]
         dim = (320, int(cam_image.shape[0] * r))
         cam_image = cv2.resize(cam_image, dim, interpolation = cv2.INTER_AREA)
-        cv2.line(cam_image, (0,int(self.config.scanner.origin.y*cam_image.shape[0])), (cam_image.shape[1],int(0.75*cam_image.shape[0])), (0,255,0), thickness=1, lineType=8, shift=0)
+        cv2.line(cam_image, (0,int(self.config.scanner.origin.y*cam_image.shape[0])), (cam_image.shape[1],int(self.config.scanner.origin.y*cam_image.shape[0])), (0,255,0), thickness=1, lineType=8, shift=0)
         cv2.line(cam_image, (int(0.5*cam_image.shape[1]),0), (int(0.5*cam_image.shape[1]), cam_image.shape[0]), (0,255,0), thickness=1, lineType=8, shift=0)
+        cv2.line(cam_image, (0,int(cam_image.shape[0]*self.config.laser.detection_limit)), (int(cam_image.shape[1]), int(cam_image.shape[0]*self.config.laser.detection_limit)), (0,0,255), thickness=1, lineType=8, shift=0)
 
         return cam_image
 
@@ -128,6 +129,8 @@ class ImageProcessor():
 
     def detect_laser(self, image):
 
+
+
         x_center = image.shape[1] * self.settings.center
         x_center_delta = image.shape[1] * 0.5 - x_center
 
@@ -142,7 +145,7 @@ class ImageProcessor():
                 x = x[:,0]
                 new_x = []
 
-                for i in xrange(1,20):
+                for i in xrange(1,int(image.shape[0]*self.config.laser.detection_limit)):
                     new_x.append(x[i])
 
 
@@ -220,7 +223,7 @@ class ImageProcessor():
                     sub_pixel =  np.argmax(line[ start: grey.shape[1]]) + start
 
                     if line[sub_pixel] > self.settings.threshold/3:
-                        cv2.line(image, (int(sub_pixel)-5,int(y)), (int(sub_pixel)+5,int(y)), (255,0,0), thickness=1, lineType=8, shift=0)
+                        cv2.line(image, (int(sub_pixel)-5,int(y)), (int(sub_pixel)+5,int(y)), (255,255,255), thickness=1, lineType=8, shift=0)
                         pixels.append(( sub_pixel, y))
 
         else:
@@ -306,22 +309,24 @@ class ImageProcessor():
             point.x = math.cos(alphaNew)*hypotenuse
 
             lowerLimit = 1.09
+            topLimit = self.config.camera.resolution.height - self.config.camera.resolution.height*self.config.scanner.origin.y
 
-            if (point.y>lowerLimit and hypotenuse < 7 ):
-                new_point = dict()
+            if y > topLimit:
+                if (point.y > lowerLimit and hypotenuse < 7 ):
+                    new_point = dict()
 
-                new_point['x'] = str(point.x)
-                new_point['y'] = str(point.y)
-                new_point['z'] = str(-point.z)
+                    new_point['x'] = str(point.x)
+                    new_point['y'] = str(point.y)
+                    new_point['z'] = str(-point.z)
 
-                if not color_image is None:
-                    b,g,r = color_image[y,x]
-                    new_point['r'] = str(r)
-                    new_point['g'] = str(g)
-                    new_point['b'] = str(b)
+                    if not color_image is None:
+                        b,g,r = color_image[y,x]
+                        new_point['r'] = str(r)
+                        new_point['g'] = str(g)
+                        new_point['b'] = str(b)
 
 
-                point_line.append(new_point)
+                    point_line.append(new_point)
 
         return point_line
 

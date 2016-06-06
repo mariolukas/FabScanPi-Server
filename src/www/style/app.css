@@ -14,6 +14,91 @@ body,html {
 }
 
 
+.slick-slider{
+    margin-bottom:0em;
+}
+
+/* unvisited link */
+.tab-content a:link {
+    color:white;
+}
+
+/* visited link */
+.tab-content a:visited {
+    color:white;
+}
+
+/* mouse over link */
+.tab-content a:hover {
+    color:white;
+}
+
+/* selected link */
+.tab-content a:active {
+    color:white;
+}
+
+.filter-select-box{
+    with:400px;
+    border:1px solid red;
+    height: 5em;
+}
+
+/* remove standard-styles */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border:none;
+    border-radius: 0;
+    font-size: 1em;
+    width: 100%
+}
+
+select {
+    /* irrelevante Eigenschaften gekürzt */
+
+    /*padding:.75em 1em .5em 1em;*/
+    /*box-shadow: 0 2px 1px 0 rgba(0,0,0,1);*/
+    /*background-color:#333;*/
+    color:white;
+    font-size:1.4em;
+    margin-left:2em;
+    margin-right:2em;
+}
+
+option {
+    background-color: rgba(53, 53, 53, 0.1);
+    /*border-top:1px solid #444;*/
+    padding:.3em 1em .3em 1em;
+}
+
+
+.filter{
+    /*border:1px solid #000;*/
+    font-family:arial;
+    height:100px;
+    width:200px;
+}
+
+ul{
+    list-style:none;
+    max-height:100px;
+    margin:0;
+    overflow:auto;
+    padding:0;
+    text-indent:10px;
+}
+li{
+    line-height:25px;
+}
+
+/*
+li:nth-child(even){
+    background:#ccc;
+}
+*/
+
 .timeRemaining{
     height: 10px;
     position: absolute;
@@ -161,7 +246,7 @@ a:active .icon{
 
 .settings-content{
     height: 100%;
-    margin-left: 320px;
+    margin-left: 180px;
 }
 
 .options-content{
@@ -290,7 +375,17 @@ html, body {
     margin-top: 12%;
 }
 
+.svg-icon{
+    height:2em;
+    margin-top:0.2em;
+    width: 3em;
+}
 
+.svg-icon svg > g{
+    fill: #808080;
+    height:2em;
+    margin-top:0.2em;
+}
 
 .tab{
  float:left;
@@ -299,18 +394,23 @@ html, body {
  height:2.5em;
 }
 
-.tab svg{
-    height:40px;
-    fill: rgb(200, 200, 200);
-    margin: 0 auto;
-}
 
 .tab i{
     color: #808080;
 }
 
+
 .tab.active i{
     color:white;
+    fill:#fffff;
+}
+
+.tab svg > g{
+    fill: #808080;
+}
+
+.tab.active svg > g{
+    fill:#ffffff;
 }
 
 .tab.active{
@@ -320,8 +420,18 @@ html, body {
 .tab-content{
     background-color: rgba(53, 53, 53, 0.4);
     height:200px;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
     /*padding-top: 0.8em;*/
 }
+
+.slick-loading .slick-list
+{
+    background: #fff url('../icons/spinner.gif') center center no-repeat;
+}
+
 
 .options{
     /*background-color: rgba(53, 53, 53, 0.3);*/

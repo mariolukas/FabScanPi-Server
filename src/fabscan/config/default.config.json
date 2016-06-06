@@ -10,7 +10,7 @@
    },
    "camera" : {
      "type" : "PICAM",
-     "device" : 0,
+     "rotation_angle" : 0,
      "preview_resolution":{
         "width": 320,
         "height": 240
@@ -35,6 +35,7 @@
         "z": 24.5
       },
       "angle": 33.0,
+      "detection_limit": 0.3,
       "rotation_steps": 5,
       "steps": 3200
    },

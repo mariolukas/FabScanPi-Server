@@ -192,6 +192,7 @@ class PiCam(threading.Thread):
 
                 self.objectExposure()
 
+                self.camera.rotation = self.config.camera.rotation_angle
                 #self.camera.vflip = True
                 #self.camera.hflip = True
 

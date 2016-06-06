@@ -6,35 +6,36 @@
    "serial" : {
      "baudrate" : 115200,
      "autoflash": "True",
-     "port": "/dev/ttyACM0"
+     "port": "/dev/ttyAMA0"
    },
    "camera" : {
      "type" : "PICAM",
-     "device" : 0,
+     "rotation_angle" : 90,
      "preview_resolution":{
-        "width": 320,
-        "height": 240
+        "width": 240,
+        "height": 320
      },
      "resolution":{
-          "width": 1296,
-          "height":972
+          "width": 972,
+          "height":1296
       },
       "position":{
           "x": 0.0,
-          "y": 5.5,
-          "z": 27.6
+          "y": 6.6,
+          "z": 24.6
       },
       "frame":{
-          "dimension": 23.5
+          "dimension": 24
       }
    },
    "laser": {
       "position":{
-        "x": 10.0,
+        "x": 10,
         "y": 7.3,
-        "z": 24.5
+        "z": 20
       },
       "angle": 33.0,
+      "detection_limit": 0.3,
       "rotation_steps": 5,
       "steps": 3200
    },
@@ -48,7 +49,7 @@
    },
    "scanner": {
       "origin":{
-        "y" : 0.75
+        "y" : 0.69
       }
    },
   "process_numbers": 4,

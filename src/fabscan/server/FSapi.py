@@ -202,7 +202,6 @@ class FSRest():
         return response
 
     def create_preview_image(self, data, scan_id):
-        self._logger.debug("####### Image Creation ##########")
 
         object = json2obj(str(data))
 
