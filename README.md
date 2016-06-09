@@ -13,7 +13,7 @@ FabScan PI is the next iteration of the [FabScan 3D laser scanner](http://hci.rw
 camera module. The idea behind using a Raspberry Pi is to provide the same hardware setup for all FabScans.
 Another benefit is that the FabScan gets a Stand-Alone, Web-Enabled 3D laser scanner.
 
-The FabScan PI Server is written in Python. The Web-Enabled user inferface is written in Python. The code for 
+The FabScan PI Server is written in Python. The Web-Enabled user inferface is written in JavaScript and HTML5 using WebGL. The code for 
 the interface can be found at: http://github.com/mariolukas/FabScanPi-Frontend
 That enables people with different programming skills to [contribute to this project](Readme.md#contribute).
 
