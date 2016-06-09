@@ -122,7 +122,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.settings.camera.saturation = 0
 
         self.hardwareController.led.on(20,20,20)
-        time.sleep(2)
+        time.sleep(3)
         self.hardwareController.camera.device.flushStream()
         time.sleep(2)
 
@@ -173,7 +173,6 @@ class FSScanProcessor(pykka.ThreadingActor):
         # TODO: solve this timing issue!
         # Workaround for Logitech webcam. We have to wait a loooong time until the logitech cam is ready...
         #time.sleep(3)
-
 
         self.hardwareController.camera.device.objectExposure()
         self.hardwareController.camera.device.flushStream()
