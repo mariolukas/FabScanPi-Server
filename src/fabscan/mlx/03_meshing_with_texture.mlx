@@ -1,0 +1,57 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <filter name="Poisson-disk Sampling">
+  <Param type="RichInt" value="50000" name="SampleNum"/>
+  <Param type="RichAbsPerc" value="0" min="0" name="Radius" max="100.624"/>
+  <Param type="RichInt" value="20" name="MontecarloRate"/>
+  <Param type="RichBool" value="false" name="ApproximateGeodesicDistance"/>
+  <Param type="RichBool" value="true" name="Subsample"/>
+  <Param type="RichBool" value="false" name="RefineFlag"/>
+  <Param type="RichMesh" value="0" name="RefineMesh"/>
+ </filter>
+ <filter name="Compute normals for point sets">
+  <Param type="RichInt" value="80" name="K"/>
+  <Param type="RichBool" value="false" name="flipFlag"/>
+  <Param x="0" y="0" z="0" type="RichPoint3f" name="viewPos"/>
+ </filter>
+ <filter name="Surface Reconstruction: Poisson">
+  <Param type="RichInt" value="10" name="OctDepth"/>
+  <Param type="RichInt" value="7" name="SolverDivide"/>
+  <Param type="RichFloat" value="1" name="SamplesPerNode"/>
+  <Param type="RichFloat" value="1" name="Offset"/>
+ </filter>
+ <filter name="Vertex Attribute Transfer">
+  <Param type="RichMesh" value="2" name="SourceMesh"/>
+  <Param type="RichMesh" value="0" name="TargetMesh"/>
+  <Param type="RichBool" value="true" name="GeomTransfer"/>
+  <Param type="RichBool" value="true" name="NormalTransfer"/>
+  <Param type="RichBool" value="false" name="ColorTransfer"/>
+  <Param type="RichBool" value="false" name="QualityTransfer"/>
+  <Param type="RichBool" value="false" name="SelectionTransfer"/>
+  <Param type="RichBool" value="false" name="QualityDistance"/>
+  <Param type="RichAbsPerc" value="1.84474" min="0" name="UpperBound" max="92.2372"/>
+ </filter>
+ <filter name="Remove Duplicated Vertex"/>
+ <filter name="Remove Faces from Non Manifold Edges"/>
+ <filter name="Subdivision Surfaces: Butterfly Subdivision">
+  <Param type="RichInt" value="5" name="Iterations"/>
+  <Param type="RichAbsPerc" value="0.5685" min="0" name="Threshold" max="113.702"/>
+  <Param type="RichBool" value="false" name="Selected"/>
+ </filter>
+ <filter name="Texture to Vertex Color (between 2 meshes)">
+  <Param type="RichMesh" value="2" name="sourceMesh"/>
+  <Param type="RichMesh" value="2" name="targetMesh"/>
+  <Param type="RichAbsPerc" value="2.274" min="0" name="upperBound" max="113.702"/>
+ </filter>
+ <filter name="Vertex Attribute Transfer">
+  <Param type="RichMesh" value="2" name="SourceMesh"/>
+  <Param type="RichMesh" value="0" name="TargetMesh"/>
+  <Param type="RichBool" value="true" name="GeomTransfer"/>
+  <Param type="RichBool" value="true" name="NormalTransfer"/>
+  <Param type="RichBool" value="true" name="ColorTransfer"/>
+  <Param type="RichBool" value="false" name="QualityTransfer"/>
+  <Param type="RichBool" value="false" name="SelectionTransfer"/>
+  <Param type="RichBool" value="false" name="QualityDistance"/>
+  <Param type="RichAbsPerc" value="2.274" min="0" name="UpperBound" max="113.702"/>
+ </filter>
+</FilterScript>

@@ -35,7 +35,7 @@
         "z": 20
       },
       "angle": 33.0,
-      "detection_limit": 0.3,
+      "detection_limit": 0.20,
       "rotation_steps": 5,
       "steps": 3200
    },

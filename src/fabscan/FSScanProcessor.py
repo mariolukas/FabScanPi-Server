@@ -122,9 +122,9 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.settings.camera.saturation = 0
 
         self.hardwareController.led.on(20,20,20)
-        time.sleep(3)
+        time.sleep(4)
         self.hardwareController.camera.device.flushStream()
-        time.sleep(2)
+        time.sleep(1)
 
 
 

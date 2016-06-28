@@ -88,7 +88,7 @@
             }
             if (scope.mode === "texture") {
               iframe.setAttribute('width', '100%');
-              iframeHtml = '<html><head><base target="_parent" /><style type="text/css">html, body { margin: 0; padding: 0; height: 320px; }</style><script> function resizeParent() { var ifs = window.top.document.getElementsByTagName("iframe"); for (var i = 0, len = ifs.length; i < len; i++) { var f = ifs[i]; var fDoc = f.contentDocument || f.contentWindow.document; if (fDoc === document) { f.height = 0; f.height = document.body.scrollHeight; } } }</script></head><body style="" onresize="resizeParent()"><img src="' + newVal + '" style="z-index:1000; opacity: 0.4; width: 60%; bottom:70px; left:20%;  position:absolute;" onload="resizeParent()" /></body></html>';
+              iframeHtml = '<html><head><base target="_parent" /><style type="text/css">html, body { margin: 0; padding: 0; height: 320px; }</style><script> function resizeParent() { var ifs = window.top.document.getElementsByTagName("iframe"); for (var i = 0, len = ifs.length; i < len; i++) { var f = ifs[i]; var fDoc = f.contentDocument || f.contentWindow.document; if (fDoc === document) { f.height = 0; f.height = document.body.scrollHeight; } } }</script></head><body style="" onresize="resizeParent()"><img src="' + newVal + '" style="z-index:1000; opacity: 0.4; height: 100%; left:20%;  position:absolute;" onload="resizeParent()" /></body></html>';
             }
             if (scope.mode === "preview") {
               iframe.setAttribute('height', '240px');
@@ -177,7 +177,7 @@
       return {
         restrict: "A",
         link: postLink = function(scope, element, attrs) {
-          var camera, cameraTarget, colors, contH, contW, controls, currentPointcloudAngle, current_point, materials, mesh, mouseX, mouseY, mousedown, pointcloud, positions, rad, renderer, scanLoaded, scene, windowHalfX, windowHalfY;
+          var camera, cameraTarget, colors, contH, contW, controls, currentPointcloudAngle, current_point, materials, mesh, mouseX, mouseY, mousedown, pointcloud, positions, rad, renderer, scanLoaded, scene, turntable, windowHalfX, windowHalfY;
 
           camera = void 0;
           scene = void 0;
@@ -193,6 +193,7 @@
           mousedown = false;
           scanLoaded = false;
           scanLoaded = false;
+          turntable = void 0;
           rad = 0;
           scope.height = window.innerHeight;
           scope.width = window.innerWidth;
@@ -222,8 +223,19 @@
             }
           });
           scope.$on(FSEnumService.events.ON_INFO_MESSAGE, function(event, data) {
+            if (data['message'] === 'SCANNING_TEXTURE') {
+              scene.remove(turntable);
+            }
+            if (data['message'] === 'SCANNING_OBJECT') {
+              if (!scene.getObjectByName('turntable')) {
+                scene.add(turntable);
+              }
+            }
             if (data['message'] === 'SCAN_CANCELED') {
               scope.clearView();
+              if (!scene.getObjectByName('turntable')) {
+                scene.add(turntable);
+              }
             }
             if (data['message'] === 'SCAN_COMPLETE') {
               scope.createPreviewImage(data['scan_id']);
@@ -232,7 +244,7 @@
             }
           });
           scope.init = function() {
-            var axes, cylinder, geometry, material, plane;
+            var axes, geometry, material, plane;
 
             current_point = 0;
             camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 1, 800);
@@ -257,8 +269,9 @@
             material = new THREE.MeshBasicMaterial({
               color: 0xDEDEDE
             });
-            cylinder = new THREE.Mesh(geometry, material);
-            scene.add(cylinder);
+            turntable = new THREE.Mesh(geometry, material);
+            turntable.name = "turntable";
+            scene.add(turntable);
             renderer = new THREE.WebGLRenderer({
               preserveDrawingBuffer: true
             });
@@ -317,7 +330,7 @@
               if (pointcloud && scope.scanComplete) {
                 pointcloud.rotation.y += d;
               }
-              if (mesh) {
+              if (mesh && scope.scanLoaded) {
                 return mesh.rotation.z += d;
               }
             }
@@ -453,6 +466,9 @@
               if (file.indexOf("mesh") > -1) {
                 return scope.renderMesh('stl');
               }
+            });
+            loader.addEventListener('progress', function(item) {
+              return scope.progressHandler(item);
             });
             return $log.info("Not implemented yet");
           };
@@ -1334,8 +1350,6 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
 
   angular.module(name, []).controller(name, [
     '$log', '$scope', '$rootScope', 'ngProgress', '$http', 'common.services.Configuration', 'fabscan.services.FSEnumService', 'fabscan.services.FSScanService', 'fabscan.services.FSMessageHandlerService', function($log, $scope, $rootScope, ngProgress, $http, Configuration, FSEnumService, FSScanService, FSMessageHandlerService) {
-      var filter_promise;
-
       $scope.showSettings = false;
       $scope.scanListLoaded = false;
       $scope.loadDialog = false;
@@ -1343,12 +1357,30 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       $scope.createScreenShot = null;
       $scope.scans = [];
       $scope.m_filters = [];
-      filter_promise = $http.get(Configuration.installation.httpurl + 'api/v1/filters');
-      filter_promise.then(function(payload) {
-        $log.info(payload);
-        $scope.m_filters = payload.data.filters;
-        return $scope.selectedFilter = $scope.m_filters[0]['file_name'];
-      });
+      $scope.loadFilters = function() {
+        var filter_promise;
+
+        filter_promise = $http.get(Configuration.installation.httpurl + 'api/v1/filters');
+        return filter_promise.then(function(payload) {
+          $log.info(payload);
+          $scope.m_filters = payload.data.filters;
+          $scope.m_filters.sort(function(a, b) {
+            var x, y;
+
+            x = a.file_name.toLowerCase();
+            y = b.file_name.toLowerCase();
+            if (x < y) {
+              return -1;
+            } else if (x > y) {
+              return 1;
+            } else {
+              return 0;
+            }
+          });
+          return $scope.selectedFilter = $scope.m_filters[0]['file_name'];
+        });
+      };
+      $scope.loadFilters();
       $scope.startScan = function() {
         $scope.stopStream();
         $scope.showSettings = false;

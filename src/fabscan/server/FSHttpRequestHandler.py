@@ -54,7 +54,7 @@ class RequestHandler(SimpleHTTPRequestHandler):
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
         json = self.api.call(action, self.path, self.headers, data)
-        self._logger.debug(json)
+        #self._logger.debug(json)
 
         self.wfile.write(json)
 

@@ -49,41 +49,19 @@ class ImageProcessor():
         return cv2.split(image)[0]
 
 
+    def canny_threshold(self,image, lowThreshold=0, max_lowThreshold=100, ratio=3, kernel_size=3):
+        gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+        detected_edges = cv2.GaussianBlur(gray,(3,3),0)
+        detected_edges = cv2.Canny(detected_edges,lowThreshold,lowThreshold*ratio,apertureSize = kernel_size)
+        dst = cv2.bitwise_and(image,image,mask = detected_edges)  # just add some colours to edges from original image.
+        return dst
+
     def get_laser_stream_frame(self, cam_image, type='CAMERA'):
 
         x_center = cam_image.shape[1] * self.settings.center
         x_center_delta = cam_image.shape[1] * 0.5 - x_center
 
-
-        #b,g,cam_image = cv2.split(cam_image)
-        red_channel = cam_image
-        red_channel[2,2,:] = 0
-        open_value = 2
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (open_value, open_value))
-        image_open = cv2.morphologyEx(red_channel, cv2.MORPH_OPEN, kernel)
-        image_threshold =cv2.threshold(red_channel, self.settings.threshold, 255.0, cv2.THRESH_TOZERO)[1]
-
-        #cam_image = image_threshold
-        #h, w = image_threshold.shape
-        #weight_matrix = np.array((np.matrix(np.linspace(0, w - 1, w)).T * np.matrix(np.ones(h))).T)
-        # Compute center of mass
-        #s = image_threshold.sum(axis=1)
-        #v = np.where(s > 0)[0]
-        #u = (weight_matrix * image_threshold).sum(axis=1)[v] / s[v]
-        #image_line = np.zeros_like(image_threshold)
-        #cam_image[v, u.astype(int)] = [255.0,0]
-
-
-
-        _, cam_image = self.line_coords(image_threshold,  filter=True, fast=True, x_center_delta=None)
-        #cam_image = tres
-
-        #cam_image = cv2.addWeighted(tres,1.0,cam_image,0.8,0)
-        #cam_image = cv2.merge((cam_image,tres,red_channel))
-        #cam_image = np.concatenate((red_channel, cam_image), axis=1)
-        #cv2.line(cam_image, (0,int(self.config.scanner.origin.y*cam_image.shape[0])), (cam_image.shape[1],int(0.75*cam_image.shape[0])), (0,255,0), thickness=1, lineType=8, shift=0)
-        #cv2.line(cam_image, (int(0.5*cam_image.shape[1]),0), (int(0.5*cam_image.shape[1]), cam_image.shape[0]), (0,255,0), thickness=1, lineType=8, shift=0)
-
+        _, cam_image = self.line_coords(cam_image,  filter=False, fast=True, x_center_delta=None)
 
         r = 320.0 / cam_image.shape[1]
         dim = (320, int(cam_image.shape[0] * r))
@@ -189,15 +167,10 @@ class ImageProcessor():
         open_value = 2
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (open_value, open_value))
         image_open = cv2.morphologyEx(red_channel, cv2.MORPH_OPEN, kernel)
-        image_threshold =cv2.threshold(image_open, self.settings.threshold, 255.0, cv2.THRESH_TOZERO)[1]
+        image_threshold =cv2.threshold(image_open, self.settings.threshold, self.settings.threshold+20,  cv2.THRESH_TOZERO)[1]
 
         gray_image = cv2.cvtColor(image_threshold, cv2.COLOR_BGR2GRAY)
-       # b,g,r  = cv2.split(image)
-        #gray_image = cv2.GaussianBlur(gray_image,(5,5),0)
-
-
-
-        #tres =cv2.threshold(image_open, self.settings.threshold, 255.0, cv2.THRESH_TOZERO)[1]
+        gray_image = cv2.GaussianBlur(gray_image,(5,5),0)
 
         return gray_image
 
@@ -210,6 +183,7 @@ class ImageProcessor():
         '''
         grey = self.trheshold_image(image)
 
+        threshold = cv2.cvtColor(grey,cv2.COLOR_GRAY2BGR)
 
         pixels = []
         if filter:
@@ -223,7 +197,7 @@ class ImageProcessor():
                     sub_pixel =  np.argmax(line[ start: grey.shape[1]]) + start
 
                     if line[sub_pixel] > self.settings.threshold/3:
-                        cv2.line(image, (int(sub_pixel)-5,int(y)), (int(sub_pixel)+5,int(y)), (255,255,255), thickness=1, lineType=8, shift=0)
+                        cv2.line(threshold, (int(sub_pixel)-5,int(y)), (int(sub_pixel)+5,int(y)), (255,0,0), thickness=1, lineType=8, shift=0)
                         pixels.append(( sub_pixel, y))
 
         else:
@@ -248,7 +222,7 @@ class ImageProcessor():
 
                    if it[0] > 0:
                        pixels.append((float(it[0]),it.index))
-                       cv2.line(image, (int(it[0])-5,int(it.index)), (int(it[0])+5,int(it.index)), (255,0,0), thickness=1, lineType=8, shift=0)
+                       cv2.line(threshold, (int(it[0])-5,int(it.index)), (int(it[0])+5,int(it.index)), (255,0,0), thickness=1, lineType=8, shift=0)
 
                    it.iternext()
 
@@ -258,7 +232,7 @@ class ImageProcessor():
                pixels = [(x -x_center_delta, y) for (x, y) in pixels]
 
 
-        return np.array(pixels), image
+        return np.array(pixels), threshold
 
 
     def process_line(self, line_coords, angle, color_image=None):

@@ -14,9 +14,11 @@ from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManager, FSEvents
 from fabscan.controller import HardwareController
 from fabscan.util import FSUtil
+from fabscan.util import FSUpdate
 from fabscan.FSScanProcessor import FSScanProcessor
 from fabscan.vision.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import Settings
+
 
 
 class FSState(object):
@@ -128,9 +130,8 @@ class FSScanner(threading.Thread):
             message['data']['level'] = "info"
             self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
-
-
     def _on_client_connected(self,eventManager, event):
+
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_CLIENT_INIT
         message['data']['client'] = event['client']
@@ -140,11 +141,16 @@ class FSScanner(threading.Thread):
         #message['data']['points'] = self.pointcloud
         message['data']['settings'] = self.settings.todict(self.settings)
 
-
         eventManager.publish(FSEvents.ON_SOCKET_SEND, message)
 
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_INFO_MESSAGE
+
+        #if not FSUpdate.is_up_to_date():
+        #    self._logger.info("Newer version available...")
+        #    message['data']['message'] = "UPDATE_AVAILABLE"
+        #    message['data']['level'] = "info"
+        #    self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
         if not self.hardwareController.arduino_is_connected():
             message['data']['message'] = "NO_SERIAL_CONNECTION"
