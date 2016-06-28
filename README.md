@@ -4,7 +4,7 @@
 [![Python Support](https://img.shields.io/badge/License-AGPL v3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.de.html)
 [![Build Status](https://travis-ci.org/mariolukas/FabScanPi-Server.svg?branch=master)](https://travis-ci.org/mariolukas/FabScanPi-Frontend.svg?branch=master)
 
-<img src="doc/images/logo.jpg" width="400">
+<img src="docs/images/logo.jpg" width="400">
 
 ## What is FabScan PI
 
@@ -21,8 +21,8 @@ FabScan PI is Free Software and released under the [GNU Affero General Public Li
 
 ## Installation 
 
-* [Hardware](doc/HARDWARE.md)
-* [Software](doc/SOFTWARE.md)
+* [Hardware](docs/HARDWARE.md)
+* [Software](docs/SOFTWARE.md)
 
 ## Quick Start
 
@@ -34,7 +34,7 @@ firmware version after the server is started.
 
 ### With FabScanPI ISO image for SD card (recommended)
 Dowload the current FabScanPi Raspbian image and flash it to SD Card. 
-Follow the [hardware](doc/HARDWARE.md) Setup and boot the Raspberry Pi 2 
+Follow the [hardware](docs/HARDWARE.md) Setup and boot the Raspberry Pi 2 
 and you are ready to go. 
 
 Latest image release: [https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest](https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest)
@@ -71,8 +71,8 @@ FabScan Pi is tested on:
 
 | Logo                            | OS             | Versions     | 
 |:-------------------------------:|:--------------:|:------------:|
-| <img src="doc/images/chrome-logo.png" width="30" height="30">  | OSX, Windows   | 47.0.2526.106 (64-bit) |
-| <img src="doc/images/firefox-logo.png" width="30" height="30">  | OSX, Windows   | 43.0.4 |
+| <img src="docs/images/chrome-logo.png" width="30" height="30">  | OSX, Windows   | 47.0.2526.106 (64-bit) |
+| <img src="docs/images/firefox-logo.png" width="30" height="30">  | OSX, Windows   | 43.0.4 |
 
 
 By default the FabScan PI server binds to all interfaces on port 8080. Pointing your browser to 
@@ -88,7 +88,7 @@ operating systems [here](https://learn.adafruit.com/bonjour-zeroconf-networking-
 The main view provides a camera symbol. By clicking this symbol the live settings dialog appears. On the left side
 is a laser detection preview. Best scan results can be reached, when the red laser line is covered by a blue line.
 
-<img width="500" src="doc/images/main-view.png">
+<img width="500" src="docs/images/main-view.png">
 
 The coverage of the lines can be improved by using the different slider settings. A good point to start is the 
 threshold slider. If the environment light is bright, try to set a lower value. If the environment light is low, 
@@ -98,7 +98,7 @@ settings are the camera brightness and contrast settings and if you are using an
 RGB light setting, which can be used to increase the objects contrast level. A scan can be performed by clicking
 the scan button in the first settings tab where the threshold and resolution slider are located.
 
-<img width="500" src="doc/images/settings.png">
+<img width="500" src="docs/images/settings.png">
 
 The resolution slider can be used to set the scan resolution. Sometimes it is better to start with a low resolution
 to control the selected settings result. If the result is nice you can perform a higher resolution scan with the 
@@ -106,7 +106,7 @@ same settings. The current settings are persistent as long as the pi is up and r
 with the scan data after a successful scan. They can be loaded to scan another object with the same settings. E.g. an 
 object what consists of the same material, color etc. 
 
-<img width="500" src="doc/images/loading-view.png">
+<img width="500" src="docs/images/loading-view.png">
 
 The sharing dialog can be used to handle the current loaded scan. The sharing dialog provides options to download or 
 delete a scan, and as already mentioned to load the scan settings. 
@@ -117,8 +117,8 @@ one of the previously scanned objects loads the scan.
 
 ## Development
 
-* [Frontend](doc/FRONTEND_DEV.md)
-* [Backend](doc/BACKEND_DEV.md)
+* [Frontend](docs/FRONTEND_DEV.md)
+* [Backend](docs/BACKEND_DEV.md)
 <a name="contribute"></a>
 
 ## Contributing to this project
