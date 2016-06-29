@@ -1,4 +1,4 @@
-pyserial >=2.7
+pyserial
 pillow >=2.7
 Pykka >=1.2
 numpy >=1.9
