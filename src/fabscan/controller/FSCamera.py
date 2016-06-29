@@ -186,8 +186,8 @@ class PiCam(threading.Thread):
                 #self.camera.led = False
 
                 self.camera.resolution = (self.config.camera.resolution.width, self.config.camera.resolution.height)
-                self.camera.framerate = 30
-                self.camera.quality = 70
+                #self.camera.framerate = 30
+                #self.camera.quality = 70
 
 
                 self.objectExposure()
