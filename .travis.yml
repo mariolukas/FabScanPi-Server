@@ -6,7 +6,7 @@ before_install:
 - sudo apt-get -qq update
 - sudo apt-get install -y build-essential python-setuptools debhelper cdbs dh-python
 script: 
-  - export PYBUILD_INSTALL_ARGS_python3=--install-scripts=/usr/bin/ --prefix=/usr/
+  - export PYBUILD_INSTALL_ARGS_python2="--install-scripts=/usr/bin/ --prefix=/usr/"
   - export PYBUILD_DESTDIR_python2=debian/
   - make deb
 env:
