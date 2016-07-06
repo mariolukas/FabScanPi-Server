@@ -80,7 +80,7 @@ class FSSerialCom():
         try:
            # check if device is available
            if self.avr_device_is_available():
-
+                   time.sleep(0.5)
                    # try to connect to arduino
                    self._connect()
 
@@ -94,18 +94,23 @@ class FSSerialCom():
                                if not current_version == flash_version_number:
                                    self._close()
                                    self._logger.info("Old firmare detected trying to flash new firmware...")
-                                   self.avr_flash(flash_file_version)
-                                   self._logger.info("FabScan Firmware Version: "+flash_file_version)
-                                   ## reconnect to new firmware version
-                                   self._connect()
+                                   if self.avr_flash(flash_file_version):
+                                        time.sleep(0.5)
+                                        self._connect()
+                                        current_version = self.checkVersion()
+                                        self._logger.info("Successfully flashed new Firmware Version: "+current_version)
+
 
                    # no firmware is installed, flash firmware
                    else:
                             # if auto flash is activated
                             if self.config.serial.autoflash == "True":
                                     self._logger.info("No firmware detected trying to flash firmware...")
-                                    self.avr_flash(flash_file_version)
-                                    self._connect()
+                                    if self.avr_flash(flash_file_version):
+                                        time.sleep(0.5)
+                                        self._connect()
+                                        current_version = self.checkVersion()
+                                        self._logger.info("Successfully flashed Firmware Version: "+current_version)
            else:
                     self._logger.error("No Arduino compatible device found on port "+str(self._port))
 
