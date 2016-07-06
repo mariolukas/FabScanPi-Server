@@ -48,7 +48,7 @@ class FSSerialCom():
 
     def avr_flash(self,fname):
         FSSystem.run_command("wc -l "+str(fname))
-        status = FSSystem.run_command("avrdude -U flash:w:"+str(fname)+":i -p atmega328 -b 57600 -carduino -patmega328p -P"+str(self._port))
+        status = FSSystem.run_command("avrdude -D -V -U flash:w:"+str(fname)+":i -p atmega328 -b 57600 -carduino -patmega328p -P"+str(self._port))
         if status != 0:
             self._logger.error("Failed to flash firmware")
         return status == 0
@@ -101,6 +101,7 @@ class FSSerialCom():
 
            if self._serial.isOpen() and (current_version != "None"):
               self._logger.info("FabScanPi is connected to Arduino or FabScanPi HAT on port: "+str(self._port))
+              current_version = self.checkVersion()
               self._firmware_version = current_version
               self._connected = True
            else:
@@ -117,6 +118,7 @@ class FSSerialCom():
             else:
                 self._logger.error("Can not connect to Arduino.")
                 self._connected = False
+
 
     def checkVersion(self):
         if self._serial:

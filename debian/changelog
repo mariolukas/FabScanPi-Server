@@ -1,3 +1,11 @@
+fabscanpi-server (0.2.1) unstable; urgency=medium
+
+  * fixed avrdude flashing for FabScan HAT
+  * added new dependencies to control file
+
+ -- Mario Lukas  <info@mariolukas.de>  Wed, 6 Jul 2016 20:57:00 +0000
+
+
 fabscanpi-server (0.2.0) unstable; urgency=medium
 
   * fixed issue #5, heavy CPU load
