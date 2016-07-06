@@ -46,9 +46,13 @@ class FSSerialCom():
         return baselist
 
 
+    def avr_device_is_available(self):
+        status = FSSystem.run_command("avrdude -p m328p -b 57600 -carduino -P"+str(self._port))
+        return status == 0
+
     def avr_flash(self,fname):
         FSSystem.run_command("wc -l "+str(fname))
-        status = FSSystem.run_command("avrdude -D -V -U flash:w:"+str(fname)+":i -p atmega328 -b 57600 -carduino -patmega328p -P"+str(self._port))
+        status = FSSystem.run_command("avrdude -D -V -U flash:w:"+str(fname)+":i -b 57600 -carduino -pm328p -P"+str(self._port))
         if status != 0:
             self._logger.error("Failed to flash firmware")
         return status == 0
@@ -62,6 +66,9 @@ class FSSerialCom():
         except:
             self._logger.error("Could not open serial port")
 
+    def _close(self):
+        self._serial.close()
+
 
     def _openSerial(self):
 
@@ -71,53 +78,49 @@ class FSSerialCom():
         self._logger.debug("Latest available firmware version is: "+flash_version_number)
 
         try:
+           # check if device is available
+           if self.avr_device_is_available():
 
-           # try to connect, if connection works check for firmware...
-           self._connect()
+                   # try to connect to arduino
+                   self._connect()
 
-           # check if port is open and check if autoflash is set...
-           if self._serial.isOpen():
+                   # if connection is opened successfully
+                   if self._serial.isOpen():
+                           current_version = self.checkVersion()
+                           self._logger.debug("Installed firmware version: "+current_version)
+                           # check if autoflash is active
+                           if self.config.serial.autoflash == "True":
+                               ## check if firmware is up to date, if not flash new firmware
+                               if not current_version == flash_version_number:
+                                   self._close()
+                                   self._logger.info("Old firmare detected trying to flash new firmware...")
+                                   self.avr_flash(flash_file_version)
+                                   self._logger.info("FabScan Firmware Version: "+flash_file_version)
+                                   ## reconnect to new firmware version
+                                   self._connect()
 
-                   current_version = self.checkVersion()
-
-                   self._logger.debug("Installed firmware version: "+current_version)
-
-                   if self.config.serial.autoflash == "True":
-                       ## check for curront firmware version
-                       if not current_version == flash_version_number:
-                           self._logger.info("Old firmare detected trying to flash new firmware...")
-                           self.avr_flash(flash_file_version)
-                           self._logger.info("FabScan Firmware Version: "+flash_file_version)
-                           ## reconnect to new firmware version
-                           self._connect()
-
-           # if connection fails, no firmware on device?...
+                   # no firmware is installed, flash firmware
+                   else:
+                            # if auto flash is activated
+                            if self.config.serial.autoflash == "True":
+                                    self._logger.info("No firmware detected trying to flash firmware...")
+                                    self.avr_flash(flash_file_version)
+                                    self._connect()
            else:
-              if self.config.serial.autoflash == "True":
-                    self._logger.info("No firmware detected trying to flash firmware...")
-                    self.avr_flash(flash_file_version)
-                    self._connect()
+                    self._logger.error("No Arduino compatible device found on port "+str(self._port))
 
-
+           # set connection states and version
            if self._serial.isOpen() and (current_version != "None"):
-              self._logger.info("FabScanPi is connected to Arduino or FabScanPi HAT on port: "+str(self._port))
-              current_version = self.checkVersion()
-              self._firmware_version = current_version
-              self._connected = True
+                  self._logger.info("FabScanPi is connected to Arduino or FabScanPi HAT on port: "+str(self._port))
+                  current_version = self.checkVersion()
+                  self._firmware_version = current_version
+                  self._connected = True
            else:
-              self._logger.error("Can not find Arduino or FabScanPi HAT")
-              self._connected = False
+                  self._logger.error("Can not find Arduino or FabScanPi HAT")
+                  self._connected = False
 
         except:
-            ## try to connect for installations where arduino is custom but
-            ## autoflash is still active...
-            self._connect()
-            if self._serial.isOpen():
-                self._logger.info("FabScanPi is connected to Arduino")
-                self._connected = True
-            else:
-                self._logger.error("Can not connect to Arduino.")
-                self._connected = False
+            self._logger.error("Fatal Arduino connection error....")
 
 
     def checkVersion(self):
