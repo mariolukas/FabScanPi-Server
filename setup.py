@@ -111,6 +111,8 @@ def params():
         ('/usr/local/fabscanpi/www/js/locales/de/',['src/www/js/locales/de/i18n.js']),
         ('/usr/local/fabscanpi/www/icons/', ['src/www/icons/icon_mesh.svg','src/www/icons/icon_scan.svg','src/www/icons/icon_pointcloud.svg','src/www/icons/favicon.png', 'src/www/icons/spinner.gif']),
         ('/usr/local/fabscanpi/www/fonts/', ['src/www/fonts/fontawesome-webfont.woff2', 'src/www/fonts/fontawesome-webfont.woff', 'src/www/fonts/fontawesome-webfont.ttf'])
+        ('/usr/local/fabscanpi/www/style/fonts/', ['src/www/style/fonts/slick.woff', 'src/www/style/fonts/slick.ttf'])
+
     ]
 
     scripts=['src/fabscanpi-server']
