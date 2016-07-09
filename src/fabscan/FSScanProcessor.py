@@ -169,7 +169,7 @@ class FSScanProcessor(pykka.ThreadingActor):
             "message": "SCANNING_TEXTURE",
             "level": "info"
         }
-        self.eventManager.broadcast(FSEvents.ON_INFO_MESSAGE, message)
+        self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
         self._worker_pool.create(self.config.process_numbers)
 
         self._scan_brightness = self.settings.camera.brightness
@@ -202,8 +202,7 @@ class FSScanProcessor(pykka.ThreadingActor):
                     self.init_texture_scan()
 
                 color_image = self.hardwareController.scan_at_position(self._resolution, color=True)
-                task = ImageTask(color_image, self._prefix, self.current_position, self._number_of_pictures,
-                                 task_type="PROCESS_COLOR_IMAGE")
+                task = ImageTask(color_image, self._prefix, self.current_position, self._number_of_pictures, task_type="PROCESS_COLOR_IMAGE")
                 self.image_task_q.put(task, True)
                 self._logger.debug("Color Progress %i of %i : " % (self.current_position, self._number_of_pictures))
                 self.current_position += 1
