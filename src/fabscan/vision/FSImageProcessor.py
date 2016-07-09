@@ -157,6 +157,14 @@ class ImageProcessor():
                 self._logger.debug("Can not detect laser line on backwall.")
                 return None
 
+    def get_grey(self, image):
+        hsv_img = cv2.cvtColor(image, cv2.cv.CV_BGR2HSV)
+        h, s, v = cv2.split(hsv_img)
+        height, width, channels = image.shape
+
+        blur = cv2.GaussianBlur(v,(11,11),0)
+        return blur
+
     def trheshold_image(self, image):
         #hsv_img = cv2.cvtColor(image, cv2.cv.CV_BGR2HSV)
         #h, s, v = cv2.split(hsv_img)
@@ -181,8 +189,9 @@ class ImageProcessor():
         If x_center given, transforms coordinates so that
             the axis of rotation is x=0.
         '''
-        grey = self.trheshold_image(image)
+        #grey = self.trheshold_image(image)
 
+        grey = self.get_grey(image)
         threshold = cv2.cvtColor(grey,cv2.COLOR_GRAY2BGR)
 
         pixels = []

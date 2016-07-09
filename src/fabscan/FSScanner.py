@@ -64,7 +64,6 @@ class FSScanner(threading.Thread):
 
     def on_command(self, mgr, event):
 
-        self._logger.debug(event)
         command = event.command
 
         ## Start Scan and goto Settings Mode
@@ -109,11 +108,6 @@ class FSScanner(threading.Thread):
         elif command == FSCommand.MESHING:
             meshlab_task = FSMeshlabTask(event.scan_id, event.filter, event.format)
             meshlab_task.start()
-            data = {
-                "message": "MESHING_STARTED",
-                "level": "info"
-            }
-            self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, data)
 
     def on_client_connected(self, eventManager, event):
 

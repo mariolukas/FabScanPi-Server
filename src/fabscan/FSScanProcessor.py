@@ -339,7 +339,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.reset_scanner_state()
 
         event = FSEvent()
-        event.command = '_COMPLETE'
+        event.command = 'COMPLETE'
         self.eventManager.publish(FSEvents.COMMAND,event)
 
         message = {

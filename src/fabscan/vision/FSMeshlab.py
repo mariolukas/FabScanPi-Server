@@ -23,6 +23,12 @@ class FSMeshlabTask(threading.Thread):
         def run(self):
             self._logger.info("Meshlab Process Started...")
 
+            data = {
+                "message": "MESHING_STARTED",
+                "level": "info"
+            }
+            self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, data)
+
             basedir = os.path.dirname(os.path.dirname(__file__))
             mlx_script_path = basedir+"/mlx/"+self.filter
 
