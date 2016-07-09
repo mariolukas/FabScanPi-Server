@@ -22,7 +22,15 @@ from fabscan.controller import HardwareController
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
 
-
+class FSScanProcessorCommand(object):
+    START = "START"
+    STOP = "STOP"
+    SETTINGS_MODE_OFF = "SETTINGS_MODE_OFF"
+    SETTINGS_MODE_ON = "SETTINGS_MODE_ON"
+    NOTIFY_HARDWARE_STATE = "NOTIFY_HARDWARE_STATE"
+    UPDATE_SETTINGS = "UPDATE_SETTINGS"
+    SCAN_NEXT_TEXTURE_POSITION = "SCAN_NEXT_TEXTURE_POSITION"
+    SCAN_NEXT_OBJECT_POSITION = "SCAN_NEXT_OBJECT_POSITION"
 
 class FSScanProcessor(pykka.ThreadingActor):
 
@@ -62,20 +70,70 @@ class FSScanProcessor(pykka.ThreadingActor):
 
 
     def on_receive(self, event):
-        if event[FSEvents.COMMAND] == 'START':
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.START:
             self.start_scan()
 
-        if event[FSEvents.COMMAND] == 'STOP':
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.STOP:
             self.stop_scan()
 
-        if event[FSEvents.COMMAND] == 'SCAN_NEXT_TEXTURE_POSITION':
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.SETTINGS_MODE_ON:
+            self.settings_mode_on()
+
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.SETTINGS_MODE_OFF:
+            self.settings_mode_off()
+
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.SCAN_NEXT_TEXTURE_POSITION:
             self.scan_next_texture_position()
 
-        if event[FSEvents.COMMAND] == 'SCAN_NEXT_OBJECT_POSITION':
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.SCAN_NEXT_OBJECT_POSITION:
             self.scan_next_object_position()
 
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.NOTIFY_HARDWARE_STATE:
+            self.send_hardware_state_notification()
+
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.UPDATE_SETTINGS:
+            self.update_settings(event['SETTINGS'])
+
+    def update_settings(self, settings):
+        try:
+            self.settings.update(settings)
+            self.hardwareController.led.on(self.settings.led.red,self.settings.led.green,self.settings.led.blue)
+        except:
+            pass
+
+    def send_hardware_state_notification(self):
+        self._logger.debug("Checking Hardware connections")
+
+        message = FSUtil.new_message()
+        message['type'] = FSEvents.ON_INFO_MESSAGE
+
+        if not self.hardwareController.arduino_is_connected():
+            message['data']['message'] = "NO_SERIAL_CONNECTION"
+            message['data']['level'] = "error"
+        else:
+            message['data']['message'] = "SERIAL_CONNECTION_READY"
+            message['data']['level'] = "info"
+
+        self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
+
+        if not self.hardwareController.camera_is_connected():
+            message['data']['message'] = "NO_CAMERA_CONNECTION"
+            message['data']['level'] = "error"
+        else:
+            message['data']['message'] = "CAMERA_READY"
+            message['data']['level'] = "info"
+
+        self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
+
+    def settings_mode_on(self):
+        self.hardwareController.settings_mode_on()
+
+    def settings_mode_off(self):
+        self.hardwareController.camera.device.stopStream()
+        self.hardwareController.settings_mode_off()
 
     def start_scan(self):
+        self.hardwareController.settings_mode_off()
         self._logger.info("Scan started")
         self._stop_scan = False
         self.hardwareController.laser.off()
@@ -182,7 +240,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         if self._laser_angle == None:
             event = FSEvent()
-            event.command = '_LASER_DETECTION_FAILED'
+            event.command = 'SCANNER_ERROR'
             self.eventManager.publish(FSEvents.COMMAND,event)
             self.on_laser_detection_failed()
             self._logger.debug("Send laser detection failure event")
@@ -230,26 +288,23 @@ class FSScanProcessor(pykka.ThreadingActor):
         message['data']['message'] = "NO_LASER_FOUND"
         message['data']['level'] = "warn"
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
+        self.settings_mode_on()
 
 
     def stop_scan(self):
-
        self._stop_scan = True
        self._worker_pool.kill()
        time.sleep(1)
        FSUtil.delete_scan(self._prefix)
        self.reset_scanner_state()
        self._logger.info("Scan stoped")
+       self.hardwareController.camera.device.stopStream()
 
-
-    def on_stop(self):
-
-        message = FSUtil.new_message()
-        message['type'] = FSEvents.ON_INFO_MESSAGE
-        message['data']['message'] = "SCAN_CANCELED"
-        message['data']['level'] = "info"
-        self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
-        #self.eventManager.unsubscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
+       message = FSUtil.new_message()
+       message['type'] = FSEvents.ON_INFO_MESSAGE
+       message['data']['message'] = "SCAN_CANCELED"
+       message['data']['level'] = "info"
+       self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
 
     def image_processed(self, eventManager, event):
@@ -275,7 +330,6 @@ class FSScanProcessor(pykka.ThreadingActor):
 
     def scan_complete(self):
 
-
         self._logger.debug("Scan complete writing pointcloud files with %i points." % (self.point_cloud.get_size(),))
         self.point_cloud.saveAsFile(self._prefix)
         self.settings.saveAsFile(self._prefix)
@@ -292,8 +346,6 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         event = FSEvent()
         event.command = '_COMPLETE'
-        #TODO: generate MESH Here if option is selected in scan settings!
-        #self.create_mesh(self._prefix)
         self.eventManager.publish(FSEvents.COMMAND,event)
 
         message = FSUtil.new_message()
@@ -304,6 +356,7 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
+        self.hardwareController.camera.device.stopStream()
 
     def append_points(self, point_set):
         if self.point_cloud:

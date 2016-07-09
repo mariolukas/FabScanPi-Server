@@ -120,7 +120,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             self.event_q.put(event)
 
 
-                        if (image_task.task_type == "PROCESS_LASER_IMAGE"):
+                        if (image_task.task_type == "PROCESS_DEPTH_IMAGE"):
 
                             angle = (image_task.progress) * 360 / image_task.resolution
                             save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)

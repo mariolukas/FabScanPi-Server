@@ -1,3 +1,9 @@
+fabscanpi-server (0.2.2) unstable; urgency=medium
+
+  * refactored FSScanner.py to make software more flexible
+
+ -- Mario Lukas  <info@mariolukas.de>  Wed, 8 Jul 2016 17:52:00 +0000
+
 fabscanpi-server (0.2.1) unstable; urgency=medium
 
   * fixed avrdude flashing for FabScan HAT

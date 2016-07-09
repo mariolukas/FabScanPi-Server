@@ -18,7 +18,7 @@ from fabscan.util import FSUpdate
 from fabscan.FSScanProcessor import FSScanProcessor
 from fabscan.vision.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import Settings
-
+from fabscan.FSScanProcessor import FSScanProcessorCommand
 
 
 class FSState(object):
@@ -33,7 +33,8 @@ class FSCommand(object):
     UPDATE_SETTINGS = "UPDATE_SETTINGS"
     MESHING = "MESHING"
     _COMPLETE = "_COMPLETE"
-    _LASER_DETECTION_FAILED = "_LASER_DETECTION_FAILED"
+    SCANNER_ERROR = "SCANNER_ERROR"
+
 
 class FSScanner(threading.Thread):
 
@@ -48,10 +49,12 @@ class FSScanner(threading.Thread):
         self._exit_requested = False
         self.meshingTaskRunning = False
 
+        self.scanProcessor = FSScanProcessor.start()
         self._logger.debug("Number of cpu cores: "+str( multiprocessing.cpu_count()))
+
         self.eventManager = FSEventManager.instance()
-        self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self._on_client_connected)
-        self.eventManager.subscribe(FSEvents.COMMAND, self._on_command)
+        self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self.on_client_connected)
+        self.eventManager.subscribe(FSEvents.COMMAND, self.on_command)
 
     def run(self):
 
@@ -62,7 +65,7 @@ class FSScanner(threading.Thread):
     def request_exit(self):
             self._exit_requested = True
 
-    def _on_command(self,mgr, event):
+    def on_command(self, mgr, event):
 
         command = event.command
 
@@ -70,68 +73,50 @@ class FSScanner(threading.Thread):
         if command == FSCommand.SCAN:
             if self._state is FSState.IDLE:
                 self.set_state(FSState.SETTINGS)
-                self.hardwareController.settings_mode_on()
+                self.scanProcessor.tell({FSEvents.COMMAND:FSScanProcessorCommand.SETTINGS_MODE_ON})
 
         ## Update Settings in Settings Mode
         elif command == FSCommand.UPDATE_SETTINGS:
             if self._state is FSState.SETTINGS:
-                try:
-                    #self._logger.info(event.settings)
-                    self.settings.update(event.settings)
-                    self.hardwareController.led.on(self.settings.led.red,self.settings.led.green,self.settings.led.blue)
-                except:
-                    pass
+                self.scanProcessor.tell({FSEvents.COMMAND:FSScanProcessorCommand.UPDATE_SETTINGS, 'SETTINGS': event.settings})
 
         ## Start Scan Process
         elif command == FSCommand.START:
             if self._state is FSState.SETTINGS:
                 self._logger.debug("Start command received...")
                 self.set_state(FSState.SCANNING)
-                self.hardwareController.settings_mode_off()
-                self.scanProcessor = FSScanProcessor.start()
-                self.scanProcessor.tell({FSEvents.COMMAND:FSCommand.START})
+                self.scanProcessor.tell({FSEvents.COMMAND:FSScanProcessorCommand.START})
 
         ## Stop Scan Process or Stop Settings Mode
         elif command == FSCommand.STOP:
 
             if self._state is FSState.SCANNING:
-                self.scanProcessor.ask({FSEvents.COMMAND:FSCommand.STOP})
-                self.scanProcessor.stop()
+                self.scanProcessor.ask({FSEvents.COMMAND:FSScanProcessorCommand.STOP})
 
             if self._state is FSState.SETTINGS:
-                self.hardwareController.settings_mode_off()
-                #self.scanProcessor.stop()
+                self._logger.debug("Close Settings")
+                self.scanProcessor.tell({FSEvents.COMMAND:FSScanProcessorCommand.SETTINGS_MODE_OFF})
 
-            self.hardwareController.camera.device.stopStream()
             self.set_state(FSState.IDLE)
-
 
         elif command == FSCommand._COMPLETE:
             self.set_state(FSState.IDLE)
-            self.hardwareController.camera.device.stopStream()
-            #self.scanProcessor.stop()
             self._logger.info("Scan complete")
 
-        elif command == FSCommand._LASER_DETECTION_FAILED:
-            #self.scanProcessor.ask({FSEvents.COMMAND:FSCommand.STOP})
-            self._logger.info("No Laser detected, returning to settings dialog.")
-            #self.scanProcessor.ask({FSEvents.COMMAND:FSCommand.STOP})
-            #self.scanProcessor.stop()
-
+        elif command == FSCommand.SCANNER_ERROR:
+            self._logger.info("Internal Scanner Error.")
             self.set_state(FSState.SETTINGS)
-            self.hardwareController.settings_mode_on()
 
         elif command == FSCommand.MESHING:
-            _meshlabTask = FSMeshlabTask(event.scan_id, event.filter, event.format)
-            _meshlabTask.start()
+            meshlab_task = FSMeshlabTask(event.scan_id, event.filter, event.format)
+            meshlab_task.start()
             message = FSUtil.new_message()
             message['type'] = FSEvents.ON_INFO_MESSAGE
             message['data']['message'] = "MESHING_STARTED"
             message['data']['level'] = "info"
             self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
 
-    def _on_client_connected(self,eventManager, event):
-
+    def on_client_connected(self,eventManager, event):
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_CLIENT_INIT
         message['data']['client'] = event['client']
@@ -140,41 +125,12 @@ class FSScanner(threading.Thread):
         message['data']['firmware_version'] = str(self.hardwareController.get_firmware_version())
         #message['data']['points'] = self.pointcloud
         message['data']['settings'] = self.settings.todict(self.settings)
-
         eventManager.publish(FSEvents.ON_SOCKET_SEND, message)
 
-        message = FSUtil.new_message()
-        message['type'] = FSEvents.ON_INFO_MESSAGE
-
-        #if not FSUpdate.is_up_to_date():
-        #    self._logger.info("Newer version available...")
-        #    message['data']['message'] = "UPDATE_AVAILABLE"
-        #    message['data']['level'] = "info"
-        #    self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
-
-        if not self.hardwareController.arduino_is_connected():
-            message['data']['message'] = "NO_SERIAL_CONNECTION"
-            message['data']['level'] = "error"
-        else:
-            message['data']['message'] = "SERIAL_CONNECTION_READY"
-            message['data']['level'] = "info"
-
-        self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
-
-        if not self.hardwareController.camera_is_connected():
-            message['data']['message'] = "NO_CAMERA_CONNECTION"
-            message['data']['level'] = "error"
-            self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
-        else:
-            message['data']['message'] = "CAMERA_READY"
-            message['data']['level'] = "info"
-
-        self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
-
+        self.scanProcessor.tell({FSEvents.COMMAND:FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
 
     def set_state(self, state):
         self._state = state
-
         message = FSUtil.new_message()
         message['type'] = FSEvents.ON_STATE_CHANGED
         message['data']['state'] = state

@@ -6,7 +6,7 @@ __email__ = "info@mariolukas.de"
 
 class FSTaskType(object):
     PROCESS_COLOR_IMAGE = "PROCESS_COLOR_IMAGE"
-    PROCESS_LASER_IMAGE = "PROCESS_COLOR_IMAGE"
+    PROCESS_DEPTH_IMAGE = "PROCESS_DEPTH_IMAGE"
     PROCESS_PREVIEW_IMAGE = "PROCESS_PREVIEW_IMAGE"
     KILL = "KILL"
 
@@ -21,7 +21,7 @@ class ImageTask(object):
     resolution = 100
     state = None
 
-    def __init__(self, image, prefix, prorgess, resolution=100, task_type="PROCESS_LASER_IMAGE", settings=None, raw_dir="raw"):
+    def __init__(self, image, prefix, prorgess, resolution=100, task_type="PROCESS_DEPTH_IMAGE", settings=None, raw_dir="raw"):
             self.image = image
             self.progress = prorgess
             self.raw_dir = raw_dir
