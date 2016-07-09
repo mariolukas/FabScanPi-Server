@@ -21,35 +21,21 @@ class FSMeshlabTask(threading.Thread):
             self.format = format
 
         def run(self):
-            #try:
-                self._logger.info("Meshlab Process Started...")
+            self._logger.info("Meshlab Process Started...")
 
-                basedir = os.path.dirname(os.path.dirname(__file__))
-                mlx_script_path = basedir+"/mlx/"+self.filter
+            basedir = os.path.dirname(os.path.dirname(__file__))
+            mlx_script_path = basedir+"/mlx/"+self.filter
 
-                input =  self.config.folders.scans+str(self.scan_id)+"/scan_"+str(self.scan_id)+".ply"
-                output = self.config.folders.scans+str(self.scan_id)+"/mesh_"+str(self.scan_id)+"_"+str(self.filter).split(".")[0]+"."+self.format
-                self._logger.info(output)
+            input =  self.config.folders.scans+str(self.scan_id)+"/scan_"+str(self.scan_id)+".ply"
+            output = self.config.folders.scans+str(self.scan_id)+"/mesh_"+str(self.scan_id)+"_"+str(self.filter).split(".")[0]+"."+self.format
+            self._logger.info(output)
 
-                FSSystem.run_command("xvfb-run meshlabserver -i "+input+" -o "+output+" -s "+str(mlx_script_path)+" -om vc vn")
+            FSSystem.run_command("xvfb-run meshlabserver -i "+input+" -o "+output+" -s "+str(mlx_script_path)+" -om vc vn")
 
-                self.message_event()
-
-                self._logger.info("Meshlab Process finished.")
-
-            #except:
-            #    self._logger.error("Meshing Task crashed.")
-            #    message = FSUtil.new_message()
-            #    message['type'] = FSEvents.ON_INFO_MESSAGE
-            #    message['data']['message'] = "MESHING_FAILED"
-            #    message['data']['level'] = "error"
-            #    self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
-
-
-        def message_event(self):
-            message = FSUtil.new_message()
-            message['type'] = FSEvents.ON_INFO_MESSAGE
-            message['data']['message'] = "MESHING_DONE"
-            message['data']['scan_id'] = self.scan_id
-            message['data']['level'] = "success"
-            self.eventManager.publish(FSEvents.ON_SOCKET_BROADCAST,message)
+            message = {
+                "message" : "MESHING_DONE",
+                "scan_id" : self.scan_id,
+                "level": "success"
+            }
+            self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE,message)
+            self._logger.info("Meshlab Process finished.")
