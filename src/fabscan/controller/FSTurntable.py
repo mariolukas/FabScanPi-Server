@@ -4,15 +4,15 @@ __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
-STEPS_PER_ROTATION = 3200
-
+from fabscan.FSConfig import Config
 
 class Turntable:
     def __init__(self, serial_object):
         self.serial_connection = serial_object
+        self.config = Config.instance()
         # Number of steps for the turntable to do a full rotation
         # DEFAULT Value for FS Shield is 1/16 Step
-        self.STEPS_PER_ROTATION = STEPS_PER_ROTATION
+        self.STEPS_PER_ROTATION = self.config.turntable.steps
 
 
     def async_step(self, steps=1):

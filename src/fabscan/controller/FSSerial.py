@@ -7,8 +7,6 @@ __email__ = "info@mariolukas.de"
 import os
 import glob
 import serial
-import traceback
-import sys
 import time
 import logging
 from fabscan.util.FSUtil import FSSystem

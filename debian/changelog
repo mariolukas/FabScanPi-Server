@@ -1,6 +1,8 @@
 fabscanpi-server (0.2.2) unstable; urgency=medium
 
   * refactored FSScanner.py to make software more flexible
+  * falling back to laser detection algorithm of 0.1.15
+  * refactored FSScannerProcessor.py
 
  -- Mario Lukas  <info@mariolukas.de>  Wed, 8 Jul 2016 17:52:00 +0000
 

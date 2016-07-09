@@ -149,7 +149,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self._laser_positions = int(self.settings.laser_positions)
         self._is_color_scan = bool(self.settings.color)
 
-        self._number_of_pictures = 3200 / int(self.settings.resolution)
+        self._number_of_pictures =  self.config.turntable.steps / int(self.settings.resolution)
         self.current_position = 0
 
         # TODO: rename prefix to scan_id

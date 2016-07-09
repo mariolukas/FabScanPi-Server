@@ -16,6 +16,7 @@ from fabscan.FSConfig import Config
 from fabscan.file.FSImage import save_image, load_image
 from fabscan.vision.FSImageProcessor import ImageProcessor
 from fabscan.FSSettings import Settings
+from fabscan.FSScanner import FSEvents
 
 
 class FSImageWorkerPool():
@@ -110,12 +111,13 @@ class FSImageWorkerProcess(multiprocessing.Process):
                         if (image_task.task_type == "PROCESS_COLOR_IMAGE"):
                             save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
 
-                            data['points'] = []
-                            data['image_type'] = 'color'
-
                             event = dict()
-                            event['event'] = "ON_IMAGE_PROCESSED"
-                            event['data'] = data
+                            event['event'] = FSEvents.ON_IMAGE_PROCESSED
+                            event['data'] = {
+                                "points": [],
+                                "image_type": "color"
+
+                            }
 
                             self.event_q.put(event)
 
@@ -128,15 +130,12 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
                             points = self.image_processor.process_image(angle, image_task.image, color_image)
 
-                            data['points'] = points
-                            data['image_type'] = 'laser'
-                            #data['progress'] = image_task.progress
-                            #data['resolution'] = image_task.resolution
-
                             event = dict()
-                            event['event'] = "ON_IMAGE_PROCESSED"
-                            event['data'] = data
-
+                            event['event'] = FSEvents.ON_IMAGE_PROCESSED
+                            event['data'] = {
+                                "points" : points,
+                                "image_type" : "laser"
+                            }
 
                             self.event_q.put(event)
 
