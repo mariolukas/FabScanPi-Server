@@ -14,6 +14,7 @@ class Turntable:
         # DEFAULT Value for FS Shield is 1/16 Step
         self.STEPS_PER_ROTATION = STEPS_PER_ROTATION
 
+
     def async_step(self, steps=1):
         '''
         Accepts number of steps to take. Does not wait for it to finish turning

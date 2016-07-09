@@ -61,14 +61,12 @@ class ImageProcessor():
         x_center = cam_image.shape[1] * self.settings.center
         x_center_delta = cam_image.shape[1] * 0.5 - x_center
 
-        _, cam_image = self.line_coords(cam_image,  filter=False, fast=True, x_center_delta=None)
+        _, cam_image = self.line_coords(cam_image,  filter=False, fast=False, x_center_delta=None)
 
         r = 320.0 / cam_image.shape[1]
         dim = (320, int(cam_image.shape[0] * r))
         cam_image = cv2.resize(cam_image, dim, interpolation = cv2.INTER_AREA)
         return cam_image
-
-
 
 
     def process_image(self, angle, laser_image, color_image=None):
