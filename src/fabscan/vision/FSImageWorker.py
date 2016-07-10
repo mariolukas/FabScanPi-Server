@@ -7,13 +7,11 @@ __email__ = "info@mariolukas.de"
 from Queue import Empty
 import multiprocessing
 import logging
-import os
 import time
-import os.path
 
-from fabscan.vision.FSImageTask import ImageTask, FSTaskType
 from fabscan.FSConfig import Config
 from fabscan.file.FSImage import save_image, load_image
+from fabscan.vision.FSImageTask import ImageTask, FSTaskType
 from fabscan.vision.FSImageProcessor import ImageProcessor
 from fabscan.FSSettings import Settings
 from fabscan.FSScanner import FSEvents

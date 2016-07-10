@@ -8,35 +8,22 @@ import pykka
 import time
 import datetime
 import multiprocessing
-
 import logging
-
 from fabscan.util import FSUtil
 from fabscan.file.FSPointCloud import FSPointCloud
-from fabscan.vision.FSImageProcessor import ImageProcessor
 from fabscan.FSEvents import FSEventManager, FSEvents, FSEvent
 from fabscan.vision.FSImageTask import ImageTask
-
+from fabscan.vision.FSImageProcessor import ImageProcessor
 from fabscan.vision.FSImageWorker import FSImageWorkerPool
 from fabscan.controller import HardwareController
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
+from fabscan.scanner.FSAbstractScanProcessor import FSAbstractScanProcessor
+from fabscan.scanner.FSAbstractScanProcessor import FSScanProcessorCommand
 
-
-class FSScanProcessorCommand(object):
-    START = "START"
-    STOP = "STOP"
-    SETTINGS_MODE_OFF = "SETTINGS_MODE_OFF"
-    SETTINGS_MODE_ON = "SETTINGS_MODE_ON"
-    NOTIFY_HARDWARE_STATE = "NOTIFY_HARDWARE_STATE"
-    UPDATE_SETTINGS = "UPDATE_SETTINGS"
-    SCAN_NEXT_TEXTURE_POSITION = "SCAN_NEXT_TEXTURE_POSITION"
-    SCAN_NEXT_OBJECT_POSITION = "SCAN_NEXT_OBJECT_POSITION"
-
-
-class FSScanProcessor(pykka.ThreadingActor):
+class FSLaserScanProcessor(pykka.ThreadingActor, FSAbstractScanProcessor):
     def __init__(self):
-        super(FSScanProcessor, self).__init__()
+        super(FSLaserScanProcessor, self).__init__()
 
         self.eventManager = FSEventManager.instance()
         self.settings = Settings.instance()

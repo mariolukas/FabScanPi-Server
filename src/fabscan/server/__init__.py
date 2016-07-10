@@ -23,7 +23,6 @@ from fabscan.FSSettings import Settings
 from fabscan.controller import HardwareController
 from fabscan.FSVersion import __version__
 
-
 class FSServer():
     def __init__(self,config_file, settings_file):
 

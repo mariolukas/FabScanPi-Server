@@ -12,10 +12,10 @@ import multiprocessing
 from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManager, FSEvents
 from fabscan.controller import HardwareController
-from fabscan.FSScanProcessor import FSScanProcessor
-from fabscan.vision.FSMeshlab import FSMeshlabTask
+from fabscan.scanner.FSScanProcessorFactory import FSScanProcessorFactory
+from fabscan.scanner.FSAbstractScanProcessor import FSScanProcessorCommand
+from fabscan.vision.FSMeshlabProcessor import FSMeshlabTask
 from fabscan.FSSettings import Settings
-from fabscan.FSScanProcessor import FSScanProcessorCommand
 
 
 class FSState(object):
@@ -46,7 +46,9 @@ class FSScanner(threading.Thread):
         self._exit_requested = False
         self.meshingTaskRunning = False
 
-        self.scanProcessor = FSScanProcessor.start()
+
+        self.scanProcessor = FSScanProcessorFactory.get_scanner_obj("laser")
+
         self._logger.debug("Number of cpu cores: " + str(multiprocessing.cpu_count()))
 
         self.eventManager = FSEventManager.instance()
@@ -71,7 +73,10 @@ class FSScanner(threading.Thread):
         if command == FSCommand.SCAN:
             if self._state is FSState.IDLE:
                 self.set_state(FSState.SETTINGS)
-                self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.SETTINGS_MODE_ON})
+                try:
+                    self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.SETTINGS_MODE_ON})
+                except:
+                    self._logger.debug("Scan Processor crashed")
 
         ## Update Settings in Settings Mode
         elif command == FSCommand.UPDATE_SETTINGS:
