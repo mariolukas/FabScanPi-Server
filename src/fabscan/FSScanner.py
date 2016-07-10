@@ -8,11 +8,13 @@ import time
 import threading
 import logging
 import multiprocessing
+import traceback
 
 from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManager, FSEvents
 from fabscan.controller import HardwareController
 from fabscan.scanner.FSScanProcessorFactory import FSScanProcessorFactory
+from fabscan.scanner.FSLaserScanProcessor import FSLaserScanProcessor
 from fabscan.scanner.FSAbstractScanProcessor import FSScanProcessorCommand
 from fabscan.vision.FSMeshlabProcessor import FSMeshlabTask
 from fabscan.FSSettings import Settings
@@ -48,6 +50,7 @@ class FSScanner(threading.Thread):
 
 
         self.scanProcessor = FSScanProcessorFactory.get_scanner_obj("laser")
+        #self.scanProcessor = FSLaserScanProcessor()
 
         self._logger.debug("Number of cpu cores: " + str(multiprocessing.cpu_count()))
 
@@ -75,8 +78,9 @@ class FSScanner(threading.Thread):
                 self.set_state(FSState.SETTINGS)
                 try:
                     self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.SETTINGS_MODE_ON})
-                except:
-                    self._logger.debug("Scan Processor crashed")
+                except Exception as e:
+                    stack_trace = traceback.format_exc()
+                    self._logger.error(stack_trace)
 
         ## Update Settings in Settings Mode
         elif command == FSCommand.UPDATE_SETTINGS:
@@ -117,6 +121,7 @@ class FSScanner(threading.Thread):
 
     def on_client_connected(self, eventManager, event):
 
+
         message = {
             "client": event['client'],
             "state": self._state,
@@ -126,7 +131,14 @@ class FSScanner(threading.Thread):
         }
 
         eventManager.send_client_message(FSEvents.ON_CLIENT_INIT, message)
-        self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
+        try:
+            self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
+        except Exception as e:
+            stack_trace = traceback.format_exc()
+            self._logger.error(stack_trace)
+
+
+
 
     def set_state(self, state):
         self._state = state

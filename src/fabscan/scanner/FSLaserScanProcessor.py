@@ -5,6 +5,7 @@ __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
 import pykka
+import traceback
 import time
 import datetime
 import multiprocessing
@@ -21,7 +22,7 @@ from fabscan.FSSettings import Settings
 from fabscan.scanner.FSAbstractScanProcessor import FSAbstractScanProcessor
 from fabscan.scanner.FSAbstractScanProcessor import FSScanProcessorCommand
 
-class FSLaserScanProcessor(pykka.ThreadingActor, FSAbstractScanProcessor):
+class FSLaserScanProcessor(FSAbstractScanProcessor):
     def __init__(self):
         super(FSLaserScanProcessor, self).__init__()
 
@@ -89,33 +90,35 @@ class FSLaserScanProcessor(pykka.ThreadingActor, FSAbstractScanProcessor):
             pass
 
     def send_hardware_state_notification(self):
-        self._logger.debug("Checking Hardware connections")
 
-        if not self.hardwareController.arduino_is_connected():
-            message = {
-                "message": "NO_SERIAL_CONNECTION",
-                "level": "error"
-            }
-        else:
-            message = {
-                "message": "SERIAL_CONNECTION_READY",
-                "level": "info"
-            }
+            self._logger.debug("Checking Hardware connections")
 
-        self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+            if not self.hardwareController.arduino_is_connected():
+                message = {
+                    "message": "NO_SERIAL_CONNECTION",
+                    "level": "error"
+                }
+            else:
+                message = {
+                    "message": "SERIAL_CONNECTION_READY",
+                    "level": "info"
+                }
 
-        if not self.hardwareController.camera_is_connected():
-            message = {
-                "message": "NO_CAMERA_CONNECTION",
-                "level": "error"
-            }
-        else:
-            message = {
-                "message": "CAMERA_READY",
-                "level": "info"
-            }
+            self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
-        self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+            if not self.hardwareController.camera_is_connected():
+                message = {
+                    "message": "NO_CAMERA_CONNECTION",
+                    "level": "error"
+                }
+            else:
+                message = {
+                    "message": "CAMERA_READY",
+                    "level": "info"
+                }
+
+            self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+
 
     def settings_mode_on(self):
         self.hardwareController.settings_mode_on()

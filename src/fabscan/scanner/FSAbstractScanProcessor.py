@@ -3,10 +3,14 @@ __copyright__ = "Copyright 2015"
 __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
+__author__ = "Mario Lukas"
+__copyright__ = "Copyright 2015"
+__license__ = "AGPL"
+__maintainer__ = "Mario Lukas"
+__email__ = "info@mariolukas.de"
 
 import abc
 import pykka
-from fabscan.FSEvents import FSEvents
 
 class FSScanProcessorCommand(object):
     START = "START"
@@ -18,42 +22,42 @@ class FSScanProcessorCommand(object):
     SCAN_NEXT_TEXTURE_POSITION = "SCAN_NEXT_TEXTURE_POSITION"
     SCAN_NEXT_OBJECT_POSITION = "SCAN_NEXT_OBJECT_POSITION"
 
-class FSAbstractScanProcessor(object):
+class FSAbstractScanProcessor(pykka.ThreadingActor):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         super(FSAbstractScanProcessor, self).__init__()
         pass
 
     @abc.abstractmethod
-    def start_scan(self, *args, **kwargs):
+    def start_scan(self):
         pass
 
     @abc.abstractmethod
-    def stop_scan(self, *args, **kwargs):
+    def stop_scan(self):
         pass
 
     @abc.abstractmethod
-    def settings_mode_on(self, *args, **kwargs):
+    def settings_mode_on(self):
         pass
 
     @abc.abstractmethod
-    def settings_mode_off(self, *args, **kwargs):
+    def settings_mode_off(self):
         pass
 
     @abc.abstractmethod
-    def scan_next_texture_position(self, *args, **kwargs):
+    def scan_next_texture_position(self):
         pass
 
     @abc.abstractmethod
-    def scan_next_object_position(self, *args, **kwargs):
+    def scan_next_object_position(self):
         pass
 
     @abc.abstractmethod
-    def send_hardware_state_notification(self, *args, **kwargs):
+    def send_hardware_state_notification(self):
         pass
 
     @abc.abstractmethod
-    def update_settings(self, *args, **kwargs):
+    def update_settings(self):
         pass
