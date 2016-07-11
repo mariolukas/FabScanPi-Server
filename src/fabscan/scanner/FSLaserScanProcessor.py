@@ -4,8 +4,6 @@ __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
-import pykka
-import traceback
 import time
 import datetime
 import multiprocessing
@@ -16,11 +14,12 @@ from fabscan.FSEvents import FSEventManager, FSEvents, FSEvent
 from fabscan.vision.FSImageTask import ImageTask
 from fabscan.vision.FSImageProcessor import ImageProcessor
 from fabscan.vision.FSImageWorker import FSImageWorkerPool
-from fabscan.controller import HardwareController
+from fabscan.hardware.FSHardwareControllerFactory import FSHardwareControllerFactory
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
 from fabscan.scanner.FSAbstractScanProcessor import FSAbstractScanProcessor
 from fabscan.scanner.FSAbstractScanProcessor import FSScanProcessorCommand
+from fabscan.hardware.FSLaserScannerHardwareController import FSLaserScannerHardwareController
 
 class FSLaserScanProcessor(FSAbstractScanProcessor):
     def __init__(self):
@@ -51,36 +50,15 @@ class FSLaserScanProcessor(FSAbstractScanProcessor):
         self.event_q = self.eventManager.get_event_q()
 
         self._worker_pool = FSImageWorkerPool(self.image_task_q, self.event_q)
-        self.hardwareController = HardwareController.instance()
+        self.hardwareController = FSHardwareControllerFactory.get_hardware_controller_instance("laser")
         self.eventManager.subscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
         self._scan_brightness = self.settings.camera.brightness
         self._scan_contrast = self.settings.camera.contrast
         self._scan_saturation = self.settings.camera.saturation
 
-    def on_receive(self, event):
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.START:
-            self.start_scan()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.STOP:
-            self.stop_scan()
-
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.SETTINGS_MODE_ON:
-            self.settings_mode_on()
-
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.SETTINGS_MODE_OFF:
-            self.settings_mode_off()
-
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.SCAN_NEXT_TEXTURE_POSITION:
-            self.scan_next_texture_position()
-
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.SCAN_NEXT_OBJECT_POSITION:
-            self.scan_next_object_position()
-
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.NOTIFY_HARDWARE_STATE:
-            self.send_hardware_state_notification()
-
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.UPDATE_SETTINGS:
-            self.update_settings(event['SETTINGS'])
+    def get_hardware_info(self):
+        return str(self.hardwareController.get_firmware_version())
 
     def update_settings(self, settings):
         try:
@@ -124,7 +102,7 @@ class FSLaserScanProcessor(FSAbstractScanProcessor):
         self.hardwareController.settings_mode_on()
 
     def settings_mode_off(self):
-        self.hardwareController.camera.device.stopStream()
+        self.hardwareController.camera.stopStream()
         self.hardwareController.settings_mode_off()
 
     def start_scan(self):
@@ -134,7 +112,7 @@ class FSLaserScanProcessor(FSAbstractScanProcessor):
         self.hardwareController.laser.off()
         self.hardwareController.turntable.stop_turning()
         self.hardwareController.turntable.enable_motors()
-        self.hardwareController.camera.device.startStream()
+        self.hardwareController.camera.startStream()
         self._resolution = int(self.settings.resolution)
         self._laser_positions = int(self.settings.laser_positions)
         self._is_color_scan = bool(self.settings.color)
@@ -166,14 +144,14 @@ class FSLaserScanProcessor(FSAbstractScanProcessor):
         self._scan_contrast = self.settings.camera.contrast
         self._scan_saturation = self.settings.camera.saturation
 
-        self.hardwareController.camera.device.textureExposure()
+        self.hardwareController.camera.textureExposureMode()
         self.settings.camera.brightness = 50
         self.settings.camera.contrast = 0
         self.settings.camera.saturation = 0
 
         self.hardwareController.led.on(20, 20, 20)
         time.sleep(4)
-        self.hardwareController.camera.device.flushStream()
+        self.hardwareController.camera.flushStream()
         time.sleep(1)
 
     def finish_texture_scan(self):
@@ -219,11 +197,11 @@ class FSLaserScanProcessor(FSAbstractScanProcessor):
         # Workaround for Logitech webcam. We have to wait a loooong time until the logitech cam is ready...
         # time.sleep(3)
 
-        self.hardwareController.camera.device.objectExposure()
-        self.hardwareController.camera.device.flushStream()
+        self.hardwareController.camera.objectExposureMode()
+        self.hardwareController.camera.flushStream()
         time.sleep(2)
 
-        self._laser_angle = self.image_processor.calculate_laser_angle(self.hardwareController.camera.device.getFrame())
+        self._laser_angle = self.image_processor.calculate_laser_angle(self.hardwareController.camera.getFrame())
 
         if self._laser_angle == None:
             event = FSEvent()
@@ -245,7 +223,7 @@ class FSLaserScanProcessor(FSAbstractScanProcessor):
         self._worker_pool.kill()
         self.hardwareController.laser.off()
         self.hardwareController.led.off()
-        self.hardwareController.camera.device.setPreviewResolution()
+        self.hardwareController.camera.setPreviewResolution()
 
     def scan_next_object_position(self):
         if not self._stop_scan:
@@ -282,7 +260,7 @@ class FSLaserScanProcessor(FSAbstractScanProcessor):
         FSUtil.delete_scan(self._prefix)
         self.reset_scanner_state()
         self._logger.info("Scan stoped")
-        self.hardwareController.camera.device.stopStream()
+        self.hardwareController.camera.stopStream()
 
         message = {
             "message": "SCAN_CANCELED",
@@ -338,7 +316,7 @@ class FSLaserScanProcessor(FSAbstractScanProcessor):
         }
 
         self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-        self.hardwareController.camera.device.stopStream()
+        self.hardwareController.camera.stopStream()
 
     def append_points(self, point_set):
         if self.point_cloud:
@@ -356,8 +334,8 @@ class FSLaserScanProcessor(FSAbstractScanProcessor):
 
     def reset_scanner_state(self):
         self._logger.info("Reseting scanner states ... ")
-        self.hardwareController.camera.device.objectExposure()
-        self.hardwareController.camera.device.flushStream()
+        self.hardwareController.camera.objectExposureMode()
+        self.hardwareController.camera.flushStream()
         self.hardwareController.laser.off()
         self.hardwareController.led.off()
         self.hardwareController.turntable.disable_motors()

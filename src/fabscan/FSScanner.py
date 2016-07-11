@@ -12,9 +12,8 @@ import traceback
 
 from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManager, FSEvents
-from fabscan.controller import HardwareController
+from fabscan.hardware.FSHardwareControllerFactory import FSHardwareControllerFactory
 from fabscan.scanner.FSScanProcessorFactory import FSScanProcessorFactory
-from fabscan.scanner.FSLaserScanProcessor import FSLaserScanProcessor
 from fabscan.scanner.FSAbstractScanProcessor import FSScanProcessorCommand
 from fabscan.vision.FSMeshlabProcessor import FSMeshlabTask
 from fabscan.FSSettings import Settings
@@ -44,16 +43,10 @@ class FSScanner(threading.Thread):
         self._logger.setLevel(logging.DEBUG)
         self.settings = Settings.instance()
         self.daemon = True
-        self.hardwareController = HardwareController.instance()
         self._exit_requested = False
         self.meshingTaskRunning = False
-
-
         self.scanProcessor = FSScanProcessorFactory.get_scanner_obj("laser")
-        #self.scanProcessor = FSLaserScanProcessor()
-
         self._logger.debug("Number of cpu cores: " + str(multiprocessing.cpu_count()))
-
         self.eventManager = FSEventManager.instance()
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self.on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self.on_command)
@@ -121,12 +114,13 @@ class FSScanner(threading.Thread):
 
     def on_client_connected(self, eventManager, event):
 
-
+        hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
+        
         message = {
             "client": event['client'],
             "state": self._state,
             "server_version": str(__version__),
-            "firmware_version": str(self.hardwareController.get_firmware_version()),
+            "firmware_version": hardware_info,
             "settings": self.settings.todict(self.settings)
         }
 
@@ -136,9 +130,6 @@ class FSScanner(threading.Thread):
         except Exception as e:
             stack_trace = traceback.format_exc()
             self._logger.error(stack_trace)
-
-
-
 
     def set_state(self, state):
         self._state = state

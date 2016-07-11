@@ -81,13 +81,13 @@ class RequestHandler(SimpleHTTPRequestHandler):
 
              stream_id = self.path.split('/')[-1]
              if stream_id == 'laser.mjpeg':
-                 self.get_stream("LASER_STREAM")
+                 self.get_stream("DEPTH_IMAGE_STREAM")
 
              elif stream_id == 'texture.mjpeg':
-                 self.get_stream("TEXTURE_STREAM")
+                 self.get_stream("TEXTURE_IMAGE_STREAM")
 
              elif stream_id == 'calibration.mjpeg':
-                self.get_stream("CALIBRATION_STREAM")
+                self.get_stream("CALIBRATION_IMAGE_STREAM")
              else:
 
                 self.bad_request()
