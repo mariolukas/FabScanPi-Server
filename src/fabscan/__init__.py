@@ -9,6 +9,7 @@ from fabscan.daemon import Daemon
 from fabscan.FSVersion import __version__
 import logging
 import logging.handlers
+import optparse
 import sys
 
 

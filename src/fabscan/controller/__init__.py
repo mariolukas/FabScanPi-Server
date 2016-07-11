@@ -4,35 +4,40 @@ __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
+from FSLaser import Laser
+from FSTurntable import Turntable
+from FSLed import Led
 import time
+
+from fabscan.controller.FSCamera import FSCamera
+from fabscan.controller.FSSerial import FSSerialCom
+
 
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
-from fabscan.hardware.FSAbstractHadrwareController import FSAbstractHadrwareController
-from fabscan.vision.FSImageProcessorFactory import FSImageProcessorFactory
-from fabscan.hardware.components.FSSerial import FSSerialCom
-from fabscan.hardware.components.FSLaser import Laser
-from fabscan.hardware.components.FSTurntable import Turntable
-from fabscan.hardware.components.FSLed import Led
-from fabscan.hardware.components.camera.FSCameraDeviceFactory import FSCameraDeviceFactory
+from fabscan.vision.FSImageProcessor import ImageProcessor
+from fabscan.util.FSSingleton import SingletonMixin
 
 
-
-class FSLaserScannerHardwareController(FSAbstractHadrwareController):
+class HardwareController(SingletonMixin):
     """
     Wrapper class for getting the Laser, Camera, and Turntable classes working
     together
     """
     def __init__(self):
-        super(FSLaserScannerHardwareController, self).__init__()
         self.config = Config.instance()
         self.settings = Settings.instance()
-        self._image_processor = FSImageProcessorFactory.get_image_processor_class(self.config.scanner_type)
-        self.camera = FSCameraDeviceFactory.get_camera_device_obj(self.config.camera.type)
+
+        self.camera = None
+        self._image_processor = ImageProcessor(self.config, self.settings)
+        self.camera = FSCamera()
         self.serial_connection = FSSerialCom()
+
         self.turntable = Turntable(self.serial_connection)
+
         self.laser = Laser(self.serial_connection)
         self.led = Led(self.serial_connection)
+
         self.laser.off()
         self.led.off()
         self.turntable.stop_turning()
@@ -41,14 +46,21 @@ class FSLaserScannerHardwareController(FSAbstractHadrwareController):
     def settings_mode_on(self):
         self.laser.on()
         self.turntable.start_turning()
-        self.camera.startStream()
+        self.camera.device.startStream()
+
+
 
     def settings_mode_off(self):
         self.turntable.stop_turning()
         self.led.off()
         self.laser.off()
-        self.camera.flushStream()
-        self.camera.stopStream()
+        self.camera.device.flushStream()
+        self.camera.device.stopStream()
+
+
+    def get_picture(self):
+        img = self.camera.device.getFrame()
+        return img
 
     def scan_at_position(self, steps=180, color=False):
         '''
@@ -61,12 +73,14 @@ class FSLaserScannerHardwareController(FSAbstractHadrwareController):
         else:
             speed = 50
 
+
         self.turntable.step_interval(steps, speed)
-        img = self.camera.getFrame()
+        img = self.camera.device.getFrame()
         return img
 
+
     def get_laser_angle(self):
-        image = self.camera.getFrame()
+        image = self.camera.device.getFrame()
         angle = self._image_processor.calculate_laser_angle(image)
         return angle
 
@@ -77,12 +91,35 @@ class FSLaserScannerHardwareController(FSAbstractHadrwareController):
         return self.serial_connection.get_firmware_version()
 
     def camera_is_connected(self):
-       return self.camera.isAlive()
+       return self.camera.is_connected()
 
     def calibrate_laser(self):
         self.laser.on()
         time.sleep(0.8)
         last_angle = 0
         current_angle = self.get_laser_angle()
+
+        #while (last_angle != current_angle):
+       #     last_angle = current_angle
+        #    current_angle = self.get_laser_angle()
+
+        #angle_delta = 1
+        #while(not (angle_delta < 0.3 and angle_delta > -0.3)):
+        #    laser_angle = self.get_laser_angle()
+        #    angle_delta = 30 - laser_angle
+
+         #   if angle_delta > 0.3:
+         #       self.laser.turn(1)
+         #   elif angle_delta < -0.3:
+         #       self.laser.turn(-1)
+
+        #delta_angle = 30 - first_detected_angle
+        #steps = delta_angle/0.1125*3200
+        #self.laser.turn(int(360/steps))
+
+        #angle = self.get_laser_angle()
+
         self.laser.off()
         return current_angle
+
+

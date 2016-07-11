@@ -7,14 +7,15 @@ __email__ = "info@mariolukas.de"
 from Queue import Empty
 import multiprocessing
 import logging
+import os
 import time
+import os.path
 
+from fabscan.vision.FSImageTask import ImageTask, FSTaskType
 from fabscan.FSConfig import Config
 from fabscan.file.FSImage import save_image, load_image
-from fabscan.vision.FSImageTask import ImageTask, FSTaskType
-from fabscan.vision.FSImageProcessorFactory import FSImageProcessorFactory
+from fabscan.vision.FSImageProcessor import ImageProcessor
 from fabscan.FSSettings import Settings
-from fabscan.FSScanner import FSEvents
 
 
 class FSImageWorkerPool():
@@ -78,7 +79,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
         self.log = logging.getLogger('IMAGE_PROCESSOR THREAD')
         self.log.setLevel(logging.DEBUG)
-        self.image_processor = FSImageProcessorFactory.get_image_processor_class(self.config.scanner_type)
+        self.image_processor = ImageProcessor(self.config, self.settings)
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
 
@@ -109,13 +110,12 @@ class FSImageWorkerProcess(multiprocessing.Process):
                         if (image_task.task_type == "PROCESS_COLOR_IMAGE"):
                             save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
 
-                            event = dict()
-                            event['event'] = FSEvents.ON_IMAGE_PROCESSED
-                            event['data'] = {
-                                "points": [],
-                                "image_type": "color"
+                            data['points'] = []
+                            data['image_type'] = 'color'
 
-                            }
+                            event = dict()
+                            event['event'] = "ON_IMAGE_PROCESSED"
+                            event['data'] = data
 
                             self.event_q.put(event)
 
@@ -128,12 +128,15 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
                             points = self.image_processor.process_image(angle, image_task.image, color_image)
 
+                            data['points'] = points
+                            data['image_type'] = 'laser'
+                            #data['progress'] = image_task.progress
+                            #data['resolution'] = image_task.resolution
+
                             event = dict()
-                            event['event'] = FSEvents.ON_IMAGE_PROCESSED
-                            event['data'] = {
-                                "points" : points,
-                                "image_type" : "laser"
-                            }
+                            event['event'] = "ON_IMAGE_PROCESSED"
+                            event['data'] = data
+
 
                             self.event_q.put(event)
 

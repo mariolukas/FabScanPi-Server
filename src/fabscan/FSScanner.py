@@ -8,15 +8,14 @@ import time
 import threading
 import logging
 import multiprocessing
-import traceback
 
 from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManager, FSEvents
-from fabscan.scanner.FSScanProcessorFactory import FSScanProcessorFactory
-from fabscan.scanner.FSAbstractScanProcessor import FSScanProcessorCommand
-from fabscan.vision.FSMeshlabProcessor import FSMeshlabTask
+from fabscan.controller import HardwareController
+from fabscan.FSScanProcessor import FSScanProcessor
+from fabscan.vision.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import Settings
-from fabscan.FSConfig import Config
+from fabscan.FSScanProcessor import FSScanProcessorCommand
 
 
 class FSState(object):
@@ -42,12 +41,14 @@ class FSScanner(threading.Thread):
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
         self.settings = Settings.instance()
-        self.config = Config.instance()
         self.daemon = True
+        self.hardwareController = HardwareController.instance()
         self._exit_requested = False
         self.meshingTaskRunning = False
-        self.scanProcessor = FSScanProcessorFactory.get_scanner_obj(self.config.scanner_type)
+
+        self.scanProcessor = FSScanProcessor.start()
         self._logger.debug("Number of cpu cores: " + str(multiprocessing.cpu_count()))
+
         self.eventManager = FSEventManager.instance()
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self.on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self.on_command)
@@ -70,11 +71,7 @@ class FSScanner(threading.Thread):
         if command == FSCommand.SCAN:
             if self._state is FSState.IDLE:
                 self.set_state(FSState.SETTINGS)
-                try:
-                    self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.SETTINGS_MODE_ON})
-                except Exception as e:
-                    stack_trace = traceback.format_exc()
-                    self._logger.error(stack_trace)
+                self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.SETTINGS_MODE_ON})
 
         ## Update Settings in Settings Mode
         elif command == FSCommand.UPDATE_SETTINGS:
@@ -115,22 +112,16 @@ class FSScanner(threading.Thread):
 
     def on_client_connected(self, eventManager, event):
 
-        hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
-        
         message = {
             "client": event['client'],
             "state": self._state,
             "server_version": str(__version__),
-            "firmware_version": hardware_info,
+            "firmware_version": str(self.hardwareController.get_firmware_version()),
             "settings": self.settings.todict(self.settings)
         }
 
         eventManager.send_client_message(FSEvents.ON_CLIENT_INIT, message)
-        try:
-            self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
-        except Exception as e:
-            stack_trace = traceback.format_exc()
-            self._logger.error(stack_trace)
+        self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
 
     def set_state(self, state):
         self._state = state
