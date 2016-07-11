@@ -30,7 +30,7 @@ class FSSettingsPreviewProcessor(pykka.ThreadingActor):
         if event['type'] == "DEPTH_IMAGE_STREAM":
             return self.create_depth_stream()
 
-        if event['type'] == "TEXTURE_IMGAE_STREAM":
+        if event['type'] == "TEXTURE_IMAGE_STREAM":
             return self.create_texture_stream()
 
     def create_texture_stream(self):
