@@ -50,10 +50,6 @@ class FSLaserScannerHardwareController(FSAbstractHadrwareController):
         self.camera.flushStream()
         self.camera.stopStream()
 
-    def get_picture(self):
-        img = self.camera.getFrame()
-        return img
-
     def scan_at_position(self, steps=180, color=False):
         '''
         Take a step and return an image.

@@ -15,5 +15,5 @@ class FSAbstractImageProcessor(object):
         pass
 
     @abc.abstractmethod
-    def process_image(self, angle, laser_image, color_image=None):
+    def process_image(self, angle, depth_image, color_image=None):
         pass

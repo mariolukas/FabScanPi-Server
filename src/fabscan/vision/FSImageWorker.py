@@ -79,7 +79,6 @@ class FSImageWorkerProcess(multiprocessing.Process):
         self.log = logging.getLogger('IMAGE_PROCESSOR THREAD')
         self.log.setLevel(logging.DEBUG)
         self.image_processor = FSImageProcessorFactory.get_image_processor_class(self.config.scanner_type)
-        #self.image_processor = ImageProcessor(self.config, self.settings)
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
 

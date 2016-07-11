@@ -12,7 +12,6 @@ from fabscan.util import FSUtil
 from fabscan.file.FSPointCloud import FSPointCloud
 from fabscan.FSEvents import FSEventManager, FSEvents, FSEvent
 from fabscan.vision.FSImageTask import ImageTask
-from fabscan.vision.FSImageProcessor import ImageProcessor
 from fabscan.vision.FSImageWorker import FSImageWorkerPool
 from fabscan.hardware.FSHardwareControllerFactory import FSHardwareControllerFactory
 from fabscan.vision.FSImageProcessorFactory import FSImageProcessorFactory
@@ -20,7 +19,6 @@ from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
 from fabscan.scanner.FSAbstractScanProcessor import FSAbstractScanProcessor
 from fabscan.scanner.FSAbstractScanProcessor import FSScanProcessorCommand
-from fabscan.hardware.FSLaserScannerHardwareController import FSLaserScannerHardwareController
 
 class FSLaserScanProcessor(FSAbstractScanProcessor):
     def __init__(self):
@@ -125,7 +123,6 @@ class FSLaserScanProcessor(FSAbstractScanProcessor):
         self._prefix = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
         self.point_cloud = FSPointCloud(self._is_color_scan)
         self.image_processor = FSImageProcessorFactory.get_image_processor_class(self.config.scanner_type)
-        #self.image_processor = ImageProcessor(self.config, self.settings)
 
         if self._is_color_scan:
             self._total = self._number_of_pictures * 2

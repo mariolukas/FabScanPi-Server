@@ -25,9 +25,5 @@ class FSAbstractHadrwareController(SingletonMixin):
         pass
 
     @abc.abstractmethod
-    def get_picture(self):
-        pass
-
-    @abc.abstractmethod
     def camera_is_connected(self):
         pass

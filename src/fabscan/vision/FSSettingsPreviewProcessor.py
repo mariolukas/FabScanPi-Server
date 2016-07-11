@@ -7,7 +7,7 @@ __email__ = "info@mariolukas.de"
 import pykka
 from fabscan.hardware.FSHardwareControllerFactory import FSHardwareControllerFactory
 from fabscan.FSEvents import FSEvents, FSEventManager
-from fabscan.vision.FSImageProcessor import ImageProcessor
+from fabscan.vision.FSImageProcessorFactory import FSImageProcessorFactory
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
 
@@ -20,7 +20,7 @@ class FSSettingsPreviewProcessor(pykka.ThreadingActor):
         self.config = Config.instance()
         self.settings = Settings.instance()
         self.hardwareController = FSHardwareControllerFactory.get_hardware_controller_instance(self.config.scanner_type)
-        self._image_processor = ImageProcessor(self.config, self.settings)
+        self._image_processor = FSImageProcessorFactory.get_image_processor_class(self.config.scanner_type)
 
     def on_receive(self, event):
 
@@ -34,18 +34,18 @@ class FSSettingsPreviewProcessor(pykka.ThreadingActor):
             return self.create_texture_stream()
 
     def create_texture_stream(self):
-        image = self.hardwareController.get_picture()
-        image = self._image_processor.get_texture_stream_frame(image)
+        image = self.hardwareController.camera.getFrame()
+        #image = self._image_processor.get_texture_stream_frame(image)
         return image
 
     def create_calibration_stream(self):
-        image = self.hardwareController.get_picture()
+        image = self.hardwareController.camera.getFrame()
         image = self._image_processor.get_calibration_stream_frame(image)
         return image
 
     def create_depth_stream(self):
         try:
-            image = self.hardwareController.get_picture()
+            image = self.hardwareController.camera.getFrame()
             image = self._image_processor.get_laser_stream_frame(image)
             return image
         except:
