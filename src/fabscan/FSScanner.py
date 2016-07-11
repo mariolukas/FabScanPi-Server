@@ -12,11 +12,11 @@ import traceback
 
 from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManager, FSEvents
-from fabscan.hardware.FSHardwareControllerFactory import FSHardwareControllerFactory
 from fabscan.scanner.FSScanProcessorFactory import FSScanProcessorFactory
 from fabscan.scanner.FSAbstractScanProcessor import FSScanProcessorCommand
 from fabscan.vision.FSMeshlabProcessor import FSMeshlabTask
 from fabscan.FSSettings import Settings
+from fabscan.FSConfig import Config
 
 
 class FSState(object):
@@ -42,10 +42,11 @@ class FSScanner(threading.Thread):
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
         self.settings = Settings.instance()
+        self.config = Config.instance()
         self.daemon = True
         self._exit_requested = False
         self.meshingTaskRunning = False
-        self.scanProcessor = FSScanProcessorFactory.get_scanner_obj("laser")
+        self.scanProcessor = FSScanProcessorFactory.get_scanner_obj(self.config.scanner_type)
         self._logger.debug("Number of cpu cores: " + str(multiprocessing.cpu_count()))
         self.eventManager = FSEventManager.instance()
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self.on_client_connected)

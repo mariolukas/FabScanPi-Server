@@ -9,12 +9,13 @@ import time
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
 from fabscan.hardware.FSAbstractHadrwareController import FSAbstractHadrwareController
+from fabscan.vision.FSImageProcessorFactory import FSImageProcessorFactory
 from fabscan.hardware.components.FSSerial import FSSerialCom
 from fabscan.hardware.components.FSLaser import Laser
 from fabscan.hardware.components.FSTurntable import Turntable
 from fabscan.hardware.components.FSLed import Led
 from fabscan.hardware.components.camera.FSCameraDeviceFactory import FSCameraDeviceFactory
-from fabscan.vision.FSImageProcessor import ImageProcessor
+
 
 
 class FSLaserScannerHardwareController(FSAbstractHadrwareController):
@@ -23,10 +24,10 @@ class FSLaserScannerHardwareController(FSAbstractHadrwareController):
     together
     """
     def __init__(self):
-        #super(FSLaserScannerHardwareController, self).__init__()
+        super(FSLaserScannerHardwareController, self).__init__()
         self.config = Config.instance()
         self.settings = Settings.instance()
-        self._image_processor = ImageProcessor(self.config, self.settings)
+        self._image_processor = FSImageProcessorFactory.get_image_processor_class(self.config.scanner_type)
         self.camera = FSCameraDeviceFactory.get_camera_device_obj(self.config.camera.type)
         self.serial_connection = FSSerialCom()
         self.turntable = Turntable(self.serial_connection)

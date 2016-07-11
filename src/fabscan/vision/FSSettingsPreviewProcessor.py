@@ -19,7 +19,7 @@ class FSSettingsPreviewProcessor(pykka.ThreadingActor):
         self.eventManager = FSEventManager.instance()
         self.config = Config.instance()
         self.settings = Settings.instance()
-        self.hardwareController = FSHardwareControllerFactory.get_hardware_controller_instance("laser")
+        self.hardwareController = FSHardwareControllerFactory.get_hardware_controller_instance(self.config.scanner_type)
         self._image_processor = ImageProcessor(self.config, self.settings)
 
     def on_receive(self, event):

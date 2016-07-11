@@ -15,6 +15,7 @@ from fabscan.vision.FSImageTask import ImageTask
 from fabscan.vision.FSImageProcessor import ImageProcessor
 from fabscan.vision.FSImageWorker import FSImageWorkerPool
 from fabscan.hardware.FSHardwareControllerFactory import FSHardwareControllerFactory
+from fabscan.vision.FSImageProcessorFactory import FSImageProcessorFactory
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
 from fabscan.scanner.FSAbstractScanProcessor import FSAbstractScanProcessor
@@ -50,7 +51,7 @@ class FSLaserScanProcessor(FSAbstractScanProcessor):
         self.event_q = self.eventManager.get_event_q()
 
         self._worker_pool = FSImageWorkerPool(self.image_task_q, self.event_q)
-        self.hardwareController = FSHardwareControllerFactory.get_hardware_controller_instance("laser")
+        self.hardwareController = FSHardwareControllerFactory.get_hardware_controller_instance(self.config.scanner_type)
         self.eventManager.subscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
         self._scan_brightness = self.settings.camera.brightness
         self._scan_contrast = self.settings.camera.contrast
@@ -123,7 +124,8 @@ class FSLaserScanProcessor(FSAbstractScanProcessor):
         # TODO: rename prefix to scan_id
         self._prefix = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
         self.point_cloud = FSPointCloud(self._is_color_scan)
-        self.image_processor = ImageProcessor(self.config, self.settings)
+        self.image_processor = FSImageProcessorFactory.get_image_processor_class(self.config.scanner_type)
+        #self.image_processor = ImageProcessor(self.config, self.settings)
 
         if self._is_color_scan:
             self._total = self._number_of_pictures * 2
@@ -335,7 +337,7 @@ class FSLaserScanProcessor(FSAbstractScanProcessor):
     def reset_scanner_state(self):
         self._logger.info("Reseting scanner states ... ")
         self.hardwareController.camera.objectExposureMode()
-        self.hardwareController.camera.flushStream()
+        #self.hardwareController.camera.flushStream()
         self.hardwareController.laser.off()
         self.hardwareController.led.off()
         self.hardwareController.turntable.disable_motors()

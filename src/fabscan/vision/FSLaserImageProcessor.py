@@ -8,6 +8,7 @@ import math
 import logging, os
 import numpy as np
 import cv2
+from fabscan.vision.FSAbstractImageProcessor import FSAbstractImageProcessor
 
 class FSPoint():
     def __init__(self, x=0.0, y=0.0, z=0.0):
@@ -21,7 +22,7 @@ class FSLine():
         self.b = b
 
 
-class ImageProcessor():
+class FSLaserImageProcessor(FSAbstractImageProcessor):
     def __init__(self, config, settings):
 
         self._logger =  logging.getLogger(__name__)

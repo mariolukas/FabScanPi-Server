@@ -1,4 +1,5 @@
 {
+   "scanner_type": "laser",
    "folders" : {
     "www": "/home/pi/fabscan/src/www/",
     "scans": "/usr/local/fabscanpi/scans/"

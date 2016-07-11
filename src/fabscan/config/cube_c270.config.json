@@ -1,4 +1,5 @@
 {
+   "scanner_type": "laser",
    "serial" : {
      "baudrate" : "115200",
      "port": "/dev/tty.usbmodem1421",

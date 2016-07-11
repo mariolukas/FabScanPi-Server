@@ -12,7 +12,7 @@ import time
 from fabscan.FSConfig import Config
 from fabscan.file.FSImage import save_image, load_image
 from fabscan.vision.FSImageTask import ImageTask, FSTaskType
-from fabscan.vision.FSImageProcessor import ImageProcessor
+from fabscan.vision.FSImageProcessorFactory import FSImageProcessorFactory
 from fabscan.FSSettings import Settings
 from fabscan.FSScanner import FSEvents
 
@@ -78,7 +78,8 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
         self.log = logging.getLogger('IMAGE_PROCESSOR THREAD')
         self.log.setLevel(logging.DEBUG)
-        self.image_processor = ImageProcessor(self.config, self.settings)
+        self.image_processor = FSImageProcessorFactory.get_image_processor_class(self.config.scanner_type)
+        #self.image_processor = ImageProcessor(self.config, self.settings)
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
 
