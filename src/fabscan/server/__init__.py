@@ -56,7 +56,11 @@ class FSServer():
 
             # Web Server
             self.fsWebServer = WebServer()
-            self.fsWebServer.serve_forever()
+            self.fsWebServer.start()
+
+            while True:
+                time.sleep(0.3)
+            #self.fsWebServer.serve_forever()
 
         except (KeyboardInterrupt, SystemExit):
 

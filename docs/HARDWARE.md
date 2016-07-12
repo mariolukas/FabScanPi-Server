@@ -1,8 +1,11 @@
-# Hardware
+#Parts
 
-<img width="500" src="images/FabScanCube.jpg">
+#Case
+The laser cut files can be found at [https://github.com/mariolukas/FabScan-Case](https://github.com/mariolukas/FabScan-Case)
 
-The laser cut files can be found at : <a href="https://github.com/mariolukas/FabScan-Case">https://github.com/mariolukas/FabScan-Case</a>
+# Electronics
+![alt text](images/FabScanCube.jpg)
+
 
 
 The FabScan PI case is the same as the FabScan (CUBE) case. The Logitech webcam is replaced by the a Raspberry PI
