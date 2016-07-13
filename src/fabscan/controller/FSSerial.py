@@ -20,10 +20,17 @@ class FSSerialCom():
         self._logger =  logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
         self.config = Config.instance()
+
         if hasattr(self.config.serial, 'port'):
             self._port = self.config.serial.port
         else:
             self._port = self._port = self.serialList()[0]
+
+        if hasattr(self.config.serial, 'flash_baudrate'):
+            self.flash_baudrate = self.config.serial.flash_baudrate
+        else:
+            self.flash_baudrate = 115200
+
         self._baudrate = self.config.serial.baudrate
         self._serial = None
         self._connected = False
@@ -47,12 +54,12 @@ class FSSerialCom():
 
 
     def avr_device_is_available(self):
-        status = FSSystem.run_command("avrdude -p m328p -b 57600 -carduino -P"+str(self._port))
+        status = FSSystem.run_command("avrdude -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port))
         return status == 0
 
     def avr_flash(self,fname):
         FSSystem.run_command("wc -l "+str(fname))
-        status = FSSystem.run_command("avrdude -D -V -U flash:w:"+str(fname)+":i -b 57600 -carduino -pm328p -P"+str(self._port))
+        status = FSSystem.run_command("avrdude -D -V -U flash:w:"+str(fname)+":i -b "+str(self.flash_baudrate)+" -carduino -pm328p -P"+str(self._port))
         if status != 0:
             self._logger.error("Failed to flash firmware")
         return status == 0
