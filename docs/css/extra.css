@@ -11,3 +11,17 @@
 .wy-side-nav-search{
     background-color: #d71633;
 }
+
+.wy-nav-top {
+    background: #d71633;
+}
+
+.github-corner{
+    display:block;
+}
+
+@media screen and (max-width: 768px) {
+    .github-corner{
+        display:none
+    }
+}
