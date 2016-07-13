@@ -32,7 +32,7 @@ class FSScanProcessorCommand(object):
     UPDATE_SETTINGS = "UPDATE_SETTINGS"
     SCAN_NEXT_TEXTURE_POSITION = "SCAN_NEXT_TEXTURE_POSITION"
     SCAN_NEXT_OBJECT_POSITION = "SCAN_NEXT_OBJECT_POSITION"
-
+    GET_HARDWARE_INFO = "GET_HARDWARE_INFO"
 
 class FSScanProcessor(pykka.ThreadingActor):
     def __init__(self):
@@ -93,6 +93,9 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         if event[FSEvents.COMMAND] == FSScanProcessorCommand.UPDATE_SETTINGS:
             self.update_settings(event['SETTINGS'])
+
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.GET_HARDWARE_INFO:
+            return self.hardwareController.get_firmware_version()
 
     def update_settings(self, settings):
         try:

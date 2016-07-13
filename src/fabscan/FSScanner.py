@@ -11,7 +11,6 @@ import multiprocessing
 
 from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManager, FSEvents
-from fabscan.controller import HardwareController
 from fabscan.FSScanProcessor import FSScanProcessor
 from fabscan.vision.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import Settings
@@ -42,7 +41,6 @@ class FSScanner(threading.Thread):
         self._logger.setLevel(logging.DEBUG)
         self.settings = Settings.instance()
         self.daemon = True
-        self.hardwareController = HardwareController.instance()
         self._exit_requested = False
         self.meshingTaskRunning = False
 
@@ -112,11 +110,14 @@ class FSScanner(threading.Thread):
 
     def on_client_connected(self, eventManager, event):
 
+
+        hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
+
         message = {
             "client": event['client'],
             "state": self._state,
             "server_version": str(__version__),
-            "firmware_version": str(self.hardwareController.get_firmware_version()),
+            "firmware_version": str(hardware_info),
             "settings": self.settings.todict(self.settings)
         }
 
