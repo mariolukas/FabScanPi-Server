@@ -30,8 +30,8 @@ class FSScanProcessorCommand(object):
     SETTINGS_MODE_ON = "SETTINGS_MODE_ON"
     NOTIFY_HARDWARE_STATE = "NOTIFY_HARDWARE_STATE"
     UPDATE_SETTINGS = "UPDATE_SETTINGS"
-    SCAN_NEXT_TEXTURE_POSITION = "SCAN_NEXT_TEXTURE_POSITION"
-    SCAN_NEXT_OBJECT_POSITION = "SCAN_NEXT_OBJECT_POSITION"
+    _SCAN_NEXT_TEXTURE_POSITION = "SCAN_NEXT_TEXTURE_POSITION"
+    _SCAN_NEXT_OBJECT_POSITION = "SCAN_NEXT_OBJECT_POSITION"
     GET_HARDWARE_INFO = "GET_HARDWARE_INFO"
 
 class FSScanProcessor(pykka.ThreadingActor):
@@ -82,10 +82,10 @@ class FSScanProcessor(pykka.ThreadingActor):
         if event[FSEvents.COMMAND] == FSScanProcessorCommand.SETTINGS_MODE_OFF:
             self.settings_mode_off()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.SCAN_NEXT_TEXTURE_POSITION:
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION:
             self.scan_next_texture_position()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.SCAN_NEXT_OBJECT_POSITION:
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION:
             self.scan_next_object_position()
 
         if event[FSEvents.COMMAND] == FSScanProcessorCommand.NOTIFY_HARDWARE_STATE:
@@ -162,10 +162,10 @@ class FSScanProcessor(pykka.ThreadingActor):
 
         if self._is_color_scan:
             self._total = self._number_of_pictures * 2
-            self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand.SCAN_NEXT_TEXTURE_POSITION})
+            self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
         else:
             self._total = self._number_of_pictures
-            self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand.SCAN_NEXT_OBJECT_POSITION})
+            self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
 
     def init_texture_scan(self):
         message = {
@@ -209,10 +209,10 @@ class FSScanProcessor(pykka.ThreadingActor):
                 self.image_task_q.put(task, True)
                 self._logger.debug("Color Progress %i of %i : " % (self.current_position, self._number_of_pictures))
                 self.current_position += 1
-                self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand.SCAN_NEXT_TEXTURE_POSITION})
+                self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
             else:
                 self.finish_texture_scan()
-                self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand.SCAN_NEXT_OBJECT_POSITION})
+                self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
 
     def init_object_scan(self):
         self._logger.debug("Started object scan initialisation")
@@ -272,7 +272,7 @@ class FSScanProcessor(pykka.ThreadingActor):
                 self._logger.debug("Laser Progress: %i of %i at laser position %i" % (
                 self.current_position, self._number_of_pictures, self._current_laser_position))
                 self.current_position += 1
-                self.actor_ref.tell({FSEvents.COMMAND: 'SCAN_NEXT_OBJECT_POSITION'})
+                self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
 
             else:
                 self.finish_object_scan()
