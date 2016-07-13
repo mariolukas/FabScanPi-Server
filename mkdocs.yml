@@ -5,6 +5,7 @@ pages:
 - Software: software.md
 - Developing: developing.md
 - Contributing: contributing.md
+- Community: community.md
 - F.A.Q: faq.md
 extra_css:
   - css/extra.css
