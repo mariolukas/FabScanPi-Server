@@ -19,50 +19,9 @@ That enables people with different programming skills to [contribute to this pro
 
 FabScan PI is Free Software and released under the [GNU Affero General Public License V3](http://www.gnu.org/licenses/agpl.html).
 
-## Installation 
+## Documentation
+The FabScan documentation can be found at [http://www.fabscan.org](http://www.fabscan.org)
 
-* [Hardware](docs/hardware.md)
-* [Software](docs/software.md)
-
-## Quick Start
-
-
-## Notice!
-There ist no need to flash the Arduino firmware. The Arduino will be flashed automatically with the current
-firmware version after the server is started.
-
-
-### With FabScanPI ISO image for SD card (recommended)
-Dowload the current FabScanPi Raspbian image and flash it to SD Card. 
-Follow the [hardware](docs/HARDWARE.md) Setup and boot the Raspberry Pi 2 
-and you are ready to go. 
-
-Latest image release: [https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest](https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest)
-
-
-### With FabScanPI Raspbian Package 
-
-```
-echo "deb http://archive.fabscan.org/ jessie main" >> /etc/apt/sources.list
-```
-
-Then add the FabScan PI repository key to your key chain.
-
-```
-wget http://archive.fabscan.org/fabscan.public.key -O - | sudo apt-key add -
-```
-
-Update the package list.
-
-```
-apt-get update
-```
-
-Finish the installation with the needed packages.
-
-```
-apt-get isntall fabscanpi-server python-opencv-tbb libtbb2  python-pil python-serial python-pykka python-picamera avrdude
-```
 
 ##<a name="useage"></a> Useage
 
@@ -115,20 +74,6 @@ Previously scanned objects can be loaded by calling the load gallery dialog. A g
 one of the previously scanned objects loads the scan.
 
 
-## Development
-
-* [Frontend](docs/FRONTEND_DEV.md)
-* [Backend](docs/BACKEND_DEV.md)
-<a name="contribute"></a>
-
-## Contributing to this project
-
-Anyone and everyone is welcome to contribute. Please take a moment to
-review the [guidelines for contributing](CONTRIBUTING.md).
-
-* [Bug reports](CONTRIBUTING.md#bugs)
-* [Feature requests](CONTRIBUTING.md#features)
-* [Pull requests](CONTRIBUTING.md#pull-requests)
 
 ## Contributions from
 * Watterott electronic
