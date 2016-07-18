@@ -38,3 +38,7 @@ img[alt=drawing_250] {
 img[alt=drawing_400] {
     width: 400px;
 }
+
+img[alt=browser_logo] {
+    width: 40px;
+}
