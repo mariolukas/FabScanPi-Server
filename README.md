@@ -21,8 +21,8 @@ FabScan PI is Free Software and released under the [GNU Affero General Public Li
 
 ## Installation 
 
-* [Hardware](docs/HARDWARE.md)
-* [Software](docs/SOFTWARE.md)
+* [Hardware](docs/hardware.md)
+* [Software](docs/software.md)
 
 ## Quick Start
 

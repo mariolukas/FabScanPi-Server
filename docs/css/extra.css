@@ -25,3 +25,16 @@
         display:none
     }
 }
+
+img[alt=drawing_200] {
+    width: 200px;
+}
+
+img[alt=drawing_250] {
+    width: 230px;
+}
+
+
+img[alt=drawing_400] {
+    width: 400px;
+}

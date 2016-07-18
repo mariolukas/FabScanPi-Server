@@ -25,12 +25,12 @@
           "z": 24.6
       },
       "frame":{
-          "dimension": 24
+          "dimension": 30
       }
    },
    "laser": {
       "position":{
-        "x": 10,
+        "x": 7,
         "y": 7.3,
         "z": 20
       },
