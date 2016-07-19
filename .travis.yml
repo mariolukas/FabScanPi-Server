@@ -18,7 +18,7 @@ after_success:
 - git config credential.helper "store --file=.git/credentials"
 - ls -al 
 - echo "https://${GH_TOKEN}:@github.com" > .git/credentials
-- rsync -a -v ../FabScanPi-Server/site . 
+- rsync -a -v ../../FabScanPi-Server/site . 
 - git commit -am "travis doc update ${NOW}"
 - git push 
 env:
