@@ -13,7 +13,7 @@ after_success:
 - mkdir doku
 - cd doku
 - git clone https://github.com/mariolukas/FabScanPi-Build-Raspbian.git --branch gh-pages
-- cp ../test/. .
+- cp ../site/. .
 - git config credential.helper "store --file=.git/credentials"
 - echo "https://${GH_TOKEN}:@github.com" > .git/credentials
 - git commit -am "travis doc update ${NOW}"
