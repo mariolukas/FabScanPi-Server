@@ -8,6 +8,9 @@ before_install:
 before_script: pip install mkdocs
 script: make deb
 after_success:
+  api_key:
+    secure: eISi+PPamJlREHhOIGSeMVvf5biKITsspjwFHq7IAvLlJRtLU/GxW/2kVohCED5SNUjBYQvnAnhV8fQ7qR28+U2OjlvFKKduP1uGNgm0uld4BAeVQXN4kEdfXOuMlajMAUc4UGDJXpqIz51/9ToC92SzEmKMF3tNFDBOy6n1mlvppOdUuwEBxlGBc/WaVWvMm3VzdmS5q84MN+nalikBnOhKFldJw/BGa1vtVkUWYyEpBT9nYRfVXL4cv1SQGGC+3zDnNDVAZ9kYHXO1L5L3gxXWpYwKNhcgxzdCRWa2oghMJ9BSKDxwu6bJEkA8MvL64SaIRr7iZv3bL5BxHFVgowOd+PQmH/XjybV7tdjLIwFBRjDy+WhhxbOgrOZPPseVtQxRICaS1hf9nZeDyQYP7Ap+N8ks/oUXsfqvr3gIKuF6PannlWB4M1w86GP/Xwq6ocViPOKUgMcR2pDSsHS+fL0ukA7njQ4pj54KBPOxtiRYEF4801cYtL+1/2aSSh7Ymnu2mLHfDJqX/8Le2U/mckJnRxT9h5G0kLrNPVpKaO7jVC3VGf90mTR1gNf3esdZgcekWLaLpWuiMitNZx8epYgGVZ+snwrdmsQYCj+BHP8aQR0QO23r/KFTb/PK8f/YMj0KeXTS3hXkx4VcOlJfDhDlQaAN65gyWpl9qe5FJhA=
+
 - NOW=`date +%Y-%m-%d-%H-%M`
 - mkdocs build
 - cd ..
