@@ -12,12 +12,11 @@ after_success:
 - mkdocs build
 - mkdir doku
 - cd doku
-- git clone https://github.com/mariolukas/FabScanPi-Build-Raspbian.git --branch gh-pages
+- git clone https://github.com/mariolukas/FabScanPi-Server.git --branch gh-pages
 - cd ..
 - cp site/. doku
 - cd doku
 - git config credential.helper "store --file=.git/credentials"
-- touch .git/credentials
 - echo "https://${GH_TOKEN}:@github.com" > .git/credentials
 - git commit -am "travis doc update ${NOW}"
 - git push 
