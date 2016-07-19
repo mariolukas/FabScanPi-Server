@@ -10,12 +10,14 @@ script: make deb
 after_success:
 - NOW=`date +%Y-%m-%d-%H-%M`
 - mkdocs build
+- cd ..
 - mkdir doku
 - cd doku
-- git clone https://github.com/mariolukas/FabScanPi-Server.git --branch gh-pages
+- git clone -b gh-pages https://github.com/mariolukas/FabScanPi-Server.git
 - git config credential.helper "store --file=.git/credentials"
+- ls -al 
 - echo "https://${GH_TOKEN}:@github.com" > .git/credentials
-- rsync -a ../site . 
+- rsync -a -v ../FabScanPi-Server/site . 
 - git commit -am "travis doc update ${NOW}"
 - git push 
 env:
