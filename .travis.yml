@@ -4,7 +4,7 @@ python:
 - 2.7_with_system_site_packages
 before_install:
 - sudo apt-get -qq update
-- sudo apt-get install -y build-essential python-setuptools debhelper cdbs dh-python python-pip
+- sudo apt-get install -y build-essential python-setuptools debhelper cdbs dh-python python-pip rsync 
 before_script: pip install mkdocs
 script: make deb
 after_success:
@@ -13,11 +13,9 @@ after_success:
 - mkdir doku
 - cd doku
 - git clone https://github.com/mariolukas/FabScanPi-Server.git --branch gh-pages
-- cd ..
-- cp site/. doku
-- cd doku
 - git config credential.helper "store --file=.git/credentials"
 - echo "https://${GH_TOKEN}:@github.com" > .git/credentials
+- rsync -a ../site . 
 - git commit -am "travis doc update ${NOW}"
 - git push 
 env:
