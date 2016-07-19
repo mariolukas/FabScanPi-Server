@@ -4,8 +4,20 @@ python:
 - 2.7_with_system_site_packages
 before_install:
 - sudo apt-get -qq update
-- sudo apt-get install -y build-essential python-setuptools debhelper cdbs dh-python
+- sudo apt-get install -y build-essential python-setuptools debhelper cdbs dh-python python-pip
+before_script: pip install mkdocs
 script: make deb
+after_success:
+- NOW=`date +%Y-%m-%d-%H-%M`
+- mkdocs build
+- mkdir doku
+- cd doku
+- git clone git clone https://github.com/mariolukas/FabScanPi-Build-Raspbian.git --branch gh-pages
+- cp ../test/. .
+- git config credential.helper "store --file=.git/credentials"
+- echo "https://${GH_TOKEN}:@github.com" > .git/credentials
+- git commit -am "travis doc update ${NOW}"
+- git push origin 
 env:
   global:
   - secure: JK/Xyt1uBDkyvkfws/5IYDBbM9cYLh0sEp0XKWTjxCgnQ8EqIMin7zpcJNd36/mq3aaNG3IopXE9lEdqiEhG4yWh6H4pgXSm24ChMfICkX74Cp7ctE1qMVt7plVuLjXCtAyEhk1149zIf83KYDHg2GFP99+KmfNm1IjaX7tu4+Xvd8uz7syDPtfQBSR6D67NWQnhKw3wOZ/iAUqxXxaYqb3pux+nI4LiKCWIDplPQV85zqPbwyJZV6Gzx+lDd9vt5pze7ZJ4jLTUlqQiK/gwDoAqIga7Sqah+HKQz2zrWJ8NB6iiW4KifA1Frbu50ch3lqoIQyMNnkSw9b1EyWqnCE47IsZuE6921biYOLV3vqZp4N/C99YX4BvR7msFGs+mOeksmelIlxNK0NjbGReE/zpWlk13zcteOo4V6l6fcKtp8iOYkalqJrUR5cRtVNNNVLGMbbYsxpxkMhRJPbwgLdyFjPnOqAu9WvAXkDa0h2MS5ZJtrCXUM6akbkL/HwSYeV2LC4SbAQI+pQajA0AQOXtzCFWDXCaZGR2t5QwPUMQYYh0849YgkSfcedWnn0k5axT0tGor9COX90ARb21oxmZM1RP41h1XPzbSPsJjZ3S8Jen5dit14bmsNdOlbssuLIJ10Ge/eihmfIJB5BHCvhVtDBpo/PWwaPhW2s+M0PE=
