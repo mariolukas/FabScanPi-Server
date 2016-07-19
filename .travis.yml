@@ -16,7 +16,7 @@ after_success:
 - git clone -b gh-pages https://github.com/mariolukas/FabScanPi-Server.git
 - cd FabScanPi-Server
 - git config credential.helper "store --file=.git/credentials"
-- echo "https://${GH_TOKEN}:@github.com/mariolukas/FabScanPi-Server.git" > .git/credentials
+- echo "https://${GH_TOKEN}:@github.com" > .git/credentials
 - git config --global push.default simple
 - rsync -a -v ../../FabScanPi-Server/site/ . 
 - ls -al
@@ -35,7 +35,7 @@ after_deploy:
 - git clone https://github.com/mariolukas/FabScanPi-Build-Raspbian.git
 - cd FabScanPi-Build-Raspbian
 - git config credential.helper "store --file=.git/credentials"
-- echo "https://${GH_TOKEN}:@github.com/mariolukas/FabScanPi-Build-Raspbian.git" > .git/credentials
+- echo "https://${GH_TOKEN}:@github.com" > .git/credentials
 - git tag v.${NOW} -m "new release ${RELEASE_FILE_NAME}"
 - git push origin --tags
 deploy:
