@@ -17,6 +17,7 @@ from fabscan.FSSettings import Settings
 from fabscan.FSScanProcessor import FSScanProcessorCommand
 
 
+
 class FSState(object):
     IDLE = "IDLE"
     SCANNING = "SCANNING"

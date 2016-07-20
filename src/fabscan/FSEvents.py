@@ -26,13 +26,44 @@ class FSEvents(object):
     ON_NEW_PREVIEW_IMAGE = "ON_NEW_PREVIEW_IMAGE"
     ON_INFO_MESSAGE = "ON_INFO_MESSAGE"
 
-__author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
-__maintainer__ = "Mario Lukas"
-__email__ = "info@mariolukas.de"
 
-class FSEventManager(SingletonMixin):
+class FSEventManagerInterface(object):
+
+    def subscribe(self, key, callback, force=False):
+        raise NotImplementedError()
+    def unsubscribe(self, key, callback):
+        raise NotImplementedError()
+
+    def unsubscribe_all(self, key):
+        raise NotImplementedError()
+
+    def has_subscription(self, key, callback):
+        raise NotImplementedError()
+
+    def has_any_subscriptions(self, key):
+        raise NotImplementedError()
+
+    def publish(self, key, *args, **kwargs):
+        raise NotImplementedError()
+
+    def send_client_message(self, type, data):
+        raise NotImplementedError()
+
+    def broadcast_client_message(self, type, data):
+        raise NotImplementedError()
+
+    def reset(self):
+        raise NotImplementedError()
+
+    def handle_event_q(self):
+        raise NotImplementedError()
+
+    def get_event_q(self):
+       raise NotImplementedError()
+
+
+
+class FSEventManager(EventManager):
     def __init__(self):
         self.reset()
         self.event_q = multiprocessing.Queue()

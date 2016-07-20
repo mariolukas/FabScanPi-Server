@@ -6,21 +6,16 @@ __email__ = "info@mariolukas.de"
 
 import time
 import logging
-import signal
 import sys
 from WebServer import WebServer
-import webbrowser
-import os
-import multiprocessing
-
-
 
 from fabscan.server.websockets import FSWebSocketServer
 from fabscan.FSScanner import FSScanner
-from fabscan.FSEvents import FSEventManager
+from fabscan.FSEvents import FSEventManager, FSEventManagerInterface
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
 from fabscan.controller import HardwareController
+from fabscan.util.FSinject import injector
 from fabscan.FSVersion import __version__
 
 
@@ -39,6 +34,9 @@ class FSServer():
         self._logger.info("FabScanPi-Server "+str(__version__))
 
         try:
+
+
+            injector.provide_instance(FSEventManager, FSEventManager(), name="FSEventManager")
 
             # create Singleton instances
             _config = Config.instance(self.config_file)

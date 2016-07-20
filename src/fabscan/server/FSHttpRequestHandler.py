@@ -8,7 +8,9 @@ import os
 import posixpath
 import urllib
 import time
+
 from PIL import Image
+
 import StringIO
 import re
 from BaseHTTPServer import BaseHTTPRequestHandler
@@ -123,6 +125,7 @@ class RequestHandler(SimpleHTTPRequestHandler):
 
                     if image != None:
                         image = image[:, :, ::-1]
+                        #stream = toimage(image)
                         stream = Image.fromarray(image)
                         tmpFile = StringIO.StringIO()
 
