@@ -22,11 +22,11 @@ $.get('https://api.github.com/repos/mariolukas/FabScanPi-Build-Raspbian/releases
      var timeAgo;
      if (dateDiff < oneDay)
      {
-         timeAgo = (dateDiff / oneHour).toFixed(1) + " hours ago";
+         timeAgo = Math.ceil((dateDiff / oneHour).toFixed(1)) + " hours ago";
      }
      else
      {
-         timeAgo = (dateDiff / oneDay).toFixed(1) + " days ago";
+         timeAgo = Math.ceil((dateDiff / oneDay).toFixed(1)) + " days ago";
      }
   $('#latest_release').attr('href', data.assets[0].browser_download_url);
   $('#latest_release').text(data.assets[0].browser_download_url.split("/").pop());
