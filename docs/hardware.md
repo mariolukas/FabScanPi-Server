@@ -7,26 +7,26 @@ The laser cut files can be found at [https://github.com/mariolukas/FabScan-Case]
 ![drawing_200](images/FabScanPI_closed.jpg)
 ![drawing_200](images/FabScanPi_opened.jpg)
 
-<span class="subheadline">Assembly</span>
+**Assembly**
 TODO
 
 #Electronics
 
-<span class="subheadline">FabScanPi HAT</span>
+**FabScanPi HAT**
 
 ![drawing_400](images/fabscanpihat.png)
 
-<span class="subheadline">Motor connector</span>
+**Motor connector**
 TODO
 
-<span class="subheadline">Laser connectors</span>
+**Laser connectors**
 TODO
 
-<span class="subheadline">LED connector</span>
+**LED connector**
 TODO
 
-<span class="subheadline">Safety switch</span>
+**Safety switch**
 TODO
 
-<span class="subheadline">Servo connectors</span>
+**Servo connectors**
 TODO

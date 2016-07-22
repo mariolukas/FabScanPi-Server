@@ -268,13 +268,13 @@ Now you must know the IP-address which has be assigned to your FabScanPi. It is 
 
 Start **Putty.exe** and a window will pop up.
 
- ![PuTTY_Menu](images/PuTTY_Menu.jpg)
+![PuTTY_Menu](images/PuTTY_Menu.jpg)
 
 Type in your IP-address in the appropriate field and click on "OPEN".
 
 
 
- ![Login](images/Login.jpg)
+![Login](images/Login.jpg)
 
 Now the console window opens and you must type in "**pi**" as **login-name** and "**raspberry**" as **password** (without the quotes). Now you should be able to see the login prompt (similar to the picture above).
 
@@ -290,7 +290,7 @@ To view and modify the config file (default.config.json) you must open it with a
 
 **sudo nano default.config.json**
 
- ![Open_Nano](images/Open_Nano.jpg)
+![Open_Nano](images/Open_Nano.jpg)
 
 You have to enter the password "**raspberry**" (without the quotes) again, because you open the editor with administrator rights.
 
@@ -310,7 +310,7 @@ For the changes to take effect you must restart your FabScanPi by typing in the 
 
 and ENTER.
 
- ![Reboot](images/Reboot.jpg)
+![Reboot](images/Reboot.jpg)
 
 
 You can now close the PuTTY window.
