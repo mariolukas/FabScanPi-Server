@@ -11,12 +11,13 @@ from WebServer import WebServer
 
 from fabscan.server.websockets import FSWebSocketServer
 from fabscan.FSScanner import FSScanner
-from fabscan.FSEvents import FSEventManager, FSEventManagerInterface
+from fabscan.FSEvents import FSEventManager
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
 from fabscan.controller import HardwareController
-from fabscan.util.FSinject import injector
 from fabscan.FSVersion import __version__
+from fabscan.util.FSInject import injector
+import threading
 
 
 class FSServer():
@@ -28,15 +29,11 @@ class FSServer():
         self.config_file = config_file
         self.settings_file = settings_file
 
-
-
     def run(self):
         self._logger.info("FabScanPi-Server "+str(__version__))
 
         try:
-
-
-            injector.provide_instance(FSEventManager, FSEventManager(), name="FSEventManager")
+            #injector.provide(HardwareControllerInterface, HardwareController)
 
             # create Singleton instances
             _config = Config.instance(self.config_file)
@@ -52,20 +49,20 @@ class FSServer():
             _scanner = FSScanner()
             _scanner.start()
 
-            # Web Server
-            self.fsWebServer = WebServer()
-            self.fsWebServer.start()
+
+            # start webserver
+            threading.Thread(target=WebServer().serve_forever).start()
 
             while True:
                 time.sleep(0.3)
-            #self.fsWebServer.serve_forever()
+
 
         except (KeyboardInterrupt, SystemExit):
 
             time.sleep(0.5)
-            _hardwareController.laser.off()
-            _hardwareController.led.off()
-            _hardwareController.turntable.stop_turning()
+            #_hardwareController.laser.off()
+            #_hardwareController.led.off()
+            #_hardwareController.turntable.stop_turning()
 
             sys.exit(0)
 

@@ -21,6 +21,7 @@ from fabscan.vision.FSImageWorker import FSImageWorkerPool
 from fabscan.controller import HardwareController
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
+from fabscan.util.FSInject import inject
 
 
 class FSScanProcessorCommand(object):
@@ -33,6 +34,7 @@ class FSScanProcessorCommand(object):
     _SCAN_NEXT_TEXTURE_POSITION = "SCAN_NEXT_TEXTURE_POSITION"
     _SCAN_NEXT_OBJECT_POSITION = "SCAN_NEXT_OBJECT_POSITION"
     GET_HARDWARE_INFO = "GET_HARDWARE_INFO"
+
 
 class FSScanProcessor(pykka.ThreadingActor):
     def __init__(self):

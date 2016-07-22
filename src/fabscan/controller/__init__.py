@@ -98,27 +98,6 @@ class HardwareController(SingletonMixin):
         time.sleep(0.8)
         last_angle = 0
         current_angle = self.get_laser_angle()
-
-        #while (last_angle != current_angle):
-       #     last_angle = current_angle
-        #    current_angle = self.get_laser_angle()
-
-        #angle_delta = 1
-        #while(not (angle_delta < 0.3 and angle_delta > -0.3)):
-        #    laser_angle = self.get_laser_angle()
-        #    angle_delta = 30 - laser_angle
-
-         #   if angle_delta > 0.3:
-         #       self.laser.turn(1)
-         #   elif angle_delta < -0.3:
-         #       self.laser.turn(-1)
-
-        #delta_angle = 30 - first_detected_angle
-        #steps = delta_angle/0.1125*3200
-        #self.laser.turn(int(360/steps))
-
-        #angle = self.get_laser_angle()
-
         self.laser.off()
         return current_angle
 

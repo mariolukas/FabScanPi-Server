@@ -27,13 +27,15 @@ from fabscan.FSConfig import Config
 
 class RequestHandler(SimpleHTTPRequestHandler):
 
-    def __init__(self,*args):
+    def __init__(self, *args):
+        super(SimpleHTTPRequestHandler, self).__init__(*args)
         self._logger =  logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
         self.api = FSRest()
         self._eventManager = FSEventManager.instance()
         self.close_mjpeg_stream = False
         self.config = Config.instance()
+
 
 
         self.ROUTES = (
@@ -123,7 +125,7 @@ class RequestHandler(SimpleHTTPRequestHandler):
                     future_image = self._settingsPreviewProcessor.ask({'command': FSEvents.MPJEG_IMAGE,'type':type}, block=False)
                     image = future_image.get()
 
-                    if image != None:
+                    if image is not None:
                         image = image[:, :, ::-1]
                         #stream = toimage(image)
                         stream = Image.fromarray(image)
