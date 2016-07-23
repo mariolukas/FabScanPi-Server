@@ -7,6 +7,7 @@ __email__ = "info@mariolukas.de"
 import multiprocessing
 from Queue import Empty
 from fabscan.util.FSSingleton import SingletonMixin
+from fabscan.util.FSInject import singleton
 
 class FSEvent():
     pass
@@ -27,9 +28,13 @@ class FSEvents(object):
     ON_INFO_MESSAGE = "ON_INFO_MESSAGE"
 
 
+class FSEVentManagerInterface(object):
+    pass
 
+@singleton(singleton=FSEVentManagerInterface)
 class FSEventManager(SingletonMixin):
-    def __init__(self):
+    def __init__(self, singleton):
+
         self.reset()
         self.event_q = multiprocessing.Queue()
 

@@ -7,14 +7,15 @@ __email__ = "info@mariolukas.de"
 import time
 import logging
 import sys
-from WebServer import WebServer
+from WebServer import FSWebServer
 
 from fabscan.server.websockets import FSWebSocketServer
 from fabscan.FSScanner import FSScanner
 from fabscan.FSEvents import FSEventManager
-from fabscan.FSConfig import Config
+from fabscan.FSConfig import Config, FSConfigInterface
 from fabscan.FSSettings import Settings
-from fabscan.controller import HardwareController
+from fabscan.controller import FSHardwareController
+from fabscan.FSScanProcessor import FSScanProcessor
 from fabscan.FSVersion import __version__
 from fabscan.util.FSInject import injector
 import threading
@@ -33,28 +34,26 @@ class FSServer():
         self._logger.info("FabScanPi-Server "+str(__version__))
 
         try:
-            #injector.provide(HardwareControllerInterface, HardwareController)
+            # dynamic module classes dependencies... (later this will be plug-ins)
+            injector.provide(FSHardwareController, FSHardwareController)
+            #injector.provide(FSImageProcessor, FSImageProcessor)
+            injector.provide(FSScanProcessor, FSScanProcessor)
 
-            # create Singleton instances
-            _config = Config.instance(self.config_file)
-            _settings = Settings.instance(self.settings_file)
-
-            _hardwareController = HardwareController.instance()
-            _eventManager = FSEventManager.instance()
+            # static classes
+            injector.provide(FSEventManager, FSEventManager)
+            injector.provide_instance(Config, Config.instance(self.config_file))
+            injector.provide_instance(Settings, Settings.instance(self.settings_file))
 
             # Websocket Server
-            self.fsWebSocketServer = FSWebSocketServer()
-            self.fsWebSocketServer.start()
-
-            _scanner = FSScanner()
-            _scanner.start()
-
-
-            # start webserver
-            threading.Thread(target=WebServer().serve_forever).start()
+            FSWebSocketServer().start()
+            FSScanner().start()
+            FSWebServer().start()
 
             while True:
-                time.sleep(0.3)
+                try:
+                    time.sleep(0.3)
+                except KeyboardInterrupt:
+                    raise
 
 
         except (KeyboardInterrupt, SystemExit):
@@ -63,8 +62,8 @@ class FSServer():
             #_hardwareController.laser.off()
             #_hardwareController.led.off()
             #_hardwareController.turntable.stop_turning()
-
-            sys.exit(0)
+            pass
+            #sys.exit(0)
 
 
 

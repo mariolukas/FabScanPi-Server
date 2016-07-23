@@ -258,6 +258,10 @@ It is most likely that you don't have a monitor nor mouse and keyboard connected
 
 This can be done via a remote PC which is connected to the same network.
 
+
+**Connecting as Windows User (Putty)**
+
+
 First of all you need to download the tiny program "PuTTY" from http://www.putty.org/.
 
 PuTTY is a SSH client program which establishes the connection to your FabScanPi. There is no no graphic user interface -only a console which allows only the exchange of text. But that's enough to make some changes in the config file or to update your FabScanPi-Software.
@@ -272,13 +276,21 @@ Start **Putty.exe** and a window will pop up.
 
 Type in your IP-address in the appropriate field and click on "OPEN".
 
-
-
 ![Login](images/Login.jpg)
 
 Now the console window opens and you must type in "**pi**" as **login-name** and "**raspberry**" as **password** (without the quotes). Now you should be able to see the login prompt (similar to the picture above).
 
 
+**Connecting as Linux or OSX User (Terminal)**
+
+Linux users can open a Terminal and type "**ssh pi@fabscanpi.local**"  ("**sh pi@ip-address-of-you-pi**"). 
+Next you are asked for a password. Type in "**raspberry**" as **password** (without the quotes).
+The next steps are described with screenshots for Putty, but the workflow is the same once the connection is 
+established.
+
+![Login](images/ssh_linux.png)
+
+**Changing the config file.**
 
 The config file is in a different folder, so you must change into that folder by entering the command:
 

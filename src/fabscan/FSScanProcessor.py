@@ -18,7 +18,7 @@ from fabscan.FSEvents import FSEventManager, FSEvents, FSEvent
 from fabscan.vision.FSImageTask import ImageTask
 
 from fabscan.vision.FSImageWorker import FSImageWorkerPool
-from fabscan.controller import HardwareController
+from fabscan.controller import FSHardwareController
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
 from fabscan.util.FSInject import inject
@@ -36,13 +36,22 @@ class FSScanProcessorCommand(object):
     GET_HARDWARE_INFO = "GET_HARDWARE_INFO"
 
 
-class FSScanProcessor(pykka.ThreadingActor):
-    def __init__(self):
-        super(FSScanProcessor, self).__init__()
 
-        self.eventManager = FSEventManager.instance()
-        self.settings = Settings.instance()
-        self.config = Config.instance()
+@inject(
+    hardwarecontroller=FSHardwareController,
+    eventmanager=FSEventManager,
+    config=Config,
+    settings=Settings
+)
+class FSScanProcessor(pykka.ThreadingActor):
+    def __init__(self, hardwarecontroller, eventmanager, config, settings):
+
+        self.settings = settings
+        self.config = config
+        self.hardwareController = hardwarecontroller
+        self.eventManager = eventmanager
+
+        super(FSScanProcessor, self).__init__()
 
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
@@ -65,7 +74,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.event_q = self.eventManager.get_event_q()
 
         self._worker_pool = FSImageWorkerPool(self.image_task_q, self.event_q)
-        self.hardwareController = HardwareController.instance()
+
         self.eventManager.subscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
         self._scan_brightness = self.settings.camera.brightness
         self._scan_contrast = self.settings.camera.contrast

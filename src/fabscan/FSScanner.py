@@ -11,10 +11,10 @@ import multiprocessing
 
 from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManager, FSEvents
-from fabscan.FSScanProcessor import FSScanProcessor
 from fabscan.vision.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import Settings
-from fabscan.FSScanProcessor import FSScanProcessorCommand
+from fabscan.FSScanProcessor import FSScanProcessorCommand, FSScanProcessor
+from fabscan.util.FSInject import inject
 
 
 
@@ -33,22 +33,26 @@ class FSCommand(object):
     COMPLETE = "COMPLETE"
     SCANNER_ERROR = "SCANNER_ERROR"
 
-
+@inject(
+        settings=Settings,
+        eventmanager=FSEventManager,
+        scanprocessor=FSScanProcessor
+)
 class FSScanner(threading.Thread):
-    def __init__(self):
+    def __init__(self,settings, eventmanager, scanprocessor):
         threading.Thread.__init__(self)
         self._state = FSState.IDLE
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
-        self.settings = Settings.instance()
+        self.settings = settings
         self.daemon = True
         self._exit_requested = False
         self.meshingTaskRunning = False
 
-        self.scanProcessor = FSScanProcessor.start()
         self._logger.debug("Number of cpu cores: " + str(multiprocessing.cpu_count()))
 
-        self.eventManager = FSEventManager.instance()
+        self.scanProcessor = scanprocessor.start()
+        self.eventManager = eventmanager
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self.on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self.on_command)
 

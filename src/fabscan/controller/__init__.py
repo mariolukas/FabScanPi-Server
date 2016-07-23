@@ -17,14 +17,19 @@ from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
 from fabscan.vision.FSImageProcessor import ImageProcessor
 from fabscan.util.FSSingleton import SingletonMixin
+from fabscan.util.FSInject import singleton
 
+class FSHardwareControllerInterface(object):
+    pass
 
-class HardwareController(SingletonMixin):
+@singleton(singleton=FSHardwareControllerInterface)
+class FSHardwareController(SingletonMixin):
     """
     Wrapper class for getting the Laser, Camera, and Turntable classes working
     together
     """
-    def __init__(self):
+    def __init__(self, singleton):
+
         self.config = Config.instance()
         self.settings = Settings.instance()
 
