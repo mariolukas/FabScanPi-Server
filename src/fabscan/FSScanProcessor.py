@@ -169,7 +169,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         # TODO: rename prefix to scan_id
         self._prefix = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
         self.point_cloud = FSPointCloud(self._is_color_scan)
-        self.image_processor = ImageProcessor(self.config, self.settings)
+        self.image_processor = ImageProcessor()
 
         if self._is_color_scan:
             self._total = self._number_of_pictures * 2

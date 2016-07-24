@@ -13,15 +13,18 @@ from SimpleWebSocketServer import WebSocket
 # fabscan imports
 from fabscan.FSEvents import FSEventManager, FSEvents
 from fabscan.util.FSUtil import json2obj
+from fabscan.util.FSInject import inject
 
-
+@inject(
+    eventmanager=FSEventManager
+)
 class FSWebSocket(WebSocket):
-    def __init__(self, server, sock, address):
+    def __init__(self, server, sock, address, eventmanager):
         WebSocket.__init__(self, server, sock, address)
 
         self.maxheader = 65536
         self.maxpayload = 4194304
-        self.eventManager = FSEventManager.instance()
+        self.eventManager = eventmanager
         self._logger =  logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
 

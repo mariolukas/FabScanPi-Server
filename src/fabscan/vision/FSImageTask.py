@@ -10,8 +10,6 @@ class FSTaskType(object):
     PROCESS_PREVIEW_IMAGE = "PROCESS_PREVIEW_IMAGE"
     KILL = "KILL"
 
-
-
 class ImageTask(object):
 
     color_image = None

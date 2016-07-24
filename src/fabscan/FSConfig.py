@@ -8,6 +8,7 @@ import logging
 import os
 import json
 from fabscan.util.FSSingleton import SingletonMixin
+from fabscan.util.FSInject import singleton
 
 
 class FSConfigInterface(object):

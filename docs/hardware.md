@@ -10,7 +10,7 @@
 - [FaBScanPi Case](http://www.watterott.com/en/FabScan-Pi-Housing-Parts)
 
 
-#How to Assmble the Cabinet
+#How to Assemble the Cabinet
 The laser cut files can be found at [https://github.com/mariolukas/FabScan-Case](https://github.com/mariolukas/FabScan-Case)
 
 ![drawing_200](images/FabScanPI_closed.jpg)
@@ -69,16 +69,17 @@ with ...
 There is the possibility to add a laser safety switch which disables the laser
 when the lid is opened. The FabScanPi HAT provides a connector for such a switch.
 If you don't need a switch you still have to bridge this connector with 
-a cable to get the lasers work. (see images)
+a cable to get the lasers work. (left image: with bridged connector, 
+right image: connecting a switch)
 
 ![test](images/laser_safety.jpg)
 ![test](images/laser_safety_switch.jpg)
 
 #Connecting the Motor drivers
+TODO
 
 #How to Connect the LED Ring
 TODO
 
-
 #Additional Motors for the Lasers
-There are connectors for 
+TODO

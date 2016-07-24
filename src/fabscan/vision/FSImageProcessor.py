@@ -8,6 +8,9 @@ import math
 import logging, os
 import numpy as np
 import cv2
+from fabscan.FSConfig import Config
+from fabscan.FSSettings import Settings
+from fabscan.util.FSInject import inject
 
 class FSPoint():
     def __init__(self, x=0.0, y=0.0, z=0.0):
@@ -20,7 +23,10 @@ class FSLine():
         self.a = a
         self.b = b
 
-
+@inject(
+    config=Config,
+    settings=Settings
+)
 class ImageProcessor():
     def __init__(self, config, settings):
 

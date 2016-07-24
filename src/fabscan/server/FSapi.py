@@ -13,13 +13,16 @@ import base64
 import shutil
 import logging
 import glob
+from fabscan.util.FSInject import inject
 
-
+@inject(
+    config=Config
+)
 class FSRest():
-    def __init__(self):
+    def __init__(self, config):
         self._logger =  logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
-        self.config = Config.instance()
+        self.config = config
 
     def call(self,action, path, headers, data=None):
 
