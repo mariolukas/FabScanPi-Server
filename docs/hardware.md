@@ -59,7 +59,7 @@ swap wires until you light the LED.
 
 #Connecting the Lasers
 The FabScanPi HAT provides connectors for two lasers. But only one laser
-is supportet until now. Connect your laser to the connectors labeled
+is supported until now. Connect your laser to the connectors labeled
 with ...
 
 ![drawing_450](images/laser_connection.jpg)
