@@ -9,16 +9,17 @@ import os
 import json
 from fabscan.util.FSSingleton import SingletonMixin
 
+
+class FSConfigInterface(object):
+    pass
+
+
 class Config(SingletonMixin):
-
-
     def __init__(self, config=os.path.dirname(__file__)+"/config/default.config.json",first=True):
 
         if first:
-
             with open(config) as file:
                 config = file.read()
-
             config = json.loads(config)
 
         def _traverse(key, element):

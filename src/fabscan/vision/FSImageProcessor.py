@@ -1,4 +1,4 @@
- __author__ = "Mario Lukas"
+__author__ = "Mario Lukas"
 __copyright__ = "Copyright 2015"
 __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
@@ -221,8 +221,6 @@ class ImageProcessor():
             sum_a = grey[:,start:].astype(float).sum(axis=1)
 
             weight =  np.squeeze(sum_t/sum_a)
-
-
 
             it = np.nditer(weight, flags=['f_index'])
             while not it.finished:

@@ -4,7 +4,6 @@ __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
-import logging
 import os
 import json
 from fabscan.FSConfig import Config

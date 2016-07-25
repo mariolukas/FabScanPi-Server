@@ -1,6 +1,7 @@
 #Slack
 Use the FabScan Slack channel for direct messaging and chat communication. 
-[https://fabscan.slack.com](https://fabscan.slack.com/)
+
+<a href="https://slack.com/oauth/authorize?scope=incoming-webhook&client_id=58041981943.62412650183"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
 
 #Google Group
 For general problems and information use the FabScan google group. 
