@@ -13,7 +13,7 @@ from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManager, FSEvents
 from fabscan.vision.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import Settings
-from fabscan.FSScanProcessor import FSScanProcessorCommand, FSScanProcessor
+from fabscan.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorSingleton
 from fabscan.util.FSInject import inject
 
 
@@ -36,7 +36,7 @@ class FSCommand(object):
 @inject(
         settings=Settings,
         eventmanager=FSEventManager,
-        scanprocessor=FSScanProcessor
+        scanprocessor=FSScanProcessorSingleton
 )
 class FSScanner(threading.Thread):
     def __init__(self,settings, eventmanager, scanprocessor):

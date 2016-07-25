@@ -4,7 +4,7 @@ __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
-import pykka
+from pykka import ThreadingActor
 import time
 import datetime
 import multiprocessing
@@ -18,10 +18,10 @@ from fabscan.FSEvents import FSEventManager, FSEvents, FSEvent
 from fabscan.vision.FSImageTask import ImageTask
 
 from fabscan.vision.FSImageWorker import FSImageWorkerPool
-from fabscan.controller import FSHardwareController
+from fabscan.controller import FSHardwareControllerSingleton
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
-from fabscan.util.FSInject import inject
+from fabscan.util.FSInject import inject, singleton
 
 
 class FSScanProcessorCommand(object):
@@ -36,25 +36,29 @@ class FSScanProcessorCommand(object):
     GET_HARDWARE_INFO = "GET_HARDWARE_INFO"
 
 
+class FSScanProcessorInterface(ThreadingActor):
+    def __init__(self):
+        super(ThreadingActor, self).__init__()
+        pass
 
 @inject(
-    hardwarecontroller=FSHardwareController,
-    eventmanager=FSEventManager,
     config=Config,
-    settings=Settings
+    settings=Settings,
+    eventmanager=FSEventManager,
+    hardwarecontroller=FSHardwareControllerSingleton
 )
-class FSScanProcessor(pykka.ThreadingActor):
-    def __init__(self, hardwarecontroller, eventmanager, config, settings):
-
+class FSScanProcessor(ThreadingActor):
+    def __init__(self,config, settings, eventmanager, hardwarecontroller):
+        super(ThreadingActor, self).__init__(config, settings, eventmanager, hardwarecontroller)
         self.settings = settings
         self.config = config
+        self.eventmanager = eventmanager
         self.hardwareController = hardwarecontroller
-        self.eventManager = eventmanager
-
-        super(FSScanProcessor, self).__init__()
 
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
+        self._logger.debug("Initialized")
+        self._logger.debug(self.hardwareController is FSHardwareControllerSingleton)
 
         self._prefix = None
         self._resolution = 16
@@ -71,11 +75,11 @@ class FSScanProcessor(pykka.ThreadingActor):
         self._current_laser_position = 1
 
         self.semaphore = multiprocessing.BoundedSemaphore()
-        self.event_q = self.eventManager.get_event_q()
+        self.event_q = self.eventmanager.get_event_q()
 
         self._worker_pool = FSImageWorkerPool(self.image_task_q, self.event_q)
 
-        self.eventManager.subscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
+        self.eventmanager.subscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
         self._scan_brightness = self.settings.camera.brightness
         self._scan_contrast = self.settings.camera.contrast
         self._scan_saturation = self.settings.camera.saturation
@@ -129,7 +133,7 @@ class FSScanProcessor(pykka.ThreadingActor):
                 "level": "info"
             }
 
-        self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
         if not self.hardwareController.camera_is_connected():
             message = {
@@ -142,7 +146,7 @@ class FSScanProcessor(pykka.ThreadingActor):
                 "level": "info"
             }
 
-        self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
     def settings_mode_on(self):
         self.hardwareController.settings_mode_on()
@@ -183,7 +187,7 @@ class FSScanProcessor(pykka.ThreadingActor):
             "message": "SCANNING_TEXTURE",
             "level": "info"
         }
-        self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
         self._worker_pool.create(self.config.process_numbers)
 
         self._scan_brightness = self.settings.camera.brightness
@@ -252,7 +256,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         if self._laser_angle == None:
             event = FSEvent()
             event.command = 'SCANNER_ERROR'
-            self.eventManager.publish(FSEvents.COMMAND,event)
+            self.eventmanager.publish(FSEvents.COMMAND,event)
             self.on_laser_detection_failed()
             self._logger.debug("Send laser detection failure event")
         else:
@@ -260,7 +264,7 @@ class FSScanProcessor(pykka.ThreadingActor):
                 "message": "SCANNING_OBJECT",
                 "level": "info"
             }
-            self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+            self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
             self._logger.debug("Detected Laser Angle at: %f deg" % (self._laser_angle,))
             self._worker_pool.create(self.config.process_numbers)
 
@@ -296,7 +300,7 @@ class FSScanProcessor(pykka.ThreadingActor):
             "level": "warn"
         }
 
-        self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
         self.settings_mode_on()
 
     def stop_scan(self):
@@ -312,9 +316,9 @@ class FSScanProcessor(pykka.ThreadingActor):
             "message": "SCAN_CANCELED",
             "level": "info"
         }
-        self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
-    def image_processed(self, eventManager, event):
+    def image_processed(self, eventmanager, event):
 
         if event['image_type'] == 'laser':
             self.append_points(event['points'])
@@ -332,7 +336,7 @@ class FSScanProcessor(pykka.ThreadingActor):
         if self._progress == self._total:
             self.scan_complete()
 
-        self.eventManager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
+        self.eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
 
     def scan_complete(self):
 
@@ -346,14 +350,14 @@ class FSScanProcessor(pykka.ThreadingActor):
             "level": "info"
         }
 
-        self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
         FSUtil.delete_image_folders(self._prefix)
         self.reset_scanner_state()
 
         event = FSEvent()
         event.command = 'COMPLETE'
-        self.eventManager.publish(FSEvents.COMMAND,event)
+        self.eventmanager.publish(FSEvents.COMMAND,event)
 
         message = {
             "message": "SCAN_COMPLETE",
@@ -361,7 +365,7 @@ class FSScanProcessor(pykka.ThreadingActor):
             "level": "success"
         }
 
-        self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
         self.hardwareController.camera.device.stopStream()
 
     def append_points(self, point_set):
@@ -390,3 +394,9 @@ class FSScanProcessor(pykka.ThreadingActor):
         self.current_position = 0
         self._number_of_pictures = 0
         self._total = 0
+
+@singleton(interface=FSScanProcessorInterface)
+class FSScanProcessorSingleton(FSScanProcessor):
+    def __init__(self, interface):
+        super(FSScanProcessor, self).__init__(interface)
+        pass

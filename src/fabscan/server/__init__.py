@@ -12,10 +12,10 @@ from WebServer import FSWebServer
 from fabscan.server.websockets import FSWebSocketServer
 from fabscan.FSScanner import FSScanner
 from fabscan.FSEvents import FSEventManager
-from fabscan.FSConfig import Config, FSConfigInterface
-from fabscan.FSSettings import Settings
-from fabscan.controller import FSHardwareController
-from fabscan.FSScanProcessor import FSScanProcessor
+from fabscan.FSConfig import Config, ConfigInterface, ConfigSingleton
+from fabscan.FSSettings import Settings, SettingsInterface
+from fabscan.controller import FSHardwareController,FSHardwareControllerInterface, FSHardwareControllerSingleton
+from fabscan.FSScanProcessor import FSScanProcessorInterface, FSScanProcessor, FSScanProcessorSingleton
 from fabscan.FSVersion import __version__
 from fabscan.util.FSInject import injector
 
@@ -32,20 +32,29 @@ class FSServer():
         self._logger.info("FabScanPi-Server "+str(__version__))
 
         try:
-            # dynamic module classes dependencies... (later this will be plug-ins)
-            injector.provide(FSHardwareController, FSHardwareController)
-            #injector.provide(FSImageProcessor, FSImageProcessor)
-            injector.provide(FSScanProcessor, FSScanProcessor)
 
             # static classes
             injector.provide(FSEventManager, FSEventManager)
-            injector.provide_instance(Config, Config.instance(config=self.config_file))
-            injector.provide_instance(Settings, Settings.instance(settings=self.settings_file))
+            #injector.provide_instance(Config, Config.instance(config=self.config_file))
+            #injector.provide_instance(Settings, Settings.instance(settings=self.settings_file))
+
+
+            # dynamic module classes dependencies... (later this will be plug-ins)
+            injector.provide(FSHardwareControllerInterface, FSHardwareController)
+            #injector.provide(FSImageProcessor, FSImageProcessor)
+            injector.provide(FSScanProcessor, FSScanProcessor)
+            injector.provide(ConfigInterface, Config)
+
+            ConfigSingleton(self.config_file)
+
+            self._logger.debug(ConfigSingleton() is ConfigSingleton())
+            #self._logger.debug(FSHardwareControllerSingleton() is FSHardwareControllerSingleton())
+            #self._logger.debug(FSScanProcessorSingleton() is FSScanProcessorSingleton())
 
             # Websocket Server
-            FSWebSocketServer().start()
-            FSScanner().start()
-            FSWebServer().start()
+            #FSWebSocketServer().start()
+            #FSScanner().start()
+            #FSWebServer().start()
 
             while True:
                 try:

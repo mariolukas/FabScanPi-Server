@@ -11,11 +11,11 @@ from fabscan.util.FSSingleton import SingletonMixin
 from fabscan.util.FSInject import singleton
 
 
-class FSConfigInterface(object):
-    pass
+class ConfigInterface(object):
+    def __init__(self, config=os.path.dirname(__file__)+"/config/default.config.json", first=True):
+        pass
 
-
-class Config(SingletonMixin):
+class Config(ConfigInterface):
     def __init__(self, config=os.path.dirname(__file__)+"/config/default.config.json",first=True):
 
         if first:
@@ -37,4 +37,13 @@ class Config(SingletonMixin):
         pass
 
     def load(self,file):
+        pass
+
+@singleton(
+        interface=ConfigInterface
+)
+class ConfigSingleton(Config):
+    def __init__(self, config, interface):
+        super(Config, self).__init__(self, config)
+        #self.interface = interface
         pass

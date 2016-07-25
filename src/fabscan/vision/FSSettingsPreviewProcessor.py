@@ -5,23 +5,27 @@ __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
 import pykka
-from fabscan.controller import FSHardwareController
+from fabscan.controller import FSHardwareControllerSingleton
 from fabscan.FSEvents import FSEvents, FSEventManager
 from fabscan.vision.FSImageProcessor import ImageProcessor
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
 from fabscan.util.FSInject import inject
+import logging
 
 @inject(
-        hardwarecontroller=FSHardwareController,
-        eventmanager=FSEventManager,
         config=Config,
-        settings=Settings
+        settings=Settings,
+        eventmanager=FSEventManager,
+        hardwarecontroller=FSHardwareControllerSingleton
 )
 class FSSettingsPreviewProcessor(pykka.ThreadingActor):
 
-    def __init__(self, hardwarecontroller, eventmanager, config, settings):
+    def __init__(self, config, settings, eventmanager, hardwarecontroller):
         super(FSSettingsPreviewProcessor, self).__init__()
+
+        self._logger = logging.getLogger(__name__)
+        self._logger.setLevel(logging.DEBUG)
         self.hardwareController = hardwarecontroller
         self.eventManager = eventmanager
         self.config = config

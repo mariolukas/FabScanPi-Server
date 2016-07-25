@@ -70,7 +70,7 @@ But you can also turn classes into singletons:
 >>> SomeSingleton() is SomeSingleton()
 True
 
-And of course you can also inject classes, without the need for defining and
+And of course you ca n also inject classes, without the need for defining and
 interface and registering an implementation:
 
 >>> @inject(singleton=SomeSingleton)

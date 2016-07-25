@@ -9,6 +9,11 @@ import json
 from fabscan.FSConfig import Config
 from fabscan.util.FSSingleton import SingletonMixin
 
+class SettingsInterface(SingletonMixin):
+    def __init__(self):
+        pass
+
+
 class Settings(SingletonMixin):
 
     def __init__(self, settings=os.path.dirname(__file__)+"/config/default.settings.json", first=True):
