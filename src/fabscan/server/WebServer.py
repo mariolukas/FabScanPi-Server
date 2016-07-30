@@ -30,9 +30,5 @@ class FSWebServer(threading.Thread):
         #self._logger = logging.getLogger(__name__)
 
     def run(self):
-        #try:
-            #self._logger.info("Webserver started")
-            self.webserver = WebServer()
-            self.webserver.serve_forever()
-        #except:
-        #    self._logger.error("WebSocket Crash!")
+        self.webserver = WebServer()
+        self.webserver.serve_forever()

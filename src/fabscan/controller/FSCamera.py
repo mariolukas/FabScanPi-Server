@@ -15,6 +15,7 @@ import threading
 import sys, re, threading, collections
 from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
+from fabscan.util.FSInject import inject
 import traceback
 
 
@@ -25,12 +26,15 @@ except:
 
 _instance = None
 
+@inject(
+    config=Config
+)
 class FSCamera():
 
-    def __init__(self):
+    def __init__(self, config):
 
         self.camera_buffer = FSRingBuffer(10)
-        config = Config.instance()
+        config = config
 
         if config.camera.type  == 'PICAM':
             self.device = PiCam(self.camera_buffer)
@@ -70,21 +74,23 @@ class FSRingBuffer(threading.Thread):
     def flush(self):
         self.data.clear()
 
-
+@inject(
+    config=Config,
+    settings=Settings
+)
 class C270(threading.Thread):
-    def __init__(self, cambuffer):
+    def __init__(self, cambuffer, config, settings):
         threading.Thread.__init__(self)
 
         self._logger =  logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
 
-        self.config = Config.instance()
+        self.config = config
+        self.settings = settings
         self.camera_buffer = cambuffer
         self.isRecording = True
         self.timestamp = int(round(time.time() * 1000))
         self.semaphore = threading.BoundedSemaphore()
-        self.config = Config.instance()
-        self.settings = Settings.instance()
 
         self.prior_image = None
         self.stream = None
@@ -155,10 +161,16 @@ class C270(threading.Thread):
     def close(self):
         pass
 
+@inject(
+    config=Config,
+    settings=Settings
+)
 class PiCam(threading.Thread):
     camera = None
-    def __init__(self, cambuffer):
+    def __init__(self, cambuffer, config, settings):
         threading.Thread.__init__(self)
+        self.config = config
+        self.settings = settings
         self.start()
         self.isRecording = True
         self.timestamp = int(round(time.time() * 1000))
@@ -166,8 +178,6 @@ class PiCam(threading.Thread):
         self.camera = None
         self.prior_image = None
         self.stream = None
-        self.config = Config.instance()
-        self.settings = Settings.instance()
         self.camera_buffer = cambuffer
         self.awb_default_gain = 0
         self.is_idle = True
@@ -297,6 +307,7 @@ class PiCam(threading.Thread):
     def setBrightness(self, brightness):
         pass
         #self.camera.brightness = brightness
+
 
 class DummyCam:
 

@@ -12,16 +12,21 @@ from fabscan.FSConfig import Config
 from fabscan.FSSettings import Settings
 from fabscan.util.FSInject import inject
 
-@inject(hardwarecontroller=FSHardwareController)
+@inject(
+        hardwarecontroller=FSHardwareController,
+        eventmanager=FSEventManager,
+        config=Config,
+        settings=Settings
+)
 class FSSettingsPreviewProcessor(pykka.ThreadingActor):
 
-    def __init__(self, hardwarecontroller):
+    def __init__(self, hardwarecontroller, eventmanager, config, settings):
         super(FSSettingsPreviewProcessor, self).__init__()
         self.hardwareController = hardwarecontroller
-        self.eventManager = FSEventManager.instance()
-        self.config = Config.instance()
-        self.settings = Settings.instance()
-        self._image_processor = ImageProcessor(self.config, self.settings)
+        self.eventManager = eventmanager
+        self.config = config
+        self.settings = settings
+        self._image_processor = ImageProcessor()
 
 
     def on_receive(self, event):

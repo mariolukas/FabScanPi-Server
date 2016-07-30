@@ -16,14 +16,19 @@ from fabscan.FSConfig import Config
 from fabscan.file.FSImage import save_image, load_image
 from fabscan.vision.FSImageProcessor import ImageProcessor
 from fabscan.FSSettings import Settings
+from fabscan.util.FSInject import inject
 
-
+@inject(
+        config=Config,
+        settings=Settings
+)
 class FSImageWorkerPool():
-    def __init__(self, task_q, event_q):
+    def __init__(self, task_q, event_q, config, settings):
         self._task_q = task_q
         self._event_q = event_q
         self.workers = []
-        self.config = Config.instance()
+        self.config = config
+        self.settings = settings
 
         self._number_of_workers = self.config.process_numbers
         self._workers_active = False
@@ -39,7 +44,7 @@ class FSImageWorkerPool():
         self._logger.info("Creating %i image worker processes." % number_of_workers)
 
         for _ in range(self._number_of_workers):
-            worker = FSImageWorkerProcess(Settings.instance(), Config.instance(), self._task_q, self._event_q)
+            worker = FSImageWorkerProcess(self._task_q, self._event_q)
             worker.daemon = True
             worker.start()
             self.workers.append(worker)
@@ -68,8 +73,12 @@ class FSImageWorkerPool():
     def set_number_of_workers(self, number):
         self._number_of_workers =  number
 
+@inject(
+    config=Config,
+    settings=Settings
+)
 class FSImageWorkerProcess(multiprocessing.Process):
-    def __init__(self, settings, config , image_task_q, event_q):
+    def __init__(self,image_task_q, event_q, config, settings):
         super(FSImageWorkerProcess, self).__init__(group=None)
         self.image_task_q = image_task_q
         self.settings = settings
@@ -79,7 +88,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
         self.log = logging.getLogger('IMAGE_PROCESSOR THREAD')
         self.log.setLevel(logging.DEBUG)
-        self.image_processor = ImageProcessor(self.config, self.settings)
+        self.image_processor = ImageProcessor()
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
 

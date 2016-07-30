@@ -31,12 +31,21 @@ img[alt=drawing_200] {
 }
 
 img[alt=drawing_250] {
-    width: 230px;
+    width: 250px;
+}
+
+img[alt=drawing_300] {
+    width: 300px;
 }
 
 
 img[alt=drawing_400] {
     width: 400px;
+}
+
+
+img[alt=drawing_450] {
+    width: 450px;
 }
 
 img[alt=browser_logo] {

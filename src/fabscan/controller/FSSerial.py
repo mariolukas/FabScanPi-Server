@@ -12,14 +12,17 @@ import sys
 import time
 import logging
 from fabscan.util.FSUtil import FSSystem
-
+from fabscan.util.FSInject import inject
 from fabscan.FSConfig import Config
 
+@inject(
+    config=Config
+)
 class FSSerialCom():
-    def __init__(self):
+    def __init__(self, config):
         self._logger =  logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
-        self.config = Config.instance()
+        self.config = config
 
         if hasattr(self.config.serial, 'port'):
             self._port = self.config.serial.port

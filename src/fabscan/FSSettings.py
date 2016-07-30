@@ -11,7 +11,6 @@ from fabscan.util.FSSingleton import SingletonMixin
 
 class Settings(SingletonMixin):
 
-
     def __init__(self, settings=os.path.dirname(__file__)+"/config/default.settings.json", first=True):
 
         if first:

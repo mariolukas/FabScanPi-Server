@@ -18,8 +18,6 @@ from fabscan.controller import FSHardwareController
 from fabscan.FSScanProcessor import FSScanProcessor
 from fabscan.FSVersion import __version__
 from fabscan.util.FSInject import injector
-import threading
-
 
 class FSServer():
     def __init__(self,config_file, settings_file):
@@ -41,8 +39,8 @@ class FSServer():
 
             # static classes
             injector.provide(FSEventManager, FSEventManager)
-            injector.provide_instance(Config, Config.instance(self.config_file))
-            injector.provide_instance(Settings, Settings.instance(self.settings_file))
+            injector.provide_instance(Config, Config.instance(config=self.config_file))
+            injector.provide_instance(Settings, Settings.instance(settings=self.settings_file))
 
             # Websocket Server
             FSWebSocketServer().start()
