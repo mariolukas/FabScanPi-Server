@@ -36,11 +36,10 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     """
     def __init__(self, config, settings, imageprocessor):
 
-        self._logger = logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
-
         self.config = config.instance
         self.settings = settings.instance
+
+        self._logger = logging.getLogger(__name__)
 
         self.camera = None
         self._image_processor = imageprocessor

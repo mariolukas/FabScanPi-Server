@@ -18,10 +18,11 @@ class FSMeshlabTask(threading.Thread):
         def __init__(self, id, filter, format, eventmanager, config, settings):
             threading.Thread.__init__(self)
             self.eventManager = eventmanager
-            self._logger =  logging.getLogger(__name__)
-            self._logger.setLevel(logging.DEBUG)
             self.settings = settings.instance
             self.config = config.instance
+            self._logger =  logging.getLogger(__name__)
+
+
             self.scan_id = id
             self.filter = filter
             self.format = format

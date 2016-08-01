@@ -82,9 +82,6 @@ class C270(threading.Thread):
     def __init__(self, cambuffer, config, settings):
         threading.Thread.__init__(self)
 
-        self._logger =  logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
-
         self.config = config.instance
         self.settings = settings.instance
         self.camera_buffer = cambuffer
@@ -94,6 +91,8 @@ class C270(threading.Thread):
 
         self.prior_image = None
         self.stream = None
+
+        self._logger =  logging.getLogger(__name__)
 
         # auto exposure mode for logitech C270 can not be controlled by opencv, with this work
         # around the exposer mode can be set direcly by v4l2
@@ -183,6 +182,7 @@ class PiCam(threading.Thread):
         self.is_idle = True
 
         self._logger =  logging.getLogger(__name__)
+
 
     def run(self):
         try:

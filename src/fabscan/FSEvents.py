@@ -37,7 +37,6 @@ class FSEventManager(FSEventManagerInterface):
     def __init__(self):
         super(FSEventManagerInterface, self).__init__()
         self._logger =  logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
         self.reset()
         self.event_q = multiprocessing.Queue()
 

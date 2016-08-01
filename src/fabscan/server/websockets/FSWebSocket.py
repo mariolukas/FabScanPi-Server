@@ -22,7 +22,6 @@ class FSWebSocket(WebSocket):
         WebSocket.__init__(self, server, sock, address)
 
         self._logger = logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
 
         self.maxheader = 65536
         self.maxpayload = 4194304

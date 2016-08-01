@@ -35,10 +35,10 @@ class ImageProcessorInterface(object):
 class ImageProcessor(ImageProcessorInterface):
     def __init__(self, config, settings):
 
-        self._logger =  logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
         self.settings = settings.instance
         self.config = config.instance
+        self._logger =  logging.getLogger(__name__)
+
 
     def test(self):
         self._logger.debug("ImageProcessor Called")

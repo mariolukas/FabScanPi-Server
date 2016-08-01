@@ -24,12 +24,13 @@ def CreateRequestHandler(config, scanprocessor):
     class RequestHandler(SimpleHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
 
+            self.config = config.instance
+
             self._logger = logging.getLogger(__name__)
-            self._logger.setLevel(logging.DEBUG)
 
             self.api = FSRest()
             self.close_mjpeg_stream = False
-            self.config = config.instance
+
             self.scanprocessor = scanprocessor.start()
 
             self.ROUTES = (

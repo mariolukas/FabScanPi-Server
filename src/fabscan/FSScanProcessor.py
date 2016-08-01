@@ -54,11 +54,10 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
         super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
 
-        self._logger = logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
-
         self.settings = settings.instance
         self.config = config.instance
+        self._logger = logging.getLogger(__name__)
+
         self.eventmanager = eventmanager.instance
 
         # individual package classes for each of different scan method/priciple (e.g laser scan, kinect, etc.)

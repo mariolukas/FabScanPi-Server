@@ -23,11 +23,11 @@ from fabscan.vision.FSImageProcessor import ImageProcessor, ImageProcessorInterf
 
 class FSServer(object):
     def __init__(self,config_file, settings_file):
-        self._logger = logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
 
         self.config_file = config_file
         self.settings_file = settings_file
+        self._logger = logging.getLogger(__name__)
+
 
     def run(self):
         self._logger.info("FabScanPi-Server "+str(__version__))

@@ -21,9 +21,9 @@ from fabscan.util.FSInject import inject
 )
 class FSRest():
     def __init__(self, config):
-        self._logger =  logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
+
         self.config = config.instance
+        self._logger =  logging.getLogger(__name__)
 
     def call(self,action, path, headers, data=None):
 

@@ -18,9 +18,10 @@ from fabscan.FSConfig import ConfigInterface
 )
 class FSSerialCom():
     def __init__(self, config):
-        self._logger =  logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
+
         self.config = config.instance
+
+        self._logger =  logging.getLogger(__name__)
 
         if hasattr(self.config.serial, 'port'):
             self._port = self.config.serial.port

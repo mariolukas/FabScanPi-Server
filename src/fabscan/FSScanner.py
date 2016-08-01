@@ -15,7 +15,6 @@ from fabscan.vision.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import SettingsInterface
 from fabscan.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
 from fabscan.util.FSInject import inject, singleton
-from fabscan.controller import FSHardwareControllerInterface
 
 
 class FSState(object):
@@ -43,7 +42,6 @@ class FSScanner(threading.Thread):
         threading.Thread.__init__(self)
 
         self._logger = logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
 
         self.settings = settings.instance
         self.eventManager = eventmanager.instance

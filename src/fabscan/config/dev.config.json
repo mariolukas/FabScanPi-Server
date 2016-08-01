@@ -25,14 +25,14 @@
           "z": 24.6
       },
       "frame":{
-          "dimension": 27
+          "dimension": 27.5
       }
    },
    "laser": {
       "position":{
-        "x": 7,
-        "y": 7.3,
-        "z": 20
+        "x": 8,
+        "y": 6.5,
+        "z": 27.5
       },
       "angle": 33.0,
       "detection_limit": 0.20,
@@ -55,5 +55,6 @@
   "process_numbers": 4,
    "meshlab":{
      "path": "/usr/bin/"
-   }
+   },
+  "log_level": 10
 }

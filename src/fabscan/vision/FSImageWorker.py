@@ -28,9 +28,7 @@ class FSImageWorkerPool():
         self.config = config.instance
         self.settings = settings.instance
         self.imageprocessor = imageprocessor
-
         self._logger = logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
 
         self.workers = []
         self._number_of_workers = multiprocessing.cpu_count()
