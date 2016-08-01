@@ -8,7 +8,7 @@ import logging
 import glob
 
 from collections import namedtuple
-from fabscan.FSConfig import Config
+from fabscan.FSConfig import ConfigSingleton
 
 class FSSystem(object):
     def __init__(self):
@@ -54,10 +54,10 @@ def delete_folder(folder):
 
 
 def delete_image_folders(scan_id):
-    folder =  Config.instance().folders.scans+scan_id+"/color_raw/"
+    folder =  ConfigSingleton().instance.folders.scans+scan_id+"/color_raw/"
     delete_folder(folder)
 
-    folder =  Config.instance().folders.scans+scan_id+"/laser_raw/"
+    folder =  ConfigSingleton().instance.folders.scans+scan_id+"/laser_raw/"
     delete_folder(folder)
 
 
@@ -66,9 +66,9 @@ def delete_scan(scan_id,ignore_errors=True):
 
 
     #basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    folder =  Config.instance().folders.scans+scan_id+"/"
+    folder =  ConfigSingleton().instance.folders.scans+scan_id+"/"
 
-    mask = Config.instance().folders.scans+scan_id+"/"'*.[pso][ltb][lyj]'
+    mask = ConfigSingleton().instance.folders.scans+scan_id+"/"'*.[pso][ltb][lyj]'
     number_of_files = len(glob.glob(mask))
 
 

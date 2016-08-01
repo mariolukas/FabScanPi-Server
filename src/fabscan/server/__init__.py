@@ -40,6 +40,7 @@ class FSServer(object):
             injector.provide_instance(SettingsInterface, SettingsSingleton(self.settings_file))
 
             # "dynamic" module classes ... (later called plug-ins/scan-modules)
+            injector.provide(ImageProcessorInterface, ImageProcessor)
             injector.provide(FSHardwareControllerInterface, FSHardwareControllerSingleton)
             injector.provide(FSScanProcessorInterface, FSScanProcessorSingleton)
 

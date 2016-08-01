@@ -16,24 +16,25 @@ from fabscan.controller.FSSerial import FSSerialCom
 
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
-from fabscan.vision.FSImageProcessor import ImageProcessor
+from fabscan.vision.FSImageProcessor import ImageProcessorInterface
 from fabscan.util.FSInject import singleton, inject
 
 class FSHardwareControllerInterface(object):
 
-    def __init__(self, config, settings):
+    def __init__(self, config, settings, imageprocessor):
         pass
 
 @singleton(
     config=ConfigInterface,
     settings=SettingsInterface,
+    imageprocessor=ImageProcessorInterface
 )
 class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     """
     Wrapper class for getting the Laser, Camera, and Turntable classes working
     together
     """
-    def __init__(self, config, settings):
+    def __init__(self, config, settings, imageprocessor):
 
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
@@ -42,7 +43,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.settings = settings.instance
 
         self.camera = None
-        self._image_processor = ImageProcessor(self.config, self.settings)
+        self._image_processor = imageprocessor
         self.camera = FSCamera()
         self.serial_connection = FSSerialCom()
 

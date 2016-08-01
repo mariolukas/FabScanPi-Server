@@ -12,20 +12,22 @@ import time
 from fabscan.vision.FSImageTask import ImageTask, FSTaskType
 from fabscan.FSConfig import ConfigInterface
 from fabscan.file.FSImage import save_image, load_image
-from fabscan.vision.FSImageProcessor import ImageProcessor
+from fabscan.vision.FSImageProcessor import ImageProcessorInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.util.FSInject import inject
 
 @inject(
         config=ConfigInterface,
-        settings=SettingsInterface
+        settings=SettingsInterface,
+        imageprocessor=ImageProcessorInterface
 )
 class FSImageWorkerPool():
-    def __init__(self, task_q, event_q, config, settings):
+    def __init__(self, task_q, event_q, config, settings, imageprocessor):
         self._task_q = task_q
         self._event_q = event_q
         self.config = config.instance
         self.settings = settings.instance
+        self.imageprocessor = imageprocessor
 
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
@@ -44,7 +46,7 @@ class FSImageWorkerPool():
         self._logger.info("Creating %i image worker processes." % number_of_workers)
 
         for _ in range(self._number_of_workers):
-            worker = FSImageWorkerProcess(self._task_q, self._event_q, self.config, self.settings)
+            worker = FSImageWorkerProcess(self._task_q, self._event_q, self.config, self.settings, self.imageprocessor)
             worker.daemon = True
             worker.start()
             self.workers.append(worker)
@@ -75,7 +77,7 @@ class FSImageWorkerPool():
 
 
 class FSImageWorkerProcess(multiprocessing.Process):
-    def __init__(self,image_task_q, event_q, config, settings):
+    def __init__(self,image_task_q, event_q, config, settings, imageprocessor):
         super(FSImageWorkerProcess, self).__init__(group=None)
         self.image_task_q = image_task_q
         self.settings = settings
@@ -85,7 +87,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
         self.log = logging.getLogger('IMAGE_PROCESSOR THREAD')
         self.log.setLevel(logging.DEBUG)
-        self.image_processor = ImageProcessor(self.config, self.settings)
+        self.image_processor = imageprocessor
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
 
@@ -124,7 +126,6 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             event['data'] = data
 
                             self.event_q.put(event)
-
 
                         if (image_task.task_type == "PROCESS_DEPTH_IMAGE"):
 

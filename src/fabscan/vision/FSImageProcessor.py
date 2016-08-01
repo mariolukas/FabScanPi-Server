@@ -28,13 +28,17 @@ class ImageProcessorInterface(object):
         pass
 
 
+@inject(
+    config=ConfigInterface,
+    settings=SettingsInterface
+)
 class ImageProcessor(ImageProcessorInterface):
     def __init__(self, config, settings):
 
         self._logger =  logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
-        self.settings = settings
-        self.config = config
+        self.settings = settings.instance
+        self.config = config.instance
 
     def test(self):
         self._logger.debug("ImageProcessor Called")

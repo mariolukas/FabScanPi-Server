@@ -13,7 +13,7 @@ import logging
 
 from fabscan.util import FSUtil
 from fabscan.file.FSPointCloud import FSPointCloud
-from fabscan.vision.FSImageProcessor import ImageProcessor
+from fabscan.vision.FSImageProcessor import ImageProcessorInterface
 from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
 from fabscan.vision.FSImageTask import ImageTask
 
@@ -39,19 +39,20 @@ class FSScanProcessorCommand(object):
     GET_TEXTURE_STREAM = "GET_TEXTURE_STREAM"
 
 class FSScanProcessorInterface(ThreadingActor):
-    def __init__(self, config, settings, eventmanager, hardwarecontroller):
-        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, hardwarecontroller)
+    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
+        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
         pass
 
 @singleton(
     config=ConfigInterface,
     settings=SettingsInterface,
     eventmanager=FSEventManagerSingleton,
+    imageprocessor=ImageProcessorInterface,
     hardwarecontroller=FSHardwareControllerInterface
 )
 class FSScanProcessorSingleton(FSScanProcessorInterface):
-    def __init__(self, config, settings, eventmanager, hardwarecontroller):
-        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, hardwarecontroller)
+    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
+        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
 
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
@@ -62,7 +63,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
         # individual package classes for each of different scan method/priciple (e.g laser scan, kinect, etc.)
         self.hardwareController = hardwarecontroller
-        self.image_processor = ImageProcessor(self.config, self.settings)
+        self.image_processor = imageprocessor
 
         self._prefix = None
         self._resolution = 16
@@ -134,7 +135,8 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
             image = self.image_processor.get_texture_stream_frame(image)
             return image
         except StandardError, e:
-            self._logger.error(e)
+            #self._logger.error(e)
+            pass
 
     def create_calibration_stream(self):
         try:
@@ -142,8 +144,8 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
             image = self.image_processor.get_calibration_stream_frame(image)
             return image
         except StandardError, e:
-            self._logger.error(e)
-
+            #self._logger.error(e)
+            pass
 
     def create_laser_stream(self):
         try:
@@ -152,13 +154,14 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
             image = self.image_processor.get_laser_stream_frame(image)
             return image
         except StandardError, e:
-            self._logger.error(e)
+            #self._logger.error(e)
+            pass
 
     def update_settings(self, settings):
         try:
             self.settings.update(settings)
             self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
-        except:
+        except StandardError, e:
             pass
 
     def send_hardware_state_notification(self):
