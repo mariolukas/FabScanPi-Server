@@ -5,17 +5,20 @@ __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
 import os
-from fabscan.FSConfig import Config
+from fabscan.FSConfig import ConfigInterface
+from fabscan.util.FSInject import inject
 
-
+@inject(
+    config=ConfigInterface
+)
 class FSPointCloud():
 
-    def __init__(self, color=True):
+    def __init__(self, config, color=True):
         self.points = []
         self.file_name = None
         self._dir_name = None
         self.color = color
-        self.config = Config.instance()
+        self.config = config.instance
 
     def append_point(self, points):
         self.points.append(points)

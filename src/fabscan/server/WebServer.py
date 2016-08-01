@@ -4,31 +4,36 @@ __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
+import threading
+import FSHttpRequestHandler
 
 from SocketServer import ThreadingMixIn
-import FSHttpRequestHandler
 from SocketServer import TCPServer
 from BaseHTTPServer import  HTTPServer
-from fabscan.FSEvents import FSEventManager
-from fabscan.FSConfig import Config
-import threading
+from fabscan.FSScanProcessor import FSScanProcessorInterface
+from fabscan.FSConfig import ConfigSingleton, ConfigInterface
+from fabscan.util.FSInject import inject
 
 class ThreadedHTTPServer(ThreadingMixIn, TCPServer):
-    pass
+    def __init__(self, config, scanprocessor):
+        pass
 
-class WebServer(ThreadingMixIn,HTTPServer):
-    def __init__(self):
-        self.eventmanager = FSEventManager.instance()
-        self.config = Config.instance()
-        handler = FSHttpRequestHandler.CreateRequestHandler(self.eventmanager, self.config)
-        HTTPServer.__init__(self, ('',8080),handler)
+class WebServer(ThreadingMixIn, HTTPServer):
+    def __init__(self, config, scanprocessor):
+        handler = FSHttpRequestHandler.CreateRequestHandler(config, scanprocessor)
+        HTTPServer.__init__(self, ('',8080), handler)
 
+@inject(
+    config=ConfigInterface,
+    scanprocessor=FSScanProcessorInterface
+)
 class FSWebServer(threading.Thread):
 
-    def __init__(self):
+    def __init__(self, config, scanprocessor):
         threading.Thread.__init__(self)
-        #self._logger = logging.getLogger(__name__)
+        self.config = config
+        self.scanprocessor = scanprocessor
 
     def run(self):
-        self.webserver = WebServer()
+        self.webserver = WebServer(self.config, self.scanprocessor)
         self.webserver.serve_forever()

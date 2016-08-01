@@ -14,13 +14,13 @@ import logging
 from fabscan.util import FSUtil
 from fabscan.file.FSPointCloud import FSPointCloud
 from fabscan.vision.FSImageProcessor import ImageProcessor
-from fabscan.FSEvents import FSEventManager, FSEvents, FSEvent
+from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
 from fabscan.vision.FSImageTask import ImageTask
 
 from fabscan.vision.FSImageWorker import FSImageWorkerPool
-from fabscan.controller import FSHardwareControllerSingleton
-from fabscan.FSConfig import Config
-from fabscan.FSSettings import Settings
+from fabscan.controller import FSHardwareControllerSingleton, FSHardwareControllerInterface
+from fabscan.FSConfig import ConfigInterface
+from fabscan.FSSettings import SettingsInterface
 from fabscan.util.FSInject import inject, singleton
 
 
@@ -34,31 +34,35 @@ class FSScanProcessorCommand(object):
     _SCAN_NEXT_TEXTURE_POSITION = "SCAN_NEXT_TEXTURE_POSITION"
     _SCAN_NEXT_OBJECT_POSITION = "SCAN_NEXT_OBJECT_POSITION"
     GET_HARDWARE_INFO = "GET_HARDWARE_INFO"
-
+    GET_CALIBRATION_STREAM = "GET_CALIBRATION_STREAM"
+    GET_LASER_STREAM = "GET_LASER_STREAM"
+    GET_TEXTURE_STREAM = "GET_TEXTURE_STREAM"
 
 class FSScanProcessorInterface(ThreadingActor):
-    def __init__(self):
-        super(ThreadingActor, self).__init__()
+    def __init__(self, config, settings, eventmanager, hardwarecontroller):
+        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, hardwarecontroller)
         pass
 
-@inject(
-    config=Config,
-    settings=Settings,
-    eventmanager=FSEventManager,
-    hardwarecontroller=FSHardwareControllerSingleton
+@singleton(
+    config=ConfigInterface,
+    settings=SettingsInterface,
+    eventmanager=FSEventManagerSingleton,
+    hardwarecontroller=FSHardwareControllerInterface
 )
-class FSScanProcessor(ThreadingActor):
-    def __init__(self,config, settings, eventmanager, hardwarecontroller):
-        super(ThreadingActor, self).__init__(config, settings, eventmanager, hardwarecontroller)
-        self.settings = settings
-        self.config = config
-        self.eventmanager = eventmanager
-        self.hardwareController = hardwarecontroller
+class FSScanProcessorSingleton(FSScanProcessorInterface):
+    def __init__(self, config, settings, eventmanager, hardwarecontroller):
+        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, hardwarecontroller)
 
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
-        self._logger.debug("Initialized")
-        self._logger.debug(self.hardwareController is FSHardwareControllerSingleton)
+
+        self.settings = settings.instance
+        self.config = config.instance
+        self.eventmanager = eventmanager.instance
+
+        # individual package classes for each of different scan method/priciple (e.g laser scan, kinect, etc.)
+        self.hardwareController = hardwarecontroller
+        self.image_processor = ImageProcessor(self.config, self.settings)
 
         self._prefix = None
         self._resolution = 16
@@ -79,10 +83,13 @@ class FSScanProcessor(ThreadingActor):
 
         self._worker_pool = FSImageWorkerPool(self.image_task_q, self.event_q)
 
-        self.eventmanager.subscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
         self._scan_brightness = self.settings.camera.brightness
         self._scan_contrast = self.settings.camera.contrast
         self._scan_saturation = self.settings.camera.saturation
+
+        self.eventmanager.subscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
+        self._logger.debug("Laser Scan Processor initilized...")
+
 
     def on_receive(self, event):
         if event[FSEvents.COMMAND] == FSScanProcessorCommand.START:
@@ -111,6 +118,41 @@ class FSScanProcessor(ThreadingActor):
 
         if event[FSEvents.COMMAND] == FSScanProcessorCommand.GET_HARDWARE_INFO:
             return self.hardwareController.get_firmware_version()
+
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.GET_CALIBRATION_STREAM:
+            return self.create_calibration_stream()
+
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.GET_LASER_STREAM:
+            return self.create_laser_stream()
+
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.GET_TEXTURE_STREAM:
+            return self.create_texture_stream()
+
+    def create_texture_stream(self):
+        try:
+            image = self.hardwareController.get_picture()
+            image = self.image_processor.get_texture_stream_frame(image)
+            return image
+        except StandardError, e:
+            self._logger.error(e)
+
+    def create_calibration_stream(self):
+        try:
+            image = self.hardwareController.get_picture()
+            image = self.image_processor.get_calibration_stream_frame(image)
+            return image
+        except StandardError, e:
+            self._logger.error(e)
+
+
+    def create_laser_stream(self):
+        try:
+            image = self.hardwareController.get_picture()
+            #self._logger.debug(image)
+            image = self.image_processor.get_laser_stream_frame(image)
+            return image
+        except StandardError, e:
+            self._logger.error(e)
 
     def update_settings(self, settings):
         try:
@@ -172,8 +214,8 @@ class FSScanProcessor(ThreadingActor):
 
         # TODO: rename prefix to scan_id
         self._prefix = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
-        self.point_cloud = FSPointCloud(self._is_color_scan)
-        self.image_processor = ImageProcessor()
+        self.point_cloud = FSPointCloud(color=self._is_color_scan)
+
 
         if self._is_color_scan:
             self._total = self._number_of_pictures * 2
@@ -342,7 +384,8 @@ class FSScanProcessor(ThreadingActor):
 
         self._logger.debug("Scan complete writing pointcloud files with %i points." % (self.point_cloud.get_size(),))
         self.point_cloud.saveAsFile(self._prefix)
-        self.settings.saveAsFile(self._prefix)
+        settings_filename = self.config.folders.scans+self._prefix+"/"+self._prefix+".fab"
+        self.settings.saveAsFile(settings_filename)
 
         message = {
             "message": "SAVING_POINT_CLOUD",
@@ -394,9 +437,3 @@ class FSScanProcessor(ThreadingActor):
         self.current_position = 0
         self._number_of_pictures = 0
         self._total = 0
-
-@singleton(interface=FSScanProcessorInterface)
-class FSScanProcessorSingleton(FSScanProcessor):
-    def __init__(self, interface):
-        super(FSScanProcessor, self).__init__(interface)
-        pass

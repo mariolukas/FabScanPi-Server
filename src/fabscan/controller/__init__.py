@@ -14,36 +14,35 @@ from fabscan.controller.FSCamera import FSCamera
 from fabscan.controller.FSSerial import FSSerialCom
 
 
-from fabscan.FSConfig import Config
-from fabscan.FSSettings import Settings
+from fabscan.FSConfig import ConfigInterface
+from fabscan.FSSettings import SettingsInterface
 from fabscan.vision.FSImageProcessor import ImageProcessor
-from fabscan.util.FSSingleton import SingletonMixin
 from fabscan.util.FSInject import singleton, inject
 
 class FSHardwareControllerInterface(object):
-    def __init__(self):
-       pass
 
-    def get_picture(self):
-       pass
+    def __init__(self, config, settings):
+        pass
 
-
-@inject(
-        config=Config,
-        settings=Settings
+@singleton(
+    config=ConfigInterface,
+    settings=SettingsInterface,
 )
-class FSHardwareController(FSHardwareControllerInterface):
+class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     """
     Wrapper class for getting the Laser, Camera, and Turntable classes working
     together
     """
     def __init__(self, config, settings):
 
-        self.config = config
-        self.settings = settings
+        self._logger = logging.getLogger(__name__)
+        self._logger.setLevel(logging.DEBUG)
+
+        self.config = config.instance
+        self.settings = settings.instance
 
         self.camera = None
-        self._image_processor = ImageProcessor()
+        self._image_processor = ImageProcessor(self.config, self.settings)
         self.camera = FSCamera()
         self.serial_connection = FSSerialCom()
 
@@ -56,9 +55,8 @@ class FSHardwareController(FSHardwareControllerInterface):
         self.led.off()
         self.turntable.stop_turning()
         self.turntable.disable_motors()
-        self._logger = logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
-        self._logger.debug("Hardware controller init")
+
+        self._logger.debug("Hardware controller initialized...")
 
     def settings_mode_on(self):
         self.laser.on()
@@ -117,11 +115,3 @@ class FSHardwareController(FSHardwareControllerInterface):
         current_angle = self.get_laser_angle()
         self.laser.off()
         return current_angle
-
-
-@singleton(
-        interface=FSHardwareControllerInterface
-)
-class FSHardwareControllerSingleton(FSHardwareController):
-     def __init__(self,interface):
-         pass

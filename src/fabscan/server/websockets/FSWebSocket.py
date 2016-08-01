@@ -9,24 +9,24 @@ import sys
 import traceback
 import logging
 from SimpleWebSocketServer import WebSocket
-
-# fabscan imports
-from fabscan.FSEvents import FSEventManager, FSEvents
+from fabscan.FSEvents import FSEvents, FSEventManagerSingleton
 from fabscan.util.FSUtil import json2obj
 from fabscan.util.FSInject import inject
 
+
 @inject(
-    eventmanager=FSEventManager
+    eventmanager=FSEventManagerSingleton
 )
 class FSWebSocket(WebSocket):
     def __init__(self, server, sock, address, eventmanager):
         WebSocket.__init__(self, server, sock, address)
 
+        self._logger = logging.getLogger(__name__)
+        self._logger.setLevel(logging.DEBUG)
+
         self.maxheader = 65536
         self.maxpayload = 4194304
-        self.eventManager = eventmanager
-        self._logger =  logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
+        self.eventManager = eventmanager.instance
 
         self.eventManager.subscribe(FSEvents.ON_SOCKET_BROADCAST, self.on_socket_broadcast)
         self.eventManager.subscribe(FSEvents.ON_SOCKET_SEND, self.on_socket_send)
@@ -87,4 +87,3 @@ class FSWebSocket(WebSocket):
         self.eventManager.unsubscribe(FSEvents.ON_SOCKET_SEND, self.on_socket_send)
 
         self._logger.debug("Client disconnected")
-

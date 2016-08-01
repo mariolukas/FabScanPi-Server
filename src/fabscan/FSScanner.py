@@ -10,19 +10,18 @@ import logging
 import multiprocessing
 
 from fabscan.FSVersion import __version__
-from fabscan.FSEvents import FSEventManager, FSEvents
+from fabscan.FSEvents import FSEventManager, FSEvents, FSEventManagerSingleton
 from fabscan.vision.FSMeshlab import FSMeshlabTask
-from fabscan.FSSettings import Settings
-from fabscan.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorSingleton
-from fabscan.util.FSInject import inject
-
+from fabscan.FSSettings import SettingsInterface
+from fabscan.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
+from fabscan.util.FSInject import inject, singleton
+from fabscan.controller import FSHardwareControllerInterface
 
 
 class FSState(object):
     IDLE = "IDLE"
     SCANNING = "SCANNING"
     SETTINGS = "SETTINGS"
-
 
 class FSCommand(object):
     SCAN = "SCAN"
@@ -33,29 +32,33 @@ class FSCommand(object):
     COMPLETE = "COMPLETE"
     SCANNER_ERROR = "SCANNER_ERROR"
 
+
 @inject(
-        settings=Settings,
-        eventmanager=FSEventManager,
-        scanprocessor=FSScanProcessorSingleton
+        settings=SettingsInterface,
+        eventmanager=FSEventManagerSingleton,
+        scanprocessor=FSScanProcessorInterface
 )
 class FSScanner(threading.Thread):
-    def __init__(self,settings, eventmanager, scanprocessor):
+    def __init__(self, settings, eventmanager, scanprocessor):
         threading.Thread.__init__(self)
-        self._state = FSState.IDLE
+
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
-        self.settings = settings
-        self.daemon = True
+
+        self.settings = settings.instance
+        self.eventManager = eventmanager.instance
+        self.scanProcessor = scanprocessor.start()
+
+
+        self._state = FSState.IDLE
         self._exit_requested = False
         self.meshingTaskRunning = False
 
-        self._logger.debug("Number of cpu cores: " + str(multiprocessing.cpu_count()))
-
-        self.scanProcessor = scanprocessor.start()
-        self.eventManager = eventmanager
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self.on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self.on_command)
 
+        self._logger.debug("Scanner initialized...")
+        self._logger.debug("Number of cpu cores: " + str(multiprocessing.cpu_count()))
 
     def run(self):
 
@@ -115,19 +118,24 @@ class FSScanner(threading.Thread):
 
     def on_client_connected(self, eventManager, event):
 
+        try:
 
-        hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
+            hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
+            #hardware_info = "None"
 
-        message = {
-            "client": event['client'],
-            "state": self._state,
-            "server_version": str(__version__),
-            "firmware_version": str(hardware_info),
-            "settings": self.settings.todict(self.settings)
-        }
+            message = {
+                "client": event['client'],
+                "state": self._state,
+                "server_version": str(__version__),
+                "firmware_version": str(hardware_info),
+                "settings": self.settings.todict(self.settings)
+            }
 
-        eventManager.send_client_message(FSEvents.ON_CLIENT_INIT, message)
-        self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
+            eventManager.send_client_message(FSEvents.ON_CLIENT_INIT, message)
+            self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
+        except StandardError, e:
+            self._logger.error(e)
+
 
     def set_state(self, state):
         self._state = state

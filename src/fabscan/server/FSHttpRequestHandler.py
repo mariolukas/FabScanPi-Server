@@ -8,34 +8,29 @@ import os
 import posixpath
 import urllib
 import time
-
-from PIL import Image
-
 import StringIO
-import re
+import logging
+from PIL import Image
 from BaseHTTPServer import BaseHTTPRequestHandler
 from SimpleHTTPServer import SimpleHTTPRequestHandler
-import SimpleHTTPServer
-import logging
-import json
 
 from fabscan.server.FSapi import FSRest
-from fabscan.vision.FSSettingsPreviewProcessor import FSSettingsPreviewProcessor
-from fabscan.FSEvents import FSEventManager, FSEvents
-from fabscan.FSConfig import Config
+from fabscan.FSEvents import FSEvents
+from fabscan.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorSingleton
 
+# parameter is already a config instance
+def CreateRequestHandler(config, scanprocessor):
 
-def CreateRequestHandler(eventmanager, config):
-    class RequestHandler(SimpleHTTPRequestHandler, object):
-
+    class RequestHandler(SimpleHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
 
             self._logger = logging.getLogger(__name__)
             self._logger.setLevel(logging.DEBUG)
+
             self.api = FSRest()
-            self._eventManager = eventmanager
             self.close_mjpeg_stream = False
-            self.config = config
+            self.config = config.instance
+            self.scanprocessor = scanprocessor.start()
 
             self.ROUTES = (
                 # [url_prefix ,  directory_path]
@@ -47,10 +42,9 @@ def CreateRequestHandler(eventmanager, config):
 
             )
             try:
-                SimpleHTTPRequestHandler.__init__(self, *args)
-            except:
-                self._logger.info("http socket disconnect")
-                pass
+                SimpleHTTPRequestHandler.__init__(self, *args, **kwargs)
+            except StandardError, e:
+                self._logger.error(e)
 
         def do_API_CALL(self, action, data=None):
             self.send_response(200)
@@ -84,13 +78,13 @@ def CreateRequestHandler(eventmanager, config):
 
                  stream_id = self.path.split('/')[-1]
                  if stream_id == 'laser.mjpeg':
-                     self.get_stream("LASER_STREAM")
+                     self.get_stream(FSScanProcessorCommand.GET_LASER_STREAM)
 
                  elif stream_id == 'texture.mjpeg':
-                     self.get_stream("TEXTURE_STREAM")
+                     self.get_stream(FSScanProcessorCommand.GET_TEXTURE_STREAM)
 
                  elif stream_id == 'calibration.mjpeg':
-                    self.get_stream("CALIBRATION_STREAM")
+                    self.get_stream(FSScanProcessorCommand.GET_CALIBRATION_STREAM)
                  else:
 
                     self.bad_request()
@@ -106,7 +100,7 @@ def CreateRequestHandler(eventmanager, config):
              return
 
         def get_stream(self, type):
-               self._settingsPreviewProcessor = FSSettingsPreviewProcessor.start()
+
                self.send_response(200)
                self.send_header('Pragma:', 'no-cache');
                self.send_header('Cache-Control:', 'no-cache')
@@ -117,11 +111,10 @@ def CreateRequestHandler(eventmanager, config):
                try:
                     while True:
                         if self.close_mjpeg_stream:
-                            self._settingsPreviewProcessor.stop()
+                            #self._settingsPreviewProcessor.stop()
                             break
 
-
-                        future_image = self._settingsPreviewProcessor.ask({'command': FSEvents.MPJEG_IMAGE,'type':type}, block=False)
+                        future_image = self.scanprocessor.ask({FSEvents.COMMAND: type}, block=False)
                         image = future_image.get()
 
                         if image is not None:
@@ -142,17 +135,17 @@ def CreateRequestHandler(eventmanager, config):
                             time.sleep(0.05)
 
                     self.close_mjpeg_stream = False
-                    self._settingsPreviewProcessor.stop()
+                    #self._settingsPreviewProcessor.stop()
 
                     time.sleep(0.05)
 
                except IOError as e:
                     if hasattr(e, 'errno') and e.errno == 32:
                         self.rfile.close()
-                        self._settingsPreviewProcessor.stop()
+                        #self._settingsPreviewProcessor.stop()
                         return
                     else:
-                        self._settingsPreviewProcessor.stop()
+                        #self._settingsPreviewProcessor.stop()
                         pass
 
 

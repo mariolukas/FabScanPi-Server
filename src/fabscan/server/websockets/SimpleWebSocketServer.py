@@ -537,7 +537,6 @@ class SimpleWebSocketServer(object):
 
    def serveforever(self):
       while True:
-         time.sleep(0.05)
          rList, wList, xList = select(self.listeners, [], self.listeners, 1)
 
          for ready in rList:
@@ -622,4 +621,3 @@ class SimpleSSLWebSocketServer(SimpleWebSocketServer):
 
    def serveforever(self):
       super(SimpleSSLWebSocketServer, self).serveforever()
-

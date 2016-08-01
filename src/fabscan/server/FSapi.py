@@ -6,23 +6,24 @@ __email__ = "info@mariolukas.de"
 
 import os
 import json
-from PIL import Image
-from fabscan.util.FSUtil import json2obj
-from fabscan.FSConfig import Config
 import base64
 import shutil
 import logging
 import glob
+from PIL import Image
+
+from fabscan.util.FSUtil import json2obj
+from fabscan.FSConfig import ConfigInterface
 from fabscan.util.FSInject import inject
 
 @inject(
-    config=Config
+    config=ConfigInterface
 )
 class FSRest():
     def __init__(self, config):
         self._logger =  logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
-        self.config = config
+        self.config = config.instance
 
     def call(self,action, path, headers, data=None):
 

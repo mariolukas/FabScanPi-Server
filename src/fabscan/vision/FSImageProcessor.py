@@ -8,8 +8,8 @@ import math
 import logging, os
 import numpy as np
 import cv2
-from fabscan.FSConfig import Config
-from fabscan.FSSettings import Settings
+from fabscan.FSConfig import ConfigInterface
+from fabscan.FSSettings import SettingsInterface
 from fabscan.util.FSInject import inject
 
 class FSPoint():
@@ -23,11 +23,12 @@ class FSLine():
         self.a = a
         self.b = b
 
-@inject(
-    config=Config,
-    settings=Settings
-)
-class ImageProcessor():
+class ImageProcessorInterface(object):
+    def __init__(self, config, settings):
+        pass
+
+
+class ImageProcessor(ImageProcessorInterface):
     def __init__(self, config, settings):
 
         self._logger =  logging.getLogger(__name__)
@@ -35,6 +36,8 @@ class ImageProcessor():
         self.settings = settings
         self.config = config
 
+    def test(self):
+        self._logger.debug("ImageProcessor Called")
 
     def get_texture_stream_frame(self,cam_image):
         return cam_image

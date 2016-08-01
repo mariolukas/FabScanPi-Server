@@ -7,24 +7,25 @@ __email__ = "info@mariolukas.de"
 import time
 import logging
 import sys
-from WebServer import FSWebServer
 
-from fabscan.server.websockets import FSWebSocketServer
-from fabscan.FSScanner import FSScanner
-from fabscan.FSEvents import FSEventManager
-from fabscan.FSConfig import Config, ConfigInterface, ConfigSingleton
-from fabscan.FSSettings import Settings, SettingsInterface
-from fabscan.controller import FSHardwareController,FSHardwareControllerInterface, FSHardwareControllerSingleton
-from fabscan.FSScanProcessor import FSScanProcessorInterface, FSScanProcessor, FSScanProcessorSingleton
+from WebServer import FSWebServer
 from fabscan.FSVersion import __version__
 from fabscan.util.FSInject import injector
+from fabscan.server.websockets import FSWebSocketServer, FSWebSocketServerInterface
+from fabscan.FSScanner import FSScanner
+from fabscan.FSEvents import FSEventManager, FSEventManagerSingleton, FSEventManagerInterface
+from fabscan.FSConfig import ConfigInterface, ConfigSingleton
+from fabscan.FSSettings import SettingsInterface, SettingsSingleton
+from fabscan.FSScanProcessor import FSScanProcessorInterface, FSScanProcessorSingleton
+from fabscan.controller import FSHardwareControllerSingleton, FSHardwareControllerInterface
+from fabscan.vision.FSImageProcessor import ImageProcessor, ImageProcessorInterface
 
-class FSServer():
+
+class FSServer(object):
     def __init__(self,config_file, settings_file):
-
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
-        self.hardwareController = None
+
         self.config_file = config_file
         self.settings_file = settings_file
 
@@ -32,29 +33,19 @@ class FSServer():
         self._logger.info("FabScanPi-Server "+str(__version__))
 
         try:
+            # "static" classes
+            injector.provide(FSEventManagerInterface, FSEventManager)
+            injector.provide(FSWebSocketServerInterface, FSWebSocketServer)
+            injector.provide_instance(ConfigInterface, ConfigSingleton(self.config_file))
+            injector.provide_instance(SettingsInterface, SettingsSingleton(self.settings_file))
 
-            # static classes
-            injector.provide(FSEventManager, FSEventManager)
-            #injector.provide_instance(Config, Config.instance(config=self.config_file))
-            #injector.provide_instance(Settings, Settings.instance(settings=self.settings_file))
+            # "dynamic" module classes ... (later called plug-ins/scan-modules)
+            injector.provide(FSHardwareControllerInterface, FSHardwareControllerSingleton)
+            injector.provide(FSScanProcessorInterface, FSScanProcessorSingleton)
 
-
-            # dynamic module classes dependencies... (later this will be plug-ins)
-            injector.provide(FSHardwareControllerInterface, FSHardwareController)
-            #injector.provide(FSImageProcessor, FSImageProcessor)
-            injector.provide(FSScanProcessor, FSScanProcessor)
-            injector.provide(ConfigInterface, Config)
-
-            ConfigSingleton(self.config_file)
-
-            self._logger.debug(ConfigSingleton() is ConfigSingleton())
-            #self._logger.debug(FSHardwareControllerSingleton() is FSHardwareControllerSingleton())
-            #self._logger.debug(FSScanProcessorSingleton() is FSScanProcessorSingleton())
-
-            # Websocket Server
-            #FSWebSocketServer().start()
-            #FSScanner().start()
-            #FSWebServer().start()
+            FSWebSocketServer().start()
+            FSWebServer().start()
+            FSScanner().start()
 
             while True:
                 try:
@@ -64,13 +55,7 @@ class FSServer():
 
 
         except (KeyboardInterrupt, SystemExit):
-
-            time.sleep(0.5)
-            #_hardwareController.laser.off()
-            #_hardwareController.led.off()
-            #_hardwareController.turntable.stop_turning()
-            pass
-            #sys.exit(0)
+            sys.exit(0)
 
 
 

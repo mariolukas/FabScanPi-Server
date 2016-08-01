@@ -8,6 +8,7 @@ import multiprocessing
 from Queue import Empty
 from fabscan.util.FSSingleton import SingletonMixin
 from fabscan.util.FSInject import singleton
+import logging
 
 class FSEvent():
     pass
@@ -28,17 +29,20 @@ class FSEvents(object):
     ON_INFO_MESSAGE = "ON_INFO_MESSAGE"
 
 
-class FSEVentManagerInterface(object):
-    pass
+class FSEventManagerInterface(object):
+     def __init__(self):
+         pass
 
-@singleton(singleton=FSEVentManagerInterface)
-class FSEventManager(SingletonMixin):
-    def __init__(self, singleton):
-
+class FSEventManager(FSEventManagerInterface):
+    def __init__(self):
+        super(FSEventManagerInterface, self).__init__()
+        self._logger =  logging.getLogger(__name__)
+        self._logger.setLevel(logging.DEBUG)
         self.reset()
         self.event_q = multiprocessing.Queue()
 
     def subscribe(self, key, callback, force=False):
+
         if key not in self.subscriptions:
             self.subscriptions[key] = []
 
@@ -118,3 +122,12 @@ class FSEventManager(SingletonMixin):
 
     def get_event_q(self):
         return self.event_q
+
+
+@singleton(
+    instance=FSEventManager
+)
+class FSEventManagerSingleton(FSEventManager):
+    def __init__(self, instance):
+        super(FSEventManager, self).__init__()
+        self.instance=instance

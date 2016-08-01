@@ -7,22 +7,20 @@ __email__ = "info@mariolukas.de"
 import os
 import glob
 import serial
-import traceback
-import sys
 import time
 import logging
 from fabscan.util.FSUtil import FSSystem
 from fabscan.util.FSInject import inject
-from fabscan.FSConfig import Config
+from fabscan.FSConfig import ConfigInterface
 
 @inject(
-    config=Config
+    config=ConfigInterface
 )
 class FSSerialCom():
     def __init__(self, config):
         self._logger =  logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
-        self.config = config
+        self.config = config.instance
 
         if hasattr(self.config.serial, 'port'):
             self._port = self.config.serial.port

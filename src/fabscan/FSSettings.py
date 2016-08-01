@@ -6,20 +6,18 @@ __email__ = "info@mariolukas.de"
 
 import os
 import json
-from fabscan.FSConfig import Config
-from fabscan.util.FSSingleton import SingletonMixin
+from fabscan.util.FSInject import inject, singleton
 
-class SettingsInterface(SingletonMixin):
-    def __init__(self):
+class SettingsInterface(object):
+      def __init__(self, settings=os.path.dirname(__file__)+"/config/default.settings.json", first=True):
         pass
 
 
-class Settings(SingletonMixin):
+class Settings(SettingsInterface):
 
-    def __init__(self, settings=os.path.dirname(__file__)+"/config/default.settings.json", first=True):
+    def __init__(self,settings=os.path.dirname(__file__)+"/config/default.settings.json", first=True):
 
         if first:
-
             with open(settings) as file:
                 settings = file.read()
 
@@ -33,13 +31,11 @@ class Settings(SingletonMixin):
 
 
         object_dict = dict(_traverse(k, v) for k, v in settings.iteritems())
-        self.config = Config.instance()
+
         self.__dict__.update(object_dict)
 
 
     def saveAsFile(self, filename):
-
-        filename = self.config.folders.scans+filename+"/"+filename+".fab"
         current_settings = self.todict(self.__dict__)
         with open(filename, 'w+') as outfile:
             json.dump(current_settings, outfile)
@@ -75,3 +71,11 @@ class Settings(SingletonMixin):
             return data
         else:
             return obj
+
+@singleton(
+    instance=Settings
+)
+class SettingsSingleton(Settings):
+    def __init__(self, settings, instance):
+        super(Settings, self).__init__(self, settings)
+        self.instance = instance

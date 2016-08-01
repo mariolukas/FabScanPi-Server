@@ -8,7 +8,7 @@ __email__ = "info@mariolukas.de"
 import os
 import cv2
 
-from fabscan.FSConfig import Config
+from fabscan.FSConfig import ConfigSingleton
 
 def save_images(imgs, prefix, dir_name="scans"):
 
@@ -23,7 +23,7 @@ def save_images(imgs, prefix, dir_name="scans"):
 def save_image(img, number, prefix, dir_name="scans"):
 
 
-    dir_name = Config.instance().folders.scans+dir_name
+    dir_name = ConfigSingleton().instance.folders.scans+dir_name
     if not os.path.exists(dir_name):
         os.makedirs(dir_name)
     prefix = os.path.join(dir_name, "%s_{0}" % prefix)
@@ -32,7 +32,7 @@ def save_image(img, number, prefix, dir_name="scans"):
     return prefix.format(number) + ".jpg"
 
 def load_image(number, prefix, dir_name="scans"):
-    dir_name =  Config.instance().folders.scans+dir_name
+    dir_name =  ConfigSingleton().instance.folders.scans+dir_name
     prefix = os.path.join(dir_name, "%s_{0}" % prefix)
     number = str(number).zfill(3)
     if os.path.isfile(prefix.format(number) + ".jpg"):
