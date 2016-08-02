@@ -89,7 +89,7 @@ updates with the following command.
 
 ```
 sudo apt-get update && apt-get upgrade
-``` 
+```
 
 # Config File Values
 
@@ -121,14 +121,14 @@ you should add the "port" attribute to your config.
 The autoflash option is True by default, that means that the firmware is flashed automatically to 
 the Arduino or FabScanPi HAT. If you want to use a custom board e.g. sanguinololu, you can set this
 to False and flash the Firmware manually to your board. 
-   
+
 ```
    "serial" : {
      "baudrate" : 115200,
      "port": "/dev/ttyACM0",
      "autoflash": "True"
    }
-``` 
+```
 
 
 **Camera**
@@ -176,7 +176,7 @@ of the FabScan setups. This value is used for tansforming image coordinates to w
           "dimension": 23.5
       }
    }
-```   
+```
 
 **Laser**
 
@@ -199,8 +199,8 @@ set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 ste
       "steps": 3200
    }
 ```
-   
-   
+
+
 **Turntable**
 
 In this section some turntable related values are set. For positioning have a look to the image. 
@@ -217,7 +217,7 @@ In the default case the motor is set to 1/16 step mode. A motor with 200 steps p
      "steps":3200
    },
 ```
-   
+
 **Scanner**
 
 This section defines global scanner related values. Origin is defined as the green horizontal line in the settings
@@ -437,52 +437,238 @@ After you changed the file you can restart your network daemon.
 sudo /etc/init.d/networking restart
 ```
 
-#Usage
+#
+
+# User Manual
+
+#### [Getting Started](#gettingStarted)
+
+#### [Presets](#presets)
+
+#### [Perform a scan](#performAScan)
+
+#### [Generate Mesh](#generateMesh)
+
+#### [File Operations](#fileOperations)
+
+------
 
 FabScan Pi is tested on: 
 
-
-| Logo                            | OS             | Versions     | 
-|:-------------------------------:|:--------------:|:------------:|
-| ![browser_logo](images/chrome-logo.png)  | OSX, Windows   | 47.0.2526.106 (64-bit) |
-| ![browser_logo](images/firefox-logo.png) | OSX, Windows   | 43.0.4 |
-
-
-By default the FabScan PI server binds to all interfaces on port 8080. Pointing your browser to 
-[http://ip-of-your-raspbrry-pi:8080](http://ip-of-your-raspbrry-pi:8080) will open the user interface. If your computer supports bonjour
-you can point yout browser to [http://fabscanpi.local:8080](http://fabscanpi.local:8080), you can omit the port if you used the SD-Card
-image.
+|                   Logo                   |      OS      |        Versions        |
+| :--------------------------------------: | :----------: | :--------------------: |
+| ![browser_logo](images/chrome-logo.png)  | OSX, Windows | 47.0.2526.106 (64-bit) |
+| ![browser_logo](images/firefox-logo.png) |     OSX      |         43.0.4         |
+| ![browser_logo](images/firefox-logo.png) |   Windows    |      43.0.4, 47.0      |
 
 
-Most Apple devices support bonjour by default. On Windows you can install [Bonjour Print Services for Windows 2.0.2|
-(http://support.apple.com/kb/DL999). You will find more detailed information about this topic for the most common 
-operating systems [here](https://learn.adafruit.com/bonjour-zeroconf-networking-for-windows-and-linux/overview).
 
-The main view provides a camera symbol. By clicking this symbol the live settings dialog appears. On the left side
-is a laser detection preview. Best scan results can be reached, when the red laser line is covered by a blue line.
+#### Getting Started<a name="gettingStarted"></a>
 
-![drawing_300](images/main-view.png)
+- By default the FabScanPi server binds to all interfaces on port 8080. Pointing your browser to http://ip-of-your-raspberry-pi:8080 will open the user interface. 
+  Note: Status messages will always appear in the upper left corner. 
 
-The coverage of the lines can be improved by using the different slider settings. A good point to start is the 
-threshold slider. If the environment light is bright, try to set a lower value. If the environment light is low, 
-you should better use a higher slider value. After chnangig the slider have a look at the preview image. The video
-stream leaks for a few milliseconds, sometimes up to a second (depends on the environment lighting). More advanced
-settings are the camera brightness and contrast settings and if you are using an LED ring/strip of course the 
-RGB light setting, which can be used to increase the objects contrast level. A scan can be performed by clicking
-the scan button in the first settings tab where the threshold and resolution slider are located.
+- Right after the start you should see a notification about the camera status and one confirming that the FabScanPi HAT has been found. 
+  Note: The messages will fade away after a short period of time.
 
-![drawing_300](images/settings.png)
+  ​
+  ![fig.: main menu](images/Manual_1.jpg)
 
-The resolution slider can be used to set the scan resolution. Sometimes it is better to start with a low resolution
-to control the selected settings result. If the result is nice you can perform a higher resolution scan with the 
-same settings. The current settings are persistent as long as the pi is up and running. The settings are also saved
-with the scan data after a successful scan. They can be loaded to scan another object with the same settings. E.g. an 
-object what consists of the same material, color etc. 
+Now your FabScanPI is ready.
 
-![drawing_300](images/loading-view.png)
+#### Presets<a name="presets"></a>
 
-The sharing dialog can be used to handle the current loaded scan. The sharing dialog provides options to download or 
-delete a scan, and as already mentioned to load the scan settings. 
+Note: The current settings are only persistent as long as the pi is up and running. The settings are saved with the scan data after a successful scan. They can be loaded to scan another object with the same settings. E.g. an object what consists of the same material, color etc. 
 
-Previously scanned objects can be loaded by calling the load gallery dialog. A gallery of scans appears. By clicking
-one of the previously scanned objects loads the scan.
+- Click on the duckling-symbol to open the scan menu.
+
+![fig.: open the scan menu](images/Manual_4.jpg)
+
+- The threshold-slider (5) can be used to adjust the sensitivity of the captured data. Select the scan quality by using the other slider (6). 
+  Note: The better the scan the longer is the required capture time. Sometimes it is better to start with a low resolution to control the selected settings result. If the result is nice you can perform a higher resolution scan with the same settings.
+
+  ​
+  ![fig.: scan menu](images/Manual_5a.jpg)
+
+By clicking on the contrast-icon (3) you will get access to the camera settings menu. For adjusting the camera presets three sliders for saturation, brightness and contrast are available.
+
+
+![fig.: camera settings menu](images/Manual_6.jpg)
+
+
+
+Click on the light-symbol (4) to get access to the lighting menu.
+
+![fig.: scan menu](images/Manual_5a.jpg)
+
+
+
+Here you can use the sliders to change the brightness and color of the (optional) light source. When all three sliders are at the very left end the light is off. Watch the preview in the lower left corner of the menu.
+![fig.: lighting menu](images/Manual_7.jpg)
+
+
+
+Note: The setting in the lighting menu will only cause an effect if an optional WS2812-compatible light source (e.g. Adafruit NeoPixel LED-Ring or FabScanPi-Camera-Holder) is installed.
+Click on the  arrows-and-circle symbol (5) to get access to the alignment menu.
+![fig.: scan menu](images/Manual_5a.jpg)
+
+
+
+The preview in the lower left corner is showing the camera view completed with calibration bars. This preview must be used for aligning the camera after the assembly of the scanner. When the scan results are not flawless this menu can be used to check the correct adjustment.
+![fig.: alignment menu](images/Manual_8.jpg)
+
+
+
+#### Perform a scan<a name="performAScan"></a>
+
+**Color Scan**<a name="colorScan"></a>
+
+- Make sure your FabScanPi is switched on, an object is placed on the turntable and the lid / the optional laser safety switch is closed.
+- Open the web-interface as described in chapter 
+  [Getting Started](#gettingStarted).
+- Click on the duckling-symbol to open the scan menu.
+
+![fig.: open the scan menu](images/Manual_4.jpg)
+
+
+
+Note: If you do not have installed a light source you should perform a [monochrome scan](#monochromeScan).
+
+- Adjust the scan preset values to your needs as described in chapter [Presets](#presets).
+
+![fig.: scan menu](images/Manual_TextureScan_1.jpg)
+
+
+
+- Click on “Start Scan” to initiate the process
+  A starting message will be displayed. Now the texture will be processed.
+
+  ​
+  ![fig.: texture capturing](images/Manual_TextureScan_2.jpg)
+
+
+
+The latest photo will be displayed during the capturing process.
+
+![fig.: scan starts](images/Manual_TextureScan_3.jpg)
+
+
+
+When the texture has been captured (progress bar at 50 percent) the actual scan is initiated. A notification is displayed.
+![fig.: scan starts](images/Manual_TextureScan_4.jpg)
+
+
+
+A notification will be displayed when the scan is completed / file is saved.
+![fig.: scan completed](images/Manual_TextureScan_5.jpg)
+
+
+- You can now check, download or delete the scan-data.
+
+  ​
+
+**Monochrome scan**<a name="monochromeScan"></a>
+
+- Make sure your FabScanPi is switched on, an object is placed on the turntable and the lid / the optional laser safety switch is closed.
+- Open the web-interface as described in chapter 
+  [Getting Started](#gettingStarted).
+- Click on the duckling-symbol to open the scan menu.
+
+![fig.: open the scan menu](images/Manual_4.jpg)
+
+- Adjust the scan preset values to your needs as described in chapter [Presets](#presets).
+- Uncheck the color-scan option (8)
+
+![fig.: scan menu](images/Manual_5a.jpg)
+
+- Click on “Start Scan” to initiate the process
+  A starting message will be displayed and the scan process is started.
+
+![fig.: scan starts](images/Manual_Scan_2.jpg)
+
+
+
+When the scan is completed / file is saved a notification will be displayed. 
+![fig.: scan completed](images/Manual_Scan_3.jpg)
+
+
+- You can now check, download or delete the scan-data.
+
+
+
+#### Generate Mesh<a name="generateMesh"></a>
+
+The FabScanPi software includes a feature to convert a scan into a mesh-file. This mesh-file can be used for 3D-printing.
+Note: To generate a mesh-file a scan must have been performed. It is also possible to load a scan-file which has been saved previously. 
+
+
+
+#### File Operations<a name="fileOperations"></a>
+
+- Load files<a name="loadFiles"></a>
+
+A scan result which has been saved to the FabScanPi memory previously can be reloaded. Go to the main menu and click on the folder-icon at the left side of the menu bar.
+![fig.: main menu - load scan](images/Manual_LoadScan_1.jpg)
+
+
+
+- Scroll through the displayed file inventory and click on the icon of the wanted file.
+
+![fig.: load scan](images/Manual_LoadScan_2.jpg)
+
+
+
+Now the selected file will be loaded which may need some time. After the loading process is finished a notification will be displayed.
+![fig.: loaded scan-file](images/Manual_LoadScan_3.jpg)
+
+
+
+- Delete files<a name="deleteFiles"></a>
+
+**Delete a scan-file**
+A scan result which has been saved to the FabScanPi memory previously can be deleted. To do that it must be loaded and displayed on the virtual turntable in the main menu.
+-Click on the options-icon on the right side of the menu bar.
+![fig.: delete files](images/Manual_CreateMash_1.jpg)
+
+Click on the wastebasket-icon to delete the scan-file.
+NOTE: By deleting a scan file the corresponding mesh file (if available) will be deleted instantly.
+
+
+
+**Delete a mesh-file**
+Note: If a mesh file is available a second slide for the mesh file will be displayed.
+![fig.: mesh slide available](images/Manual_CreateMash_1.jpg)
+
+
+By selecting the mesh slide and clicking on the wastebasket-icon the mesh-file can be deleted separately. 
+![fig.: loaded scan-file](images/Manual_DeleteScan_1.jpg)
+
+- Download Files<a name="downloadFiles"></a>
+  It is possible to download generated files (either scan- or mesh-files) from the FabScanPi via the web-based user interface. 
+
+  ​
+
+**Scan-file**
+Note: Before you can download a file it must be [loaded](#loadFiles) and displayed on the virtual turntable in the main menu.
+
+- Go to the main menu.
+
+- Click on the options-icon on the right side of the menu bar.
+
+  ​
+  ![fig.: delete files](images/Manual_CreateMash_1.jpg)
+
+- Click on the download-icon to download the mesh-file
+
+- A download message (depending on the used web-browser) will be displayed
+
+  ​
+
+**Mesh-file**
+Note: If a mesh file is available a second slide for the mesh file will be displayed.
+![fig.: mesh slide available](images/Manual_CreateMash_1.jpg)
+
+- Select the mesh slide
+- Click on the download-icon to download the mesh-file
+- A download message (depending on the used web-browser) will be displayed
+
