@@ -16,6 +16,9 @@ The laser cut files can be found at [https://github.com/mariolukas/FabScan-Case]
 ![drawing_200](images/FabScanPI_closed.jpg)
 ![drawing_200](images/FabScanPi_opened.jpg)
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/W9KgYL7sZN0" frameborder="0" allowfullscreen></iframe>
+
+
 #The FabScanPi HAT
 The FabScan HAT is basically a combination of an Arduino and the old
 FabScan Shield for Arduino. It provides all connectors for the hardware
