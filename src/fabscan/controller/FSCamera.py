@@ -13,8 +13,8 @@ import time
 import subprocess
 import threading
 import sys, re, threading, collections
-from fabscan.FSConfig import Config
-from fabscan.FSSettings import Settings
+from fabscan.FSConfig import ConfigInterface
+from fabscan.FSSettings import SettingsInterface
 from fabscan.util.FSInject import inject
 import traceback
 
@@ -27,14 +27,14 @@ except:
 _instance = None
 
 @inject(
-    config=Config
+    config=ConfigInterface
 )
 class FSCamera():
 
     def __init__(self, config):
 
         self.camera_buffer = FSRingBuffer(10)
-        config = config
+        config = config.instance
 
         if config.camera.type  == 'PICAM':
             self.device = PiCam(self.camera_buffer)
@@ -75,18 +75,15 @@ class FSRingBuffer(threading.Thread):
         self.data.clear()
 
 @inject(
-    config=Config,
-    settings=Settings
+    config=ConfigInterface,
+    settings=SettingsInterface
 )
 class C270(threading.Thread):
     def __init__(self, cambuffer, config, settings):
         threading.Thread.__init__(self)
 
-        self._logger =  logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
-
-        self.config = config
-        self.settings = settings
+        self.config = config.instance
+        self.settings = settings.instance
         self.camera_buffer = cambuffer
         self.isRecording = True
         self.timestamp = int(round(time.time() * 1000))
@@ -94,6 +91,8 @@ class C270(threading.Thread):
 
         self.prior_image = None
         self.stream = None
+
+        self._logger =  logging.getLogger(__name__)
 
         # auto exposure mode for logitech C270 can not be controlled by opencv, with this work
         # around the exposer mode can be set direcly by v4l2
@@ -162,15 +161,15 @@ class C270(threading.Thread):
         pass
 
 @inject(
-    config=Config,
-    settings=Settings
+    config=ConfigInterface,
+    settings=SettingsInterface
 )
 class PiCam(threading.Thread):
     camera = None
     def __init__(self, cambuffer, config, settings):
         threading.Thread.__init__(self)
-        self.config = config
-        self.settings = settings
+        self.config = config.instance
+        self.settings = settings.instance
         self.start()
         self.isRecording = True
         self.timestamp = int(round(time.time() * 1000))
@@ -183,6 +182,7 @@ class PiCam(threading.Thread):
         self.is_idle = True
 
         self._logger =  logging.getLogger(__name__)
+
 
     def run(self):
         try:

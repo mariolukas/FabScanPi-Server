@@ -64,6 +64,9 @@ def main():
     parser.add_argument("--logging", action="store", dest="logConf", default=None,
                         help="Specify the config file to use for configuring logging. Defaults to /var/log/fabscanpi/fabscan.log")
 
+    parser.add_argument("--loglevel", action="store", dest="logLevel", default="debug",
+                        help="Specify the Log level. Possible Params are debug, info and warning")
+
     parser.add_argument("--daemon", action="store", type=str, choices=["start", "stop", "restart"],
                         help="Daemonize/control daemonized FabScan Pi instance (only supported under Linux right now)")
     parser.add_argument("--pid", action="store", type=str, dest="pidfile", default="/tmp/fabscanpi.pid",
@@ -77,16 +80,25 @@ def main():
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     logger=logging.getLogger("fabscan")
 
+    log_level= {
+        "debug": logging.DEBUG,
+        "info": logging.INFO,
+        "warning": logging.WARNING
+    }
+
+    level = log_level.get(str(args.logLevel), "debug")
     if args.logConf != None:
         fh=logging.handlers.RotatingFileHandler(args.logConf, maxBytes=5000000, backupCount=5)
-        fh.setLevel(logging.DEBUG)
+        fh.setLevel(level)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
+        logger.setLevel(level)
     else:
         ch = logging.StreamHandler()
-        ch.setLevel(logging.DEBUG)
+        ch.setLevel(level)
         ch.setFormatter(formatter)
         logger.addHandler(ch)
+        logger.setLevel(level)
 
     if args.version:
         print "FabScan Pi version %s" % __version__

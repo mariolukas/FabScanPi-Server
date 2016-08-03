@@ -1,28 +1,28 @@
 import threading
 import logging
 import os
-from fabscan.FSSettings import Settings
-from fabscan.FSConfig import Config
+
 from fabscan.util.FSUtil import FSSystem
 from fabscan.FSEvents import FSEventManager, FSEvents
-from fabscan.FSConfig import Config
-from fabscan.FSSettings import Settings
-from fabscan.FSEvents import FSEventManager
+from fabscan.FSConfig import ConfigInterface
+from fabscan.FSSettings import SettingsInterface
+from fabscan.FSEvents import FSEventManagerSingleton
 from fabscan.util.FSInject import inject
 
 @inject(
-    config=Config,
-    settings=Settings,
-    eventmanager=FSEventManager
+    config=ConfigInterface,
+    settings=SettingsInterface,
+    eventmanager=FSEventManagerSingleton
 )
 class FSMeshlabTask(threading.Thread):
         def __init__(self, id, filter, format, eventmanager, config, settings):
             threading.Thread.__init__(self)
             self.eventManager = eventmanager
+            self.settings = settings.instance
+            self.config = config.instance
             self._logger =  logging.getLogger(__name__)
-            self._logger.setLevel(logging.DEBUG)
-            self.settings = settings
-            self.config = config
+
+
             self.scan_id = id
             self.filter = filter
             self.format = format

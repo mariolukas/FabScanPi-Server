@@ -7,9 +7,7 @@ __email__ = "info@mariolukas.de"
 
 import fabscan
 
-
 def main():
-
     fabscan.main()
 
 if __name__ == "__main__":

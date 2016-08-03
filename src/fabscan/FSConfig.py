@@ -4,18 +4,17 @@ __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
-import logging
 import os
 import json
-from fabscan.util.FSSingleton import SingletonMixin
 from fabscan.util.FSInject import singleton
 
 
-class FSConfigInterface(object):
-    pass
+class ConfigInterface(object):
+    def __init__(self, config=os.path.dirname(__file__)+"/config/default.config.json", first=True):
+        pass
 
 
-class Config(SingletonMixin):
+class Config(ConfigInterface):
     def __init__(self, config=os.path.dirname(__file__)+"/config/default.config.json",first=True):
 
         if first:
@@ -29,7 +28,6 @@ class Config(SingletonMixin):
             else:
                 return key, element
 
-
         object_dict = dict(_traverse(k, v) for k, v in config.iteritems())
         self.__dict__.update(object_dict)
 
@@ -38,3 +36,12 @@ class Config(SingletonMixin):
 
     def load(self,file):
         pass
+
+
+@singleton(
+    instance=Config
+)
+class ConfigSingleton(Config):
+    def __init__(self, config, instance):
+        super(Config, self).__init__(self, config)
+        self.instance = instance
