@@ -24,7 +24,7 @@ def CreateRequestHandler(config, scanprocessor):
     class RequestHandler(SimpleHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
 
-            self.config = config.instance
+            self.config = config
 
             self._logger = logging.getLogger(__name__)
 

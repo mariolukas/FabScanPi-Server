@@ -11,7 +11,7 @@ import time
 
 from fabscan.vision.FSImageTask import ImageTask, FSTaskType
 from fabscan.FSConfig import ConfigInterface
-from fabscan.file.FSImage import save_image, load_image
+from fabscan.file.FSImage import FSImage
 from fabscan.vision.FSImageProcessor import ImageProcessorInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.util.FSInject import inject
@@ -25,8 +25,8 @@ class FSImageWorkerPool():
     def __init__(self, task_q, event_q, config, settings, imageprocessor):
         self._task_q = task_q
         self._event_q = event_q
-        self.config = config.instance
-        self.settings = settings.instance
+        self.config = config
+        self.settings = settings
         self.imageprocessor = imageprocessor
         self._logger = logging.getLogger(__name__)
 
@@ -82,12 +82,14 @@ class FSImageWorkerProcess(multiprocessing.Process):
         self.config = config
         self.exit = False
         self.event_q = event_q
+        self.image = FSImage()
 
         self.log = logging.getLogger('IMAGE_PROCESSOR THREAD')
         self.log.setLevel(logging.DEBUG)
         self.image_processor = imageprocessor
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
+
 
     def run(self):
         '''
@@ -114,7 +116,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
                         #print "process "+str(self.pid)+" task "+str(image_task.progress)
                         if (image_task.task_type == "PROCESS_COLOR_IMAGE"):
-                            save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
+                            self.image.save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
 
                             data['points'] = []
                             data['image_type'] = 'color'
@@ -128,13 +130,14 @@ class FSImageWorkerProcess(multiprocessing.Process):
                         if (image_task.task_type == "PROCESS_DEPTH_IMAGE"):
 
                             angle = (image_task.progress) * 360 / image_task.resolution
-                            save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)
-                            color_image = load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
+                            self._logger.debug("Progress "+str(image_task.progress)+" Resolution "+str(image_task.resolution)+" angle "+str(angle))
+                            self.image.save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)
+                            color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
 
                             points = self.image_processor.process_image(angle, image_task.image, color_image)
 
                             data['points'] = points
-                            data['image_type'] = 'laser'
+                            data['image_type'] = 'depth'
                             #data['progress'] = image_task.progress
                             #data['resolution'] = image_task.resolution
 

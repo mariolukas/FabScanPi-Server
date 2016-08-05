@@ -43,9 +43,10 @@ class FSScanner(threading.Thread):
 
         self._logger = logging.getLogger(__name__)
 
-        self.settings = settings.instance
+        self.settings = settings
         self.eventManager = eventmanager.instance
         self.scanProcessor = scanprocessor.start()
+
 
 
         self._state = FSState.IDLE
@@ -55,8 +56,8 @@ class FSScanner(threading.Thread):
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self.on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self.on_command)
 
-        self._logger.debug("Scanner initialized...")
-        self._logger.debug("Number of cpu cores: " + str(multiprocessing.cpu_count()))
+        self._logger.info("Scanner initialized...")
+        self._logger.info("Number of cpu cores: " + str(multiprocessing.cpu_count()))
 
     def run(self):
 
@@ -86,7 +87,7 @@ class FSScanner(threading.Thread):
         ## Start Scan Process
         elif command == FSCommand.START:
             if self._state is FSState.SETTINGS:
-                self._logger.debug("Start command received...")
+                self._logger.info("Start command received...")
                 self.set_state(FSState.SCANNING)
                 self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START})
 

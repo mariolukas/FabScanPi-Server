@@ -35,9 +35,9 @@ class ImageProcessorInterface(object):
 class ImageProcessor(ImageProcessorInterface):
     def __init__(self, config, settings):
 
-        self.settings = settings.instance
-        self.config = config.instance
-        self._logger =  logging.getLogger(__name__)
+        self.settings = settings
+        self.config = config
+        self._logger = logging.getLogger(__name__)
 
 
     def test(self):
@@ -117,8 +117,6 @@ class ImageProcessor(ImageProcessorInterface):
 
 
     def detect_laser(self, image):
-
-
 
         x_center = image.shape[1] * self.settings.center
         x_center_delta = image.shape[1] * 0.5 - x_center
@@ -201,7 +199,7 @@ class ImageProcessor(ImageProcessorInterface):
             the axis of rotation is x=0.
         '''
         #grey = self.trheshold_image(image)
-
+        self._logger.debug("Laser Position Value "+ str(self.config.laser.position.x))
         grey = self.get_grey(image)
         threshold = cv2.cvtColor(grey,cv2.COLOR_GRAY2BGR)
 
@@ -359,7 +357,3 @@ class ImageProcessor(ImageProcessorInterface):
         point.z = 0.0
 
         return point
-
-
-
-

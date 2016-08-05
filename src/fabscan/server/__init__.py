@@ -14,8 +14,8 @@ from fabscan.util.FSInject import injector
 from fabscan.server.websockets import FSWebSocketServer, FSWebSocketServerInterface
 from fabscan.FSScanner import FSScanner
 from fabscan.FSEvents import FSEventManager, FSEventManagerSingleton, FSEventManagerInterface
-from fabscan.FSConfig import ConfigInterface, ConfigSingleton
-from fabscan.FSSettings import SettingsInterface, SettingsSingleton
+from fabscan.FSConfig import ConfigInterface, ConfigSingleton, Config
+from fabscan.FSSettings import SettingsInterface, SettingsSingleton, Settings
 from fabscan.FSScanProcessor import FSScanProcessorInterface, FSScanProcessorSingleton
 from fabscan.controller import FSHardwareControllerSingleton, FSHardwareControllerInterface
 from fabscan.vision.FSImageProcessor import ImageProcessor, ImageProcessorInterface
@@ -28,6 +28,7 @@ class FSServer(object):
         self.settings_file = settings_file
         self._logger = logging.getLogger(__name__)
 
+        self._logger.debug(self.config_file)
 
     def run(self):
         self._logger.info("FabScanPi-Server "+str(__version__))
@@ -36,8 +37,8 @@ class FSServer(object):
             # "static" classes
             injector.provide(FSEventManagerInterface, FSEventManager)
             injector.provide(FSWebSocketServerInterface, FSWebSocketServer)
-            injector.provide_instance(ConfigInterface, ConfigSingleton(self.config_file))
-            injector.provide_instance(SettingsInterface, SettingsSingleton(self.settings_file))
+            injector.provide_instance(ConfigInterface, Config(self.config_file, True))
+            injector.provide_instance(SettingsInterface, Settings(self.settings_file, True))
 
             # "dynamic" module classes ... (later called plug-ins/scan-modules)
             injector.provide(ImageProcessorInterface, ImageProcessor)

@@ -9,13 +9,13 @@ import json
 from fabscan.util.FSInject import inject, singleton
 
 class SettingsInterface(object):
-      def __init__(self, settings=os.path.dirname(__file__)+"/config/default.settings.json", first=True):
+      def __init__(self, settings, first=True):
         pass
 
 
 class Settings(SettingsInterface):
 
-    def __init__(self,settings=os.path.dirname(__file__)+"/config/default.settings.json", first=True):
+    def __init__(self,settings, first=True):
 
         if first:
             with open(settings) as file:

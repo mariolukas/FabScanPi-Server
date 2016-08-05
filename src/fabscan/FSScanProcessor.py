@@ -12,6 +12,7 @@ import multiprocessing
 import logging
 
 from fabscan.util import FSUtil
+from fabscan.util.FSUtil import FSSystem
 from fabscan.file.FSPointCloud import FSPointCloud
 from fabscan.vision.FSImageProcessor import ImageProcessorInterface
 from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
@@ -54,8 +55,8 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
         super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
 
-        self.settings = settings.instance
-        self.config = config.instance
+        self.settings = settings
+        self.config = config
         self._logger = logging.getLogger(__name__)
 
         self.eventmanager = eventmanager.instance
@@ -78,6 +79,8 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self._stop_scan = False
         self._current_laser_position = 1
 
+        self.utils = FSSystem()
+
         self.semaphore = multiprocessing.BoundedSemaphore()
         self.event_q = self.eventmanager.get_event_q()
 
@@ -88,7 +91,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self._scan_saturation = self.settings.camera.saturation
 
         self.eventmanager.subscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
-        self._logger.debug("Laser Scan Processor initilized...")
+        self._logger.info("Laser Scan Processor initilized...")
 
 
     def on_receive(self, event):
@@ -274,7 +277,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
                 self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
 
     def init_object_scan(self):
-        self._logger.debug("Started object scan initialisation")
+        self._logger.info("Started object scan initialisation")
 
         self.current_position = 0
 
@@ -351,7 +354,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self._stop_scan = True
         self._worker_pool.kill()
         time.sleep(1)
-        FSUtil.delete_scan(self._prefix)
+        self.utils.delete_scan(self._prefix)
         self.reset_scanner_state()
         self._logger.info("Scan stoped")
         self.hardwareController.camera.device.stopStream()
@@ -364,7 +367,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
     def image_processed(self, eventmanager, event):
 
-        if event['image_type'] == 'laser':
+        if event['image_type'] == 'depth':
             self.append_points(event['points'])
 
         self.semaphore.acquire()
@@ -384,7 +387,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
     def scan_complete(self):
 
-        self._logger.debug("Scan complete writing pointcloud files with %i points." % (self.point_cloud.get_size(),))
+        self._logger.info("Scan complete writing pointcloud files with %i points." % (self.point_cloud.get_size(),))
         self.point_cloud.saveAsFile(self._prefix)
         settings_filename = self.config.folders.scans+self._prefix+"/"+self._prefix+".fab"
         self.settings.saveAsFile(settings_filename)
@@ -397,7 +400,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
-        FSUtil.delete_image_folders(self._prefix)
+        self.utils.delete_image_folders(self._prefix)
         self.reset_scanner_state()
 
         event = FSEvent()
