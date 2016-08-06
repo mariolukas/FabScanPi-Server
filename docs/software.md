@@ -437,7 +437,7 @@ After you changed the file you can restart your network daemon.
 sudo /etc/init.d/networking restart
 ```
 
-#
+
 
 # Software User Manual
 
@@ -451,7 +451,6 @@ sudo /etc/init.d/networking restart
 
 * [File Operations](#fileOperations)
 
-------
 
 FabScan Pi is tested on: 
 
@@ -471,51 +470,52 @@ FabScan Pi is tested on:
 - Right after the start you should see a notification about the camera status and one confirming that the FabScanPi HAT has been found. 
   Note: The messages will fade away after a short period of time.
 
-  ​
-  ![fig.: main menu](images/Manual_1.jpg)
+
+  ![main_menu](images/Manual_1.jpg)
 
 Now your FabScanPI is ready.
 
 **Presets<a name="presets"></a>**
 
-Note: The current settings are only persistent as long as the pi is up and running. The settings are saved with the scan data after a successful scan. They can be loaded to scan another object with the same settings. E.g. an object what consists of the same material, color etc. 
+The current settings are only persistent as long as the pi is up and running. The settings are saved with the scan data after a successful scan. They can be loaded to scan another object with the same settings. E.g. an object what consists of the same material, color etc. 
 
 - Click on the duckling-symbol to open the scan menu.
 
-![fig.: open the scan menu](images/Manual_4.jpg)
+![open_the_scan_menu](images/Manual_4.jpg)
 
 - The threshold-slider (5) can be used to adjust the sensitivity of the captured data. Select the scan quality by using the other slider (6). 
   Note: The better the scan the longer is the required capture time. Sometimes it is better to start with a low resolution to control the selected settings result. If the result is nice you can perform a higher resolution scan with the same settings.
 
-  ​
-  ![fig.: scan menu](images/Manual_5a.jpg)
+  ![scan_menu](images/Manual_5a.jpg)
+
+
 
 By clicking on the contrast-icon (3) you will get access to the camera settings menu. For adjusting the camera presets three sliders for saturation, brightness and contrast are available.
 
 
-![fig.: camera settings menu](images/Manual_6.jpg)
+![camera_settings_menu](images/Manual_6.jpg)
 
 
 
 Click on the light-symbol (4) to get access to the lighting menu.
 
-![fig.: scan menu](images/Manual_5a.jpg)
+![scan_menu](images/Manual_5a.jpg)
 
 
 
 Here you can use the sliders to change the brightness and color of the (optional) light source. When all three sliders are at the very left end the light is off. Watch the preview in the lower left corner of the menu.
-![fig.: lighting menu](images/Manual_7.jpg)
+![lighting_menu](images/Manual_7.jpg)
 
 
 
 Note: The setting in the lighting menu will only cause an effect if an optional WS2812-compatible light source (e.g. Adafruit NeoPixel LED-Ring or FabScanPi-Camera-Holder) is installed.
 Click on the  arrows-and-circle symbol (5) to get access to the alignment menu.
-![fig.: scan menu](images/Manual_5a.jpg)
+![scan_menu](images/Manual_5a.jpg)
 
 
 
 The preview in the lower left corner is showing the camera view completed with calibration bars. This preview must be used for aligning the camera after the assembly of the scanner. When the scan results are not flawless this menu can be used to check the correct adjustment.
-![fig.: alignment menu](images/Manual_8.jpg)
+![alignment_menu](images/Manual_8.jpg)
 
 
 
@@ -528,7 +528,7 @@ The preview in the lower left corner is showing the camera view completed with c
   [Getting Started](#gettingStarted).
 - Click on the duckling-symbol to open the scan menu.
 
-![fig.: open the scan menu](images/Manual_4.jpg)
+![open_scan_menu](images/Manual_4.jpg)
 
 
 
@@ -536,36 +536,36 @@ Note: If you do not have installed a light source you should perform a [monochro
 
 - Adjust the scan preset values to your needs as described in chapter [Presets](#presets).
 
-![fig.: scan menu](images/Manual_TextureScan_1.jpg)
+![scan_menu](images/Manual_TextureScan_1.jpg)
 
 
 
 - Click on “Start Scan” to initiate the process
   A starting message will be displayed. Now the texture will be processed.
 
-  ​
-  ![fig.: texture capturing](images/Manual_TextureScan_2.jpg)
+
+![texture_capturing](images/Manual_TextureScan_2.jpg)
 
 
 
 The latest photo will be displayed during the capturing process.
 
-![fig.: scan starts](images/Manual_TextureScan_3.jpg)
+![capturing_starts](images/Manual_TextureScan_3.jpg)
 
 
 
 When the texture has been captured (progress bar at 50 percent) the actual scan is initiated. A notification is displayed.
-![fig.: scan starts](images/Manual_TextureScan_4.jpg)
+![scan_starts](images/Manual_TextureScan_4.jpg)
 
 
 
 A notification will be displayed when the scan is completed / file is saved.
-![fig.: scan completed](images/Manual_TextureScan_5.jpg)
+![scan_completed](images/Manual_TextureScan_5.jpg)
 
 
 - You can now check, download or delete the scan-data.
 
-  ​
+  
 
 **Monochrome scan**<a name="monochromeScan"></a>
 
@@ -574,52 +574,97 @@ A notification will be displayed when the scan is completed / file is saved.
   [Getting Started](#gettingStarted).
 - Click on the duckling-symbol to open the scan menu.
 
-![fig.: open the scan menu](images/Manual_4.jpg)
+![open_scan_menu](images/Manual_4.jpg)
+
+
 
 - Adjust the scan preset values to your needs as described in chapter [Presets](#presets).
 - Uncheck the color-scan option (8)
 
-![fig.: scan menu](images/Manual_5a.jpg)
+![scan_menu](images/Manual_5a.jpg)
+
+
 
 - Click on “Start Scan” to initiate the process
   A starting message will be displayed and the scan process is started.
 
-![fig.: scan starts](images/Manual_Scan_2.jpg)
+![scan_starts](images/Manual_Scan_2.jpg)
 
 
 
 When the scan is completed / file is saved a notification will be displayed. 
-![fig.: scan completed](images/Manual_Scan_3.jpg)
+![scan_completed](images/Manual_Scan_3.jpg)
 
 
 - You can now check, download or delete the scan-data.
 
-
-
+  ​
 ** Generate Mesh<a name="generateMesh"></a>
 
 The FabScanPi software includes a feature to convert a scan into a mesh-file. This mesh-file can be used for 3D-printing.
 Note: To generate a mesh-file a scan must have been performed. It is also possible to load a scan-file which has been saved previously. 
 
+- Click on the options icon to open the options menu.
+  ![open_options_menu](images/Manual_CreateMash_1.jpg)
+
+  ​
+
+- The options menu will open and you can see the index card of the loaded file.
+  ![open_options_menu](images/Manual_CreateMash_1.jpg)
+
+  ​
+
+- Click on the magic wand icon to open the menu for the MeshLab filter.
+  ![open_options_menu](images/Manual_CreateMash_3.jpg)
+
+  ​
+
+- Now select one of the Meshlab filters and the file format for the future mesh file.
+
+- Click on "Start Meshing" to activate the conversion process. 
+  ![open_options_menu](images/Manual_CreateMash_4.jpg)
 
 
+
+The conversion starts and the main menu appears. A notification is displayed as well.
+Note: Depending on the size and complexity of the scan file as well as the type of selected filter the conversion process may take some time.
+![open_options_menu](images/Manual_CreateMash_5.jpg)
+
+
+
+When the mesh-file is available a notification is displayed.
+![open_options_menu](images/Manual_CreateMash_6.jpg)
+
+
+
+- Again open the options menu. Another index card for the mesh-file has been added.
+
+- Click on the mesh-file index card.
+  ![open_options_menu](images/Manual_CreateMash_7.jpg)
+
+  ​
+
+- You can now click on the download-icon to download the mesh-file to your computer or click on the trashbasket icon to delete the mesh-file.
+  ![open_options_menu](images/Manual_CreateMash_8.jpg)
+
+  ​
 ** File Operations<a name="fileOperations"></a>
 
 - Load files<a name="loadFiles"></a>
 
 A scan result which has been saved to the FabScanPi memory previously can be reloaded. Go to the main menu and click on the folder-icon at the left side of the menu bar.
-![fig.: main menu - load scan](images/Manual_LoadScan_1.jpg)
+![main_menu-load_scan](images/Manual_LoadScan_1.jpg)
 
 
 
 - Scroll through the displayed file inventory and click on the icon of the wanted file.
 
-![fig.: load scan](images/Manual_LoadScan_2.jpg)
+![load_scan](images/Manual_LoadScan_2.jpg)
 
 
 
 Now the selected file will be loaded which may need some time. After the loading process is finished a notification will be displayed.
-![fig.: loaded scan-file](images/Manual_LoadScan_3.jpg)
+![loaded_scan-file](images/Manual_LoadScan_3.jpg)
 
 
 
@@ -628,7 +673,7 @@ Now the selected file will be loaded which may need some time. After the loading
 **Delete a scan-file**
 A scan result which has been saved to the FabScanPi memory previously can be deleted. To do that it must be loaded and displayed on the virtual turntable in the main menu.
 -Click on the options-icon on the right side of the menu bar.
-![fig.: delete files](images/Manual_CreateMash_1.jpg)
+![delete_files](images/Manual_CreateMash_1.jpg)
 
 Click on the wastebasket-icon to delete the scan-file.
 NOTE: By deleting a scan file the corresponding mesh file (if available) will be deleted instantly.
@@ -637,26 +682,29 @@ NOTE: By deleting a scan file the corresponding mesh file (if available) will be
 
 **Delete a mesh-file**
 Note: If a mesh file is available a second slide for the mesh file will be displayed.
-![fig.: mesh slide available](images/Manual_CreateMash_1.jpg)
+![mesh_slide_available](images/Manual_CreateMash_1.jpg)
+
 
 
 By selecting the mesh slide and clicking on the wastebasket-icon the mesh-file can be deleted separately. 
-![fig.: loaded scan-file](images/Manual_DeleteScan_1.jpg)
+![loaded_scan-file](images/Manual_DeleteScan_1.jpg)
 
 - Download Files<a name="downloadFiles"></a>
   It is possible to download generated files (either scan- or mesh-files) from the FabScanPi via the web-based user interface. 
 
   ​
 
-**Scan-file**
+
+
+**Download a scan-file**
 Note: Before you can download a file it must be [loaded](#loadFiles) and displayed on the virtual turntable in the main menu.
 
 - Go to the main menu.
 
 - Click on the options-icon on the right side of the menu bar.
 
-  ​
-  ![fig.: delete files](images/Manual_CreateMash_1.jpg)
+
+  ![delete_files](images/Manual_CreateMash_1.jpg)
 
 - Click on the download-icon to download the mesh-file
 
@@ -664,9 +712,11 @@ Note: Before you can download a file it must be [loaded](#loadFiles) and display
 
   ​
 
-**Mesh-file**
+
+
+**Download a mesh-file**
 Note: If a mesh file is available a second slide for the mesh file will be displayed.
-![fig.: mesh slide available](images/Manual_CreateMash_1.jpg)
+![mesh_slide_available](images/Manual_CreateMash_1.jpg)
 
 - Select the mesh slide
 - Click on the download-icon to download the mesh-file
