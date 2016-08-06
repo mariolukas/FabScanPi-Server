@@ -1,11 +1,12 @@
 #Bill of Materials
 - Raspberry Pi 2 or Raspberry Pi 3
-- Stepper Motor 1.8° step angle (200 steps/revolution)
+- Stepper Motor, NEMA 17 type, 1.8° step angle (200 steps/revolution)
 - Pololu Universal Aluminum Mounting Hub for 5mm Shaft
 - Motor driver ([Silent Step Stick](http://www.watterott.com/de/SilentStepStick) recommended)
 - 5V red line laser module
 - 9g Servo Motor (not supported by the software now)
 - [FabScanPi HAT](http://www.watterott.com/en/RPi-FabScan-HAT) for Raspberry Pi
+- 12V to 5V switching regulator
 - [FabScanPi Camera Mount](http://www.watterott.com/index.php?page=product&info=4930) with LED ring
 - [FaBScanPi Case](http://www.watterott.com/en/FabScan-Pi-Housing-Parts)
 
@@ -60,7 +61,10 @@ swap wires until you light the LED.
 
 ![drawing_400](images/hat_wires.jpg)
 
+
+
 #Connecting the Lasers
+
 The FabScanPi HAT provides connectors for two lasers. But only one laser
 is supported until now. Connect your laser to the connectors labeled
 with ...
@@ -78,11 +82,72 @@ right image: connecting a switch)
 ![test](images/laser_safety.jpg)
 ![test](images/laser_safety_switch.jpg)
 
+
+
 #Connecting the Motor drivers
+
 TODO
 
-#How to Connect the LED Ring
+
+
+#Connecting the Power Supply
+The FabScanPi will need 12V DC and 5V DC. There are different options to fulfil this requirement:
+
+**Option A: ** (recommended)
+Connect 12V DC to the HAT (round connector) and install a 12V DC - to - 5V DC regulator on the designated space on the HAT. Make sure the 5V power regulator can provide a current of min. 2.0A
+
+for 1 turntable stepper motor, 1 PiCam and 1 laser.
+
+
+
+![drawing_400](images/fabscanpihat_12to5.png)
+
+
+
+| Pin label      | Description                              |
+| -------------- | ---------------------------------------- |
+| Inp.           | 12V from HAT as input for regulator      |
+| (white square) | Ground (GND)                             |
+| 5V             | 5V output from regulator to FabScanPi HAT |
+
+
+
+NOTE: For the final stage of constuction a more powerful power supply is needed. At the moment there are no technical specifications available.
+
+
+
+**Option B:** 
+
+Connect 12V DC to the HAT (round connector) and 5V DC to the raspberry (micro USB connector). 
+
+NOTE: Make sure you switch on the both power sources at the same time to avoid software trouble.
+
+
+
+**Option C:** 
+
+Connect 12V DC to the HAT (round connector) and connect a 5V DC power source to the 5V pin regulator pin on the HAT. Make sure the 5V power source can provide a current of min. 2.0A for
+
+1 turntable stepper motor, 1 PiCam and 1 laser.
+
+
+
+![drawing_400](images/fabscanpihat_5V.png)
+
+| Pin label      | Description                          |
+| -------------- | ------------------------------------ |
+| (white square) | Ground (GND)                         |
+| 5V             | Output from external 5V power source |
+
+NOTE: For the final stage of constuction a more powerful power supply is needed. At the moment there are no technical specifications available. Make sure you switch on the both power sources at the same time to avoid software trouble.
+
+
+
+
+#Connecting the LED Ring
 TODO
+
+
 
 #Additional Motors for the Lasers
 TODO
