@@ -438,8 +438,22 @@ sudo /etc/init.d/networking restart
 ```
 
 
+<<<<<<< HEAD
 
 # User Manual
+=======
+# Software User Manual
+
+* [Getting Started](#gettingStarted)
+
+* [Presets](#presets)
+
+* [Perform a scan](#performAScan)
+
+* [Generate Mesh](#generateMesh)
+
+* [File Operations](#fileOperations)
+>>>>>>> refs/remotes/mariolukas/master
 
 ------
 
@@ -453,7 +467,7 @@ FabScan Pi is tested on:
 
 
 
-#### Getting Started<a name="gettingStarted"></a>
+**Getting Started<a name="gettingStarted"></a>**
 
 - By default the FabScanPi server binds to all interfaces on port 8080. Pointing your browser to http://ip-of-your-raspberry-pi:8080 will open the user interface. 
   Note: Status messages will always appear in the upper left corner. 
@@ -466,11 +480,15 @@ FabScan Pi is tested on:
 
 Now your FabScanPI is ready.
 
+<<<<<<< HEAD
 
 
 ------
 
 #### Presets<a name="presets"></a>
+=======
+**Presets<a name="presets"></a>**
+>>>>>>> refs/remotes/mariolukas/master
 
 Note: The current settings are only persistent as long as the pi is up and running. The settings are saved with the scan data after a successful scan. They can be loaded to scan another object with the same settings. E.g. an object what consists of the same material, color etc. 
 
@@ -514,9 +532,13 @@ The preview in the lower left corner is showing the camera view completed with c
 
 
 
+<<<<<<< HEAD
 ------
 
 #### Perform a scan<a name="performAScan"></a>
+=======
+**Perform a scan<a name="performAScan"></a>**
+>>>>>>> refs/remotes/mariolukas/master
 
 **Color Scan**<a name="colorScan"></a>
 
@@ -602,7 +624,7 @@ When the scan is completed / file is saved a notification will be displayed.
 
 ------
 
-#### Generate Mesh<a name="generateMesh"></a>
+** Generate Mesh<a name="generateMesh"></a>
 
 The FabScanPi software includes a feature to convert a scan into a mesh-file. This mesh-file can be used for 3D-printing.
 Note: To generate a mesh-file a scan must have been performed. It is also possible to load a scan-file which has been saved previously. 
@@ -654,7 +676,7 @@ When the mesh-file is available a notification is displayed.
 
 ------
 
-#### File Operations<a name="fileOperations"></a>
+** File Operations<a name="fileOperations"></a>
 
 - Load files<a name="loadFiles"></a>
 
