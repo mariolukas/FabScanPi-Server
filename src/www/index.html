@@ -23,15 +23,36 @@
 
     </head>
     <div ng-controller="fabscan.controller.FSAppController">
-
+        <div ng-if="!appIsInitialized" class="splash">
+            <div>
+                <img class="logo" src="icons/logo.png">
+                <div ng-if="!initError">
+                    <div class="sk-three-bounce">
+                        <div class="sk-child sk-bounce1"></div>
+                        <div class="sk-child sk-bounce2"></div>
+                        <div class="sk-child sk-bounce3"></div>
+                    </div>
+                </div>
+                <div ng-if="initError">
+                    Can not initialize UI, try to refresh Window.
+                    <br>
+                    (Press 'F5')
+                </div>
+            </div>
+        </div>
     <div id="top-bar">
 
     </div>
     <div ng-controller="fabscan.controller.FSScanController">
           <div class="header row" id="header">
           </div>
-
            <div id="mainview"  class="row scroll-y">
+          <!--     <div class="configWindow" ng-class="{'open':(configDialog)}">
+                   <div ng-jsoneditor ng-model="obj.data" options="obj.options" style="width: 100%; height: 80%;"></div>
+                   <a class="hvr-grow" style="margin-right: 13%; margin-top:0.2em; text-decoration:none; float:right; color:white; font-size:1.5em;" ng-click="hideConfigDialog()" href="#">Save & Restart</a>
+                   <a class="hvr-grow" style="margin-right: 13%; margin-top:0.2em; text-decoration:none; float:right; color:white; font-size:1.5em;" ng-click="hideConfigDialog()" href="#">Cancel</a>
+               </div>
+           -->
                <!-- Settings View -->
                 <div class="settingsWindow" ng-class="{'open':('SETTINGS' | currentState)}">
                     <div ng-if="('SETTINGS' | currentState)" ng-controller="fabscan.controller.FSSettingsController" >
@@ -41,8 +62,7 @@
                     <div>
                         <mjpeg mode="'preview'" url="streamUrl"></mjpeg>
                     </div>
-
-                    <div class="settings-content">
+                        <div class="settings-content">
                         <div style="height: 40px;">
                             <div ng-click="selectTab('general')" class="tab icon settings" ng-class="{'active':(selectedTab == 'general')}">
                                 <i class="fa fa-cogs fa-2x"></i>
@@ -155,9 +175,12 @@
                          material-type="materialType"
                          new-points="newPoints"
                          >
-                             <div style="position:absolute; right:10px; color:white">
+                             <div style="position:absolute; right:10px; top:2px; color:white">
                                  <span>Server: {{server_version}} <br> Firmware: {{firmware_version}}</span>
                              </div>
+                           <!--  <div style="position:absolute; left:10px; top:2px; color:white">
+                                 <span class="hvr-grow"><i ng-click="showConfigDialog()" class="fa fa-gear fa-2x"></i></span>
+                             </div>-->
                          <!--<div style="position:absolute;">
                              <a href="#" ng-click="renderObjectAsType('MESH')">Show Mesh</a>
                              <a href="#" ng-click="renderObjectAsType('POINTCLOUD')">Show Pointcloud</a>
@@ -326,7 +349,7 @@
         <div id="controlpanel" class="footer row" style="background-color: grey">
 
            <!--<div ng-show="isConnected">-->
-            <div>
+            <div ng-if="appIsInitialized">
             <!-- Left Icon Group -->
             <div class="icongroup left" >
                 <a class="icon" tooltips title="Load Scan" tooltip-side="top" ng-if="!('SETTINGS' | currentState) && !('SCANNING' | currentState)" ng-click="toggleLoadDialog()" href="#">
