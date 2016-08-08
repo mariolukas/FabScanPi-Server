@@ -10,12 +10,12 @@ import logging
 import multiprocessing
 
 from fabscan.FSVersion import __version__
-from fabscan.FSEvents import FSEventManager, FSEvents, FSEventManagerSingleton
+from fabscan.FSEvents import FSEventManagerInterface, FSEvents
 from fabscan.vision.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import SettingsInterface
 from fabscan.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
 from fabscan.util.FSInject import inject, singleton
-
+from fabscan.util.FSUpdate import upgrade_is_available, get_latest_version_tag
 
 class FSState(object):
     IDLE = "IDLE"
@@ -30,11 +30,12 @@ class FSCommand(object):
     MESHING = "MESHING"
     COMPLETE = "COMPLETE"
     SCANNER_ERROR = "SCANNER_ERROR"
-
+    UPGRADE_SERVER = "UPGRADE_SERVER"
+    RESTART_SERVER = "RESTART_SERVER"
 
 @inject(
         settings=SettingsInterface,
-        eventmanager=FSEventManagerSingleton,
+        eventmanager=FSEventManagerInterface,
         scanprocessor=FSScanProcessorInterface
 )
 class FSScanner(threading.Thread):
@@ -42,12 +43,9 @@ class FSScanner(threading.Thread):
         threading.Thread.__init__(self)
 
         self._logger = logging.getLogger(__name__)
-
         self.settings = settings
         self.eventManager = eventmanager.instance
         self.scanProcessor = scanprocessor.start()
-
-
 
         self._state = FSState.IDLE
         self._exit_requested = False
@@ -115,26 +113,36 @@ class FSScanner(threading.Thread):
             meshlab_task = FSMeshlabTask(event.scan_id, event.filter, event.format)
             meshlab_task.start()
 
+
+
     def on_client_connected(self, eventManager, event):
 
         try:
 
-            hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
-            #hardware_info = "None"
+            try:
+                hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
+            except:
+                hardware_info = "undefined"
+
+            self._logger.debug("Upgrade available:"+str(upgrade_is_available()))
 
             message = {
                 "client": event['client'],
                 "state": self._state,
                 "server_version": str(__version__),
                 "firmware_version": str(hardware_info),
-                "settings": self.settings.todict(self.settings)
+                "settings": self.settings.todict(self.settings),
+                "upgrade": {
+                    "available": upgrade_is_available(),
+                    "version": str(get_latest_version_tag())
+                }
             }
 
             eventManager.send_client_message(FSEvents.ON_CLIENT_INIT, message)
             self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
+
         except StandardError, e:
             self._logger.error(e)
-
 
     def set_state(self, state):
         self._state = state

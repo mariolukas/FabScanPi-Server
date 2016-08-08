@@ -146,24 +146,25 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
             image = self.image_processor.get_calibration_stream_frame(image)
             return image
         except StandardError, e:
-            #self._logger.error(e)
+            # images are dropped this cateched exception.. no error hanlder needed here.
             pass
 
     def create_laser_stream(self):
         try:
             image = self.hardwareController.get_picture()
-            #self._logger.debug(image)
             image = self.image_processor.get_laser_stream_frame(image)
             return image
         except StandardError, e:
-            #self._logger.error(e)
+            # images are dropped this cateched exception.. no error hanlder needed here.
             pass
+
 
     def update_settings(self, settings):
         try:
             self.settings.update(settings)
             self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
         except StandardError, e:
+            # images are dropped this cateched exception.. no error hanlder needed here.
             pass
 
     def send_hardware_state_notification(self):
@@ -177,7 +178,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         else:
             message = {
                 "message": "SERIAL_CONNECTION_READY",
-                "level": "info"
+                "level": "success"
             }
 
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
@@ -190,7 +191,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         else:
             message = {
                 "message": "CAMERA_READY",
-                "level": "info"
+                "level": "success"
             }
 
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
