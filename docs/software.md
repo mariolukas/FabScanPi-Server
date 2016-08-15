@@ -8,7 +8,7 @@ firmware version after the server is started.
 
 The fastest way to start working with FabScan PI is to use the FabScan PI Raspbian Image. 
 Dowload the image and install it to a SD-Card. After the image is flashed and the Raspberry
-Pi is up and runnig follow the instructions in the [Usage section](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage)
+Pi is up and running follow the instructions in the [Usage section](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage)
 
 Latest image release: 
 
@@ -58,10 +58,7 @@ Read [Usage](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.m
 
 Dependencies
 
-FabScan PI software depends on some python libraries. You need to install pyserial, pykka, opencv with tbb support 
-and picamera. The easiest way to install all dependencies is to use debians package manager apt. Some of the packages, 
-like opencv with tbb support and libtbb are not provided by the official raspbian mirrors. You need to add the
-fabscan repository to your apt source list. 
+FabScan PI software depends on some python libraries. You need to install pyserial, pykka, opencv with tbb support and picamera. The easiest way to install all dependencies is to use debians package manager apt. Some of the packages, like opencv with tbb support and libtbb are not provided by the official raspbian mirrors. You need to add the fabscan repository to your apt source list. 
 
 Build Debian package
 Install dependencies
@@ -113,14 +110,12 @@ you don't know what you are doing, it is a good decision to keep this section un
 **Serial**
 
 In this section you can set your port. By default this value is not set, because the
-FabScanPi Server software autodetcts the correct port. Some Arduino and compatible boards differ 
-in the port name. The port can be set if you are not using an Arduino UNO or compatible Board. 
+FabScanPi Server software autodetects the correct port. Some Arduino and compatible boards differ in the port name. The port can be set if you are not using an Arduino UNO or compatible Board. 
 In case that your Arduino is not detected and you can see an error in the /var/log/fabscanpi/fabscan.log
 you should add the "port" attribute to your config.
 
 The autoflash option is True by default, that means that the firmware is flashed automatically to 
-the Arduino or FabScanPi HAT. If you want to use a custom board e.g. sanguinololu, you can set this
-to False and flash the Firmware manually to your board. 
+the Arduino or FabScanPi HAT. If you want to use a custom board e.g. sanguinololu, you can set this to False and flash the Firmware manually to your board. 
 
 ```
    "serial" : {
@@ -133,25 +128,17 @@ to False and flash the Firmware manually to your board.
 
 **Camera**
 
-In this section some camera values are set. The type can be set to PICAM which is default value. There is 
-also an experimental mode for a C270 webcam. But this mode is not further developed. I used it in early 
-versions of fabscanpi. 
+In this section some camera values are set. The type can be set to PICAM which is default value. There is also an experimental mode for a C270 webcam. But this mode is not further developed. I used it in early versions of fabscanpi. 
 
-The device is not used for the PICAM. Only if a webcam is used, you have to set the device to the count number
-of your webcam if you have one or more cameras connected to your pi.
+The device is not used for the PICAM. Only if a webcam is used, you have to set the device to the count number of your webcam if you have one or more cameras connected to your pi.
 
 Preview Resolution is the resolution value for the settings window. 
-Resolution is the resolution for the picamera python module. You can have a look to the documentation of 
-picamera. If you set this to other values please be sure what you are doing, not all resolutions are supported
-by the picam. Some might lead to slower image capturing. 
+Resolution is the resolution for the picamera python module. You can have a look to the documentation of picamera. If you set this to other values please be sure what you are doing, not all resolutions are supported by the picam. Some might lead to slower image capturing. 
 
 The position values are used to define where the camera is located in the case. All values are in cm. 
 Thre is an image later in this documentation which explains all the dimension related meassures. 
 
-Frame dimension is what your camera sees in the case. An easy way to validate this value is to put a 
-ruler to the backwall of the fabscan ( i used a paper one from IKEA ). Then activate the settings mode
-and read the last value you can read in the image. The default is 23.5 cm. The default value fits most
-of the FabScan setups. This value is used for tansforming image coordinates to world coordinates. 
+Frame dimension is what your camera sees in the case. An easy way to validate this value is to put a ruler to the backwall of the fabscan ( i used a paper one from IKEA ). Then activate the settings mode and read the last value you can read in the image. The default is 23.5 cm. The default value fits most of the FabScan setups. This value is used for tansforming image coordinates to world coordinates. 
 
 <img src="images/measure_dimension.png">
 
@@ -180,12 +167,9 @@ of the FabScan setups. This value is used for tansforming image coordinates to w
 
 **Laser**
 
-This section describes the laser position and laser stepper motor values. I mentioned position values in the section 
-before (Camera), have a look at the image. 
+This section describes the laser position and laser stepper motor values. I mentioned position values in the section before (Camera), have a look at the image. 
 
-The angle is set to the angle which was used in the last scan. The rotation_steps value should be used for a laser 
-angle change (not implemented yet).Steps defines how many steps the motor can do. In the default case the motor is 
-set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps. 
+The angle is set to the angle which was used in the last scan. The rotation_steps value should be used for a laser angle change (not implemented yet). Steps defines how many steps the motor can do. In the default case the motor is set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps. 
 
 ``` 
    "laser": {
@@ -220,11 +204,10 @@ In the default case the motor is set to 1/16 step mode. A motor with 200 steps p
 
 **Scanner**
 
-This section defines global scanner related values. Origin is defined as the green horizontal line in the settings
-preview window. It is a also here a good idea to keep that value untouched. Process number defines how many processes
-should be used for calculating the scan data. Due the Raspberry Pi2 serves 4 cores it is a good idea to keep this
-value. Increasing the proccess number does not mean inrceasing speed in all cases. 
-Meshlab is not supported in the curren verision of fabscan pi. So you can leave this value. 
+This section defines global scanner related values. Origin is defined as the green horizontal line in the settings preview window. It is a also here a good idea to keep that value untouched.
+
+Process number defines how many processes should be used for calculating the scan data. Due the Raspberry Pi2 and Raspberry Pi3 serves 4 cores it is a good idea to keep this value. Increasing the proccess number does not mean inrceasing speed in all cases. 
+Meshlab is not supported in the current version of fabscan pi. So you can leave this value. 
 
 ```
    "scanner": {
@@ -240,8 +223,7 @@ Meshlab is not supported in the curren verision of fabscan pi. So you can leave 
 ```
 
 
-For a first try the default values should be fine. But the values in your setup may be different. To be sure measure your
-setup and modify the values in your default.conf.json file if needed. 
+For a first try the default values should be fine. But the values in your setup may be different. To be sure measure your setup and modify the values in your default.conf.json file if needed. 
 
 Y values
 ![y values](images/fabscan_dimensions_3.jpg)
@@ -482,7 +464,6 @@ Now your FabScanPI is ready.
 
 <<<<<<< HEAD
 
-
 ------
 
 #### Presets<a name="presets"></a>
@@ -529,6 +510,7 @@ Click on the  arrows-and-circle symbol (5) to get access to the alignment menu.
 
 The preview in the lower left corner is showing the camera view completed with calibration bars. This preview must be used for aligning the camera after the assembly of the scanner. When the scan results are not flawless this menu can be used to check the correct adjustment.
 ![alignment_menu](images/Manual_8.jpg)
+
 
 
 
