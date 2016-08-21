@@ -8,10 +8,8 @@ from pykka import ThreadingActor
 import time
 import datetime
 import multiprocessing
-
 import logging
 
-from fabscan.util import FSUtil
 from fabscan.util.FSUtil import FSSystem
 from fabscan.file.FSPointCloud import FSPointCloud
 from fabscan.vision.FSImageProcessor import ImageProcessorInterface
@@ -263,14 +261,14 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
     def scan_next_texture_position(self):
         if not self._stop_scan:
-            if self.current_position < self._number_of_pictures:
+            if self.current_position <= self._number_of_pictures:
                 if self.current_position == 0:
                     self.init_texture_scan()
 
                 color_image = self.hardwareController.scan_at_position(self._resolution, color=True)
                 task = ImageTask(color_image, self._prefix, self.current_position, self._number_of_pictures, task_type="PROCESS_COLOR_IMAGE")
                 self.image_task_q.put(task, True)
-                self._logger.debug("Color Progress %i of %i : " % (self.current_position, self._number_of_pictures))
+                #self._logger.debug("Color Progress %i of %i : " % (self.current_position, self._number_of_pictures))
                 self.current_position += 1
                 self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
             else:
@@ -296,8 +294,9 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         # time.sleep(3)
 
         self.hardwareController.camera.device.objectExposure()
-        self.hardwareController.camera.device.flushStream()
         time.sleep(2)
+        self.hardwareController.camera.device.flushStream()
+        time.sleep(1)
 
         self._laser_angle = self.image_processor.calculate_laser_angle(self.hardwareController.camera.device.getFrame())
 
@@ -325,15 +324,16 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
     def scan_next_object_position(self):
         if not self._stop_scan:
-            if self.current_position < self._number_of_pictures:
+            if self.current_position <= self._number_of_pictures:
                 if self.current_position == 0:
                     self.init_object_scan()
 
                 laser_image = self.hardwareController.scan_at_position(self._resolution)
                 task = ImageTask(laser_image, self._prefix, self.current_position, self._number_of_pictures)
                 self.image_task_q.put(task)
-                self._logger.debug("Laser Progress: %i of %i at laser position %i" % (
-                self.current_position, self._number_of_pictures, self._current_laser_position))
+                #self._logger.debug("Laser Progress: %i of %i at laser position %i" % (
+                #   self.current_position, self._number_of_pictures, self._current_laser_position
+                # ))
                 self.current_position += 1
                 self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
 

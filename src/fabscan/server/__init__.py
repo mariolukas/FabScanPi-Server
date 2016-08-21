@@ -49,8 +49,15 @@ class FSServer(object):
 
     def restart_server(self):
         try:
-            FSSystem.run_command("nohup /etc/init.d/fabscanpi-server restart")
+            FSSystem.run_command("/etc/init.d/fabscanpi-server restart", blocking=True)
         except StandardError, e:
+            self._logger.error(e)
+
+    def update_server(self):
+         try:
+            FSSystem.run_command("apt-get update")
+            FSSystem.run_command("nohup apt-get -y --only-upgrade install fabscanpi-server")
+         except StandardError, e:
             self._logger.error(e)
 
 
@@ -84,6 +91,7 @@ class FSServer(object):
 
             if self.upgrade:
                 self._logger.info("Upgrading FabScanPi Server")
+                self.update_server()
                 self.restart = True
 
             if self.restart:

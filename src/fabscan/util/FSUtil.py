@@ -24,17 +24,22 @@ class FSSystem(object):
         self.config = config
 
     @staticmethod
-    def run_command(command):
-            process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
-            while True:
-                output = process.stdout.readline()
-                if output == '' and process.poll() is not None:
-                    break
+    def run_command(command, blocking=False):
+            if blocking:
+                process = subprocess.Popen(shlex.split(command), stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True)
+                output, _ = process.communicate()
                 if output:
-                    logging.getLogger(__name__).setLevel(logging.DEBUG)
-                    logging.getLogger(__name__).debug(output.strip())
-            rc = process.poll()
-            return rc
+                   logging.getLogger(__name__).debug(output.strip())
+            else:
+                process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
+                while True:
+                    output = process.stdout.readline()
+                    if output == '' and process.poll() is not None:
+                        break
+                    if output:
+                        logging.getLogger(__name__).debug(output.strip())
+                rc = process.poll()
+                return rc
 
     @staticmethod
     def isRaspberryPi(self):
