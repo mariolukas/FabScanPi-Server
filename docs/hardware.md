@@ -1,15 +1,18 @@
 #Bill of Materials
 - Raspberry Pi 2 or Raspberry Pi 3
-- Stepper Motor, NEMA 17 type, 1.8° step angle (200 steps/revolution)
-- Pololu Universal Aluminum Mounting Hub for 5mm Shaft
-- Motor driver ([Silent Step Stick](http://www.watterott.com/de/SilentStepStick) recommended)
-- 5V red line laser module
-- 9g Servo Motor (not supported by the software now)
+- [Stepper Motor, NEMA 17 type, 1.8° step angle (200 steps/revolution)](http://www.watterott.com/en/Stepper-Motor-Unipolar/Bipolar-200-Steps/Rev-42x48mm-4V-1200mA)
+- [Pololu Universal Aluminum Mounting Hub for 5mm Shaft](http://www.watterott.com/en/Pololu-Universal-Aluminum-Mounting-Hub-for-5mm-Shaft-M3-Holes-2-Pack)
+- Motor driver ([Silent Step Stick](http://www.watterott.com/en/SilentStepStick-with-Pins) recommended)
+- [5V red line laser module](http://www.watterott.com/en/5mW-Laser-Module-emitter-Red-Line)
+- [9g Servo Motor](http://www.watterott.com/en/Servo-HS-53) (not supported by the software now)
 - [FabScanPi HAT](http://www.watterott.com/en/RPi-FabScan-HAT) for Raspberry Pi
-- 12V to 5V switching regulator
+- [12V to 5V switching regulator](http://www.watterott.com/de/CUI-V7805-2000-StepDown-5V/2A)
+- [Raspberry Pi camera V2](http://www.watterott.com/en/Raspberry-Pi-Camera-v2)
+- [Raspberry Pi Camera Connection Cable - 50cm](http://www.watterott.com/en/Raspberry-Pi-Camera-Connection-Cable-50cm)
 - [FabScanPi Camera Mount](http://www.watterott.com/index.php?page=product&info=4930) with LED ring
 - [FaBScanPi Case](http://www.watterott.com/en/FabScan-Pi-Housing-Parts)
-
+- [Screw Set](http://www.watterott.com/en/FabScan-Pi-Screw-Set) or see the [Screws and Washers](#screws-and-washers) table
+- [1x 12V / 2A power supply](http://www.watterott.com/en/Power-Supply-12V-2A)
 
 #How to Assemble the Cabinet
 The laser cut files can be found at [https://github.com/mariolukas/FabScan-Case](https://github.com/mariolukas/FabScan-Case)
@@ -151,3 +154,26 @@ TODO
 
 #Additional Motors for the Lasers
 TODO
+
+#Screws and Washers
+
+Even if you use the srew set from Watterott, as given in the *BOM*, here is the the usage reference:
+
+**Screws**
+
+| Type | Length | Qty | Usage                   |
+|------|--------|-----|-------------------------|
+| M2   |     16 |   2 | Servo Hitec-HS53        |
+|      |        |   2 | Security Switch         |
+|      |        |   1 | 5mW line Laser red      |
+| M2.5 |     15 |   4 | RaspberryPi             |
+| M3   |     10 |   4 | Stepper motor           |
+|      |        |   4 | RPi-RingLight           |
+|      |        |   4 | Turn-table Mounting Hub |
+
+**Washers**
+
+| Type    | Heigth | Qty | Usage         |
+|---------|--------|-----|---------------|
+| 3.4/4.5 |      1 |   4 | Stepper motor |
+| 2.5/4.5 |      3 |   4 | RaspberryPi   |
