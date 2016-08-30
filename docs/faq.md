@@ -1,5 +1,3 @@
-# F.A.Q.
-
 #### [Software](#software)
 
 #### [Hardware](#hardware)
@@ -7,8 +5,6 @@
 #### [Scanning Issues](#scanningIssues)
 
 #### [Other](#other)
-
-
 
 ------
 
@@ -105,7 +101,7 @@ the normal cam. Therefore we recommend to use the normal camera modules.
 
 ------
 
-#### Scanning issues<a name="scanningIssues"></a>
+**Scanning issues**<a name="scanningIssues"></a>
 
 - ##### The turntable is jerking during the scan process what can I do?
 
