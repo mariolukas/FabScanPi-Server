@@ -1,10 +1,10 @@
-**[Software]**(#software)
+**[Software](#software)**
 
-**[Hardware]**(#hardware)
+**[Hardware](#hardware)**
 
-**[Scanning Issues]**(#scanningIssues)
+**[Scanning Issues](#scanningIssues)**
 
-**[Other]**(#other)
+**[Other](#other)**
 
 ------
 
