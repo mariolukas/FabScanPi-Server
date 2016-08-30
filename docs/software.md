@@ -462,14 +462,7 @@ FabScan Pi is tested on:
 
 Now your FabScanPI is ready.
 
-<<<<<<< HEAD
-
-------
-
-#### Presets<a name="presets"></a>
-=======
 **Presets<a name="presets"></a>**
->>>>>>> refs/remotes/mariolukas/master
 
 Note: The current settings are only persistent as long as the pi is up and running. The settings are saved with the scan data after a successful scan. They can be loaded to scan another object with the same settings. E.g. an object what consists of the same material, color etc. 
 
@@ -512,15 +505,7 @@ The preview in the lower left corner is showing the camera view completed with c
 ![alignment_menu](images/Manual_8.jpg)
 
 
-
-
-<<<<<<< HEAD
-------
-
-#### Perform a scan<a name="performAScan"></a>
-=======
 **Perform a scan<a name="performAScan"></a>**
->>>>>>> refs/remotes/mariolukas/master
 
 **Color Scan**<a name="colorScan"></a>
 
@@ -546,7 +531,6 @@ Note: If you do not have installed a light source you should perform a [monochro
 
 
 ![texture_capturing](images/Manual_TextureScan_2.jpg)
-
 
 
 The latest photo will be displayed during the capturing process.
@@ -721,8 +705,6 @@ Note: Before you can download a file it must be [loaded](#loadFiles) and display
 - A download message (depending on the used web-browser) will be displayed
 
   ​
-
-
 
 **Download a mesh-file**
 Note: If a mesh file is available a second slide for the mesh file will be displayed.
