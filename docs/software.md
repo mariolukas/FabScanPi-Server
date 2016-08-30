@@ -420,10 +420,7 @@ sudo /etc/init.d/networking restart
 ```
 
 
-<<<<<<< HEAD
 
-# User Manual
-=======
 # Software User Manual
 
 * [Getting Started](#gettingStarted)
@@ -435,7 +432,6 @@ sudo /etc/init.d/networking restart
 * [Generate Mesh](#generateMesh)
 
 * [File Operations](#fileOperations)
->>>>>>> refs/remotes/mariolukas/master
 
 ------
 
