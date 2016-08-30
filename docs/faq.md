@@ -1,18 +1,14 @@
-# F.A.Q.
+**[Software](#software)**
 
-#### [Software](#software)
+**[Hardware](#hardware)**
 
-#### [Hardware](#hardware)
+**[Scanning Issues](#scanningIssues)**
 
-#### [Scanning Issues](#scanningIssues)
-
-#### [Other](#other)
-
-
+**[Other](#other)**
 
 ------
 
-**Software**<a name="software"></a>
+#### Software<a name="software"></a>
 
 - What username and password do I need for login the FabScanPi?
 
@@ -20,7 +16,6 @@ The username / password is the same as in the standard raspbian configuration:
 
 Username: **pi**
 Password: **raspberry**
-
 
 
 
@@ -46,9 +41,9 @@ Note: Unit for all values is centimeters [cm].
 
 ------
 
-**Hardware**<a name="hardware"></a>
+#### Hardware<a name="hardware"></a>
 
-- ##### What power source(s) do I need to get my FabScanPi working?
+-  What power source(s) do I need to get my FabScanPi working?
 
 The FabScanPi will need 12V DC and 5V DC. There are different options to fulfil this requirement:
 
@@ -72,31 +67,31 @@ NOTE: For details and specifications please consult the hardware chapter.
 
 
 
-- ##### What is the rotating direction of the scan table?
+- What is the rotating direction of the scan table?
 
 It should move clockwise – if not please consult the hardware chapter of our documentation and check the connection of your stepper.
 
 
 
-- ##### What camera will work?
+- What camera will work?
 
 FabScan Pi can be built with both Raspberry Pi Camera Modules V 1.x or V 2.x.
 
 
 
-- ##### Is the LED-Ring / PCB-board with LEDs mandatory?
+- Is the LED-Ring / PCB-board with LEDs mandatory?
 
 No, you can start without the LEDs when you only need un-textured scans. To archive good quality texture scans we highly recommend the use of an LED light source.
 
 
 
-- ##### Which LED-ring is compatible?
+- Which LED-ring is compatible?
 
 Any ring using WS2812B LEDs (or compatible) will do.
 
 
 
-- ##### I have a Raspberry Cam Module with NoIR. Can I use it?
+- I have a Raspberry Cam Module with NoIR. Can I use it?
 
 There’s no advantage in using the NoIR cam. The algorithms for the laser detection are made for 
 the normal cam. Therefore we recommend to use the normal camera modules.
@@ -105,33 +100,33 @@ the normal cam. Therefore we recommend to use the normal camera modules.
 
 ------
 
-**Scanning issues**<a name="scanningIssues"></a>
+#### Scanning issues<a name="scanningIssues"></a>
 
-- ##### The turntable is jerking during the scan process what can I do?
+- The turntable is jerking during the scan process what can I do?
 
 This behavior is quite normal because every time a new image has been shot the table just moves to the next position. If the table is turning smoothly (clockwise) during scan preview everything should be fine.
 
 
 
-- ##### My scan is cut-off on top and / or bottom. What can I do?
+- My scan is cut-off on top and / or bottom. What can I do?
 
 Try to optimize your scan results by changing the “dimension” value.
 
 
 
-- ##### The texture scan is mirror-inverted.
+- The texture scan is mirror-inverted.
 
 Check the rotating direction of your turntable (and the connection of the stepper motor). Check and adjust your config-settings for the “dimension”-value.
 
 
 
-- ##### The laser cannot be detected.
+- The laser cannot be detected.
 
 Make sure your laser adjustment is correct. The laser must pass the scanning table right through the center. If no object is on the table the laser should be visible in the preview image (on the rear wall close to the left border of the image).
 
 
 
-- ##### The scans don’t have the same shape as the original.
+- The scans don’t have the same shape as the original.
 
 Check if your laser is aligned in vertical direction.
 
@@ -139,6 +134,6 @@ Check if your laser is aligned in vertical direction.
 
 ------
 
-**Other**<a name="other"></a>
+#### Other<a name="other"></a>
 
 tbd.

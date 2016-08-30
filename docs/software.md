@@ -8,7 +8,7 @@ firmware version after the server is started.
 
 The fastest way to start working with FabScan PI is to use the FabScan PI Raspbian Image. 
 Dowload the image and install it to a SD-Card. After the image is flashed and the Raspberry
-Pi is up and running follow the instructions in the [Usage section](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage)
+Pi is up and runnig follow the instructions in the [Usage section](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage)
 
 Latest image release: 
 
@@ -58,7 +58,10 @@ Read [Usage](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.m
 
 Dependencies
 
-FabScan PI software depends on some python libraries. You need to install pyserial, pykka, opencv with tbb support and picamera. The easiest way to install all dependencies is to use debians package manager apt. Some of the packages, like opencv with tbb support and libtbb are not provided by the official raspbian mirrors. You need to add the fabscan repository to your apt source list. 
+FabScan PI software depends on some python libraries. You need to install pyserial, pykka, opencv with tbb support 
+and picamera. The easiest way to install all dependencies is to use debians package manager apt. Some of the packages, 
+like opencv with tbb support and libtbb are not provided by the official raspbian mirrors. You need to add the
+fabscan repository to your apt source list. 
 
 Build Debian package
 Install dependencies
@@ -110,12 +113,14 @@ you don't know what you are doing, it is a good decision to keep this section un
 **Serial**
 
 In this section you can set your port. By default this value is not set, because the
-FabScanPi Server software autodetects the correct port. Some Arduino and compatible boards differ in the port name. The port can be set if you are not using an Arduino UNO or compatible Board. 
+FabScanPi Server software autodetcts the correct port. Some Arduino and compatible boards differ 
+in the port name. The port can be set if you are not using an Arduino UNO or compatible Board. 
 In case that your Arduino is not detected and you can see an error in the /var/log/fabscanpi/fabscan.log
 you should add the "port" attribute to your config.
 
 The autoflash option is True by default, that means that the firmware is flashed automatically to 
-the Arduino or FabScanPi HAT. If you want to use a custom board e.g. sanguinololu, you can set this to False and flash the Firmware manually to your board. 
+the Arduino or FabScanPi HAT. If you want to use a custom board e.g. sanguinololu, you can set this
+to False and flash the Firmware manually to your board. 
 
 ```
    "serial" : {
@@ -128,17 +133,25 @@ the Arduino or FabScanPi HAT. If you want to use a custom board e.g. sanguinolol
 
 **Camera**
 
-In this section some camera values are set. The type can be set to PICAM which is default value. There is also an experimental mode for a C270 webcam. But this mode is not further developed. I used it in early versions of fabscanpi. 
+In this section some camera values are set. The type can be set to PICAM which is default value. There is 
+also an experimental mode for a C270 webcam. But this mode is not further developed. I used it in early 
+versions of fabscanpi. 
 
-The device is not used for the PICAM. Only if a webcam is used, you have to set the device to the count number of your webcam if you have one or more cameras connected to your pi.
+The device is not used for the PICAM. Only if a webcam is used, you have to set the device to the count number
+of your webcam if you have one or more cameras connected to your pi.
 
 Preview Resolution is the resolution value for the settings window. 
-Resolution is the resolution for the picamera python module. You can have a look to the documentation of picamera. If you set this to other values please be sure what you are doing, not all resolutions are supported by the picam. Some might lead to slower image capturing. 
+Resolution is the resolution for the picamera python module. You can have a look to the documentation of 
+picamera. If you set this to other values please be sure what you are doing, not all resolutions are supported
+by the picam. Some might lead to slower image capturing. 
 
 The position values are used to define where the camera is located in the case. All values are in cm. 
 Thre is an image later in this documentation which explains all the dimension related meassures. 
 
-Frame dimension is what your camera sees in the case. An easy way to validate this value is to put a ruler to the backwall of the fabscan ( i used a paper one from IKEA ). Then activate the settings mode and read the last value you can read in the image. The default is 23.5 cm. The default value fits most of the FabScan setups. This value is used for tansforming image coordinates to world coordinates. 
+Frame dimension is what your camera sees in the case. An easy way to validate this value is to put a 
+ruler to the backwall of the fabscan ( i used a paper one from IKEA ). Then activate the settings mode
+and read the last value you can read in the image. The default is 23.5 cm. The default value fits most
+of the FabScan setups. This value is used for tansforming image coordinates to world coordinates. 
 
 <img src="images/measure_dimension.png">
 
@@ -167,9 +180,12 @@ Frame dimension is what your camera sees in the case. An easy way to validate th
 
 **Laser**
 
-This section describes the laser position and laser stepper motor values. I mentioned position values in the section before (Camera), have a look at the image. 
+This section describes the laser position and laser stepper motor values. I mentioned position values in the section 
+before (Camera), have a look at the image. 
 
-The angle is set to the angle which was used in the last scan. The rotation_steps value should be used for a laser angle change (not implemented yet). Steps defines how many steps the motor can do. In the default case the motor is set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps. 
+The angle is set to the angle which was used in the last scan. The rotation_steps value should be used for a laser 
+angle change (not implemented yet).Steps defines how many steps the motor can do. In the default case the motor is 
+set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps. 
 
 ``` 
    "laser": {
@@ -204,10 +220,11 @@ In the default case the motor is set to 1/16 step mode. A motor with 200 steps p
 
 **Scanner**
 
-This section defines global scanner related values. Origin is defined as the green horizontal line in the settings preview window. It is a also here a good idea to keep that value untouched.
-
-Process number defines how many processes should be used for calculating the scan data. Due the Raspberry Pi2 and Raspberry Pi3 serves 4 cores it is a good idea to keep this value. Increasing the proccess number does not mean inrceasing speed in all cases. 
-Meshlab is not supported in the current version of fabscan pi. So you can leave this value. 
+This section defines global scanner related values. Origin is defined as the green horizontal line in the settings
+preview window. It is a also here a good idea to keep that value untouched. Process number defines how many processes
+should be used for calculating the scan data. Due the Raspberry Pi2 serves 4 cores it is a good idea to keep this
+value. Increasing the proccess number does not mean inrceasing speed in all cases. 
+Meshlab is not supported in the curren verision of fabscan pi. So you can leave this value. 
 
 ```
    "scanner": {
@@ -223,7 +240,8 @@ Meshlab is not supported in the current version of fabscan pi. So you can leave 
 ```
 
 
-For a first try the default values should be fine. But the values in your setup may be different. To be sure measure your setup and modify the values in your default.conf.json file if needed. 
+For a first try the default values should be fine. But the values in your setup may be different. To be sure measure your
+setup and modify the values in your default.conf.json file if needed. 
 
 Y values
 ![y values](images/fabscan_dimensions_3.jpg)
@@ -420,10 +438,7 @@ sudo /etc/init.d/networking restart
 ```
 
 
-<<<<<<< HEAD
 
-# User Manual
-=======
 # Software User Manual
 
 * [Getting Started](#gettingStarted)
@@ -435,9 +450,7 @@ sudo /etc/init.d/networking restart
 * [Generate Mesh](#generateMesh)
 
 * [File Operations](#fileOperations)
->>>>>>> refs/remotes/mariolukas/master
 
-------
 
 FabScan Pi is tested on: 
 
@@ -462,14 +475,9 @@ FabScan Pi is tested on:
 
 Now your FabScanPI is ready.
 
-<<<<<<< HEAD
-
 ------
 
-#### Presets<a name="presets"></a>
-=======
 **Presets<a name="presets"></a>**
->>>>>>> refs/remotes/mariolukas/master
 
 Note: The current settings are only persistent as long as the pi is up and running. The settings are saved with the scan data after a successful scan. They can be loaded to scan another object with the same settings. E.g. an object what consists of the same material, color etc. 
 
@@ -512,15 +520,7 @@ The preview in the lower left corner is showing the camera view completed with c
 ![alignment_menu](images/Manual_8.jpg)
 
 
-
-
-<<<<<<< HEAD
-------
-
-#### Perform a scan<a name="performAScan"></a>
-=======
 **Perform a scan<a name="performAScan"></a>**
->>>>>>> refs/remotes/mariolukas/master
 
 **Color Scan**<a name="colorScan"></a>
 
@@ -548,7 +548,6 @@ Note: If you do not have installed a light source you should perform a [monochro
 ![texture_capturing](images/Manual_TextureScan_2.jpg)
 
 
-
 The latest photo will be displayed during the capturing process.
 
 ![capturing_starts](images/Manual_TextureScan_3.jpg)
@@ -566,9 +565,7 @@ A notification will be displayed when the scan is completed / file is saved.
 
 - You can now check, download or delete the scan-data.
 
-  ​
-
-
+  
 
 **Monochrome scan**<a name="monochromeScan"></a>
 
@@ -601,11 +598,6 @@ When the scan is completed / file is saved a notification will be displayed.
 
 - You can now check, download or delete the scan-data.
 
-  ​
-
-
-------
-
 ** Generate Mesh<a name="generateMesh"></a>
 
 The FabScanPi software includes a feature to convert a scan into a mesh-file. This mesh-file can be used for 3D-printing.
@@ -614,17 +606,17 @@ Note: To generate a mesh-file a scan must have been performed. It is also possib
 - Click on the options icon to open the options menu.
   ![open_options_menu](images/Manual_CreateMash_1.jpg)
 
-  ​
+
 
 - The options menu will open and you can see the index card of the loaded file.
   ![open_options_menu](images/Manual_CreateMash_1.jpg)
 
-  ​
+
 
 - Click on the magic wand icon to open the menu for the MeshLab filter.
   ![open_options_menu](images/Manual_CreateMash_3.jpg)
 
-  ​
+
 
 - Now select one of the Meshlab filters and the file format for the future mesh file.
 
@@ -649,14 +641,11 @@ When the mesh-file is available a notification is displayed.
 - Click on the mesh-file index card.
   ![open_options_menu](images/Manual_CreateMash_7.jpg)
 
-  ​
+
 
 - You can now click on the download-icon to download the mesh-file to your computer or click on the trashbasket icon to delete the mesh-file.
   ![open_options_menu](images/Manual_CreateMash_8.jpg)
 
-  ​
-
-------
 
 ** File Operations<a name="fileOperations"></a>
 
@@ -702,10 +691,7 @@ By selecting the mesh slide and clicking on the wastebasket-icon the mesh-file c
 - Download Files<a name="downloadFiles"></a>
   It is possible to download generated files (either scan- or mesh-files) from the FabScanPi via the web-based user interface. 
 
-  ​
-
-
-
+ 
 **Download a scan-file**
 Note: Before you can download a file it must be [loaded](#loadFiles) and displayed on the virtual turntable in the main menu.
 
@@ -719,10 +705,6 @@ Note: Before you can download a file it must be [loaded](#loadFiles) and display
 - Click on the download-icon to download the mesh-file
 
 - A download message (depending on the used web-browser) will be displayed
-
-  ​
-
-
 
 **Download a mesh-file**
 Note: If a mesh file is available a second slide for the mesh file will be displayed.

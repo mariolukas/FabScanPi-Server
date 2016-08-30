@@ -14,14 +14,14 @@ from fabscan.util.FSInject import inject
 
 class FSPoint():
     def __init__(self, x=0.0, y=0.0, z=0.0):
-        self.x = x
-        self.y = y
-        self.z = z
+        self.x = float(x)
+        self.y = float(y)
+        self.z = float(z)
 
 class FSLine():
     def __init__(self, a=0.0, b=0.0):
-        self.a = a
-        self.b = b
+        self.a = float(a)
+        self.b = float(b)
 
 class ImageProcessorInterface(object):
     def __init__(self, config, settings):
@@ -35,13 +35,10 @@ class ImageProcessorInterface(object):
 class ImageProcessor(ImageProcessorInterface):
     def __init__(self, config, settings):
 
-        self.settings = settings.instance
-        self.config = config.instance
-        self._logger =  logging.getLogger(__name__)
+        self.settings = settings
+        self.config = config
+        self._logger = logging.getLogger(__name__)
 
-
-    def test(self):
-        self._logger.debug("ImageProcessor Called")
 
     def get_texture_stream_frame(self,cam_image):
         return cam_image
@@ -118,8 +115,6 @@ class ImageProcessor(ImageProcessorInterface):
 
     def detect_laser(self, image):
 
-
-
         x_center = image.shape[1] * self.settings.center
         x_center_delta = image.shape[1] * 0.5 - x_center
 
@@ -134,7 +129,9 @@ class ImageProcessor(ImageProcessorInterface):
                 x = x[:,0]
                 new_x = []
 
-                for i in xrange(1,int(image.shape[0]*self.config.laser.detection_limit)):
+                self._logger.debug(image.shape[0]*self.config.laser.detection_limit)
+                detection_pixel_start_limit = int(image.shape[0]*self.config.laser.detection_limit)
+                for i in xrange(detection_pixel_start_limit, detection_pixel_start_limit+20):
                     new_x.append(x[i])
 
 
@@ -201,7 +198,7 @@ class ImageProcessor(ImageProcessorInterface):
             the axis of rotation is x=0.
         '''
         #grey = self.trheshold_image(image)
-
+        #self._logger.debug("Laser Position Value "+ str(self.config.laser.position.x))
         grey = self.get_grey(image)
         threshold = cv2.cvtColor(grey,cv2.COLOR_GRAY2BGR)
 
@@ -282,14 +279,14 @@ class ImageProcessor(ImageProcessorInterface):
             point.x = intersection.x
             point.z = intersection.z
 
-            point.y -= self.config.camera.position.y
-            point.y *= (self.config.camera.position.z - point.z)/self.config.camera.position.z
-            point.y += self.config.camera.position.y
+            point.y -= float(self.config.camera.position.y)
+            point.y *= (float(self.config.camera.position.z) - point.z)/float(self.config.camera.position.z)
+            point.y += float(self.config.camera.position.y)
 
-            point.z -= self.config.turntable.position.z
+            point.z -= float(self.config.turntable.position.z)
             alphaDetla = angle
             alphaOld = float(math.atan(point.z/point.x))
-            alphaNew = alphaOld+alphaDetla*(math.pi/180.0)
+            alphaNew = float(alphaOld+alphaDetla*(math.pi/180.0))
             hypotenuse = float(math.sqrt(point.x*point.x + point.z*point.z))
 
             if point.z < 0 and point.x < 0:
@@ -359,7 +356,3 @@ class ImageProcessor(ImageProcessorInterface):
         point.z = 0.0
 
         return point
-
-
-
-

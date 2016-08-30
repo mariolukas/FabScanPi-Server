@@ -3,25 +3,23 @@ import logging
 import os
 
 from fabscan.util.FSUtil import FSSystem
-from fabscan.FSEvents import FSEventManager, FSEvents
+from fabscan.FSEvents import FSEventManagerInterface, FSEvents
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
-from fabscan.FSEvents import FSEventManagerSingleton
 from fabscan.util.FSInject import inject
 
 @inject(
     config=ConfigInterface,
     settings=SettingsInterface,
-    eventmanager=FSEventManagerSingleton
+    eventmanager=FSEventManagerInterface
 )
 class FSMeshlabTask(threading.Thread):
         def __init__(self, id, filter, format, eventmanager, config, settings):
             threading.Thread.__init__(self)
-            self.eventManager = eventmanager
-            self.settings = settings.instance
-            self.config = config.instance
-            self._logger =  logging.getLogger(__name__)
-
+            self.eventManager = eventmanager.instance
+            self.settings = settings
+            self.config = config
+            self._logger = logging.getLogger(__name__)
 
             self.scan_id = id
             self.filter = filter

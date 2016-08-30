@@ -12,6 +12,7 @@ src/fabscan/FSVersion.py
 # Distribution / packaging
 .Python
 env/
+site/
 sites/
 build/
 develop-eggs/

@@ -8,25 +8,38 @@ import logging
 import glob
 
 from collections import namedtuple
-from fabscan.FSConfig import ConfigSingleton
+from fabscan.FSConfig import ConfigInterface
+from fabscan.util.FSInject import inject
 
+class FSSystemInterface(object):
+    def __init__(self, config):
+        pass
+
+@inject(
+    config=ConfigInterface
+)
 class FSSystem(object):
-    def __init__(self):
+    def __init__(self, config):
         self._logger =  logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
+        self.config = config
 
     @staticmethod
-    def run_command(command):
-            process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
-            while True:
-                output = process.stdout.readline()
-                if output == '' and process.poll() is not None:
-                    break
+    def run_command(command, blocking=False):
+            if blocking:
+                process = subprocess.Popen(shlex.split(command), stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True)
+                output, _ = process.communicate()
                 if output:
-                    logging.getLogger(__name__).setLevel(logging.DEBUG)
-                    logging.getLogger(__name__).debug(output.strip())
-            rc = process.poll()
-            return rc
+                   logging.getLogger(__name__).debug(output.strip())
+            else:
+                process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
+                while True:
+                    output = process.stdout.readline()
+                    if output == '' and process.poll() is not None:
+                        break
+                    if output:
+                        logging.getLogger(__name__).debug(output.strip())
+                rc = process.poll()
+                return rc
 
     @staticmethod
     def isRaspberryPi(self):
@@ -34,6 +47,28 @@ class FSSystem(object):
             return True
         else:
             return False
+
+    def delete_folder(self,folder):
+        if os.path.isdir(folder):
+            shutil.rmtree(folder, ignore_errors=True)
+
+
+    def delete_image_folders(self,scan_id):
+        folder = self.config.folders.scans+scan_id+"/color_raw/"
+        self.delete_folder(folder)
+
+        folder = self.config.folders.scans+scan_id+"/laser_raw/"
+        self.delete_folder(folder)
+
+
+    def delete_scan(self, scan_id, ignore_errors=True):
+
+        #basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        folder = self.config.folders.scans+scan_id+"/"
+
+        mask = self.config.folders.scans+scan_id+"/"'*.[pso][ltb][lyj]'
+        number_of_files = len(glob.glob(mask))
+
 
 def _json_object_hook(d):
     return namedtuple('X', d.keys())(*d.values())
@@ -48,28 +83,6 @@ def new_message():
 
         return message
 
-def delete_folder(folder):
-    if os.path.isdir(folder):
-        shutil.rmtree(folder, ignore_errors=True)
-
-
-def delete_image_folders(scan_id):
-    folder =  ConfigSingleton().instance.folders.scans+scan_id+"/color_raw/"
-    delete_folder(folder)
-
-    folder =  ConfigSingleton().instance.folders.scans+scan_id+"/laser_raw/"
-    delete_folder(folder)
-
-
-def delete_scan(scan_id,ignore_errors=True):
-
-
-
-    #basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    folder =  ConfigSingleton().instance.folders.scans+scan_id+"/"
-
-    mask = ConfigSingleton().instance.folders.scans+scan_id+"/"'*.[pso][ltb][lyj]'
-    number_of_files = len(glob.glob(mask))
 
 
     #if os.path.isdir(folder):

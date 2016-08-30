@@ -19,7 +19,7 @@ from fabscan.FSConfig import ConfigInterface
 class FSSerialCom():
     def __init__(self, config):
 
-        self.config = config.instance
+        self.config = config
 
         self._logger =  logging.getLogger(__name__)
 

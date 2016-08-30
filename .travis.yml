@@ -15,6 +15,7 @@ after_success:
 - cd tmp
 - git clone -b gh-pages https://github.com/mariolukas/FabScanPi-Server.git
 - cd FabScanPi-Server
+- ls -al
 - git config --global user.email "dev@fabscan.org"
 - git config --global user.name "Travis CI"
 - git config credential.helper "store --file=.git/credentials"
