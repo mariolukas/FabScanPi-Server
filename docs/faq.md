@@ -12,7 +12,7 @@
 
 ------
 
-**Software**<a name="software"></a>
+#### Software<a name="software"></a>
 
 - What username and password do I need for login the FabScanPi?
 
@@ -46,7 +46,7 @@ Note: Unit for all values is centimeters [cm].
 
 ------
 
-**Hardware**<a name="hardware"></a>
+#### Hardware<a name="hardware"></a>
 
 - ##### What power source(s) do I need to get my FabScanPi working?
 
@@ -105,7 +105,7 @@ the normal cam. Therefore we recommend to use the normal camera modules.
 
 ------
 
-**Scanning issues**<a name="scanningIssues"></a>
+#### Scanning issues<a name="scanningIssues"></a>
 
 - ##### The turntable is jerking during the scan process what can I do?
 
@@ -139,6 +139,6 @@ Check if your laser is aligned in vertical direction.
 
 ------
 
-**Other**<a name="other"></a>
+#### Other<a name="other"></a>
 
 tbd.
