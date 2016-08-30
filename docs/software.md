@@ -451,7 +451,6 @@ sudo /etc/init.d/networking restart
 
 * [File Operations](#fileOperations)
 
-------
 
 FabScan Pi is tested on: 
 
@@ -475,7 +474,6 @@ FabScan Pi is tested on:
   ![main_menu](images/Manual_1.jpg)
 
 Now your FabScanPI is ready.
-
 
 ------
 
@@ -522,8 +520,6 @@ The preview in the lower left corner is showing the camera view completed with c
 ![alignment_menu](images/Manual_8.jpg)
 
 
-------
-
 **Perform a scan<a name="performAScan"></a>**
 
 **Color Scan**<a name="colorScan"></a>
@@ -569,9 +565,7 @@ A notification will be displayed when the scan is completed / file is saved.
 
 - You can now check, download or delete the scan-data.
 
-  ​
-
-
+  
 
 **Monochrome scan**<a name="monochromeScan"></a>
 
@@ -604,11 +598,6 @@ When the scan is completed / file is saved a notification will be displayed.
 
 - You can now check, download or delete the scan-data.
 
-  ​
-
-
-------
-
 ** Generate Mesh<a name="generateMesh"></a>
 
 The FabScanPi software includes a feature to convert a scan into a mesh-file. This mesh-file can be used for 3D-printing.
@@ -617,17 +606,17 @@ Note: To generate a mesh-file a scan must have been performed. It is also possib
 - Click on the options icon to open the options menu.
   ![open_options_menu](images/Manual_CreateMash_1.jpg)
 
-  ​
+
 
 - The options menu will open and you can see the index card of the loaded file.
   ![open_options_menu](images/Manual_CreateMash_1.jpg)
 
-  ​
+
 
 - Click on the magic wand icon to open the menu for the MeshLab filter.
   ![open_options_menu](images/Manual_CreateMash_3.jpg)
 
-  ​
+
 
 - Now select one of the Meshlab filters and the file format for the future mesh file.
 
@@ -652,14 +641,11 @@ When the mesh-file is available a notification is displayed.
 - Click on the mesh-file index card.
   ![open_options_menu](images/Manual_CreateMash_7.jpg)
 
-  ​
+
 
 - You can now click on the download-icon to download the mesh-file to your computer or click on the trashbasket icon to delete the mesh-file.
   ![open_options_menu](images/Manual_CreateMash_8.jpg)
 
-  ​
-
-------
 
 ** File Operations<a name="fileOperations"></a>
 
@@ -705,10 +691,7 @@ By selecting the mesh slide and clicking on the wastebasket-icon the mesh-file c
 - Download Files<a name="downloadFiles"></a>
   It is possible to download generated files (either scan- or mesh-files) from the FabScanPi via the web-based user interface. 
 
-  ​
-
-
-
+ 
 **Download a scan-file**
 Note: Before you can download a file it must be [loaded](#loadFiles) and displayed on the virtual turntable in the main menu.
 
@@ -722,8 +705,6 @@ Note: Before you can download a file it must be [loaded](#loadFiles) and display
 - Click on the download-icon to download the mesh-file
 
 - A download message (depending on the used web-browser) will be displayed
-
-  ​
 
 **Download a mesh-file**
 Note: If a mesh file is available a second slide for the mesh file will be displayed.

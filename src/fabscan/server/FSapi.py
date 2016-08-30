@@ -22,8 +22,8 @@ from fabscan.util.FSInject import inject
 class FSRest():
     def __init__(self, config):
 
-        self.config = config.instance
-        self._logger =  logging.getLogger(__name__)
+        self.config = config
+        self._logger = logging.getLogger(__name__)
 
     def call(self,action, path, headers, data=None):
 
@@ -127,7 +127,7 @@ class FSRest():
     def get_list_of_scans(self, headers):
         basedir = self.config.folders.scans
 
-        subdirectories = sorted(os.listdir(str(basedir)))
+        subdirectories = sorted(os.listdir(str(basedir)),reverse=True)
         response = dict()
         response['scans'] = []
 
@@ -225,6 +225,6 @@ class FSRest():
         response = dict()
         response['preview_image'] = preview_image
         response['thumbnail_image'] = thumbnail_image
-        response['response'] = {'PREVIEW_IMAGE_SAVED'}
+        response['response'] = "PREVIEW_IMAGE_SAVED"
 
         return response

@@ -6,13 +6,13 @@ __email__ = "info@mariolukas.de"
 
 STEPS_PER_ROTATION = 3200
 from fabscan.util.FSInject import inject
-from fabscan.FSConfig import Config
+from fabscan.FSConfig import ConfigInterface
 
 @inject(
-    config=Config
+    config=ConfigInterface
 )
 class Turntable(object):
-    def __init__(self, serial_object,config):
+    def __init__(self, serial_object, config):
         self.config=config
         self.serial_connection = serial_object
         # Number of steps for the turntable to do a full rotation

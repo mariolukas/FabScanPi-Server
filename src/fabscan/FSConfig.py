@@ -10,12 +10,12 @@ from fabscan.util.FSInject import singleton
 
 
 class ConfigInterface(object):
-    def __init__(self, config=os.path.dirname(__file__)+"/config/default.config.json", first=True):
+    def __init__(self, config, first=True):
         pass
 
 
 class Config(ConfigInterface):
-    def __init__(self, config=os.path.dirname(__file__)+"/config/default.config.json",first=True):
+    def __init__(self, config, first=True):
 
         if first:
             with open(config) as file:
@@ -42,6 +42,6 @@ class Config(ConfigInterface):
     instance=Config
 )
 class ConfigSingleton(Config):
-    def __init__(self, config, instance):
-        super(Config, self).__init__(self, config)
+    def __init__(self, config,instance, first=True ):
+        super(Config, self).__init__(self, config, first)
         self.instance = instance

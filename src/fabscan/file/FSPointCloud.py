@@ -18,7 +18,7 @@ class FSPointCloud():
         self.file_name = None
         self._dir_name = None
         self.color = color
-        self.config = config.instance
+        self.config = config
 
     def append_point(self, points):
         self.points.append(points)

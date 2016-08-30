@@ -36,8 +36,8 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     """
     def __init__(self, config, settings, imageprocessor):
 
-        self.config = config.instance
-        self.settings = settings.instance
+        self.config = config
+        self.settings = settings
 
         self._logger = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.camera = FSCamera()
         self.serial_connection = FSSerialCom()
 
-        self.turntable = Turntable(self.serial_connection)
+        self.turntable = Turntable(serial_object=self.serial_connection)
 
         self.laser = Laser(self.serial_connection)
         self.led = Led(self.serial_connection)

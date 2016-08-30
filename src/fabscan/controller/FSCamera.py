@@ -34,7 +34,7 @@ class FSCamera():
     def __init__(self, config):
 
         self.camera_buffer = FSRingBuffer(10)
-        config = config.instance
+        config = config
 
         if config.camera.type  == 'PICAM':
             self.device = PiCam(self.camera_buffer)
@@ -168,8 +168,8 @@ class PiCam(threading.Thread):
     camera = None
     def __init__(self, cambuffer, config, settings):
         threading.Thread.__init__(self)
-        self.config = config.instance
-        self.settings = settings.instance
+        self.config = config
+        self.settings = settings
         self.start()
         self.isRecording = True
         self.timestamp = int(round(time.time() * 1000))
