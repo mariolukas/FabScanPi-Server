@@ -10,7 +10,7 @@ import FSHttpRequestHandler
 from SocketServer import ThreadingMixIn
 from SocketServer import TCPServer
 from BaseHTTPServer import  HTTPServer
-from fabscan.FSScanProcessor import FSScanProcessorInterface
+from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
 from fabscan.FSConfig import ConfigSingleton, ConfigInterface
 from fabscan.util.FSInject import inject
 

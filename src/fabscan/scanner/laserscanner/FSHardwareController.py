@@ -4,25 +4,21 @@ __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
-from FSLaser import Laser
-from FSTurntable import Turntable
-from FSLed import Led
-import time
 import logging
+import time
 
-from fabscan.controller.FSCamera import FSCamera
-from fabscan.controller.FSSerial import FSSerialCom
-
-
+from FSLaser import Laser
+from FSLed import Led
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
-from fabscan.vision.FSImageProcessor import ImageProcessorInterface
-from fabscan.util.FSInject import singleton, inject
+from fabscan.util.FSInject import singleton
 
-class FSHardwareControllerInterface(object):
+from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
+from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 
-    def __init__(self, config, settings, imageprocessor):
-        pass
+from fabscan.scanner.laserscanner.FSTurntable import Turntable
+from fabscan.scanner.laserscanner.FSCamera import FSCamera
+from fabscan.scanner.laserscanner.FSSerial import FSSerialCom
 
 @singleton(
     config=ConfigInterface,

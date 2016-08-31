@@ -10,37 +10,22 @@ import datetime
 import multiprocessing
 import logging
 
-from fabscan.util.FSUtil import FSSystem
-from fabscan.file.FSPointCloud import FSPointCloud
-from fabscan.vision.FSImageProcessor import ImageProcessorInterface
-from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
-from fabscan.vision.FSImageTask import ImageTask
 
-from fabscan.vision.FSImageWorker import FSImageWorkerPool
-from fabscan.controller import FSHardwareControllerSingleton, FSHardwareControllerInterface
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
+
+from fabscan.util.FSUtil import FSSystem
+from fabscan.file.FSPointCloud import FSPointCloud
+from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
+from fabscan.vision.FSImageTask import ImageTask
+from fabscan.vision.FSImageWorker import FSImageWorkerPool
 from fabscan.util.FSInject import inject, singleton
 
+from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
+from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
+from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
+from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand
 
-class FSScanProcessorCommand(object):
-    START = "START"
-    STOP = "STOP"
-    SETTINGS_MODE_OFF = "SETTINGS_MODE_OFF"
-    SETTINGS_MODE_ON = "SETTINGS_MODE_ON"
-    NOTIFY_HARDWARE_STATE = "NOTIFY_HARDWARE_STATE"
-    UPDATE_SETTINGS = "UPDATE_SETTINGS"
-    _SCAN_NEXT_TEXTURE_POSITION = "SCAN_NEXT_TEXTURE_POSITION"
-    _SCAN_NEXT_OBJECT_POSITION = "SCAN_NEXT_OBJECT_POSITION"
-    GET_HARDWARE_INFO = "GET_HARDWARE_INFO"
-    GET_CALIBRATION_STREAM = "GET_CALIBRATION_STREAM"
-    GET_LASER_STREAM = "GET_LASER_STREAM"
-    GET_TEXTURE_STREAM = "GET_TEXTURE_STREAM"
-
-class FSScanProcessorInterface(ThreadingActor):
-    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
-        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
-        pass
 
 @singleton(
     config=ConfigInterface,

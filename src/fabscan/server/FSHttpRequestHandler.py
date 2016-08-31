@@ -16,7 +16,7 @@ from SimpleHTTPServer import SimpleHTTPRequestHandler
 
 from fabscan.server.FSapi import FSRest
 from fabscan.FSEvents import FSEvents
-from fabscan.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorSingleton
+from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand
 
 # parameter is already a config instance
 def CreateRequestHandler(config, scanprocessor):

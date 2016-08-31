@@ -13,7 +13,7 @@ from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManagerInterface, FSEvents
 from fabscan.vision.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import SettingsInterface
-from fabscan.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
+from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
 from fabscan.util.FSInject import inject, singleton
 from fabscan.util.FSUpdate import upgrade_is_available, get_latest_version_tag
 
@@ -101,20 +101,23 @@ class FSScanner(threading.Thread):
 
             self.set_state(FSState.IDLE)
 
+        # Scan is complete
         elif command == FSCommand.COMPLETE:
             self.set_state(FSState.IDLE)
             self._logger.info("Scan complete")
 
+        # Internal error occured
         elif command == FSCommand.SCANNER_ERROR:
             self._logger.info("Internal Scanner Error.")
             self.set_state(FSState.SETTINGS)
 
+        # Meshing
         elif command == FSCommand.MESHING:
             meshlab_task = FSMeshlabTask(event.scan_id, event.filter, event.format)
             meshlab_task.start()
 
 
-
+    # new client conneted
     def on_client_connected(self, eventManager, event):
 
         try:

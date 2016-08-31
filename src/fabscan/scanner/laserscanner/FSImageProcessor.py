@@ -11,6 +11,7 @@ import cv2
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.util.FSInject import inject
+from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 
 class FSPoint():
     def __init__(self, x=0.0, y=0.0, z=0.0):
@@ -22,10 +23,6 @@ class FSLine():
     def __init__(self, a=0.0, b=0.0):
         self.a = float(a)
         self.b = float(b)
-
-class ImageProcessorInterface(object):
-    def __init__(self, config, settings):
-        pass
 
 
 @inject(

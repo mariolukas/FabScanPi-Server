@@ -8,7 +8,7 @@ import time
 import logging
 import sys
 import os
-import threading
+
 from WebServer import FSWebServer
 from fabscan.FSVersion import __version__
 from fabscan.util.FSInject import injector
@@ -18,9 +18,9 @@ from fabscan.FSScanner import FSScanner, FSCommand
 from fabscan.FSEvents import FSEventManagerSingleton, FSEventManagerInterface, FSEvents
 from fabscan.FSConfig import ConfigInterface, ConfigSingleton, Config
 from fabscan.FSSettings import SettingsInterface, SettingsSingleton, Settings
-from fabscan.FSScanProcessor import FSScanProcessorInterface, FSScanProcessorSingleton
-from fabscan.controller import FSHardwareControllerSingleton, FSHardwareControllerInterface
-from fabscan.vision.FSImageProcessor import ImageProcessor, ImageProcessorInterface
+from fabscan.scanner.interfaces import FSScannerFactory
+
+
 
 
 class FSServer(object):
@@ -32,8 +32,6 @@ class FSServer(object):
         self.restart = False
         self.upgrade = False
         self._logger = logging.getLogger(__name__)
-
-        self._logger.debug(self.config_file)
 
     def on_server_command(self, mgr, event):
         command = event.command
@@ -65,17 +63,23 @@ class FSServer(object):
         self._logger.info("FabScanPi-Server "+str(__version__))
 
         try:
-            # "static" classes
+            # inject "static" classed
             injector.provide(FSEventManagerInterface, FSEventManagerSingleton)
             injector.provide(FSWebSocketServerInterface, FSWebSocketServer)
             injector.provide_instance(ConfigInterface, Config(self.config_file, True))
             injector.provide_instance(SettingsInterface, Settings(self.settings_file, True))
 
-            # "dynamic" module classes ... (later called plug-ins/scan-modules)
-            injector.provide(ImageProcessorInterface, ImageProcessor)
-            injector.provide(FSHardwareControllerInterface, FSHardwareControllerSingleton)
-            injector.provide(FSScanProcessorInterface, FSScanProcessorSingleton)
+            if hasattr(Config, 'scanner'):
+                self.scanner_type = self.config.scanner
+            else:
+                self.scanner_type = 'laserscanner'
 
+            self._logger.debug("Scanner Type is: "+str(self.scanner_type))
+
+            # inject "dynamic" classes
+            FSScannerFactory.injectScannerType(self.scanner_type)
+
+            # start server services
             FSWebSocketServer().start()
             FSWebServer().start()
             FSScanner().start()

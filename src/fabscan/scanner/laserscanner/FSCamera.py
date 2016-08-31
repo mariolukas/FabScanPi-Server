@@ -10,21 +10,18 @@ import numpy as np
 import io
 import os
 import time
-import subprocess
-import threading
 import sys, re, threading, collections
-from fabscan.FSConfig import ConfigInterface
-from fabscan.FSSettings import SettingsInterface
-from fabscan.util.FSInject import inject
 import traceback
 
+from fabscan.util.FSInject import inject
+from fabscan.FSConfig import ConfigInterface
+from fabscan.FSSettings import SettingsInterface
 
 try:
 	import picamera
 except:
 	pass
 
-_instance = None
 
 @inject(
     config=ConfigInterface
