@@ -31,6 +31,9 @@ class Config(ConfigInterface):
         object_dict = dict(_traverse(k, v) for k, v in config.iteritems())
         self.__dict__.update(object_dict)
 
+        if not hasattr(self,'scanner_type'):
+            self.scanner_type = "laserscanner"
+
     def update(self):
         pass
 

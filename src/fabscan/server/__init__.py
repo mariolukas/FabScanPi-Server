@@ -69,15 +69,9 @@ class FSServer(object):
             injector.provide_instance(ConfigInterface, Config(self.config_file, True))
             injector.provide_instance(SettingsInterface, Settings(self.settings_file, True))
 
-            if hasattr(Config, 'scanner'):
-                self.scanner_type = self.config.scanner
-            else:
-                self.scanner_type = 'laserscanner'
-
-            self._logger.debug("Scanner Type is: "+str(self.scanner_type))
-
             # inject "dynamic" classes
-            FSScannerFactory.injectScannerType(self.scanner_type)
+            self.config = injector.get_instance(ConfigInterface)
+            FSScannerFactory.injectScannerType(self.config.scanner_type)
 
             # start server services
             FSWebSocketServer().start()
