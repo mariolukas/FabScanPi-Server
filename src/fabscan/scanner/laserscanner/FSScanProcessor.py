@@ -158,26 +158,26 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
                 "message": "NO_SERIAL_CONNECTION",
                 "level": "error"
             }
-        else:
-            message = {
-                "message": "SERIAL_CONNECTION_READY",
-                "level": "success"
-            }
+        #else:
+        #    message = {
+        #        "message": "SERIAL_CONNECTION_READY",
+        #        "level": "success"
+        #    }
 
-        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+            self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
         if not self.hardwareController.camera_is_connected():
             message = {
                 "message": "NO_CAMERA_CONNECTION",
                 "level": "error"
             }
-        else:
-            message = {
-                "message": "CAMERA_READY",
-                "level": "success"
-            }
+        #else:
+        #    message = {
+        #        "message": "CAMERA_READY",
+        #        "level": "success"
+        #    }
 
-        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+            self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
     def settings_mode_on(self):
         self.hardwareController.settings_mode_on()

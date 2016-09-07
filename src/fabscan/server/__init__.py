@@ -54,7 +54,7 @@ class FSServer(object):
     def update_server(self):
          try:
             FSSystem.run_command("apt-get update")
-            FSSystem.run_command("nohup apt-get -y --only-upgrade install fabscanpi-server")
+            FSSystem.run_command("nohup  sh -c 'apt-get -y --only-upgrade install fabscanpi-server && reboot' > /dev/null &")
          except StandardError, e:
             self._logger.error(e)
 

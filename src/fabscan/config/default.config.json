@@ -25,16 +25,16 @@
           "z": 24.6
       },
       "frame":{
-          "dimension": 24
+          "dimension": 27
       }
    },
    "laser": {
       "position":{
-        "x": 10,
-        "y": 7.3,
+        "x": 8.3,
+        "y": 5.3,
         "z": 20
       },
-      "angle": 33.0,
+      "angle": 28.7,
       "detection_limit": 0.20,
       "rotation_steps": 5,
       "steps": 3200

@@ -1,6 +1,11 @@
-fabscanpi-server (0.2.2) unstable; urgency=medium
+fabscanpi-server (0.3.0) unstable; urgency=medium
 
-  * refactored FSScanner.py to make software more flexible
+  * refactored whole software for making it more flexible
+  * added splash screen to frontend
+  * added auto upgrade to frontend and backend
+  * fixed major laser detection error
+  * fixed some 3D calculation bugs
+  * simplified the laser settings dialog (threshold values etc.) better preview now
 
  -- Mario Lukas  <info@mariolukas.de>  Wed, 8 Jul 2016 17:52:00 +0000
 
