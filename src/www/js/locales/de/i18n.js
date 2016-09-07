@@ -4,8 +4,8 @@ MessageFormat.locale.de=function(n){return n===1?"one":"other"}
 
 window.i18n["main"] = {}
 window.i18n["main"]["FABSCAN"] = function(d){return "Fabscan"}
-window.i18n["main"]["SCAN_CANCELED"] = function(d){return "Scan stoped"}
-window.i18n["main"]["SCAN_STOPED"] = function(d){return "Scan stoped"}
+window.i18n["main"]["SCAN_CANCELED"] = function(d){return "Scan stopped"}
+window.i18n["main"]["SCAN_STOPED"] = function(d){return "Scan stopped"}
 window.i18n["main"]["SCANNING_OBJECT"] = function(d){return "Scanning Object"}
 window.i18n["main"]["SCANNING_TEXTURE"] = function(d){return "Scanning Texture"}
 window.i18n["main"]["NO_LASER_FOUND"] = function(d){return "No laser detected. Try other settings"}
