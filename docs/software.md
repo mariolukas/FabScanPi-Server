@@ -1,21 +1,61 @@
 #Installing the Software
 
-There ist no need to flash the Arduino firmware. It will be flashed automatically with the current
-firmware version after the server is started.
+There ist no need to flash the Arduino which is located on the FabScan PI HAT. It will be flashed automatically with the current firmware version after the server is started.
 
 **Installation with FabScanPi Image (recommended)**
 
-
 The fastest way to start working with FabScan PI is to use the FabScan PI Raspbian Image. 
-Dowload the image and install it to a SD-Card. After the image is flashed and the Raspberry
-Pi is up and runnig follow the instructions in the [Usage section](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage)
 
-Latest image release: 
+For the installation you will need the following things:
 
-[https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest](https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest)
+- A computer with integrated or connected card reader
+- A Micro-SD card with at least capacity of 8 GB
+- A software to format the SD card (e.g. [SD-Formatter](https://www.sdcard.org/downloads/formatter_4/))
+- A software to install the image on the SD card (e.g. [Win32DiskImager](https://sourceforge.net/projects/win32diskimager/))
+- The latest [FabScan PI Raspbian image](https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest)
 
-The image can be build with the FabScanPi Image build script. You will find more 
-information [here](developing.md#Building FabScanPi Images)
+Download the SD-Formatter an the Win32Disk image software and install them on your computer. Tip: During the installation takes place you can already download and unzip the latest FabScan PI image and save some time. In the end you should have a file with .img extension.
+
+Now insert the Micro-SD card into the card reader which is connected with your computer.
+
+![SDFormatter](images/SD-Formatter_1.jpg)
+
+Start the SD-Formatter software and select the correct device letter. Double-check that because otherwise there is a risk of formatting another drive. Note: The displayed size of the selected card my vary from the physical size. This is because of an old image which is already installed on the card.
+
+Click on the "Format" button to format the selected SD card. 
+
+![SDFormatter](images/SD-Formatter_2.jpg)
+
+
+
+When the formatting process is completed an information window will pop-up. Leave the card in the reader.
+
+![SDFormatter](images/SD-Formatter_3.jpg)
+
+
+
+Exit the SD-Formatter and start the Win32DiskImager for transferring the image on the freshly formatted card.
+
+![SDFormatter](images/Win32DiskImager_1.jpg)
+
+
+
+Select same device as before in the SD-Formatter software. Click on the folder icon and select the image file in your file system. Normally it should be in your browser's download folder. Make sure to unzip it first to get the image with .img extension.
+
+![SDFormatter](images/Win32DiskImager_2.jpg)
+
+
+
+Click on the "Write" button and the installation process will begin to start. When it's finished you will be informed by a pop-up.  Click on the "exit" button to close Win32DiskImager.
+
+![SDFormatter](images/Win32DiskImager_3.jpg)
+
+
+
+Now your SD-Card is ready to be put into the card slot of your FabScanPi.
+
+After the image is flashed and the Raspberry Pi is up and running follow the instructions in the [Usage section](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage)
+
 
 
 **Installing with fresh Raspbian and packages**
@@ -54,6 +94,16 @@ sudo /etc/init.d/fabscanpi-server start
 
 Read [Usage](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage) section for the next steps.
 
+
+
+**Build your own image of FabScan Pi**
+
+The image can be build with the FabScanPi Image build script. You will find more 
+
+information [here](developing.md#Building FabScanPi Images)
+
+
+
 **Installation: With Source Code**
 
 Dependencies
@@ -82,7 +132,10 @@ Afterwards the package can be installed by
 dpkg -i fabscabpi-server<package-version>.deb
 ```
 
+
+
 # Updating the Software
+
 Updates can be installed with debian's apt-get package manager. Log in via ssh and check/install 
 updates with the following command.
 
@@ -90,6 +143,8 @@ updates with the following command.
 ```
 sudo apt-get update && apt-get upgrade
 ```
+
+
 
 # Config File Values
 
@@ -344,6 +399,7 @@ Check the cable from the Raspberry Pi to the camera module. Be careful the cable
 fragil. Try another camera application for checking camera functionality e.g. [raspistill](https://www.raspberrypi.org/documentation/usage/camera/raspicam/raspistill.md).
 
 
+
 # Setting up a WIFI connection
 
 This description explains howto setup a wifi stick for raspbian. I prefer to use an EDIMAX dongle, it worked best for me. 
@@ -565,7 +621,6 @@ A notification will be displayed when the scan is completed / file is saved.
 
 - You can now check, download or delete the scan-data.
 
-  
 
 **Monochrome scan**<a name="monochromeScan"></a>
 
@@ -691,7 +746,7 @@ By selecting the mesh slide and clicking on the wastebasket-icon the mesh-file c
 - Download Files<a name="downloadFiles"></a>
   It is possible to download generated files (either scan- or mesh-files) from the FabScanPi via the web-based user interface. 
 
- 
+
 **Download a scan-file**
 Note: Before you can download a file it must be [loaded](#loadFiles) and displayed on the virtual turntable in the main menu.
 
