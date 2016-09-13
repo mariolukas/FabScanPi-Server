@@ -6,6 +6,7 @@ fabscanpi-server (0.3.0) unstable; urgency=medium
   * fixed major laser detection error
   * fixed some 3D calculation bugs
   * simplified the laser settings dialog (threshold values etc.) better preview now
+  * added calibration option to settings dialog
 
  -- Mario Lukas  <info@mariolukas.de>  Wed, 8 Jul 2016 17:52:00 +0000
 

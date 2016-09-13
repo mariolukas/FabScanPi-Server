@@ -770,6 +770,7 @@ Example of a 'common' filter that can be shared by all views
       SCAN: 'SCAN',
       START: 'START',
       STOP: 'STOP',
+      CALIBRATE: 'CALIBRATE',
       UPDATE_SETTINGS: 'UPDATE_SETTINGS',
       MESHING: 'MESHING',
       UPGRADE_SERVER: 'UPGRADE_SERVER',
@@ -926,6 +927,19 @@ Example of a 'common' filter that can be shared by all views
         };
         FSMessageHandlerService.sendData(message);
         return $rootScope.$broadcast(FSEnumService.commands.STOP);
+      };
+      service.startCalibration = function() {
+        var message;
+
+        message = {};
+        message = {
+          event: FSEnumService.events.COMMAND,
+          data: {
+            command: FSEnumService.commands.CALIBRATE
+          }
+        };
+        FSMessageHandlerService.sendData(message);
+        return $rootScope.$broadcast(FSEnumService.commands.CALIBRATE);
       };
       service.runMeshing = function(scan_id, filter, format) {
         var message;
@@ -1211,6 +1225,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       $scope.$on(FSEnumService.events.ON_INFO_MESSAGE, function(event, data) {
         var message;
 
+        $log.info(data['message']);
         message = FSi18nService.translateKey('main', data['message']);
         switch (data['level']) {
           case "info":
@@ -1447,6 +1462,9 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       $scope.loadFilters();
       $scope.restartServer = function() {
         return FSScanService.restartServer();
+      };
+      $scope.startCalibration = function() {
+        return FSScanService.startCalibration();
       };
       $scope.startScan = function() {
         $scope.stopStream();
