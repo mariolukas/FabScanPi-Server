@@ -19,6 +19,7 @@
          "y": 11.0,
          "z": 0.0
        },
+       "laser_angle": 33.0,
        "margin": 15,
        "offset": 100
      },

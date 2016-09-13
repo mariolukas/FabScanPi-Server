@@ -17,3 +17,4 @@ def create():
     injector.provide(ImageProcessorInterface, ImageProcessor)
     injector.provide(FSHardwareControllerInterface, FSHardwareControllerSingleton)
     injector.provide(FSScanProcessorInterface, FSScanProcessorSingleton)
+

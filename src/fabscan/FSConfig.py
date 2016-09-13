@@ -34,6 +34,10 @@ class Config(ConfigInterface):
         if not hasattr(self,'scanner_type'):
             self.scanner_type = "laserscanner"
 
+        if not hasattr(self,'texture_illumination'):
+            self.texture_illumination = 40
+
+
     def update(self):
         pass
 

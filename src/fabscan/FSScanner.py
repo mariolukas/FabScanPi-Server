@@ -26,6 +26,7 @@ class FSCommand(object):
     SCAN = "SCAN"
     START = "START"
     STOP = "STOP"
+    CALIBRATE = "CALIBRATE"
     UPDATE_SETTINGS = "UPDATE_SETTINGS"
     MESHING = "MESHING"
     COMPLETE = "COMPLETE"
@@ -58,7 +59,6 @@ class FSScanner(threading.Thread):
         self._logger.info("Number of cpu cores: " + str(multiprocessing.cpu_count()))
 
     def run(self):
-
         while not self._exit_requested:
             self.eventManager.handle_event_q()
             time.sleep(0.05)
@@ -100,6 +100,10 @@ class FSScanner(threading.Thread):
                 self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.SETTINGS_MODE_OFF})
 
             self.set_state(FSState.IDLE)
+
+        elif command == FSCommand.CALIBRATE:
+           self._logger.debug("Calibration started....")
+           self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.CALIBRATE_SCANNER})
 
         # Scan is complete
         elif command == FSCommand.COMPLETE:

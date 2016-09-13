@@ -1,6 +1,6 @@
 {
    "folders" : {
-    "www": "/usr/local/fabscanpi/www",
+    "www": "/home/pi/fabscan/src/www/",
     "scans": "/usr/local/fabscanpi/scans/"
    },
    "serial" : {

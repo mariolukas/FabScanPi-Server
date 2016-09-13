@@ -68,7 +68,7 @@ class ImageProcessor(ImageProcessorInterface):
         x_center = cam_image.shape[1] * self.settings.center
         x_center_delta = cam_image.shape[1] * 0.5 - x_center
 
-        _, cam_image = self.line_coords(cam_image,  filter=False, fast=False, x_center_delta=None)
+        _, cam_image = self.line_coords(cam_image,  filter=False, fast=True, x_center_delta=None)
 
         r = 320.0 / cam_image.shape[1]
         dim = (320, int(cam_image.shape[0] * r))
@@ -82,7 +82,7 @@ class ImageProcessor(ImageProcessorInterface):
         x_center = laser_image.shape[1] * self.settings.center
         x_center_delta = laser_image.shape[1] * 0.5 - x_center
 
-        pixels, image = self.line_coords(laser_image,filter=True, fast=False, x_center_delta=x_center_delta)  # Get line coords from image
+        pixels, image = self.line_coords(laser_image,filter=True, fast=True, x_center_delta=x_center_delta)  # Get line coords from image
 
         points = self.process_line(pixels, angle , color_image)
         return points
@@ -102,8 +102,8 @@ class ImageProcessor(ImageProcessorInterface):
             b = self.config.laser.position.x - point.x
             a = self.config.laser.position.z - point.z
             angle = math.atan(b/a) * 180.0 / math.pi
-            self.config.laser.angle = angle
-            return  angle
+            self.settings.backwall.laser_angle = angle
+            return angle
         else:
             self._logger.debug("No laser angle calculated")
             return None
@@ -272,45 +272,47 @@ class ImageProcessor(ImageProcessorInterface):
                 line1 = self.computeLineFromPoints(camera_position, point)
                 line2 = self.computeLineFromPoints(laser_backwall, laser_position)
 
-                intersection = self.computeLineIntersections(line1, line2)
+                if not (line1 is None or line2 is None):
 
-                point.x = intersection.x
-                point.z = intersection.z
+                    intersection = self.computeLineIntersections(line1, line2)
 
-                point.y -= float(self.config.camera.position.y)
-                point.y *= (float(self.config.camera.position.z) - point.z)/float(self.config.camera.position.z)
-                point.y += float(self.config.camera.position.y)
+                    point.x = intersection.x
+                    point.z = intersection.z
 
-                point.z -= float(self.config.turntable.position.z)
-                alphaDetla = angle
-                alphaOld = float(math.atan(point.z/point.x))
-                alphaNew = float(alphaOld+alphaDetla*(math.pi/180.0))
-                hypotenuse = float(math.sqrt(point.x*point.x + point.z*point.z))
+                    point.y -= float(self.config.camera.position.y)
+                    point.y *= (float(self.config.camera.position.z) - point.z)/float(self.config.camera.position.z)
+                    point.y += float(self.config.camera.position.y)
 
-                if point.z < 0 and point.x < 0:
-                    alphaNew += math.pi
-                elif (point.z > 0) and (point.x < 0):
-                    alphaNew -= math.pi
+                    point.z -= float(self.config.turntable.position.z)
+                    alphaDetla = angle
+                    alphaOld = float(math.atan(point.z/point.x))
+                    alphaNew = float(alphaOld+alphaDetla*(math.pi/180.0))
+                    hypotenuse = float(math.sqrt(point.x*point.x + point.z*point.z))
 
-                point.z = math.sin(alphaNew)*hypotenuse
-                point.x = math.cos(alphaNew)*hypotenuse
+                    if point.z < 0 and point.x < 0:
+                        alphaNew += math.pi
+                    elif (point.z > 0) and (point.x < 0):
+                        alphaNew -= math.pi
 
-                lowerLimit = 1.09
-                topLimit = self.config.camera.resolution.height - self.config.camera.resolution.height*self.config.scanner.origin.y
+                    point.z = math.sin(alphaNew)*hypotenuse
+                    point.x = math.cos(alphaNew)*hypotenuse
 
-                if y > topLimit:
-                    if (point.y > lowerLimit and hypotenuse < 7 ):
-                        new_point = dict()
+                    lowerLimit = 1.09
+                    topLimit = self.config.camera.resolution.height - self.config.camera.resolution.height*self.config.scanner.origin.y
 
-                        new_point['x'] = str(point.x)
-                        new_point['y'] = str(point.y)
-                        new_point['z'] = str(-point.z)
+                    if y > topLimit:
+                        if (point.y > lowerLimit and hypotenuse < 7 ):
+                            new_point = dict()
 
-                        if not color_image is None:
-                            b,g,r = color_image[y,x]
-                            new_point['r'] = str(r)
-                            new_point['g'] = str(g)
-                            new_point['b'] = str(b)
+                            new_point['x'] = str(point.x)
+                            new_point['y'] = str(point.y)
+                            new_point['z'] = str(-point.z)
+
+                            if not color_image is None:
+                                b,g,r = color_image[y,x]
+                                new_point['r'] = str(r)
+                                new_point['g'] = str(g)
+                                new_point['b'] = str(b)
 
 
                         point_line.append(new_point)
@@ -322,10 +324,13 @@ class ImageProcessor(ImageProcessorInterface):
 
 
     def computeLineFromPoints(self, p1, p2):
-        line = FSLine()
-        line.a = (p2.z-p1.z)/(p2.x-p1.x)
-        line.b = p1.z-line.a*p1.x
-        return line
+        try:
+            line = FSLine()
+            line.a = (p2.z-p1.z)/(p2.x-p1.x)
+            line.b = p1.z-line.a*p1.x
+            return line
+        except:
+            return None
 
     def computeLineIntersections(self,  line1, line2):
         intersection = FSPoint()

@@ -53,18 +53,20 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.turntable.disable_motors()
 
         self._logger.debug("Hardware controller initialized...")
+        #self.hardware_calibration()
 
     def settings_mode_on(self):
         self.laser.on()
         self.turntable.start_turning()
         self.camera.device.startStream()
-
+        time.sleep(1)
 
 
     def settings_mode_off(self):
         self.turntable.stop_turning()
         self.led.off()
         self.laser.off()
+        time.sleep(0.3)
         self.camera.device.flushStream()
         self.camera.device.stopStream()
 
@@ -103,6 +105,18 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
     def camera_is_connected(self):
        return self.camera.is_connected()
+
+    def calibrate_scanner(self):
+        self._logger.debug("Startup calibration sequence started.")
+        #self.laser.on()
+        #self.camera.device.startStream()
+        time.sleep(2)
+        laser_angle = self.get_laser_angle()
+        self._logger.debug(laser_angle)
+        #self.camera.device.stopStream()
+        #self.laser.off()
+        self.settings.save()
+        self._logger.debug("Calibration sequence finished.")
 
     def calibrate_laser(self):
         self.laser.on()
