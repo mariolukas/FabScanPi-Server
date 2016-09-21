@@ -10,4 +10,4 @@ export PYBUILD_INSTALL_ARGS_python2=--prefix=/usr/
 %:
 	dh $@ --with python2 --buildsystem=pybuild
 
-override_dh_usrlocal:
+#override_dh_usrlocal:

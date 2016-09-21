@@ -1,7 +1,7 @@
 {
    "folders" : {
-    "www": "/home/pi/fabscan/src/www/",
-    "scans": "/usr/local/fabscanpi/scans/"
+    "www": "/var/www/",
+    "scans": "/var/scans/"
    },
    "serial" : {
      "baudrate" : 115200,

@@ -59,7 +59,6 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.laser.on()
         self.turntable.start_turning()
         self.camera.device.startStream()
-        time.sleep(1)
 
 
     def settings_mode_off(self):

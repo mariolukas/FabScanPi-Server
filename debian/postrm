@@ -11,8 +11,8 @@ PIDFILE=/var/run/$SERVICE.pid
 
 INIT_SCRIPT=/etc/init.d/$SERVICE
 
-if [ -d /usr/local/fabscanpi/www/ ];then
-    rm -R /usr/local/fabscanpi/www/
+if [ -d /var/www/ ];then
+    rm -R /var/www/
 fi
 
 if [ -d $LOG_DIR ];then

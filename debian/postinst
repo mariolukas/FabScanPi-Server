@@ -8,14 +8,15 @@
 set -e
 
 LOG_DIR=/var/log/fabscanpi
-SCANS_DIR=/usr/local/fabscanpi/scans
+SCANS_DIR=/var/scans
+WWW_DIR=/var/www
 
-if [ -d /usr/local/fabscanpi/www/ ];then
-    chown -R pi:pi /usr/local/fabscanpi/www/
+if [ -d $WWW_DIR ];then
+    chown -R pi:pi $WWW_DIR
 fi
 
 if [ ! -d $LOG_DIR ];then
-    mkdir $LOG_DIR
+    mkdir -p $LOG_DIR
     chown -R pi:pi $LOG_DIR
 fi
 

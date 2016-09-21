@@ -238,12 +238,11 @@ class PiCam(threading.Thread):
         return self.camera_buffer.get()
 
     def startStream(self, auto_exposure=False):
-        #self.createCamera(auto_exposure=auto_exposure)
         self.setExposureMode(auto_exposure=auto_exposure)
-        time.sleep(2)
         self.semaphore.acquire()
         self.is_idle = False
         self.semaphore.release()
+        time.sleep(1)
 
     def stopStream(self):
         self.semaphore.acquire()

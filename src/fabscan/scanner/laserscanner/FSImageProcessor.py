@@ -315,7 +315,7 @@ class ImageProcessor(ImageProcessorInterface):
                                 new_point['b'] = str(b)
 
 
-                        point_line.append(new_point)
+                            point_line.append(new_point)
             except ValueError:
                 self._logger.error("Value Calculation Error occured.")
 

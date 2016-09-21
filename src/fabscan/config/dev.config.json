@@ -1,7 +1,7 @@
 {
    "folders" : {
     "www": "/home/pi/fabscan/src/www/",
-    "scans": "/usr/local/fabscanpi/scans/"
+    "scans": "/var/scans/"
    },
    "serial" : {
      "baudrate" : 115200,
@@ -21,17 +21,17 @@
       },
       "position":{
           "x": 0.0,
-          "y": 6.6,
-          "z": 24.6
+          "y": 5.2,
+          "z": 24.5
       },
       "frame":{
-          "dimension": 27
+          "dimension": 22.3
       }
    },
    "laser": {
       "position":{
-        "x": 8.3,
-        "y": 5.3,
+        "x": 8,
+        "y": 3.9,
         "z": 20
       },
       "angle": 28.7,
@@ -49,7 +49,7 @@
    },
    "scanner": {
       "origin":{
-        "y" : 0.69
+        "y" : 0.72
       }
    },
   "process_numbers": 4,

@@ -1,5 +1,6 @@
 recursive-include src/fabscan/mlx *
 recursive-include src/fabscan/firmware *
 recursive-include src/fabscan *.json
+recursive-include src/www *
 include README.md
 include requirements.txt
