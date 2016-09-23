@@ -281,6 +281,8 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
         self.hardwareController.laser.on()
         self.hardwareController.camera.device.startStream()
+        self.hardwareController.camera.device.flushStream()
+        time.sleep(0.8)
 
         #self._laser_angle = self.image_processor.calculate_laser_angle(self.hardwareController.camera.device.getFrame())
         self._laser_angle = self.settings.backwall.laser_angle

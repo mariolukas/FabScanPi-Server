@@ -24,6 +24,7 @@ from fabscan.scanner.laserscanner.FSSerial import FSSerialCom
     config=ConfigInterface,
     settings=SettingsInterface,
     imageprocessor=ImageProcessorInterface
+
 )
 class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     """
