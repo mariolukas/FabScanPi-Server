@@ -61,6 +61,7 @@ class FSScanner(threading.Thread):
     def run(self):
         while not self._exit_requested:
             self.eventManager.handle_event_q()
+
             time.sleep(0.05)
 
     def request_exit(self):
