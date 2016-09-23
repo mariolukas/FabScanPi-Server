@@ -242,7 +242,8 @@ class PiCam(threading.Thread):
         self.semaphore.acquire()
         self.is_idle = False
         self.semaphore.release()
-        time.sleep(1)
+        self.camera_buffer.flush()
+        time.sleep(0.5)
 
     def stopStream(self):
         self.semaphore.acquire()
@@ -258,18 +259,17 @@ class PiCam(threading.Thread):
 
                     self.camera.iso = 120
                     # Wait for the automatic gain control to settle
-                    time.sleep(2)
+                    time.sleep(1.4)
                     # Now fix the values
                     self.camera.shutter_speed = self.camera.exposure_speed
                     self.camera.exposure_mode = 'off'
                     g = self.camera.awb_gains
                     self.camera.awb_mode = 'off'
                     self.camera.awb_gains = g
+
                 else:
                     self.camera.awb_mode = "flash"
                     time.sleep(1)
-
-                self.camera_buffer.flush()
 
 
 class DummyCam:
