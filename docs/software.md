@@ -681,4 +681,3 @@ Note: If a mesh file is available a second slide for the mesh file will be displ
 - Select the mesh slide
 - Click on the download-icon to download the mesh-file
 - A download message (depending on the used web-browser) will be displayed
-
