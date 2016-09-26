@@ -26,6 +26,12 @@
     }
 }
 
+img[alt=centered]{
+    width: 300px;
+    display: block;
+    margin: 0 auto;
+}
+
 img[alt=drawing_200] {
     width: 200px;
 }
