@@ -1,7 +1,7 @@
 #Slack
 Use the FabScan Slack channel for direct messaging and chat communication. 
 This is the fastest way of getting support. For joining write an email to 
-slack@fabscan.org with subject "add me to slack"
+info@fabscan.org with subject "add me to slack"
 
 #Google Group
 For general problems and information use the FabScan google group. 
