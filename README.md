@@ -15,7 +15,7 @@ Another benefit is that the FabScan gets a Stand-Alone, Web-Enabled 3D laser sca
 
 The FabScan PI Server is written in Python. The Web-Enabled user inferface is written in JavaScript and HTML5 using WebGL. The code for
 the interface can be found at: http://github.com/mariolukas/FabScanPi-Frontend
-That enables people with different programming skills to [contribute to this project](Readme.md#contribute).
+That enables people with different programming skills to [contribute to this project](http://mariolukas.github.io/FabScanPi-Server/contributing/).
 
 FabScan PI is Free Software and released under the [GNU Affero General Public License V3](http://www.gnu.org/licenses/agpl.html).
 
