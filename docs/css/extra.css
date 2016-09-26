@@ -26,6 +26,16 @@
     }
 }
 
+img[alt=box_closed]{
+   width: 250px;
+   margin-top:120px;
+   
+}
+
+img[alt=box_opened]{
+   width:300px;	
+}
+
 img[alt=centered]{
     width: 300px;
     display: block;
