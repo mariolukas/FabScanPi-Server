@@ -24,15 +24,15 @@ The FabScan documentation can be found at [http://www.fabscan.org](http://www.fa
 
 
 ## Core Team
-* Mario Lukas (core development)
+* Mario Lukas (project lead, core development)
 * Watterott electronic (hardware)
 * René Bohne (supervision until 2015)
 * Jan Borchers (supervision until 2015)
 
 ## Contributions from
 * Beckmann Mediendesign (FabScanPi Logo)
-* Doug LaRue
-* Christoph Emonds
-* Jan Thar
-* Jens Hackel
+* Doug LaRue (build log, bug reporting)
+* Christoph Emonds (code review)
+* Jan Thar (case design, bug reporting, general support)
+* Jens Hackel (documentation, bug reporting)
 * Francis Engelmann (original FabScan)
