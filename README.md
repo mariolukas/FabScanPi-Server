@@ -26,8 +26,8 @@ The FabScan documentation can be found at [http://www.fabscan.org](http://www.fa
 ## Core Team
 * Mario Lukas (core development)
 * Watterott electronic (hardware)
-* René Bohne (supervision)
-* Jan Borchers (supervision)
+* René Bohne (supervision until 2015)
+* Jan Borchers (supervision until 2015)
 
 ## Contributions from
 * Beckmann Mediendesign (FabScanPi Logo)
