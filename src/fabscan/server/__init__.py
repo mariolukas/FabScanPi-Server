@@ -20,9 +20,6 @@ from fabscan.FSConfig import ConfigInterface, ConfigSingleton, Config
 from fabscan.FSSettings import SettingsInterface, SettingsSingleton, Settings
 from fabscan.scanner.interfaces import FSScannerFactory
 
-
-
-
 class FSServer(object):
     def __init__(self,config_file, settings_file):
 
@@ -65,7 +62,7 @@ class FSServer(object):
         try:
             # inject "static" classed
             injector.provide(FSEventManagerInterface, FSEventManagerSingleton)
-            injector.provide(FSWebSocketServerInterface, FSWebSocketServer)
+            injector.provide_instance(FSWebSocketServerInterface, FSWebSocketServer())
             injector.provide_instance(ConfigInterface, Config(self.config_file, True))
             injector.provide_instance(SettingsInterface, Settings(self.settings_file, True))
 
@@ -74,7 +71,9 @@ class FSServer(object):
             FSScannerFactory.injectScannerType(self.config.scanner_type)
 
             # start server services
-            FSWebSocketServer().start()
+            websocket_server = injector.get_instance(FSWebSocketServerInterface)
+            websocket_server.start()
+
             FSWebServer().start()
             FSScanner().start()
 

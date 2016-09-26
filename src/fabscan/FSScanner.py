@@ -124,9 +124,7 @@ class FSScanner(threading.Thread):
 
     # new client conneted
     def on_client_connected(self, eventManager, event):
-
         try:
-
             try:
                 hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
             except:

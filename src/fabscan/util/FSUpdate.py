@@ -4,22 +4,21 @@ import urllib2
 from fabscan.FSVersion import __version__
 import logging
 
+def version(v):
+    return tuple(map(int, (v.split("."))))
 
 def get_latest_version_tag():
     try:
         response = urllib2.urlopen("http://archive.fabscan.org/dists/jessie/main/binary-armhf/Packages").read()
-        latest_version = response.splitlines(True)[6].split(" ")[1]
+        line_with_verion_number = 6
+        latest_version = response.splitlines(True)[line_with_verion_number].split(" ")[1]
         return latest_version
     except:
         return "0.0.0"
 
 def upgrade_is_available():
-    logging.debug("Checking for new Software version...")
 
-    current_version = int(__version__.replace(".", "")[1:])
-    latest_version = int(get_latest_version_tag().replace(".", ""))
+    current_version = __version__[2:]
+    latest_version = get_latest_version_tag()
 
-    if current_version < latest_version:
-        return True
-    else:
-        return False
+    return version(current_version) < version(latest_version)

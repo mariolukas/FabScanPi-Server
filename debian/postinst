@@ -3,8 +3,6 @@
 #
 # see: dh_installdeb(1)
 
-
-
 set -e
 
 LOG_DIR=/var/log/fabscanpi

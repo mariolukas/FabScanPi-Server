@@ -1,3 +1,10 @@
+fabscanpi-server (0.3.1) unstable; urgency=medium
+
+  * fixed bug which created multiple instances for websocket server
+  * fixed bug which calculated wrong version numbers in upgrade check
+
+ -- Mario Lukas  <info@mariolukas.de>  Mo, 26 Sep 2016 20:34:00 +0000
+
 fabscanpi-server (0.3.0) unstable; urgency=medium
 
   * refactored whole software for making it more flexible
