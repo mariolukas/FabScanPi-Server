@@ -1,21 +1,61 @@
 #Installing the Software
 
-There ist no need to flash the Arduino firmware. It will be flashed automatically with the current
-firmware version after the server is started.
+There ist no need to flash the Arduino which is located on the FabScan PI HAT. It will be flashed automatically with the current firmware version after the server is started.
 
 **Installation with FabScanPi Image (recommended)**
 
-
 The fastest way to start working with FabScan PI is to use the FabScan PI Raspbian Image. 
-Dowload the image and install it to a SD-Card. After the image is flashed and the Raspberry
-Pi is up and runnig follow the instructions in the [Usage section](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage)
 
-Latest image release: 
+For the installation you will need the following things:
 
-[https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest](https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest)
+- A computer with integrated or connected card reader
+- A Micro-SD card with at least capacity of 8 GB
+- A software to format the SD card (e.g. [SD-Formatter](https://www.sdcard.org/downloads/formatter_4/))
+- A software to install the image on the SD card (e.g. [Win32DiskImager](https://sourceforge.net/projects/win32diskimager/))
+- The latest [FabScan PI Raspbian image](https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest)
 
-The image can be build with the FabScanPi Image build script. You will find more 
-information [here](developing.md#Building FabScanPi Images)
+Download the SD-Formatter an the Win32Disk image software and install them on your computer. Tip: During the installation takes place you can already download and unzip the latest FabScan PI image and save some time. In the end you should have a file with .img extension.
+
+Now insert the Micro-SD card into the card reader which is connected with your computer.
+
+![SDFormatter](images/SD-Formatter_1.jpg)
+
+Start the SD-Formatter software and select the correct device letter. Double-check that because otherwise there is a risk of formatting another drive. Note: The displayed size of the selected card my vary from the physical size. This is because of an old image which is already installed on the card.
+
+Click on the "Format" button to format the selected SD card. 
+
+![SDFormatter](images/SD-Formatter_2.jpg)
+
+
+
+When the formatting process is completed an information window will pop-up. Leave the card in the reader.
+
+![SDFormatter](images/SD-Formatter_3.jpg)
+
+
+
+Exit the SD-Formatter and start the Win32DiskImager for transferring the image on the freshly formatted card.
+
+![SDFormatter](images/Win32DiskImager_1.jpg)
+
+
+
+Select same device as before in the SD-Formatter software. Click on the folder icon and select the image file in your file system. Normally it should be in your browser's download folder. Make sure to unzip it first to get the image with .img extension.
+
+![SDFormatter](images/Win32DiskImager_2.jpg)
+
+
+
+Click on the "Write" button and the installation process will begin to start. When it's finished you will be informed by a pop-up.  Click on the "exit" button to close Win32DiskImager.
+
+![SDFormatter](images/Win32DiskImager_3.jpg)
+
+
+
+Now your SD-Card is ready to be put into the card slot of your FabScanPi.
+
+After the image is flashed and the Raspberry Pi is up and running follow the instructions in the [Usage section](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage)
+
 
 
 **Installing with fresh Raspbian and packages**
@@ -54,6 +94,16 @@ sudo /etc/init.d/fabscanpi-server start
 
 Read [Usage](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage) section for the next steps.
 
+
+
+**Build your own image of FabScan Pi**
+
+The image can be build with the FabScanPi Image build script. You will find more 
+
+information [here](developing.md#Building FabScanPi Images)
+
+
+
 **Installation: With Source Code**
 
 Dependencies
@@ -82,7 +132,10 @@ Afterwards the package can be installed by
 dpkg -i fabscabpi-server<package-version>.deb
 ```
 
+
+
 # Updating the Software
+
 Updates can be installed with debian's apt-get package manager. Log in via ssh and check/install 
 updates with the following command.
 
@@ -90,6 +143,8 @@ updates with the following command.
 ```
 sudo apt-get update && apt-get upgrade
 ```
+
+
 
 # Config File Values
 
@@ -344,9 +399,11 @@ Check the cable from the Raspberry Pi to the camera module. Be careful the cable
 fragil. Try another camera application for checking camera functionality e.g. [raspistill](https://www.raspberrypi.org/documentation/usage/camera/raspicam/raspistill.md).
 
 
-# Setting up a WIFI connection (Raspberry Pi 3)
 
-This description explains howto setup the Raspberry Pi 3 wifi device:
+# Setting up a WIFI connection
+
+This description explains howto setup a wifi stick for raspbian. I prefer to use an EDIMAX dongle, it worked best for me. 
+First plug in your wifi dongle and log in via ssh with password "raspberry" (without quotes):
 
 ```
 ssh pi@<your-fabscanpi-ip>
@@ -357,19 +414,7 @@ First you have to activate the wifi option in your networking setup.
 sudo nano /etc/network/interfaces
 ```
 
-Change the folling lines (uncomment)
-
-``` 
-#auto wlan0
-#allow-hotplug wlan0
-#iface wlan0 inet dhcp
-#wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-#iface default inet dhcp
-#pre-up iw dev wlan0 set power_save off
-#post-down iw dev wlan0 set power_save on
-```
-
-to 
+Uncomment the folling lines and save the changes. 
 
 ``` 
 auto wlan0
@@ -377,33 +422,76 @@ allow-hotplug wlan0
 iface wlan0 inet dhcp
 wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 iface default inet dhcp
-pre-up iw dev wlan0 set power_save off
-post-down iw dev wlan0 set power_save on
 ```
-
-and save the changes. 
 
 Now restart your network adapters. 
 ```
-sudo /etc/init.d/networking restart
+sudo nano /etc/init.d/networking
 ```
 
 If you type ```sudo ifconfig``` there should be a wlan0 connection in the list. 
 
-Your fasbscanpi image is ready to use wifi. The only things you have to do is 
-open wpa_supplicant.conf and insert your wifi ssid and your wifi secret.
+Your fasbcanpi image is ready to go. The only things you have to do is open wpa_supplicant.conf and 
+insert your wifi ssid and your wifi secret.
 
 ```
 sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
 ```
+
 
 Save the file and try to connect to your wifi by typing the following command.
 ```
 sudo ifup wlan0
 ```
 
-Wifi should be up and running. You can check if yout wlan0 device has received
-an ip address by typing ```sudo ifconfig``` 
+In some cases you have to reboot the Raspberry Pi. Check if the wifi dongle's led is bliking.
+If you want to change your Raspberry Pi to a fix wifi IP address you have to change the interfaces file
+to get a static wifi connection.
+
+```
+sudo nano /etc/network/interfaces
+```
+
+Change the files content from 
+
+```
+auto lo
+iface lo inet loopback
+
+allow-hotplug eth0
+iface eth0 inet dhcp
+
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
+```
+
+to 
+
+```
+auto lo
+iface lo inet loopback
+
+allow-hotplug eth0
+iface eth0 inet dhcp
+
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet static
+address <ip in your network>
+netmask <your netmask>
+gateway <your gateway>
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
+```
+
+After you changed the file you can restart your network daemon.
+
+```
+sudo /etc/init.d/networking restart
+```
 
 
 
@@ -509,7 +597,7 @@ Note: If you do not have installed a light source you should perform a [monochro
 
 
 
-- Click on “Start Scan” to initiate the process
+- Click on .Start Scan. to initiate the process
   A starting message will be displayed. Now the texture will be processed.
 
 
@@ -533,7 +621,6 @@ A notification will be displayed when the scan is completed / file is saved.
 
 - You can now check, download or delete the scan-data.
 
-  
 
 **Monochrome scan**<a name="monochromeScan"></a>
 
@@ -553,7 +640,7 @@ A notification will be displayed when the scan is completed / file is saved.
 
 
 
-- Click on “Start Scan” to initiate the process
+- Click on .Start Scan. to initiate the process
   A starting message will be displayed and the scan process is started.
 
 ![scan_starts](images/Manual_Scan_2.jpg)
@@ -659,7 +746,7 @@ By selecting the mesh slide and clicking on the wastebasket-icon the mesh-file c
 - Download Files<a name="downloadFiles"></a>
   It is possible to download generated files (either scan- or mesh-files) from the FabScanPi via the web-based user interface. 
 
- 
+
 **Download a scan-file**
 Note: Before you can download a file it must be [loaded](#loadFiles) and displayed on the virtual turntable in the main menu.
 
@@ -681,3 +768,4 @@ Note: If a mesh file is available a second slide for the mesh file will be displ
 - Select the mesh slide
 - Click on the download-icon to download the mesh-file
 - A download message (depending on the used web-browser) will be displayed
+
