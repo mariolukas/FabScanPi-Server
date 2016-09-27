@@ -17,7 +17,9 @@ class Settings(SettingsInterface):
 
     def __init__(self,settings, first=True):
 
+
         if first:
+            self.file = settings
             with open(settings) as file:
                 settings = file.read()
 
@@ -34,6 +36,10 @@ class Settings(SettingsInterface):
 
         self.__dict__.update(object_dict)
 
+    def save(self):
+        current_settings = self.todict(self.__dict__)
+        with open(self.file, 'w+') as outfile:
+            json.dump(current_settings, outfile)
 
     def saveAsFile(self, filename):
         current_settings = self.todict(self.__dict__)

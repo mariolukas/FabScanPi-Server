@@ -8,7 +8,7 @@ import time
 import logging
 import sys
 import os
-import threading
+
 from WebServer import FSWebServer
 from fabscan.FSVersion import __version__
 from fabscan.util.FSInject import injector
@@ -18,10 +18,7 @@ from fabscan.FSScanner import FSScanner, FSCommand
 from fabscan.FSEvents import FSEventManagerSingleton, FSEventManagerInterface, FSEvents
 from fabscan.FSConfig import ConfigInterface, ConfigSingleton, Config
 from fabscan.FSSettings import SettingsInterface, SettingsSingleton, Settings
-from fabscan.FSScanProcessor import FSScanProcessorInterface, FSScanProcessorSingleton
-from fabscan.controller import FSHardwareControllerSingleton, FSHardwareControllerInterface
-from fabscan.vision.FSImageProcessor import ImageProcessor, ImageProcessorInterface
-
+from fabscan.scanner.interfaces import FSScannerFactory
 
 class FSServer(object):
     def __init__(self,config_file, settings_file):
@@ -32,8 +29,6 @@ class FSServer(object):
         self.restart = False
         self.upgrade = False
         self._logger = logging.getLogger(__name__)
-
-        self._logger.debug(self.config_file)
 
     def on_server_command(self, mgr, event):
         command = event.command
@@ -56,7 +51,7 @@ class FSServer(object):
     def update_server(self):
          try:
             FSSystem.run_command("apt-get update")
-            FSSystem.run_command("nohup apt-get -y --only-upgrade install fabscanpi-server")
+            FSSystem.run_command("nohup  sh -c 'apt-get -y --only-upgrade install fabscanpi-server && reboot' > /dev/null &")
          except StandardError, e:
             self._logger.error(e)
 
@@ -65,18 +60,20 @@ class FSServer(object):
         self._logger.info("FabScanPi-Server "+str(__version__))
 
         try:
-            # "static" classes
+            # inject "static" classed
             injector.provide(FSEventManagerInterface, FSEventManagerSingleton)
-            injector.provide(FSWebSocketServerInterface, FSWebSocketServer)
+            injector.provide_instance(FSWebSocketServerInterface, FSWebSocketServer())
             injector.provide_instance(ConfigInterface, Config(self.config_file, True))
             injector.provide_instance(SettingsInterface, Settings(self.settings_file, True))
 
-            # "dynamic" module classes ... (later called plug-ins/scan-modules)
-            injector.provide(ImageProcessorInterface, ImageProcessor)
-            injector.provide(FSHardwareControllerInterface, FSHardwareControllerSingleton)
-            injector.provide(FSScanProcessorInterface, FSScanProcessorSingleton)
+            # inject "dynamic" classes
+            self.config = injector.get_instance(ConfigInterface)
+            FSScannerFactory.injectScannerType(self.config.scanner_type)
 
-            FSWebSocketServer().start()
+            # start server services
+            websocket_server = injector.get_instance(FSWebSocketServerInterface)
+            websocket_server.start()
+
             FSWebServer().start()
             FSScanner().start()
 

@@ -4,30 +4,27 @@ __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
-from FSLaser import Laser
-from FSTurntable import Turntable
-from FSLed import Led
-import time
 import logging
+import time
 
-from fabscan.controller.FSCamera import FSCamera
-from fabscan.controller.FSSerial import FSSerialCom
-
-
+from FSLaser import Laser
+from FSLed import Led
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
-from fabscan.vision.FSImageProcessor import ImageProcessorInterface
-from fabscan.util.FSInject import singleton, inject
+from fabscan.util.FSInject import singleton
 
-class FSHardwareControllerInterface(object):
+from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
+from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 
-    def __init__(self, config, settings, imageprocessor):
-        pass
+from fabscan.scanner.laserscanner.FSTurntable import Turntable
+from fabscan.scanner.laserscanner.FSCamera import FSCamera
+from fabscan.scanner.laserscanner.FSSerial import FSSerialCom
 
 @singleton(
     config=ConfigInterface,
     settings=SettingsInterface,
     imageprocessor=ImageProcessorInterface
+
 )
 class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     """
@@ -57,6 +54,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.turntable.disable_motors()
 
         self._logger.debug("Hardware controller initialized...")
+        #self.hardware_calibration()
 
     def settings_mode_on(self):
         self.laser.on()
@@ -64,11 +62,11 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.camera.device.startStream()
 
 
-
     def settings_mode_off(self):
         self.turntable.stop_turning()
         self.led.off()
         self.laser.off()
+        time.sleep(0.3)
         self.camera.device.flushStream()
         self.camera.device.stopStream()
 
@@ -107,6 +105,18 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
     def camera_is_connected(self):
        return self.camera.is_connected()
+
+    def calibrate_scanner(self):
+        self._logger.debug("Startup calibration sequence started.")
+        #self.laser.on()
+        #self.camera.device.startStream()
+        time.sleep(2)
+        laser_angle = self.get_laser_angle()
+        self._logger.debug(laser_angle)
+        #self.camera.device.stopStream()
+        #self.laser.off()
+        self.settings.save()
+        self._logger.debug("Calibration sequence finished.")
 
     def calibrate_laser(self):
         self.laser.on()

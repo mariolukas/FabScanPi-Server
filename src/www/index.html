@@ -140,18 +140,10 @@
                         </div>
                         <div class="tab-content" ng-if="(selectedTab == 'calibration')">
                             <div style="display:inline-block; width:100%; margin-top:1em; color:white; padding-left:1em;">
-                                Calibration Stream <br>
+                                Calibration<br>
                                 <br>
-                                Can be used to calibrate the camera alignment. The vertical green line should be in one line
-                                with the turntable center. <br>
-                                <br>
-                                The horizontal green line should be in one line with the back of the turntable.<br>
-                                <br>
-                                The red line should be in an area where the laser hits the backline. Best setting is a
-                                few pixels under the top edge of the backwall. It can be set in the config.json
-                                "detection_limit" , default is 0.3 what is 0.3% from the top of the image
-
-
+                                Before calibration remove objects!
+                                <a class="hvr-grow" style="margin-right: 13%; margin-top:0.2em; bottom: 0px; text-decoration:none; float:right; color:white; font-size:1.5em;" ng-click="startCalibration()" href="#">Start Calibration</a>
                             </div>
                         </div>
                         </div>

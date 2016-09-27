@@ -11,10 +11,11 @@ import time
 
 from fabscan.vision.FSImageTask import ImageTask, FSTaskType
 from fabscan.FSConfig import ConfigInterface
-from fabscan.file.FSImage import FSImage
-from fabscan.vision.FSImageProcessor import ImageProcessorInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.util.FSInject import inject
+from fabscan.file.FSImage import FSImage
+from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
+
 
 @inject(
         config=ConfigInterface,

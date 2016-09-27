@@ -11,6 +11,7 @@ import cv2
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.util.FSInject import inject
+from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 
 class FSPoint():
     def __init__(self, x=0.0, y=0.0, z=0.0):
@@ -22,10 +23,6 @@ class FSLine():
     def __init__(self, a=0.0, b=0.0):
         self.a = float(a)
         self.b = float(b)
-
-class ImageProcessorInterface(object):
-    def __init__(self, config, settings):
-        pass
 
 
 @inject(
@@ -71,7 +68,7 @@ class ImageProcessor(ImageProcessorInterface):
         x_center = cam_image.shape[1] * self.settings.center
         x_center_delta = cam_image.shape[1] * 0.5 - x_center
 
-        _, cam_image = self.line_coords(cam_image,  filter=False, fast=False, x_center_delta=None)
+        _, cam_image = self.line_coords(cam_image,  filter=False, fast=True, x_center_delta=None)
 
         r = 320.0 / cam_image.shape[1]
         dim = (320, int(cam_image.shape[0] * r))
@@ -85,7 +82,7 @@ class ImageProcessor(ImageProcessorInterface):
         x_center = laser_image.shape[1] * self.settings.center
         x_center_delta = laser_image.shape[1] * 0.5 - x_center
 
-        pixels, image = self.line_coords(laser_image,filter=True, fast=False, x_center_delta=x_center_delta)  # Get line coords from image
+        pixels, image = self.line_coords(laser_image,filter=True, fast=True, x_center_delta=x_center_delta)  # Get line coords from image
 
         points = self.process_line(pixels, angle , color_image)
         return points
@@ -105,8 +102,8 @@ class ImageProcessor(ImageProcessorInterface):
             b = self.config.laser.position.x - point.x
             a = self.config.laser.position.z - point.z
             angle = math.atan(b/a) * 180.0 / math.pi
-            self.config.laser.angle = angle
-            return  angle
+            self.settings.backwall.laser_angle = angle
+            return angle
         else:
             self._logger.debug("No laser angle calculated")
             return None
@@ -219,8 +216,8 @@ class ImageProcessor(ImageProcessorInterface):
 
         else:
 
-
-            start = self.settings.backwall.laser_pixel_position+20
+            # TODO: handle multiple points in one line
+            start = self.settings.backwall.laser_pixel_position+60
             id = np.indices((image.shape[0],image.shape[1]))[1]
 
             grey[grey <  self.settings.threshold/3] = 0
@@ -257,74 +254,83 @@ class ImageProcessor(ImageProcessorInterface):
 
         for x, y in line_coords:
 
-            # create new cv point
-            #x_center = self.config.camera.resolution.width * self.settings.center
-            # laser_point = FSPoint(x+x_center ,y)
+            try:
+                # create new cv point
+                #x_center = self.config.camera.resolution.width * self.settings.center
+                # laser_point = FSPoint(x+x_center ,y)
 
-            point = FSPoint(x ,y)
+                point = FSPoint(float(x) ,float(y))
 
-            ## world coordinates without deepth
-            point = self.convertCvPointToPoint(point)
+                ## world coordinates without deepth
+                point = self.convertCvPointToPoint(point)
 
-            camera_position = FSPoint(self.config.camera.position.x, self.config.camera.position.y, self.config.camera.position.z)
-            laser_position = FSPoint(self.config.laser.position.x,self.config.laser.position.y,self.config.laser.position.z)
-            laser_backwall = FSPoint(self.settings.backwall.laser.x,self.settings.backwall.laser.y, self.settings.backwall.laser.z)
-
-
-            line1 = self.computeLineFromPoints(camera_position, point)
-            line2 = self.computeLineFromPoints(laser_backwall, laser_position)
-
-            intersection = self.computeLineIntersections(line1, line2)
-
-            point.x = intersection.x
-            point.z = intersection.z
-
-            point.y -= float(self.config.camera.position.y)
-            point.y *= (float(self.config.camera.position.z) - point.z)/float(self.config.camera.position.z)
-            point.y += float(self.config.camera.position.y)
-
-            point.z -= float(self.config.turntable.position.z)
-            alphaDetla = angle
-            alphaOld = float(math.atan(point.z/point.x))
-            alphaNew = float(alphaOld+alphaDetla*(math.pi/180.0))
-            hypotenuse = float(math.sqrt(point.x*point.x + point.z*point.z))
-
-            if point.z < 0 and point.x < 0:
-                alphaNew += math.pi
-            elif (point.z > 0) and (point.x < 0):
-                alphaNew -= math.pi
-
-            point.z = math.sin(alphaNew)*hypotenuse
-            point.x = math.cos(alphaNew)*hypotenuse
-
-            lowerLimit = 1.09
-            topLimit = self.config.camera.resolution.height - self.config.camera.resolution.height*self.config.scanner.origin.y
-
-            if y > topLimit:
-                if (point.y > lowerLimit and hypotenuse < 7 ):
-                    new_point = dict()
-
-                    new_point['x'] = str(point.x)
-                    new_point['y'] = str(point.y)
-                    new_point['z'] = str(-point.z)
-
-                    if not color_image is None:
-                        b,g,r = color_image[y,x]
-                        new_point['r'] = str(r)
-                        new_point['g'] = str(g)
-                        new_point['b'] = str(b)
+                camera_position = FSPoint(float(self.config.camera.position.x), float(self.config.camera.position.y), float(self.config.camera.position.z))
+                laser_position = FSPoint(float(self.config.laser.position.x),float(self.config.laser.position.y),float(self.config.laser.position.z))
+                laser_backwall = FSPoint(float(self.settings.backwall.laser.x),float(self.settings.backwall.laser.y), float(self.settings.backwall.laser.z))
 
 
-                    point_line.append(new_point)
+                line1 = self.computeLineFromPoints(camera_position, point)
+                line2 = self.computeLineFromPoints(laser_backwall, laser_position)
+
+                if not (line1 is None or line2 is None):
+
+                    intersection = self.computeLineIntersections(line1, line2)
+
+                    point.x = intersection.x
+                    point.z = intersection.z
+
+                    point.y -= float(self.config.camera.position.y)
+                    point.y *= (float(self.config.camera.position.z) - point.z)/float(self.config.camera.position.z)
+                    point.y += float(self.config.camera.position.y)
+
+                    point.z -= float(self.config.turntable.position.z)
+                    alphaDetla = angle
+                    alphaOld = float(math.atan(point.z/point.x))
+                    alphaNew = float(alphaOld+alphaDetla*(math.pi/180.0))
+                    hypotenuse = float(math.sqrt(point.x*point.x + point.z*point.z))
+
+                    if point.z < 0 and point.x < 0:
+                        alphaNew += math.pi
+                    elif (point.z > 0) and (point.x < 0):
+                        alphaNew -= math.pi
+
+                    point.z = math.sin(alphaNew)*hypotenuse
+                    point.x = math.cos(alphaNew)*hypotenuse
+
+                    lowerLimit = 1.09
+                    topLimit = self.config.camera.resolution.height - self.config.camera.resolution.height*self.config.scanner.origin.y
+
+                    if y > topLimit:
+                        if (point.y > lowerLimit and hypotenuse < 7 ):
+                            new_point = dict()
+
+                            new_point['x'] = str(point.x)
+                            new_point['y'] = str(point.y)
+                            new_point['z'] = str(-point.z)
+
+                            if not color_image is None:
+                                b,g,r = color_image[y,x]
+                                new_point['r'] = str(r)
+                                new_point['g'] = str(g)
+                                new_point['b'] = str(b)
+
+
+                            point_line.append(new_point)
+            except ValueError:
+                self._logger.error("Value Calculation Error occured.")
+
 
         return point_line
 
 
     def computeLineFromPoints(self, p1, p2):
-        line = FSLine()
-        line.a = (p2.z-p1.z)/(p2.x-p1.x)
-        line.b = p1.z-line.a*p1.x
-        return line
+        try:
+            line = FSLine()
+            line.a = (p2.z-p1.z)/(p2.x-p1.x)
+            line.b = p1.z-line.a*p1.x
+            return line
+        except:
+            return None
 
     def computeLineIntersections(self,  line1, line2):
         intersection = FSPoint()

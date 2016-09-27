@@ -1,3 +1,4 @@
+#!/bin/sh
 # /etc/init.d/fabscanpi-server
 ### BEGIN INIT INFO
 # Provides:          fabscanpi-server

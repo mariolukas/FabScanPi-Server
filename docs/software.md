@@ -597,7 +597,7 @@ Note: If you do not have installed a light source you should perform a [monochro
 
 
 
-- Click on “Start Scan” to initiate the process
+- Click on .Start Scan. to initiate the process
   A starting message will be displayed. Now the texture will be processed.
 
 
@@ -640,7 +640,7 @@ A notification will be displayed when the scan is completed / file is saved.
 
 
 
-- Click on “Start Scan” to initiate the process
+- Click on .Start Scan. to initiate the process
   A starting message will be displayed and the scan process is started.
 
 ![scan_starts](images/Manual_Scan_2.jpg)

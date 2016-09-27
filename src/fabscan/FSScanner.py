@@ -13,7 +13,7 @@ from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManagerInterface, FSEvents
 from fabscan.vision.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import SettingsInterface
-from fabscan.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
+from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
 from fabscan.util.FSInject import inject, singleton
 from fabscan.util.FSUpdate import upgrade_is_available, get_latest_version_tag
 
@@ -26,6 +26,7 @@ class FSCommand(object):
     SCAN = "SCAN"
     START = "START"
     STOP = "STOP"
+    CALIBRATE = "CALIBRATE"
     UPDATE_SETTINGS = "UPDATE_SETTINGS"
     MESHING = "MESHING"
     COMPLETE = "COMPLETE"
@@ -58,9 +59,9 @@ class FSScanner(threading.Thread):
         self._logger.info("Number of cpu cores: " + str(multiprocessing.cpu_count()))
 
     def run(self):
-
         while not self._exit_requested:
             self.eventManager.handle_event_q()
+
             time.sleep(0.05)
 
     def request_exit(self):
@@ -101,24 +102,29 @@ class FSScanner(threading.Thread):
 
             self.set_state(FSState.IDLE)
 
+        elif command == FSCommand.CALIBRATE:
+           self._logger.debug("Calibration started....")
+           self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.CALIBRATE_SCANNER})
+
+        # Scan is complete
         elif command == FSCommand.COMPLETE:
             self.set_state(FSState.IDLE)
             self._logger.info("Scan complete")
 
+        # Internal error occured
         elif command == FSCommand.SCANNER_ERROR:
             self._logger.info("Internal Scanner Error.")
             self.set_state(FSState.SETTINGS)
 
+        # Meshing
         elif command == FSCommand.MESHING:
             meshlab_task = FSMeshlabTask(event.scan_id, event.filter, event.format)
             meshlab_task.start()
 
 
-
+    # new client conneted
     def on_client_connected(self, eventManager, event):
-
         try:
-
             try:
                 hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
             except:

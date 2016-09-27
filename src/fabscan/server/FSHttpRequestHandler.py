@@ -16,7 +16,7 @@ from SimpleHTTPServer import SimpleHTTPRequestHandler
 
 from fabscan.server.FSapi import FSRest
 from fabscan.FSEvents import FSEvents
-from fabscan.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorSingleton
+from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand
 
 # parameter is already a config instance
 def CreateRequestHandler(config, scanprocessor):
@@ -136,17 +136,14 @@ def CreateRequestHandler(config, scanprocessor):
                             time.sleep(0.05)
 
                     self.close_mjpeg_stream = False
-                    #self._settingsPreviewProcessor.stop()
 
                     time.sleep(0.05)
 
                except IOError as e:
                     if hasattr(e, 'errno') and e.errno == 32:
                         self.rfile.close()
-                        #self._settingsPreviewProcessor.stop()
                         return
                     else:
-                        #self._settingsPreviewProcessor.stop()
                         pass
 
 

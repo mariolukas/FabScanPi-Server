@@ -15,7 +15,7 @@ Another benefit is that the FabScan gets a Stand-Alone, Web-Enabled 3D laser sca
 
 The FabScan PI Server is written in Python. The Web-Enabled user inferface is written in JavaScript and HTML5 using WebGL. The code for
 the interface can be found at: http://github.com/mariolukas/FabScanPi-Frontend
-That enables people with different programming skills to [contribute to this project](Readme.md#contribute).
+That enables people with different programming skills to [contribute to this project](http://mariolukas.github.io/FabScanPi-Server/contributing/).
 
 FabScan PI is Free Software and released under the [GNU Affero General Public License V3](http://www.gnu.org/licenses/agpl.html).
 
@@ -24,15 +24,15 @@ The FabScan documentation can be found at [http://www.fabscan.org](http://www.fa
 
 
 ## Core Team
-* Mario Lukas (core development)
+* Mario Lukas (project lead, core development)
 * Watterott electronic (hardware)
-* René Bohne (supervision)
-* Jan Borchers (supervision)
+* René Bohne (supervision until 2015)
+* Jan Borchers (supervision until 2015)
 
 ## Contributions from
 * Beckmann Mediendesign (FabScanPi Logo)
-* Doug LaRue
-* Christoph Emonds
-* Jan Thar
-* Jens Hackel
+* Doug LaRue (build log, bug reporting)
+* Christoph Emonds (code review)
+* Jan Thar (case design, bug reporting, general support)
+* Jens Hackel (documentation, bug reporting)
 * Francis Engelmann (original FabScan)
