@@ -21,6 +21,7 @@ class FSState(object):
     IDLE = "IDLE"
     SCANNING = "SCANNING"
     SETTINGS = "SETTINGS"
+    CALIBRATION = "CALIBRATING"
 
 class FSCommand(object):
     SCAN = "SCAN"
@@ -33,6 +34,7 @@ class FSCommand(object):
     SCANNER_ERROR = "SCANNER_ERROR"
     UPGRADE_SERVER = "UPGRADE_SERVER"
     RESTART_SERVER = "RESTART_SERVER"
+    CALIBRATION_COMPLETE = "CALIBRATION_COMPLETE"
 
 @inject(
         settings=SettingsInterface,
@@ -102,9 +104,13 @@ class FSScanner(threading.Thread):
 
             self.set_state(FSState.IDLE)
 
-        elif command == FSCommand.CALIBRATE:
-           self._logger.debug("Calibration started....")
-           self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.CALIBRATE_SCANNER})
+        elif command == FSCommand.START_CALIBRATION:
+            self._logger.debug("Calibration started....")
+            self.set_state(FSState.CALIBRATING)
+            self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.CALIBRATE_SCANNER})
+
+        #elif command == FSCommand.CALIBRATION_COMPLETE:
+        #    self.set_state(FSState.IDLE)
 
         # Scan is complete
         elif command == FSCommand.COMPLETE:
