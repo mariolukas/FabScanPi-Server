@@ -153,20 +153,22 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
             pass
 
     def calibrate_scanner(self):
-        self._logger.debug("TEst ")
+
         message = {
             "message": "START_CALIBRATION",
             "level": "info"
         }
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
+        self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
         self.hardwareController.start_camera_stream()
 
 
         # do calibration here....
-
+        time.sleep(10)
 
         self.hardwareController.stop_camera_stream()
+        self.hardwareController.led.off()
 
         event = FSEvent()
         event.command = 'CALIBRATION_COMPLETE'
