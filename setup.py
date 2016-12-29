@@ -1,13 +1,14 @@
+from distutils.core import setup
+from setuptools import find_packages
+import re
+import os
+import sys
+
 __author__ = "Mario Lukas"
 __copyright__ = "Copyright 2015"
 __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
-from distutils.core import setup
-from setuptools import find_packages
-import os
-import sys
-import subprocess
 
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "src"))
@@ -17,19 +18,21 @@ DEPENDENCY_LINKS = []
 INSTALL_REQUIRES = []
 EXTRA_REQUIRES = dict()
 
+
 def version_number():
-    # get latest version number out of debian/changelog file
-    version = subprocess.Popen("head -1 debian/changelog | awk -F'[()]' '{print $2}'", shell=True, stdout=subprocess.PIPE).stdout.read()
-    version = version.rstrip(os.linesep)
-    # write version file in www folder for delivery
+    with open('debian/changelog', 'r') as changelog_file:
+        first_line = changelog_file.readline(100)
+        result = re.match("fabscanpi-server \(([0-9\.a-z\-]+)\) ([a-z]+); urgency=([a-z]+)", first_line)
+        if result is None:
+            return '0.0.0'
+        return result.group(1)
 
-    return version
 
-def create_verion_file():
+def create_version_file():
     with open("src/fabscan/FSVersion.py","w+") as version_file:
         version_file.write('__version__ = "v.%s"\n ' % str(version_number()))
 
-create_verion_file()
+create_version_file()
 
 
 def package_data_dirs(source, sub_folders):
