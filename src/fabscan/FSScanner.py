@@ -130,17 +130,18 @@ class FSScanner(threading.Thread):
             except:
                 hardware_info = "undefined"
 
-            self._logger.debug("Upgrade available:"+str(upgrade_is_available()))
+            upgrade_available, upgrade_version = upgrade_is_available(__version__)
+            self._logger.debug("Upgrade available: "+str(upgrade_available)+" "+upgrade_version)
 
             message = {
                 "client": event['client'],
                 "state": self._state,
-                "server_version": str(__version__),
+                "server_version": 'v.'+__version__,
                 "firmware_version": str(hardware_info),
                 "settings": self.settings.todict(self.settings),
                 "upgrade": {
-                    "available": upgrade_is_available(),
-                    "version": str(get_latest_version_tag())
+                    "available": upgrade_available,
+                    "version": upgrade_version
                 }
             }
 

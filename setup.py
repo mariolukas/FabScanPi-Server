@@ -30,7 +30,7 @@ def version_number():
 
 def create_version_file():
     with open("src/fabscan/FSVersion.py","w+") as version_file:
-        version_file.write('__version__ = "v.%s"\n ' % str(version_number()))
+        version_file.write('__version__ = "%s"\n ' % str(version_number()))
 
 create_version_file()
 
