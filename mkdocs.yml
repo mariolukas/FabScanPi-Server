@@ -1,6 +1,7 @@
 site_name: FabScanPi
 pages:
 - Home: index.md
+- News: news.md
 - Hardware: hardware.md
 - Software: software.md
 - Developing: developing.md
@@ -12,6 +13,7 @@ extra_css:
 extra_javascript:
   - js/main.js
 theme: readthedocs
+theme_dir: docs-theme
 extra:
     version: 1.0
 repo_url: https://github.com/mariolukas/FabScanPi-Server
