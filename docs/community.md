@@ -2,7 +2,7 @@
 Use the FabScan Slack channel for direct messaging and chat communication. 
 This is the fastest way of getting support.
 
-Signup here: https://fabscan.signup.team
+Signup here: [https://fabscan.signup.team](https://fabscan.signup.team)
 
 Or write an email to:
 info@fabscan.org with subject "add me to slack" 
