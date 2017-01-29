@@ -9,16 +9,19 @@ from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
+
+
 from fabscan.scanner.laserscanner.FSScanProcessor import FSScanProcessorSingleton
 from fabscan.scanner.laserscanner.FSHardwareController import FSHardwareControllerSingleton
-from fabscan.scanner.laserscanner.FSCalibration import FSCalibrationSingleton
 from fabscan.scanner.laserscanner.FSImageProcessor import ImageProcessor
+from fabscan.scanner.laserscanner.FSCalibration import FSCalibrationSingleton
 
 def create():
     # "dynamic" module classes ...
 
     injector.provide(ImageProcessorInterface, ImageProcessor)
     injector.provide(FSHardwareControllerInterface, FSHardwareControllerSingleton)
-    injector.provide(FSScanProcessorInterface, FSScanProcessorSingleton)
     injector.provide(FSCalibrationInterface, FSCalibrationSingleton)
+    injector.provide(FSScanProcessorInterface, FSScanProcessorSingleton)
+
 

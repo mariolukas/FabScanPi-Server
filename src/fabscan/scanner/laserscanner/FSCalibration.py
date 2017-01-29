@@ -1,13 +1,17 @@
 
+import cv2
+import numpy as np
+from PIL import Image
+import time
 import logging
-
+from fabscan.util.FSInject import singleton
 
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
-from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
+from fabscan.FSEvents import FSEventManagerSingleton
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
-from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
+from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
 
 @singleton(
     config=ConfigInterface,
@@ -15,7 +19,122 @@ from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
     eventmanager=FSEventManagerSingleton,
     imageprocessor=ImageProcessorInterface,
     hardwarecontroller=FSHardwareControllerInterface
+
 )
 class FSCalibrationSingleton(FSCalibrationInterface):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
-        super(FSCalibrationInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
+        #super(FSCalibrationInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
+
+        self._imageprocessor = imageprocessor
+        self._hardwarecontroller = hardwarecontroller
+        self.config = config
+        self.settings = settings
+
+        self.rows = 6
+        self.columns = 11
+
+        self._logger = logging.getLogger(__name__)
+        self._logger.debug("Calibration System Initialized")
+
+        # termination criteria
+        self.criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+
+        # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(columns-1,rows-1,0)
+        self.objp = np.zeros((self.rows * self.columns, 3), np.float32)
+        self.objp[:, :2] = np.mgrid[0:self.columns, 0:self.rows].T.reshape(-1, 2)
+
+
+
+
+    def camera(self):
+        self._logger.debug("Camera Calibration started... ")
+
+        self._hardwarecontroller.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
+
+        self._hardwarecontroller.start_camera_stream()
+        time.sleep(2)
+
+
+
+        #self.image.save_image(image_task.image, image_task.progress, image_task.prefix,
+        #                      dir_name=image_task.prefix + '/color_' + image_task.raw_dir)
+
+        # wake up cam device...
+        #while image is None:
+        #    image = self._hardwarecontroller.camera.device.getFrame()
+        #    pass
+        self._logger.debug("Cam is ready for calibration...")
+
+        calibration_steps = 10
+        steps_for_quater_turn = self.config.turntable.steps/4
+
+        for x in range(0, steps_for_quater_turn, steps_for_quater_turn/calibration_steps):
+            self._logger.debug("STEP FF "+str(x))
+            self._hardwarecontroller.turntable.step_blocking(80, 900)
+            time.sleep(3)
+
+        self._hardwarecontroller.turntable.step_blocking(-80*calibration_steps, 900)
+        time.sleep(3)
+
+        for x in range(0, steps_for_quater_turn, steps_for_quater_turn / calibration_steps):
+            self._hardwarecontroller.turntable.step_blocking(-80, 100)
+            self._logger.debug("STEP REV "+str(x))
+            time.sleep(3)
+
+        self._hardwarecontroller.turntable.step_blocking(80*calibration_steps, 900)
+
+
+        #self._hardwarecontroller.turntable.step_interval(80, 1200)
+
+
+        #error, mtx, dist, chessboards = self.compute_calibration(images)
+        #self._logger.debug("Calibration Matrix: "+str(mtx))
+        #self._logger.debug("Error: "+str(error))
+        #self._logger.debug("Distortion: "+str(dist))
+        #self._logger.debug("Chessboard: "+str(chessboards))
+
+        self._hardwarecontroller.stop_camera_stream()
+        self._hardwarecontroller.led.off()
+
+    def compute_calibration(self, images):
+        # Arrays to store object points and image points from all the images.
+        objpoints = []  # 3d point in real world space
+        imgpoints = []  # 2d points in image plane.
+        chessboards = []  # images with chessboard painted
+
+        for fname in images:
+
+            #img = cv2.imread(fname)
+            img = cv2.transpose(fname)
+            img = cv2.flip(img, 1)
+            gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+
+            # Find the chess board corners
+            ret, corners = cv2.findChessboardCorners(gray, (self.columns, self.rows), None)
+            self._logger.debug(corners)
+
+            # If found, add object points, image points (after refining them)
+            if ret:
+                objpoints.append(self.objp)
+
+                # Perform corner subpixel detection
+                cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), self.criteria)
+                imgpoints.append(corners)
+
+                # Show chessboards detected
+                img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+                cv2.drawChessboardCorners(img, (self.columns, self.rows), corners, ret)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                chessboards.append(img)
+
+        # Perform camera calibration
+        ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
+        # Compute calibration error
+        n = len(objpoints)
+        error = 0
+        for i in range(n):
+            imgpoints2, _ = cv2.projectPoints(objpoints[i], rvecs[i], tvecs[i], mtx, dist)
+            error += cv2.norm(imgpoints[i], imgpoints2, cv2.NORM_L2) / (len(imgpoints2))
+        error /= n
+
+        return error, mtx, dist, chessboards

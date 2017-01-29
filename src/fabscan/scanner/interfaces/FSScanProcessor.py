@@ -23,6 +23,6 @@ class FSScanProcessorCommand(object):
     GET_TEXTURE_STREAM = "GET_TEXTURE_STREAM"
 
 class FSScanProcessorInterface(ThreadingActor):
-    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
-        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
+    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration):
+        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration)
         pass

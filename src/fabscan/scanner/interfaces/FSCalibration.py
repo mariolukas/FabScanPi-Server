@@ -5,7 +5,5 @@ __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
 class FSCalibrationInterface(object):
-
-    def __init__(self, config, settings, imageprocessor, hardwarecontroller, eventmanager):
-        super(FSCalibrationInterface, self).__init__(self, config, settings, imageprocessor, hardwarecontroller, eventmanager)
+    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
         pass

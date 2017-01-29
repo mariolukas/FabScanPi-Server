@@ -166,6 +166,7 @@ class FSSerialCom():
         if self._serial:
             value = self._serial.readline()
             self.flush()
+            self._logger.debug(value)
             return value
 
     def is_connected(self):

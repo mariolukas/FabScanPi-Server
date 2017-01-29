@@ -35,6 +35,11 @@ class Turntable(object):
             self.serial_connection.send("G04 T"+str(steps)+" F"+str(speed)+";\n")
             self.serial_connection.wait()
 
+    def step_blocking(self, steps, speed):
+        if self.serial_connection != None:
+            self.serial_connection.send("G02 T"+str(steps)+" F"+str(speed)+";\n")
+            self.serial_connection.wait()
+
     def step_interval(self, steps, speed):
         '''
         Takes number of steps for one interval based on number of intervals in
