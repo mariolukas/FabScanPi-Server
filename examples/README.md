@@ -8,7 +8,7 @@ duck - the famous fabscan rubber duck
 ![Fabscan Bear](/examples/bear/bear_icon.png)
 bear - the famous fabscan bear 
 
-![Seal Toy](/examples/searl/seal_icon.png)
+![Seal Toy](/examples/seal/seal_icon.png)
 seal - a rubber seal toy
 
 ![Glue Stick](/examples/glue_stick/glue_stick_icon.png)
