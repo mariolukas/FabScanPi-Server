@@ -12,6 +12,7 @@ from fabscan.FSEvents import FSEventManagerSingleton
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
+from fabscan.file.FSImage import FSImage
 
 @singleton(
     config=ConfigInterface,
@@ -30,6 +31,7 @@ class FSCalibrationSingleton(FSCalibrationInterface):
         self.config = config
         self.settings = settings
 
+
         self.rows = 6
         self.columns = 11
 
@@ -47,6 +49,7 @@ class FSCalibrationSingleton(FSCalibrationInterface):
 
 
     def camera(self):
+        image = FSImage()
         self._logger.debug("Camera Calibration started... ")
 
         self._hardwarecontroller.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
@@ -66,32 +69,29 @@ class FSCalibrationSingleton(FSCalibrationInterface):
         self._logger.debug("Cam is ready for calibration...")
 
         calibration_steps = 10
-        steps_for_quater_turn = self.config.turntable.steps/4
+        steps_for_quater_turn = self.config.turntable.steps/8
+        motor_steps = steps_for_quater_turn / calibration_steps
 
         for x in range(0, steps_for_quater_turn, steps_for_quater_turn/calibration_steps):
+
+            img = self._hardwarecontroller.get_picture()
+            image.save_image(img, str(x)+"_left", 'calibration', dir_name='/calibration/')
             self._logger.debug("STEP FF "+str(x))
-            self._hardwarecontroller.turntable.step_blocking(80, 900)
+            self._hardwarecontroller.turntable.step_blocking(motor_steps, 900)
             time.sleep(3)
 
-        self._hardwarecontroller.turntable.step_blocking(-80*calibration_steps, 900)
+        self._hardwarecontroller.turntable.step_blocking(-motor_steps*calibration_steps, 900)
         time.sleep(3)
 
         for x in range(0, steps_for_quater_turn, steps_for_quater_turn / calibration_steps):
-            self._hardwarecontroller.turntable.step_blocking(-80, 100)
+            img = self._hardwarecontroller.get_picture()
+            image.save_image(img, str(x)+"_right", 'calibration', dir_name='/calibration/')
+            self._hardwarecontroller.turntable.step_blocking(-motor_steps, 100)
             self._logger.debug("STEP REV "+str(x))
             time.sleep(3)
 
-        self._hardwarecontroller.turntable.step_blocking(80*calibration_steps, 900)
+        self._hardwarecontroller.turntable.step_blocking(motor_steps*calibration_steps, 900)
 
-
-        #self._hardwarecontroller.turntable.step_interval(80, 1200)
-
-
-        #error, mtx, dist, chessboards = self.compute_calibration(images)
-        #self._logger.debug("Calibration Matrix: "+str(mtx))
-        #self._logger.debug("Error: "+str(error))
-        #self._logger.debug("Distortion: "+str(dist))
-        #self._logger.debug("Chessboard: "+str(chessboards))
 
         self._hardwarecontroller.stop_camera_stream()
         self._hardwarecontroller.led.off()
