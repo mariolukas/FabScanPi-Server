@@ -1,0 +1,1969 @@
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 4154
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.3.1
+Depends: python:any (>= 2.7.5-5~), python:any (<< 2.8), python, python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, python-rpi.gpio, xvfb, meshlab, strace, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.3.1_all.deb
+Size: 1020184
+MD5sum: 9e7e59180805257809d03ebe382a11de
+SHA1: c8943798f658ef0d5653fbe70835738b8c8cb369
+SHA256: e2824f4da8555f1f2b35482a01a95a2ca5b0562d765dd2dd0d65f1b59250d453
+Description:
+ FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Homepage: http://fabscan.org
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 4154
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.3.0
+Depends: python, python:any (>= 2.7.5-5~), python:any (<< 2.8), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, python-rpi.gpio, xvfb, meshlab, strace, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.3.0_all.deb
+Size: 1020052
+MD5sum: de6c96ef2e46fb53e6babc77d54d2256
+SHA1: 05c12afc06ba10629527e0ee3c5bece390f77dcb
+SHA256: 79fa8bea6e8a6fa20806bbe4bb486828e5f0048ed6ab53c21b738e8531bbc34b
+Description:
+ FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Homepage: http://fabscan.org
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 3451
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.2.1
+Depends: python, python:any (>= 2.7.5-5~), python:any (<< 2.8), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, python-rpi.gpio, xvfb, meshlab, strace, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.2.1_all.deb
+Size: 829046
+MD5sum: 3abbf19f0e668a740c79f69e1df2e97e
+SHA1: c00330b9efc1a594debb4a4ccc265d191c5b8f37
+SHA256: 4bac442390b0b2ec5b2b048f01dcc53548d8bdfa3232258c58530dbb73cd6815
+Description:
+ FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Homepage: http://fabscan.org
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 3443
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.2.0
+Depends: python, python:any (>= 2.7.5-5~), python:any (<< 2.8), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, xvfb, meshlab, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.2.0_all.deb
+Size: 827040
+MD5sum: 57abceb3988bf8e2d24b40226777ff1d
+SHA1: 36fb2527e6e69b6a862aabc8b7c785a1594a1f5e
+SHA256: 43d8ab2fbf50d8fab78824146f110e06cd805cd53f0c4d2342d783853a2862b4
+Description:
+ FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Homepage: http://fabscan.org
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 3150
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.1.14
+Depends: python, python:any (<< 2.8), python:any (>= 2.7.5-5~), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.1.14_all.deb
+Size: 771528
+MD5sum: f519f6de31a1523937f8df848d8ee38c
+SHA1: f66ce4cd462f4ecd1256dd43a559b5bd9f3f0f2a
+SHA256: b39dfcfd2a61cbcf05971d70daff4ae72a00c3ffbd28783ff739f2139610b41f
+Description: FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Homepage: http://fabscan.org
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 3112
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.1.13
+Depends: python, python:any (<< 2.8), python:any (>= 2.7.5-5~), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.1.13_all.deb
+Size: 770918
+MD5sum: a1ebbc63d1347bc7f8a326456798d17c
+SHA1: 92d8d1792bf0d09ea0fe38928872b612293c2199
+SHA256: b80a244fbe6892c649149e5daf071753e6fb74f92fcf6b7ded0d1c152bbecdb3
+Description: FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Homepage: http://fabscan.org
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 2890
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.1.12
+Depends: python, python:any (<< 2.8), python:any (>= 2.7.5-5~), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.1.12_all.deb
+Size: 543728
+MD5sum: dad1cc486e2ab7a034eddbb18235c5dc
+SHA1: 427a821f2181d9b323ad02715efb5092a851639e
+SHA256: df57d1842e2747a7da3f44d6de7ecd17c39c39af1ee031d9219990edc625c15b
+Description: FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Homepage: http://fabscan.org
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 2890
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.1.11
+Depends: python (>= 2.4), python-support (>= 0.90.0), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.1.11_all.deb
+Size: 544566
+MD5sum: 58fb4caa4d4a0b9ebff2ceaaed146160
+SHA1: 7f0ca209f9b269ccb0815714486eec61d7891026
+SHA256: fbc95097c996482a0c76d821bc94de1a4fa601831120c6acb9c2656fde506534
+Description: FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Homepage: http://fabscan.org
+Python-Version: 2.7
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 2890
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.1.10
+Depends: python (>= 2.4), python-support (>= 0.90.0), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.1.10_all.deb
+Size: 543916
+MD5sum: 865b632f0c8127170c9d21f950251ebb
+SHA1: fc12d487dbdb72477179124eec98499520584da6
+SHA256: 9530f3e2eb9d2df80685debc3805514609af4d85fda0dc66e49eef69d008680a
+Description: FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Homepage: http://fabscan.org
+Python-Version: 2.7
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 2814
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.1.9
+Depends: python (>= 2.4), python-support (>= 0.90.0), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.1.9_all.deb
+Size: 544054
+MD5sum: aa2c3c99d6efbc247ed107704da91c3c
+SHA1: 8174da7fb928797ee704c8a50895b3a26237b3ca
+SHA256: e54236326fa281c3882dbd52ca088b2d95c8848465a9beceeb3cd0833b81bab9
+Description: FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Homepage: http://fabscan.org
+Python-Version: 2.7
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 2813
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.1.8
+Depends: python (>= 2.4), python-support (>= 0.90.0), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.1.8_all.deb
+Size: 543846
+MD5sum: ddebdad2157f792589b96434d7bd16e8
+SHA1: a587a2585586f0bc6bd871030c6141a8b5d5aeb4
+SHA256: 0e4fb9812aad4f9743c3d6855e3e4cd955e65630a091df3ef954085234bb558a
+Description: FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Homepage: http://fabscan.org
+Python-Version: 2.7
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 2813
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.1.7
+Depends: python (>= 2.4), python-support (>= 0.90.0), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.1.7_all.deb
+Size: 543742
+MD5sum: c581d536ddc675d1d1596a9454df1da7
+SHA1: 1082718f3b6e1c51d1c256bae52dcf8b16ef12c6
+SHA256: d03028b089e9476e9026314431ae94755f8daac41848cfa0cbe2e34cb16405f1
+Description: FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Homepage: http://fabscan.org
+Python-Version: 2.7
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 2772
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.1.6
+Depends: python (>= 2.4), python-support (>= 0.90.0), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.1.6_all.deb
+Size: 536732
+MD5sum: 332c224188b8892d9e4b72e6fa95490b
+SHA1: b8790f2d642be4aae28da80f714044573c318e99
+SHA256: 8abd329d336d48371adb01eb719cd5fdb87614742bd20230b28e2b407e96f6a9
+Description: FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Python-Version: 2.7
+Homepage: http://fabscan.org
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 2771
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.1.4r1
+Depends: python (>= 2.4), python-support (>= 0.90.0), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.1.4r1_all.deb
+Size: 536664
+MD5sum: 5c5c9365428150cc71aaeaa20f45bbca
+SHA1: 474b8ef4daac8cd6d4c92515363dec13c849894c
+SHA256: 45679bf5ae3edc829fc548e66e4cf66d4f954ff61836a38143776bc8fdc37e90
+Description: FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Python-Version: 2.7
+Homepage: http://fabscan.org
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 1228
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.1.3
+Depends: python (>= 2.4), python-support (>= 0.90.0), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.1.3_all.deb
+Size: 295614
+MD5sum: 12ee030ead5e37046ac6d0534d96faf2
+SHA1: ed66eb0bc8cb55c1095fc25c8d8865c64bed8605
+SHA256: 5da7a98b9039910979638825a7dc6da1e8b924952b290ab67291e2cd5916b3b8
+Description: FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Python-Version: 2.7
+Homepage: http://fabscan.org
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 2778
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.1.2
+Depends: python (>= 2.4), python-support (>= 0.90.0), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.1.2_all.deb
+Size: 537428
+MD5sum: d4ad3341c26ac8e8b4e52266ad5f194e
+SHA1: 3b118fd6ba214d2ed5760dad2af5ee9c09ec8c57
+SHA256: c850aea42094343e08da725fbba1d5b6c73486873f6d4f4e64663ded48a8e4b0
+Description: FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Homepage: http://fabscan.org
+Python-Version: 2.7
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 2777
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.1.1
+Depends: python (>= 2.4), python-support (>= 0.90.0), python-opencv-tbb, libtbb2, python-pil, python-serial, python-pykka, python-picamera, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.1.1_all.deb
+Size: 537262
+MD5sum: 32cb05f2955ef90558f8a1f1a0c85c8c
+SHA1: a05581578e65f11d5675bf8e0868717b0699cadc
+SHA256: 49cf6d5302bf73e0da3b84cc327a179fe6824b2ac574c8f6dd75c47a74b9941c
+Description: FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Python-Version: 2.7
+Homepage: http://fabscan.org
+
+Package: fabscanpi-server
+Priority: optional
+Section: net
+Installed-Size: 2813
+Maintainer: Mario Lukas (info@mariolukas.de)
+Architecture: all
+Version: 0.1.0
+Depends: python (>= 2.4), python-support (>= 0.90.0), python-opencv-tbb, python-pil, python-serial, python-pykka, python-picamera, avrdude
+Filename: pool/main/f/fabscanpi-server/fabscanpi-server_0.1.0_all.deb
+Size: 538990
+MD5sum: 3d7630442b5273bc8b7001d31c70095c
+SHA1: d6359fdca5b083f9a9922b19f6f0352d48051a8d
+SHA256: c6ed7578ba74a73323c18e331b100dd8336d114f10518ba04dece3d13d243e64
+Description: FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
+Homepage: http://fabscan.org
+Python-Version: 2.7
+
+Package: libcv-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 63
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: pkg-config, libopencv-core-tbb-dev, libopencv-imgproc-tbb-dev, libopencv-flann-tbb-dev, libopencv-features2d-tbb-dev, libopencv-calib3d-tbb-dev, libopencv-objdetect-tbb-dev, libopencv-legacy-tbb-dev, libopencv-video-tbb-dev, libopencv-ml-tbb-dev
+Conflicts: libcvaux-dev (<= 2.1.0-7), libhighgui-dev (<= 2.1.0-7)
+Filename: pool/main/o/opencv/libcv-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 13762
+MD5sum: 005fea56278a1526109bbaeddcfb8de6
+SHA1: 041bbe08ecce76c0857bc7196e0f85a2522f7f93
+SHA256: 5e4260353b6ea01bb177a59d8792b8f4adb812e3ffe796d1974c4dc7bb62bd70
+Description: Translation package for libcv-dev
+ This package provide files for translation from libcv-dev to
+ subdivided packages.
+ .
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision).
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libcv2.4-tbb
+Priority: optional
+Section: devel
+Installed-Size: 45
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: all
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-core2.4-tbb, libopencv-imgproc2.4-tbb, libopencv-flann2.4-tbb, libopencv-features2d2.4-tbb, libopencv-calib3d2.4-tbb, libopencv-objdetect2.4-tbb, libopencv-legacy2.4-tbb, libopencv-video2.4-tbb, libopencv-ml2.4-tbb
+Filename: pool/main/o/opencv/libcv2.4-tbb_2.4.9.1+dfsg-1+deb8u1_all.deb
+Size: 11862
+MD5sum: acf6767b666f9fb991bb44d9acd52875
+SHA1: ae6bfe93a718d9f4473cc3f9b370a3978018ac36
+SHA256: ca2992d0779ad414d080128692e025cf0b9e463400152e4dfd87af904910a5e7
+Description: computer vision library - libcv* translation package
+ This package provide files for translation from libcv2.1 to libcv2.4.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+
+Package: libcvaux-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 51
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: pkg-config, libopencv-core-tbb-dev, libopencv-imgproc-tbb-dev, libopencv-features2d-tbb-dev, libopencv-calib3d-tbb-dev, libopencv-objdetect-tbb-dev, libopencv-legacy-tbb-dev, libopencv-video-tbb-dev, libopencv-contrib-tbb-dev
+Filename: pool/main/o/opencv/libcvaux-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 12954
+MD5sum: cc86b63522eeb39a5e6f4d260a3a22f6
+SHA1: c5da8e52d36ce2edbe3f4383a6efa789a6b3fe2e
+SHA256: 44c40986ce196c2eae07d96ebd8fbb4a1b29090965bbe5a6cb3e4097ccc86600
+Description: Translation package for libcvaux-dev
+ This package provide files for translation from libcvaux-dev to
+ subdivided packages.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libcvaux2.4-tbb
+Priority: optional
+Section: devel
+Installed-Size: 45
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: all
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-core2.4-tbb, libopencv-imgproc2.4-tbb, libopencv-features2d2.4-tbb, libopencv-calib3d2.4-tbb, libopencv-objdetect2.4-tbb, libopencv-legacy2.4-tbb, libopencv-video2.4-tbb, libopencv-contrib2.4-tbb
+Filename: pool/main/o/opencv/libcvaux2.4-tbb_2.4.9.1+dfsg-1+deb8u1_all.deb
+Size: 11866
+MD5sum: 1b6d1ff68006605abad6e948ac3d8553
+SHA1: cef31968b590ae6093a88454c9bf6b47fcf70bd5
+SHA256: 383f90223bed6864043cfb11d6125b6ffe934024ac5f884b8ca10329ef52693e
+Description: computer vision library - libcvaux translation package
+ This package provide files for translation from libcvaux2.1 to libcvaux2.4.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+
+Package: libhighgui-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 48
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: pkg-config, libopencv-highgui-tbb-dev
+Filename: pool/main/o/opencv/libhighgui-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 12732
+MD5sum: 80dd0f892656854af878d2a614edda7a
+SHA1: a6245a7876b2e85f38e58be36c300ceeef27a000
+SHA256: 293327f43a513d1152139066cc742e47ee453a1e24ef5a3e69e38a949e13b941
+Description: Translation package for libhighgui-dev
+ This package provide files for translation from libhighgui-dev to
+ subdivided packages.
+ .
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision).
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libhighgui2.4-tbb
+Priority: optional
+Section: devel
+Installed-Size: 45
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: all
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-highgui2.4-tbb
+Filename: pool/main/o/opencv/libhighgui2.4-tbb_2.4.9.1+dfsg-1+deb8u1_all.deb
+Size: 11804
+MD5sum: 4644358199b901e153a162fb3e3da1c8
+SHA1: e5d96c3dea969bc24d24f5d49900152a9462df89
+SHA256: 0c66d4782324f88a4f730ba4afc94d3337d7aaf092d245b4bd7a9ca34512d53a
+Description: computer vision library - libhighgui translation package
+ This package provide files for translation from libhighgui2.1 to libhighgui2.4.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+
+Package: libopencv-calib3d-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 904
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-features2d-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-calib3d2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-calib3d-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 229168
+MD5sum: 327d8d1fc1200f68d0675b4356512371
+SHA1: 1a87cbc9739ebd3a866e1830cc0cc9d04fd294d6
+SHA256: d579504b2a9f3b2e5f2dabe46596abf5b2e2bcdcf2a6e3b9cb01f3f1641da7b9
+Description: development files for libopencv-calib3d
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) Camera Calibration library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-calib3d2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 562
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-core2.4-tbb, libopencv-features2d2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-flann2.4-tbb, libopencv-highgui2.4-tbb, libopencv-imgproc2.4-tbb, libsm6, libstdc++6 (>= 4.9), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-calib3d2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 198882
+MD5sum: 6ba0bbad2123ccd33ff61a827be4bf3c
+SHA1: ff7db9aac73fe1848e350facd74417b6398c2fe4
+SHA256: 200916d144353d915cb2b7f39d1f6ea2856482735e46fd6e5fc3c5da5e197a0f
+Description: computer vision Camera Calibration library
+ This package contains the OpenCV (Open Computer Vision) Camera Calibration
+ runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-contrib-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 1609
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-calib3d-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-highgui-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-ml-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-video-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-objdetect-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-contrib2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-contrib-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 332322
+MD5sum: 2e07fe9c7ea14745043fb928088c15e8
+SHA1: db3608cc0904bfd9690bbc6028758128edc21953
+SHA256: 8f918a4fa61fc3f371d442e4cb55f9533c87051dc196a55803a274da080af6f9
+Description: development files for libopencv-contrib
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) crotrib library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-contrib2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 810
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-calib3d2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-core2.4-tbb, libopencv-features2d2.4-tbb, libopencv-flann2.4-tbb, libopencv-highgui2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-imgproc2.4-tbb, libopencv-ml2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-objdetect2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-video2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libsm6, libstdc++6 (>= 4.9), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-contrib2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 264164
+MD5sum: e8798edf0f0fe0d0c172f2d6d9cc160b
+SHA1: 4d9e5d56ff1cf67d5133261da24d35c17813864c
+SHA256: 505a2c60aacd4c25adc24aebe4767932d6658b9280c0b7f8aab5ad859079499d
+Description: computer vision contrib library
+ This package contains the OpenCV (Open Computer Vision) contrib
+ runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-core-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 4356
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-core2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), zlib1g-dev
+Filename: pool/main/o/opencv/libopencv-core-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 828198
+MD5sum: 8d65a8baea5d571e217e8de93b2793e0
+SHA1: f714ad4b3817417663c9851d416131c9e5648569
+SHA256: 51a414ee6796b3c6a160f8f1a51ecce582ffe0e3cf8abac0b0da18d136089740
+Description: development files for libopencv-core
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) core.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-core2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 2132
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libsm6, libstdc++6 (>= 4.9), libtbb2, libx11-6, libxext6, zlib1g (>= 1:1.1.4)
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-core2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 627070
+MD5sum: 366beb83b4c44b810d940d8b5f0f7667
+SHA1: dad35d5b5714629629b49bfa268783a08006b5ec
+SHA256: 768e40c5369e6edcc87da642e7cbc67ff3070bc3b06820cec0a38d2bf5ec076f
+Description: computer vision core library
+ This package contains the OpenCV (Open Computer Vision) core runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-features2d-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 1282
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-flann-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-imgproc-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-features2d2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-features2d-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 252974
+MD5sum: c0a74c79fe74ae6d279a6adbd579e559
+SHA1: 85f0c7e47d3200f67230c9e2e53a5ee689805df1
+SHA256: fbc3e2f3608947bc60f8abf1ce64385c2254717a311c53f768a7bd2a6b090890
+Description: development files for libopencv-features2d
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) Feature Detection and
+ Descriptor Extraction library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-features2d2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 634
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-core2.4-tbb, libopencv-flann2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-highgui2.4-tbb, libopencv-imgproc2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libsm6, libstdc++6 (>= 4.9), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-features2d2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 201690
+MD5sum: 46708345cac9be34870ce554a0ebb3ac
+SHA1: edf9ed17536aced217aa8653f7b21e13b4d8e3b1
+SHA256: 7b78887618d57de1a00dba62455e09a003bc9e58d43eab79467221e71b643c65
+Description: computer vision Feature Detection and Descriptor Extraction library
+ This package contains the OpenCV (Open Computer Vision) Feature Detection
+ and Descriptor Extraction runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-flann-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 1270
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-core-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-flann2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-flann-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 166790
+MD5sum: 97a48e0c245a2efca02cbd3efe92a811
+SHA1: 3cd32b42f98a7ed20c65fbdbe7c136158b7a280c
+SHA256: 29d9dc4e104cf51bf22945b3618b9f4d1def44613d62da5f391afb335faa1e13
+Description: development files for libopencv-flann
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) Clustering and Search
+ in Multi-Dimensional spaces library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-flann2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 406
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-core2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libsm6, libstdc++6 (>= 4.4.0), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-flann2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 102424
+MD5sum: fcc219433e6b03b29a988a1866b5e821
+SHA1: 73c7d531cccc3682a57790a5450fc27a44b5bf4c
+SHA256: b52fbb3c9e202edb36c4378db21d4c54c4a4e1dcf4078e81dc54235e0056564c
+Description: computer vision Clustering and Search in Multi-Dimensional spaces library
+ This package contains the OpenCV (Open Computer Vision) clustering and
+ search in Multi-Dimensional spaces runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-gpu-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 1526
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-core-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-gpu-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 153552
+MD5sum: 8ca6e7ee0a6ca268475cb2559b1f37ef
+SHA1: 3073f82c4242b07cc909668aa05306f2e7dd812e
+SHA256: b0055f3fc73359db8552ee8a5dd2a9a011d7d2d62abd3898ad9fc17db2067d16
+Description: development files for libopencv-gpu2.4
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) GPU library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-gpu2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 374
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-calib3d2.4-tbb, libopencv-core2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-features2d2.4-tbb, libopencv-flann2.4-tbb, libopencv-highgui2.4-tbb, libopencv-imgproc2.4-tbb, libopencv-legacy2.4-tbb, libopencv-ml2.4-tbb, libopencv-objdetect2.4-tbb, libopencv-photo2.4-tbb, libopencv-video2.4-tbb, libsm6, libstdc++6 (>= 4.3.0), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-gpu2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 49912
+MD5sum: 695f17424a399ed3cab2f3db517469b5
+SHA1: 948e8b74ca9abb77130d5c2a1348bc71d8336cac
+SHA256: 799f1791bf4da378932d4708dde2d11208dd034d9d64d0791b92174bda0df8fb
+Description: computer vision GPU library
+ This package contains the OpenCV (Open Computer Vision) GPU-accelerated
+ runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-highgui-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 750
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-imgproc-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-highgui2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libavcodec-dev (>= 0.svn20080206), libavformat-dev, libswscale-dev, libgtk2.0-dev, libjasper-dev (>= 1.900.1), libjpeg-dev, libpng-dev, libtiff-dev, libopenexr-dev (>= 1.4.0), libraw1394-dev, libdc1394-22-dev
+Filename: pool/main/o/opencv/libopencv-highgui-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 138440
+MD5sum: 7479b3d974cfabcaaec98bc9c01da648
+SHA1: 2eb6ac07b48ed029a79d6c89a8bee172cd9975cf
+SHA256: 00387d617c9c5e3fc0afd42699394d15a4b402f5fd3a024ab5d4c966de0a788e
+Description: development files for libopencv-highgui
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) High-level GUI and
+ Media I/O library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-highgui2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 307
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatk1.0-0 (>= 1.12.4), libatomic1 (>= 4.8), libavcodec56 (>= 6:11~beta1) | libavcodec-extra-56 (>= 6:11.4), libavformat56 (>= 6:11~beta1), libavutil54 (>= 6:11~beta1), libc6 (>= 2.15), libcairo2 (>= 1.2.4), libdc1394-22, libfontconfig1 (>= 2.11), libfreetype6 (>= 2.2.1), libgcc1 (>= 1:4.4.0), libgdk-pixbuf2.0-0 (>= 2.22.0), libgl1-mesa-glx | libgl1, libglib2.0-0 (>= 2.31.8), libglu1-mesa | libglu1, libgtk2.0-0 (>= 2.8.0), libgtkglext1, libice6 (>= 1:1.0.0), libilmbase6 (>= 1.0.1), libjasper1, libjpeg62-turbo (>= 1.3.1), libopencv-core2.4-tbb, libopencv-imgproc2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopenexr6 (>= 1.6.1), libpango-1.0-0 (>= 1.14.0), libpangocairo-1.0-0 (>= 1.14.0), libpangoft2-1.0-0 (>= 1.14.0), libpangox-1.0-0 (>= 0.0.2), libpng12-0 (>= 1.2.13-4), libsm6, libstdc++6 (>= 4.3.0), libswscale3 (>= 6:11~beta1), libtbb2, libtiff5 (>= 4.0.3), libv4l-0 (>= 0.5.0), libx11-6, libxext6, libxmu6, libxt6, zlib1g (>= 1:1.1.4)
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-highgui2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 98758
+MD5sum: 78301a5b90d812154fb5323d789a1817
+SHA1: 2724ca87a649c2a2f24dbc8e61b8fc8a69a835c2
+SHA256: 593c945641e60b02ce88232dfcf615c1c8b0ba07fcb829d395141c78f7575264
+Description: computer vision High-level GUI and Media I/O library
+ This package contains the OpenCV (Open Computer Vision) High-level GUI
+ and Media I/O runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-imgproc-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 3298
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-core-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-imgproc2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-imgproc-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 632394
+MD5sum: 1c81bc323151c812a910bb41abfc8519
+SHA1: 94989d796827d2b42a08aaf13ec6354dacceb254
+SHA256: 19096fbc493a848a723e50128b5b9988e0a6eca228af144a9eb09ef43e1c6c98
+Description: development files for libopencv-imgproc
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) Image Processing library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-imgproc2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 1822
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-core2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libsm6, libstdc++6 (>= 4.3.0), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-imgproc2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 540982
+MD5sum: f4ac2f9b7e3486de88a4b61fcdcf9237
+SHA1: a5b5804b478084e349673bbf01934f8066096f33
+SHA256: dfccd91938e10c5079f2a106b3f68c3492fad73020bd5092a7870e054db9139b
+Description: computer vision Image Processing library
+ This package contains the OpenCV (Open Computer Vision) Image Processing
+ runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-legacy-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 2229
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-video-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-calib3d-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-ml-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-highgui-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-legacy2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-legacy-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 486280
+MD5sum: 39133eb8791b3eba232d3219177359a9
+SHA1: 5df1ea77d5a04f7da2cc2c30861a54af748843c0
+SHA256: c67875dda133847d0db08f784aab4b7a9ece7df3a6b171b4c4a5ff255c458dd2
+Description: development files for libopencv-legacy
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) legacy library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-legacy2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 984
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-calib3d2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-core2.4-tbb, libopencv-features2d2.4-tbb, libopencv-flann2.4-tbb, libopencv-highgui2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-imgproc2.4-tbb, libopencv-ml2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-video2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libsm6, libstdc++6 (>= 4.4.0), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-legacy2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 360088
+MD5sum: a8478a16d70a0c5687a8b205f5e72635
+SHA1: 402762a215cfd02fea414f3e2ef0115238065799
+SHA256: b1ee2ac6b8118739a2f1569c3207e36f1ceebfa0d0eb789f29cd466156af2e5a
+Description: computer vision legacy library
+ This package contains the OpenCV (Open Computer Vision) legacy runtime
+ libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-ml-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 947
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-core-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-ml2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-ml-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 220872
+MD5sum: 2783333e52c3f0ec99610876f4abae1f
+SHA1: 24f034d56a7422a673c561aadf0199d3f7ff148f
+SHA256: 34f6c734d3760fb39f5cd0340cefb864d9dac114cc6ca060cd46451934a674d4
+Description: development files for libopencv-ml
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) Machine Learning library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-ml2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 496
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-core2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libsm6, libstdc++6 (>= 4.3.0), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-ml2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 179060
+MD5sum: ef5696fcbe9f37350d766e7f6d7ed05d
+SHA1: a854de43c31b0b8c26ad2ee6a875b478e76238ac
+SHA256: 536a1b9a0f450509ffce31ace56df5c0995f4d67dfed3f93d352951f9a17d6e7
+Description: computer vision Machine Learning library
+ This package contains the OpenCV (Open Computer Vision) Machine Learning
+ runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-objdetect-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 873
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-highgui-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-objdetect2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-objdetect-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 209332
+MD5sum: 520fe28278d4e61400db4895adf716b6
+SHA1: 1b13bbe2eca5d31262e6f22bae73242e9d8a090e
+SHA256: 5e13a26afd76beba081795eefea38795a1b41ae252a242c7c1a98e304b8c91a8
+Description: development files for libopencv-objdetect
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) Object Detection library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-objdetect2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 475
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-core2.4-tbb, libopencv-highgui2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-imgproc2.4-tbb, libsm6, libstdc++6 (>= 4.9), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-objdetect2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 176980
+MD5sum: a05d3251a1fe4a80d9d27f25723a8057
+SHA1: dc22871ed3398b5fbc102caacd1d49f13996f6c6
+SHA256: cb0135e6091856e50b5c634456b4b89f21437d36178bfbcd9e5f188d1e175cb6
+Description: computer vision Object Detection library
+ This package contains the OpenCV (Open Computer Vision) Object Detection
+ runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-ocl-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 2781
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-calib3d-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-ml-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-objdetect-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-highgui-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-video-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-ocl2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-ocl-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 507558
+MD5sum: 859907c044dd5725acd30ce83140056c
+SHA1: 1bd87ec1ade68440971288be07918fe00e8a08e1
+SHA256: 9d54afa1c1dd21f1268428885675fe987fc6619c67a6ff1234f37fbddafc8518
+Description: development files for libopencv-ocl2.4
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) OpenCL support library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-ocl2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 1776
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-calib3d2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-core2.4-tbb, libopencv-features2d2.4-tbb, libopencv-flann2.4-tbb, libopencv-highgui2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-imgproc2.4-tbb, libopencv-ml2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-objdetect2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-video2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libsm6, libstdc++6 (>= 4.9), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-ocl2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 435862
+MD5sum: 964483c22725fbd4df21bd4aae0f3177
+SHA1: 13df93344637d612ecd86e949a03e2dc1d9bc818
+SHA256: 72b42f93963db91926213fc79d0027e980d44ddbaba841e51823b69d362180d4
+Description: computer vision OpenCL support library
+ This package contains the OpenCV (Open Computer Vision) OpenCL runtime
+ libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-photo-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 210
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-imgproc-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-photo2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-photo-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 49080
+MD5sum: 4a23d0d0e300ff875ec9add19c168558
+SHA1: 0c56cce01915211ee5e790b2331075c78de113da
+SHA256: 54dca5a63ff83542577dc8798d5c16767d5e6ba30512c65b4f62dd5a0872cdb0
+Description: development files for libopencv-photo2.4
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) computational photography
+ library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-photo2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 150
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-core2.4-tbb, libopencv-imgproc2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libsm6, libstdc++6 (>= 4.3.0), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-photo2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 46734
+MD5sum: 5a2071de668c4a8a516e89f2b8403c54
+SHA1: 5127a23167c633a3eac5a52b4cccf96173434d34
+SHA256: 1b800aea83ddbf58878aa90fac0a0e015f57000dea4093d4bea60379a8931396
+Description: computer vision computational photography library
+ This package contains the OpenCV (Open Computer Vision) computational
+ photography runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-stitching-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 985
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-calib3d-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-flann-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-stitching2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-stitching-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 194720
+MD5sum: 83b8ca92827e3388436db5276b560a2e
+SHA1: 849956b3b1dacb342608517c0cc0fefe30fd64eb
+SHA256: 0ab7cae0cfe2b0b9f109e41bb1d4556180921985ebc741744e9a8a3d383278e0
+Description: development files for libopencv-stitching2.4
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) image stitching library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-stitching2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 474
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-calib3d2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-core2.4-tbb, libopencv-features2d2.4-tbb, libopencv-flann2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-gpu2.4-tbb, libopencv-highgui2.4-tbb, libopencv-imgproc2.4-tbb, libopencv-legacy2.4-tbb, libopencv-ml2.4-tbb, libopencv-objdetect2.4-tbb, libopencv-photo2.4-tbb, libopencv-video2.4-tbb, libsm6, libstdc++6 (>= 4.9), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-stitching2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 156586
+MD5sum: 36895c92dd6bb8690d360efc223d0d9f
+SHA1: d6dd5b5e7b9a698165226a491fb2a8bf706c3d0d
+SHA256: 26778edb7f018ec24cf6cc401b88f2eff22641632e6fbfc6dcfa8b89febe6a84
+Description: computer vision image stitching library
+ This package contains the OpenCV (Open Computer Vision) image stitching
+ runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-superres-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 467
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-highgui-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-video-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-gpu-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-superres2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-superres-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 85386
+MD5sum: 89676dbf1ace4ea09becc2aad10912d1
+SHA1: 87396afbc25b44eec0e3c6944c7ca002f4227ce8
+SHA256: 1769a86ca9631658ea9983841dc12a677eda8d759c96f92d9c3db7348f5945eb
+Description: development files for libopencv-superres2.4
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) Super Resolution library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-superres2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 250
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-calib3d2.4-tbb, libopencv-core2.4-tbb, libopencv-features2d2.4-tbb, libopencv-flann2.4-tbb, libopencv-gpu2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-highgui2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-imgproc2.4-tbb, libopencv-legacy2.4-tbb, libopencv-ml2.4-tbb, libopencv-objdetect2.4-tbb, libopencv-ocl2.4-tbb, libopencv-photo2.4-tbb, libopencv-video2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libsm6, libstdc++6 (>= 4.3.0), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-superres2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 70080
+MD5sum: ac05588c0c871fce3cb18ee93a75a2a6
+SHA1: 58214b0a1e3fbff6c5643e36edd4b5c62ccf81af
+SHA256: 4d286be194eabab401a0e619be3cb02db363da97923086da069778f4d6808ed8
+Description: computer vision Super Resolution library
+ This package contains the OpenCV (Open Computer Vision) Super Resolution
+ runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 633
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-calib3d2.4-tbb, libopencv-core2.4-tbb, libopencv-features2d2.4-tbb, libopencv-flann2.4-tbb, libopencv-highgui2.4-tbb, libopencv-imgproc2.4-tbb, libopencv-legacy2.4-tbb, libopencv-ml2.4-tbb, libopencv-objdetect2.4-tbb, libopencv-video2.4-tbb, libsm6, libstdc++6 (>= 4.4.0), libtbb2, libx11-6, libxext6, libopencv-core-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-ml-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-imgproc-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-video-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-objdetect-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-highgui-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-calib3d-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-flann-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-features2d-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-legacy-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-contrib-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-ts-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-photo-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-videostab-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-stitching-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-gpu-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-superres-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-ocl-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv2.4-java-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv2.4-jni-tbb (= 2.4.9.1+dfsg-1+deb8u1), libcv-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libhighgui-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libcvaux-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), pkg-config
+Recommends: opencv-data-tbb
+Breaks: libopencv-core-tbb-dev (<= 2.3.1-8)
+Filename: pool/main/o/opencv/libopencv-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 159256
+MD5sum: fb12dee635812f195ccee22f71be02d8
+SHA1: 2a2fb851d4d40b0a876d711371c82787b9b75bcc
+SHA256: f8b13636b52e8605ec15b0043f279e88390103082451f18949511776156b2573
+Description: development files for opencv
+ This is a metapackage providing development package necessary for
+ development of OpenCV (Open Computer Vision).
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+
+Package: libopencv-ts-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 2243
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-core-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-ts2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-ts-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 361058
+MD5sum: 5d2a999e3eca3ecd40d3cbe0f2a7caef
+SHA1: 9a136b70706a48deaf558f3cdbcdef89b9670472
+SHA256: 342cbaf02f964e66e92b6e01ff56a64c1289717dd2d5f1e0e231e4798fd560fc
+Description: development files for libopencv-ts2.4
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) ts library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-ts2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 706
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.11), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-core2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-features2d2.4-tbb, libopencv-flann2.4-tbb, libopencv-highgui2.4-tbb, libopencv-imgproc2.4-tbb, libsm6, libstdc++6 (>= 4.9), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-ts2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 222058
+MD5sum: 1acb3e84b2f703c87afe3d3e22f35b90
+SHA1: cb0201fbed3d66c102bbd955fcb1521da946cb6f
+SHA256: 22cf26243db2da78018545df11fd59fe794d9e840e222b6a354d2f7835e04f3c
+Description: computer vision ts library
+ This package contains the OpenCV (Open Computer Vision) ts runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-video-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 523
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-imgproc-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-video2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-video-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 129694
+MD5sum: ed25df4d803e2f0e07bfdba553699773
+SHA1: 764c155295c159e1480327172c8202a789e9e03e
+SHA256: 4bcc8c113b64a0fcd08a35add5afed834fe0f6ef3574bc0ac3b8698f877eddc5
+Description: development files for libopencv-video
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) Video analysis library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-video2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 338
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-core2.4-tbb, libopencv-imgproc2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libsm6, libstdc++6 (>= 4.3.0), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-video2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 110274
+MD5sum: 65441c2e4d5931bd343f01d240c4aaa8
+SHA1: 8165218e2d6c3cad3f4c3b01f4f358cb9c26994f
+SHA256: 94842bb681cfe2803afa5d4c00539683fc61f7174cbf67d52a23c67e8dc20af8
+Description: computer vision Video analysis library
+ This package contains the OpenCV (Open Computer Vision) Video analysis
+ runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+Multi-Arch: same
+
+Package: libopencv-videostab-tbb-dev
+Priority: optional
+Section: libdevel
+Installed-Size: 496
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv-features2d-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-video-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-highgui-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-photo-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-gpu-tbb-dev (= 2.4.9.1+dfsg-1+deb8u1), libopencv-videostab2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv-videostab-tbb-dev_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 94762
+MD5sum: 5a2e409d87ca14478fcff49c80b1f8f7
+SHA1: 91f3ce91e63adf6850254de4c55c30670e62d12f
+SHA256: 2c70772ce7dfcf66e01ecd7cdfe352569614a8582c092783aeea3c47e49d4588
+Description: development files for libopencv-videostab2.4
+ This package contains the header files and static library needed to compile
+ applications that use OpenCV (Open Computer Vision) video stabilization
+ library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv-videostab2.4-tbb
+Priority: optional
+Section: libs
+Installed-Size: 246
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-calib3d2.4-tbb, libopencv-core2.4-tbb, libopencv-features2d2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-flann2.4-tbb, libopencv-gpu2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-highgui2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-imgproc2.4-tbb, libopencv-legacy2.4-tbb, libopencv-ml2.4-tbb, libopencv-objdetect2.4-tbb, libopencv-photo2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-video2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libsm6, libstdc++6 (>= 4.3.0), libtbb2, libx11-6, libxext6
+Pre-Depends: multiarch-support
+Filename: pool/main/o/opencv/libopencv-videostab2.4-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 76056
+MD5sum: 858864ab1f23b7c355d6b4a87343a66b
+SHA1: c6c379ce2da767275c09a89731053add3c82b1b4
+SHA256: 5450c0b7fa9ce52df21e160f35fa9886f9447816c69c8914fdf8934653a94e32
+Description: computer vision video stabilization library
+ This package contains the OpenCV (Open Computer Vision) video stabilization
+ runtime libraries.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Multi-Arch: same
+Homepage: http://opencv.org/
+
+Package: libopencv2.4-java-tbb
+Priority: optional
+Section: java
+Installed-Size: 484
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: all
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libopencv2.4-jni-tbb (>= 2.4.9.1+dfsg-1+deb8u1)
+Filename: pool/main/o/opencv/libopencv2.4-java-tbb_2.4.9.1+dfsg-1+deb8u1_all.deb
+Size: 441884
+MD5sum: 49bd0c6c00047fe1a8ec62629dff8598
+SHA1: acacdc5fbbd269f8d7be8c0a7daa4af0f41ea89c
+SHA256: 0397c1eaa300081174bd29569254d6e1823cfb0f2e67c15e7805f08d79991e3c
+Description: Java bindings for the computer vision library
+ This package contains Java bindings for the OpenCV (Open Computer Vision)
+ library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+
+Package: libopencv2.4-jni-tbb
+Priority: optional
+Section: devel
+Installed-Size: 590
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libgl1-mesa-glx | libgl1, libglu1-mesa | libglu1, libice6 (>= 1:1.0.0), libopencv-calib3d2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-contrib2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-core2.4-tbb, libopencv-features2d2.4-tbb, libopencv-flann2.4-tbb, libopencv-highgui2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-imgproc2.4-tbb, libopencv-ml2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-objdetect2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-photo2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libopencv-video2.4-tbb (= 2.4.9.1+dfsg-1+deb8u1), libsm6, libstdc++6 (>= 4.3.0), libtbb2, libx11-6, libxext6
+Filename: pool/main/o/opencv/libopencv2.4-jni-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 136090
+MD5sum: 08ab0b88e2b85952c545ca929fcf0118
+SHA1: 4da638d5e2bc3b44e71bd398d17141b59984cb72
+SHA256: c136c095117dfc715ae590461dc059ad9f3fbb0efeb8105240a206a49efa841f
+Description: Java jni library for the computer vision library
+ This package contains Java jni library for the OpenCV (Open Computer Vision)
+ library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+
+Package: libtbb-dev
+Priority: extra
+Section: libdevel
+Installed-Size: 1525
+Maintainer: Steve Capper <steven.capper@gmail.com>
+Architecture: armhf
+Source: tbb
+Version: 4.3~20150611-0.1
+Depends: libtbb2 (= 4.3~20150611-0.1)
+Suggests: tbb-examples, libtbb-doc
+Filename: pool/main/t/tbb/libtbb-dev_4.3~20150611-0.1_armhf.deb
+Size: 235930
+MD5sum: 6af4d3f422677fc459c918eb8b1b773f
+SHA1: 71e2cf83fb7de875adca8a7f706652da65c3c5b4
+SHA256: b6cf8b37ed2e9cf5e9c93d09a61eef2d3a39148646fc66d6ae9fb5abac9c7772
+Description: parallelism library for C++ - development files
+ TBB is a library that helps you leverage multi-core processor
+ performance without having to be a threading expert. It represents a
+ higher-level, task-based parallelism that abstracts platform details
+ and threading mechanism for performance and scalability.
+ .
+ (Note: if you are a user of the i386 architecture, i.e., 32-bit Intel
+ or compatible hardware, this package only supports Pentium4-compatible
+ and higher processors.)
+ .
+ This package includes the TBB development files.
+Multi-Arch: same
+Homepage: http://threadingbuildingblocks.org/
+
+Package: libtbb-doc
+Priority: extra
+Section: doc
+Installed-Size: 4291
+Maintainer: Steve Capper <steven.capper@gmail.com>
+Architecture: all
+Source: tbb
+Version: 4.3~20150611-0.1
+Depends: libjs-jquery (>= 1.7.1)
+Recommends: libtbb-dev, tbb-examples
+Filename: pool/main/t/tbb/libtbb-doc_4.3~20150611-0.1_all.deb
+Size: 374854
+MD5sum: 6e6ee8ec438d53dbb78c99c5dd080b1c
+SHA1: f79556f810a89f32537bb71a781a23b9fb668e02
+SHA256: 49d1449978364aeef6a565c50b2aded15d5b1e44d3fb1220746e26049e6bf987
+Description: parallelism library for C++ - documentation
+ TBB is a library that helps you leverage multi-core processor
+ performance without having to be a threading expert. It represents a
+ higher-level, task-based parallelism that abstracts platform details
+ and threading mechanism for performance and scalability.
+ .
+ This package includes the TBB documentation files.
+Homepage: http://threadingbuildingblocks.org/
+
+Package: libtbb2
+Priority: extra
+Section: libs
+Installed-Size: 284
+Maintainer: Steve Capper <steven.capper@gmail.com>
+Architecture: armhf
+Source: tbb
+Version: 4.3~20150611-0.1
+Depends: libatomic1 (>= 4.8), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libstdc++6 (>= 4.3.0)
+Pre-Depends: multiarch-support
+Filename: pool/main/t/tbb/libtbb2_4.3~20150611-0.1_armhf.deb
+Size: 105832
+MD5sum: 5e2b66ff86ff66f1dff4ad5852758be9
+SHA1: a145e4fd4ced7fb98edd39c2a52d5a5be9ae7abf
+SHA256: 17b938896ffe183a8d3fddd076190ed6c9e1afe383e811f3e41da1117c0fe9b0
+Description: parallelism library for C++ - runtime files
+ TBB is a library that helps you leverage multi-core processor
+ performance without having to be a threading expert. It represents a
+ higher-level, task-based parallelism that abstracts platform details
+ and threading mechanism for performance and scalability.
+ .
+ (Note: if you are a user of the i386 architecture, i.e., 32-bit Intel
+ or compatible hardware, this package only supports Pentium4-compatible
+ and higher processors.)
+ .
+ This package includes the TBB runtime files.
+Multi-Arch: same
+Homepage: http://threadingbuildingblocks.org/
+
+Package: libtbb2-dbg
+Priority: extra
+Section: debug
+Installed-Size: 879
+Maintainer: Steve Capper <steven.capper@gmail.com>
+Architecture: armhf
+Source: tbb
+Version: 4.3~20150611-0.1
+Depends: libtbb2 (= 4.3~20150611-0.1)
+Filename: pool/main/t/tbb/libtbb2-dbg_4.3~20150611-0.1_armhf.deb
+Size: 768816
+MD5sum: e5ebfd455be9df2418b4be9bd6b33ebe
+SHA1: 35afd7bd2e5a398a96a8e5c6a2e629171a55dbb8
+SHA256: 673ef4292ddce15aba5997286db49b0e678b62d2446e1350477fe61ec9ac762c
+Description: parallelism library for C++ - debugging symbols
+ TBB is a library that helps you leverage multi-core processor
+ performance without having to be a threading expert. It represents a
+ higher-level, task-based parallelism that abstracts platform details
+ and threading mechanism for performance and scalability.
+ .
+ (Note: if you are a user of the i386 architecture, i.e., 32-bit Intel
+ or compatible hardware, this package only supports Pentium4-compatible
+ and higher processors.)
+ .
+ This package includes the TBB debugging symbols.
+Homepage: http://threadingbuildingblocks.org/
+Multi-Arch: same
+
+Package: opencv-data-tbb
+Priority: optional
+Section: libdevel
+Installed-Size: 19647
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: all
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Breaks: libopencv-tbb-dev (<= 2.3.1-12)
+Filename: pool/main/o/opencv/opencv-data-tbb_2.4.9.1+dfsg-1+deb8u1_all.deb
+Size: 1608764
+MD5sum: 1b22e356da232c1ad252d36a2dd84ccc
+SHA1: b9f5fd36f055588ace2282f726d68dca1378b0b3
+SHA256: f9de03e0152b4c1db8b9ff2257a2e37aaff6d44ae8e050d1d3b28868aacf797e
+Description: development data for opencv
+ This is a metapackage providing development package necessary for
+ development of OpenCV (Open Computer Vision).
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+
+Package: opencv-tbb-doc
+Priority: optional
+Section: doc
+Installed-Size: 1610
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: all
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Replaces: libopencv-tbb-doc
+Conflicts: libopencv-tbb-doc
+Filename: pool/main/o/opencv/opencv-tbb-doc_2.4.9.1+dfsg-1+deb8u1_all.deb
+Size: 1406510
+MD5sum: 8ab370bc7a9733655e099c52ec4c947a
+SHA1: 56fa43a19d21dd159864ba30c7ea8357d7033841
+SHA256: d4b8daa5bd860ec821b1ebf4eaa66ec16d26cc980f2d84ca20a17b6edfaecc77
+Description: OpenCV documentation and examples
+ This package contains the OpenCV documentation and example programs.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+
+Package: python-opencv-tbb
+Priority: optional
+Section: python
+Installed-Size: 1227
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Source: opencv
+Version: 2.4.9.1+dfsg-1+deb8u1
+Replaces: python2.3-opencv (<= 0.9.7-3)
+Provides: python2.7-opencv-tbb
+Depends: python (<< 2.8), python (>= 2.7~), python:any (>= 2.7.5-5~), libc6 (>= 2.4), libgcc1 (>= 1:4.4.0), libopencv-calib3d2.4-tbb, libopencv-contrib2.4-tbb, libopencv-core2.4-tbb, libopencv-features2d2.4-tbb, libopencv-flann2.4-tbb, libopencv-highgui2.4-tbb, libopencv-imgproc2.4-tbb, libopencv-legacy2.4-tbb, libopencv-ml2.4-tbb, libopencv-objdetect2.4-tbb, libopencv-photo2.4-tbb, libopencv-video2.4-tbb, libpython2.7 (>= 2.7), libstdc++6 (>= 4.3.0), python-numpy-abi9, python-numpy (>= 1:1.6.1)
+Conflicts: python2.3-opencv (<= 0.9.7-3)
+Filename: pool/main/o/opencv/python-opencv-tbb_2.4.9.1+dfsg-1+deb8u1_armhf.deb
+Size: 304428
+MD5sum: f3f57bc29f73abd986f4056b6e0a2a1d
+SHA1: 14eb4ccc852d5ebe5a03f44b79bcd0e9a2a6c888
+SHA256: 1dd8d5d3fb584c357745baffac0859d7d21fbb5dcf9dce3ebf573267aef95c32
+Description: Python bindings for the computer vision library
+ This package contains Python bindings for the OpenCV (Open Computer Vision)
+ library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+Homepage: http://opencv.org/
+
+Package: python-picamera
+Priority: extra
+Section: python
+Installed-Size: 501
+Maintainer: Dave Jones <dave@waveform.org.uk>
+Architecture: armhf
+Source: picamera
+Version: 1.10-1
+Depends: python (>= 2.7), python (<< 2.8), libraspberrypi0, python-numpy
+Suggests: python-picamera-docs, python-rpi.gpio
+Filename: pool/main/p/picamera/python-picamera_1.10-1_armhf.deb
+Size: 83646
+MD5sum: 8a2bc251317db8a395abe64af3d2382e
+SHA1: 7a87fdcfadfc1e89961a5e863c05263b58d61b17
+SHA256: 5853afaa459092bd3dc8c929535fe5643189cd33169c091b5d11ba7890e5d19f
+Description: Pure Python interface to the Raspberry Pi's camera module.
+ picamera is a library for working with the Raspberry Pi's camera module from
+ within Python without having to resort to subprocesses. The majority of the
+ functionality of raspistill and raspivid is replicated by the library.
+ .
+ This is the Python 2 version of the package.
+Homepage: http://pypi.python.org/pypi/picamera
+
+Package: python-picamera-docs
+Priority: extra
+Section: doc
+Installed-Size: 3676
+Maintainer: Dave Jones <dave@waveform.org.uk>
+Architecture: all
+Source: picamera
+Version: 1.10-1
+Depends: libjs-sphinxdoc (>= 1.0)
+Filename: pool/main/p/picamera/python-picamera-docs_1.10-1_all.deb
+Size: 1182712
+MD5sum: 6d66795f7b346a4f0b11ffd4a5e08edb
+SHA1: b5e030e64f49c4cd4fe7153be9769f61a432216c
+SHA256: 209102a37d7a1ed69128270d55561cae4d8bdbc75117060cf1c517b292ecbf13
+Description: Documentation for the Python interface to the RPi's camera module.
+ picamera is a library for working with the Raspberry Pi's camera module from
+ within Python without having to resort to subprocesses. The majority of the
+ functionality of raspistill and raspivid is replicated by the library.
+ .
+ This is the version-independent documentation for the package.
+Homepage: http://pypi.python.org/pypi/picamera
+
+Package: python3-picamera
+Priority: extra
+Section: python
+Installed-Size: 499
+Maintainer: Dave Jones <dave@waveform.org.uk>
+Architecture: armhf
+Source: picamera
+Version: 1.10-1
+Depends: python3:any (>= 3.3.2-2~), libraspberrypi0, python3-numpy
+Suggests: python-picamera-docs, python3-rpi.gpio
+Filename: pool/main/p/picamera/python3-picamera_1.10-1_armhf.deb
+Size: 83426
+MD5sum: 7ebd1181b2cec6ee102857713c2bb5e7
+SHA1: 1557b8f8e733986eea26b7b7258be7131bd3aa29
+SHA256: cc86acdb76004b9281ab03cf5db15ae226659392c73f7ac742cdb6ee21ea57f9
+Description: Pure Python interface to the Raspberry Pi's camera module.
+ picamera is a library for working with the Raspberry Pi's camera module from
+ within Python without having to resort to subprocesses. The majority of the
+ functionality of raspistill and raspivid is replicated by the library.
+ .
+ This is the Python 3 version of the package.
+Homepage: http://pypi.python.org/pypi/picamera
+
+Package: tbb-examples
+Priority: extra
+Section: doc
+Installed-Size: 1948
+Maintainer: Steve Capper <steven.capper@gmail.com>
+Architecture: armhf
+Source: tbb
+Version: 4.3~20150611-0.1
+Recommends: libtbb-dev, libtbb-doc
+Filename: pool/main/t/tbb/tbb-examples_4.3~20150611-0.1_armhf.deb
+Size: 933592
+MD5sum: 167d69e1531d20c36d449d39e408981b
+SHA1: f963a671bac382566ddb706f24380f56c83a768e
+SHA256: b77c767e41364c1df58fc5379ee582ce6f9e51bcd01be0150ac6b0e68d065162
+Description: parallelism library for C++ - example files
+ TBB is a library that helps you leverage multi-core processor
+ performance without having to be a threading expert. It represents a
+ higher-level, task-based parallelism that abstracts platform details
+ and threading mechanism for performance and scalability.
+ .
+ (Note: if you are a user of the i386 architecture, i.e., 32-bit Intel
+ or compatible hardware, this package only supports Pentium4-compatible
+ and higher processors.)
+ .
+ This package includes the TBB example files.
+Homepage: http://threadingbuildingblocks.org/
+
