@@ -12,185 +12,158 @@
 <!-- Javascript code that runs our Three.js examples -->
 <script type="text/javascript">
 
+	var camera, cameraTarget, scene, renderer;
+	var cameraDistance = 150;
+	var loader;
+	var loadGeometry;
+	var model;
 
-			var camera, cameraTarget, scene, renderer;
+	init();
+	animate();
 
-			var cameraDistance = 150;
+	function init() {
 
-            var loader;
-			var loadGeometry;
-			var model;
+		container = document.getElementById( 'WebGL-output' );
 
-			init();
-			animate();
+		camera = new THREE.PerspectiveCamera( 45, container.clientWidth / (container.clientWidth*0.6), 1, 2000 );
+		camera.position.set( cameraDistance, 0, 0 );
 
-			function init() {
+		cameraTarget = new THREE.Vector3( 0, 0, 0 );
 
-				container = document.getElementById( 'WebGL-output' );
-
-				camera = new THREE.PerspectiveCamera( 45, container.clientWidth / (container.clientWidth*0.6), 1, 2000 );
-				camera.position.set( cameraDistance, 0, 0 );
-
-				cameraTarget = new THREE.Vector3( 0, 0, 0 );
-
-				scene = new THREE.Scene();
-				scene.fog = new THREE.Fog( 0x72645b, 200, 600 );
+		scene = new THREE.Scene();
+		scene.fog = new THREE.Fog( 0x72645b, 200, 600 );
 
 
-				// Ground
-                geometry = new THREE.CylinderGeometry( 70, 70, 2, 32 );
-                material = new THREE.MeshBasicMaterial( {color: 0xDEDEDE} );
-                turntable = new THREE.Mesh( geometry, material );
-                turntable.name = "turntable";
-                scene.add( turntable );
+		// Ground
+		geometry = new THREE.CylinderGeometry( 70, 70, 2, 32 );
+		material = new THREE.MeshBasicMaterial( {color: 0xDEDEDE} );
+		turntable = new THREE.Mesh( geometry, material );
+		turntable.name = "turntable";
+		scene.add( turntable );
 
 
-				// PLY file
+		// PLY file
 
-				loader = new THREE.PLYLoader();
-                loader.useColor = true;
-                loader.colorsNeedUpdate = true;
-                loadGeometry = function ( geometry ) {
+		loader = new THREE.PLYLoader();
+		loader.useColor = true;
+		loader.colorsNeedUpdate = true;
+		loadGeometry = function ( geometry ) {
 
-                    if(model) {
-                        scene.remove(model);
-                    }
-					var material = new THREE.PointsMaterial({
-//                color: 0xffffff,
-                size: 2,
-//                opacity: 0.9,
-//                transparent: true,
-//                blending: THREE.AdditiveBlending
-//                map: generateSprite()
-                    vertexColors : THREE.VertexColors
-            });
-					model = new THREE.Points(geometry, material);
-//                    group.sortParticles = true;
-                    model.rotateX(-Math.PI/2);
-                    model.geometry.computeBoundingSphere();
-                    model.geometry.computeBoundingBox();
-                    camera.position.y = model.geometry.boundingSphere.center.z*1.2;
-                    cameraTarget = new THREE.Vector3( 0, model.geometry.boundingSphere.center.z, 0 );
-                    turntable.position.y = model.geometry.boundingBox.min.z-1;
-					scene.add( model );
-
-				};
-
-
-				// Lights
-
-				scene.add( new THREE.HemisphereLight( 0x443333, 0x111122 ) );
-
-				addShadowedLight( 1, 1, 1, 0xffffff, 1.35 );
-				addShadowedLight( 0.5, 1, -1, 0xffaa00, 1 );
-
-				// renderer
-
-				renderer = new THREE.WebGLRenderer( { antialias: true } );
-				renderer.setClearColor( scene.fog.color );
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( container.clientWidth, container.clientWidth*0.6 );
-
-				renderer.gammaInput = true;
-				renderer.gammaOutput = true;
-
-				renderer.shadowMap.enabled = true;
-				renderer.shadowMap.renderReverseSided = false;
-
-				container.appendChild( renderer.domElement );
-
-				// resize
-
-				window.addEventListener( 'resize', onWindowResize, false );
-
+			if(model) {
+				scene.remove(model);
 			}
-function generateSprite() {
-            var canvas = document.createElement('canvas');
-            canvas.width = 16;
-            canvas.height = 16;
-            var context = canvas.getContext('2d');
-            var gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
-            gradient.addColorStop(0, 'rgba(255,255,255,1)');
-            gradient.addColorStop(0.2, 'rgba(0,255,255,1)');
-            gradient.addColorStop(0.4, 'rgba(0,0,64,1)');
-            gradient.addColorStop(1, 'rgba(0,0,0,1)');
-            context.fillStyle = gradient;
-            context.fillRect(0, 0, canvas.width, canvas.height);
-            var texture = new THREE.Texture(canvas);
-            texture.needsUpdate = true;
-            return texture;
-        }
+			var material = new THREE.PointsMaterial({
+				size: 2,
+				vertexColors : THREE.VertexColors
+			});
+			model = new THREE.Points(geometry, material);
+			model.rotateX(-Math.PI/2);
+			model.geometry.computeBoundingSphere();
+			model.geometry.computeBoundingBox();
+			camera.position.y = model.geometry.boundingSphere.center.z*1.2;
+			cameraTarget = new THREE.Vector3( 0, model.geometry.boundingSphere.center.z, 0 );
+			turntable.position.y = model.geometry.boundingBox.min.z-1;
+			scene.add( model );
+		};
 
-			function addShadowedLight( x, y, z, color, intensity ) {
 
-				var directionalLight = new THREE.DirectionalLight( color, intensity );
-				directionalLight.position.set( x, y, z );
-				scene.add( directionalLight );
+		// Lights
 
-				directionalLight.castShadow = true;
+		scene.add( new THREE.HemisphereLight( 0x443333, 0x111122 ) );
 
-				var d = 1;
-				directionalLight.shadow.camera.left = -d;
-				directionalLight.shadow.camera.right = d;
-				directionalLight.shadow.camera.top = d;
-				directionalLight.shadow.camera.bottom = -d;
+		addShadowedLight( 1, 1, 1, 0xffffff, 1.35 );
+		addShadowedLight( 0.5, 1, -1, 0xffaa00, 1 );
 
-				directionalLight.shadow.camera.near = 1;
-				directionalLight.shadow.camera.far = 4;
+		// renderer
 
-				directionalLight.shadow.mapSize.width = 1024;
-				directionalLight.shadow.mapSize.height = 1024;
+		renderer = new THREE.WebGLRenderer( { antialias: true } );
+		renderer.setClearColor( scene.fog.color );
+		renderer.setPixelRatio( window.devicePixelRatio );
+		renderer.setSize( container.clientWidth, container.clientWidth*0.6 );
 
-				directionalLight.shadow.bias = -0.005;
+		renderer.gammaInput = true;
+		renderer.gammaOutput = true;
 
-			}
+		renderer.shadowMap.enabled = true;
+		renderer.shadowMap.renderReverseSided = false;
 
-			function onWindowResize() {
+		container.appendChild( renderer.domElement );
 
-				camera.aspect = container.clientWidth / (container.clientWidth*0.6) ;
-				camera.updateProjectionMatrix();
+		// resize
 
-				renderer.setSize( container.clientWidth, container.clientWidth*0.6 );
+		window.addEventListener( 'resize', onWindowResize, false );
 
-			}
+	}
+	function addShadowedLight( x, y, z, color, intensity ) {
 
-			function animate() {
+		var directionalLight = new THREE.DirectionalLight( color, intensity );
+		directionalLight.position.set( x, y, z );
+		scene.add( directionalLight );
 
-				requestAnimationFrame( animate );
+		directionalLight.castShadow = true;
 
-				render();
+		var d = 1;
+		directionalLight.shadow.camera.left = -d;
+		directionalLight.shadow.camera.right = d;
+		directionalLight.shadow.camera.top = d;
+		directionalLight.shadow.camera.bottom = -d;
 
-			}
+		directionalLight.shadow.camera.near = 1;
+		directionalLight.shadow.camera.far = 4;
 
-			function render() {
+		directionalLight.shadow.mapSize.width = 1024;
+		directionalLight.shadow.mapSize.height = 1024;
 
-				var timer = Date.now() * 0.0005;
+		directionalLight.shadow.bias = -0.005;
 
-				camera.position.x = Math.sin( timer ) * cameraDistance;
-				camera.position.z = Math.cos( timer ) * cameraDistance;
+	}
 
-				camera.lookAt( cameraTarget );
+	function onWindowResize() {
 
-				renderer.render( scene, camera );
+		camera.aspect = container.clientWidth / (container.clientWidth*0.6) ;
+		camera.updateProjectionMatrix();
 
-			}
+		renderer.setSize( container.clientWidth, container.clientWidth*0.6 );
 
-    		document.getElementById('duck-example').onclick=function() {
-    		    loader.load( '../examples/duck/duck_pointcloud.ply', loadGeometry);
-    		};
-    		document.getElementById('bear-example').onclick=function() {
-    		    loader.load( '../examples/bear/bear_pointcloud.ply', loadGeometry);
-    		};
-    		document.getElementById('glue-stick-example').onclick=function() {
-    		    loader.load( '../examples/glue_stick/glue_stick_pointcloud.ply', loadGeometry);
-    		};
-    		document.getElementById('sculpture-example').onclick=function() {
-    		    loader.load( '../examples/sculpture/sculpture_pointcloud.ply', loadGeometry);
-    		};
-    		document.getElementById('seal-example').onclick=function() {
-    		    loader.load( '../examples/seal/seal_pointcloud.ply', loadGeometry);
-    		};
+	}
 
-       		loader.load( '../examples/duck/duck_pointcloud.ply', loadGeometry);
+	function animate() {
+
+		requestAnimationFrame( animate );
+
+		render();
+
+	}
+
+	function render() {
+
+		var timer = Date.now() * 0.0005;
+
+		camera.position.x = Math.sin( timer ) * cameraDistance;
+		camera.position.z = Math.cos( timer ) * cameraDistance;
+
+		camera.lookAt( cameraTarget );
+
+		renderer.render( scene, camera );
+
+	}
+
+	document.getElementById('duck-example').onclick=function() {
+		loader.load( '../examples/duck/duck_pointcloud.ply', loadGeometry);
+	};
+	document.getElementById('bear-example').onclick=function() {
+		loader.load( '../examples/bear/bear_pointcloud.ply', loadGeometry);
+	};
+	document.getElementById('glue-stick-example').onclick=function() {
+		loader.load( '../examples/glue_stick/glue_stick_pointcloud.ply', loadGeometry);
+	};
+	document.getElementById('sculpture-example').onclick=function() {
+		loader.load( '../examples/sculpture/sculpture_pointcloud.ply', loadGeometry);
+	};
+	document.getElementById('seal-example').onclick=function() {
+		loader.load( '../examples/seal/seal_pointcloud.ply', loadGeometry);
+	};
+
+	loader.load( '../examples/duck/duck_pointcloud.ply', loadGeometry);
 
 </script>
