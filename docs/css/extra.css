@@ -67,3 +67,14 @@ img[alt=drawing_450] {
 img[alt=browser_logo] {
     width: 40px;
 }
+
+ul.example-preview {
+}
+
+ul.example-preview > li {
+    width:20%;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    list-style: none !important;
+    display: inline-block;
+}

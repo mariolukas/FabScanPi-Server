@@ -2,6 +2,7 @@ site_name: FabScanPi
 pages:
 - Home: index.md
 - News: news.md
+- Examples: examples.md
 - Hardware: hardware.md
 - Software: software.md
 - Developing: developing.md
