@@ -1,5 +1,12 @@
 <!-- Div which will hold the Output -->
 <div id="WebGL-output">
+	<div id="loading-indicator">
+		<div class="sk-three-bounce">
+			<div class="sk-child sk-bounce1"></div>
+			<div class="sk-child sk-bounce2"></div>
+			<div class="sk-child sk-bounce3"></div>
+		</div>
+	</div>
 </div>
 
 <ul class="example-preview">
@@ -17,9 +24,12 @@
 	var loader;
 	var loadGeometry;
 	var model;
+	var indicator = $('#loading-indicator');
+	indicator.show();
 
 	init();
 	animate();
+
 
 	function init() {
 
@@ -64,6 +74,7 @@
 			cameraTarget = new THREE.Vector3( 0, model.geometry.boundingSphere.center.z, 0 );
 			turntable.position.y = model.geometry.boundingBox.min.z-1;
 			scene.add( model );
+			indicator.hide();
 		};
 
 
@@ -149,18 +160,23 @@
 	}
 
 	document.getElementById('duck-example').onclick=function() {
+		indicator.show();
 		loader.load( '../examples/duck/duck_pointcloud.ply', loadGeometry);
 	};
 	document.getElementById('bear-example').onclick=function() {
+		indicator.show();
 		loader.load( '../examples/bear/bear_pointcloud.ply', loadGeometry);
 	};
 	document.getElementById('glue-stick-example').onclick=function() {
+		indicator.show();
 		loader.load( '../examples/glue_stick/glue_stick_pointcloud.ply', loadGeometry);
 	};
 	document.getElementById('sculpture-example').onclick=function() {
+		indicator.show();
 		loader.load( '../examples/sculpture/sculpture_pointcloud.ply', loadGeometry);
 	};
 	document.getElementById('seal-example').onclick=function() {
+		indicator.show();
 		loader.load( '../examples/seal/seal_pointcloud.ply', loadGeometry);
 	};
 

@@ -77,4 +77,69 @@ ul.example-preview > li {
     padding-left: 0 !important;
     list-style: none !important;
     display: inline-block;
+    cursor: pointer;
 }
+
+#WebGL-output {
+    position: relative;
+}
+
+#loading-indicator {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 40%;
+}
+
+.sk-three-bounce {
+    margin: 5px auto;
+    text-align: center;
+    border: 0.2em white;
+    display: inline-block;
+    background: white;
+    padding: 1em 2em;
+    border-radius: 0.6em;
+    opacity: 0.6;
+}
+
+.sk-three-bounce .sk-child {
+    width: 20px;
+    height: 20px;
+    background-color: #333;
+    border-radius: 100%;
+    display: inline-block;
+    -webkit-animation: sk-three-bounce 1.4s ease-in-out 0s infinite both;
+    animation: sk-three-bounce 1.4s ease-in-out 0s infinite both;
+}
+
+.sk-three-bounce .sk-bounce1 {
+    -webkit-animation-delay: -0.32s;
+    animation-delay: -0.32s;
+}
+
+.sk-three-bounce .sk-bounce2 {
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s;
+}
+
+@-webkit-keyframes sk-three-bounce {
+    0%, 80%, 100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    40% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+@keyframes sk-three-bounce {
+    0%, 80%, 100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    40% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}}
