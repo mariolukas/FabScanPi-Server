@@ -46,26 +46,24 @@ class FSCalibrationSingleton(FSCalibrationInterface):
         self.objp[:, :2] = np.mgrid[0:self.columns, 0:self.rows].T.reshape(-1, 2)
 
 
+    def start(self):
+        self.camera(with_laser=False)
+        self.camera(with_laser=True)
 
 
-    def camera(self):
+    def camera(self, with_laser=False):
+        self._hardwarecontroller.laser.off()
         image = FSImage()
         self._logger.debug("Camera Calibration started... ")
+        laser_prefix = ''
+        if with_laser:
+            laser_prefix = '_with_laser'
+            self._hardwarecontroller.laser.on()
 
         self._hardwarecontroller.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
-
         self._hardwarecontroller.start_camera_stream()
-        time.sleep(2)
+        time.sleep(1)
 
-
-
-        #self.image.save_image(image_task.image, image_task.progress, image_task.prefix,
-        #                      dir_name=image_task.prefix + '/color_' + image_task.raw_dir)
-
-        # wake up cam device...
-        #while image is None:
-        #    image = self._hardwarecontroller.camera.device.getFrame()
-        #    pass
         self._logger.debug("Cam is ready for calibration...")
 
         calibration_steps = 10
@@ -75,26 +73,27 @@ class FSCalibrationSingleton(FSCalibrationInterface):
         for x in range(0, steps_for_quater_turn, steps_for_quater_turn/calibration_steps):
 
             img = self._hardwarecontroller.get_picture()
-            image.save_image(img, str(x)+"_left", 'calibration', dir_name='/calibration/')
+            image.save_image(img, str(x)+"_left", 'calibration'+laser_prefix, dir_name='/calibration/')
             self._logger.debug("STEP FF "+str(x))
             self._hardwarecontroller.turntable.step_blocking(motor_steps, 900)
-            time.sleep(3)
+            time.sleep(1)
 
         self._hardwarecontroller.turntable.step_blocking(-motor_steps*calibration_steps, 900)
         time.sleep(3)
 
         for x in range(0, steps_for_quater_turn, steps_for_quater_turn / calibration_steps):
             img = self._hardwarecontroller.get_picture()
-            image.save_image(img, str(x)+"_right", 'calibration', dir_name='/calibration/')
+            image.save_image(img, str(x)+"_right", 'calibration'+laser_prefix, dir_name='/calibration/')
             self._hardwarecontroller.turntable.step_blocking(-motor_steps, 100)
             self._logger.debug("STEP REV "+str(x))
-            time.sleep(3)
+            time.sleep(1)
 
         self._hardwarecontroller.turntable.step_blocking(motor_steps*calibration_steps, 900)
 
 
         self._hardwarecontroller.stop_camera_stream()
         self._hardwarecontroller.led.off()
+        self._hardwarecontroller.laser.off()
 
     def compute_calibration(self, images):
         # Arrays to store object points and image points from all the images.
