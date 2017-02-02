@@ -5,6 +5,7 @@ from PIL import Image
 import time
 import logging
 from fabscan.util.FSInject import singleton
+import glob
 
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
@@ -48,7 +49,17 @@ class FSCalibrationSingleton(FSCalibrationInterface):
 
     def start(self):
         self.camera(with_laser=False)
-        self.camera(with_laser=True)
+
+        images = sorted(glob.glob(self.config.folders.scans + '/calibration/calibration_*.jpg'))
+        self._logger.debug(len(images))
+        error, mtx, dist, chessboards = self.compute_calibration(images)
+
+        self._logger.debug("Number of samples {0}".format(len(images)))
+        self._logger.debug("Calibration error {0}".format(error))
+        self._logger.debug("Camera matrix {0}".format(mtx))
+        self._logger.debug("Distortion coefficients{0}".format(dist))
+        self._logger.debug("Set of images")
+        #self.camera(with_laser=True)
 
 
     def camera(self, with_laser=False):
@@ -60,7 +71,7 @@ class FSCalibrationSingleton(FSCalibrationInterface):
             laser_prefix = '_with_laser'
             self._hardwarecontroller.laser.on()
 
-        self._hardwarecontroller.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
+        self._hardwarecontroller.led.on(150, 150, 150)
         self._hardwarecontroller.start_camera_stream()
         time.sleep(1)
 
@@ -103,14 +114,13 @@ class FSCalibrationSingleton(FSCalibrationInterface):
 
         for fname in images:
 
-            #img = cv2.imread(fname)
-            img = cv2.transpose(fname)
+            img = cv2.imread(fname)
+            img = cv2.transpose(img)
             img = cv2.flip(img, 1)
             gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
             # Find the chess board corners
             ret, corners = cv2.findChessboardCorners(gray, (self.columns, self.rows), None)
-            self._logger.debug(corners)
 
             # If found, add object points, image points (after refining them)
             if ret:

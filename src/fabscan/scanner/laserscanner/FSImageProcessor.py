@@ -82,7 +82,7 @@ class ImageProcessor(ImageProcessorInterface):
         x_center = laser_image.shape[1] * self.settings.center
         x_center_delta = laser_image.shape[1] * 0.5 - x_center
 
-        pixels, image = self.line_coords(laser_image,filter=True, fast=True, x_center_delta=x_center_delta)  # Get line coords from image
+        pixels, image = self.line_coords(laser_image ,filter=True, fast=False, x_center_delta=x_center_delta)  # Get line coords from image
 
         points = self.process_line(pixels, angle , color_image)
         return points
