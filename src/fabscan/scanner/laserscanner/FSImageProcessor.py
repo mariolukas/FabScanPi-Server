@@ -82,7 +82,7 @@ class ImageProcessor(ImageProcessorInterface):
         x_center = laser_image.shape[1] * self.settings.center
         x_center_delta = laser_image.shape[1] * 0.5 - x_center
 
-        pixels, image = self.line_coords(laser_image,filter=True, fast=True, x_center_delta=x_center_delta)  # Get line coords from image
+        pixels, image = self.line_coords(laser_image ,filter=True, fast=False, x_center_delta=x_center_delta)  # Get line coords from image
 
         points = self.process_line(pixels, angle , color_image)
         return points
@@ -207,8 +207,9 @@ class ImageProcessor(ImageProcessorInterface):
 
         if fast:
 
+
             for y, line in enumerate(grey):
-                    sub_pixel =  np.argmax(line[ start: grey.shape[1]]) + start
+                    sub_pixel = np.argmax(line[ start: grey.shape[1]]) + start
 
                     if line[sub_pixel] > self.settings.threshold/3:
                         cv2.line(threshold, (int(sub_pixel)-5,int(y)), (int(sub_pixel)+5,int(y)), (255,0,0), thickness=1, lineType=8, shift=0)
@@ -220,7 +221,7 @@ class ImageProcessor(ImageProcessorInterface):
             start = self.settings.backwall.laser_pixel_position+60
             id = np.indices((image.shape[0],image.shape[1]))[1]
 
-            grey[grey <  self.settings.threshold/3] = 0
+            grey[grey < self.settings.threshold/3] = 0
 
             id_mul = id[:,start:]*grey[:,start:]
 
