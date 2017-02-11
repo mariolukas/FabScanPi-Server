@@ -8,7 +8,7 @@
 
 ## What is FabScan PI
 
-The FabScan project started in 2010 at [Germany's first FabLab in Aachen](http://hci.rwth-aachen.de/fablab).The
+The FabScan project started in 2010 at [Germany's first FabLab in Aachen](http://hci.rwth-aachen.de/fablab). In 2014, development was taken over by Mario Lukas and the FabScanPi project was created. The
 FabScan PI is the next iteration of the [FabScan 3D laser scanner](http://hci.rwth-aachen.de/fabscan). It uses a Raspberry PI and the Raspberry PI
 camera module. The idea behind using a Raspberry Pi is to provide the same hardware setup for all FabScans.
 Another benefit is that the FabScan gets a Stand-Alone, Web-Enabled 3D laser scanner.
