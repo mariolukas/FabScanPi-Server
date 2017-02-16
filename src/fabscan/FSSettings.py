@@ -8,6 +8,12 @@ import os
 import json
 from fabscan.util.FSInject import inject, singleton
 
+import io
+try:
+    to_unicode = unicode
+except NameError:
+    to_unicode = str
+
 class SettingsInterface(object):
       def __init__(self, settings, first=True):
         pass
@@ -39,12 +45,14 @@ class Settings(SettingsInterface):
     def save(self):
         current_settings = self.todict(self.__dict__)
         with open(self.file, 'w+') as outfile:
-            json.dump(current_settings, outfile)
+            str_ = json.dump(current_settings, outfile, sort_keys=True, indent=4, ensure_ascii=False)
+            outfile.write(to_unicode(str_))
 
     def saveAsFile(self, filename):
         current_settings = self.todict(self.__dict__)
         with open(filename, 'w+') as outfile:
-            json.dump(current_settings, outfile)
+            str_ = json.dump(current_settings, outfile, sort_keys=True, indent=4, ensure_ascii=False)
+            outfile.write(to_unicode(str_))
 
     def update(self, settings):
         self.threshold = settings.threshold

@@ -8,6 +8,15 @@
      "autoflash": "True",
      "port": "/dev/ttyAMA0"
    },
+   "calibration": {
+      "pattern" : {
+          "rows": 11,
+          "columns": 6,
+          "square_size":11
+      },
+     "camera_matrix":[],
+     "dist_coefs":[]
+   },
    "camera" : {
      "type" : "PICAM",
      "rotation_angle" : 90,
@@ -16,8 +25,8 @@
         "height": 320
      },
      "resolution":{
-          "width": 972,
-          "height":1296
+          "width": 1232,
+          "height":1640
       },
       "position":{
           "x": 0.0,

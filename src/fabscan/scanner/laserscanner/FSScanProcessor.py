@@ -165,7 +165,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
 
-        self.calibration.start()
+        self.calibration.start_calibration()
         # do calibration here....
 
 
