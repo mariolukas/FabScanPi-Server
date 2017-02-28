@@ -47,7 +47,7 @@ _If you are soldering for the very fist time, we suggest to read the comic ["Sol
 * * *
 
 The FabScanPi HAT will be delivered with the main components already assembled. You only need to install the headers and connectors which fit your demand.
-![hat_assembly_1](images\hat_assembly_1.jpg)
+![drawing_400](images\hat_assembly_1.jpg)
 
 Let's start with the female 8-pin headers for the stepper motor controllers. First the two headers which are designated with "Stepper Turn Table". Put one in and flip the pcb to solder the pins on the rear side. Solder one pin first and make sure the header is still in the correct position. A "third hand" tool or a pcb-holder are very helpful for this job.
 
@@ -67,7 +67,7 @@ Now you can select between three options
 
 Use the remaining four 8-pin femal pin headers and install them on the pcb. You can now use the HAT with three stepper motors (1x turn table, 2x laser control)
 
-![hat_assembly_2a](images\hat_assembly_2a.jpg)
+![drawing_400](images\hat_assembly_2a.jpg)
 
 
 
@@ -75,7 +75,7 @@ Use the remaining four 8-pin femal pin headers and install them on the pcb. You 
 
 Use an electronics wire cutter to cut off two 3-pin male headers from the long male-header. Put them into the pinholes labeled "Servo opt." You can now use the HAT with one stepper motors (1x turn table) and two servos (2x servo opt.).
 
-![hat_assembly_2](images\hat_assembly_2.jpg)
+![drawing_400](images\hat_assembly_2.jpg)
 
 
 
@@ -83,7 +83,7 @@ Use an electronics wire cutter to cut off two 3-pin male headers from the long m
 
 If you are unsure about using servos or stepper motors you can install both. Therefore you'll need to buy four 8-pin female headers which are at least 8 mm of height. Install them at the pinholes for the "Stepper Laser 1 and 2". Also cut off two 3-pin male headers from the long male-header. Put them into the pinholes labeled "Servo opt." Now you can use either servo controllers nor the connectors for the servos.
 
-![hat_assembly_2b](images\hat_assembly_2b.jpg)
+![drawing_400](images\hat_assembly_2b.jpg)
 
 
 
@@ -91,7 +91,7 @@ If you are unsure about using servos or stepper motors you can install both. The
 
 The next connector is the JST connector for the RPi-RingLight. Make sure the direction is correct. Fix it and solder the three pins on the rear side of the PCB.
 
-![hat_assembly_3](images\hat_assembly_3.jpg)
+![drawing_400](images\hat_assembly_3.jpg)
 
 
 
@@ -99,11 +99,11 @@ The next connector is the JST connector for the RPi-RingLight. Make sure the dir
 
 Here you can use the three 4-port screw terminals if your stepper cables have no connector plug. 
 
-![hat_assembly_4](images\hat_assembly_4.jpg)
+![drawing_400](images\hat_assembly_4.jpg)
 
 If the stepper motor cables have an 4-pin female connector you can use three 4-pin male headers (to be cutted off from the long header).
 
-![hat_assembly_4a](images\hat_assembly_4a.jpg)
+![drawing_400](images\hat_assembly_4a.jpg)
 
 
 
@@ -111,7 +111,7 @@ If the stepper motor cables have an 4-pin female connector you can use three 4-p
 
 The next connector to be installed is the 6-port screw terminal. It must be soldered into the corresponding pin holes between the JST connector and the 8-pin female header for the table stepper. Later this 6-port terminal will be used to connect the Laser(s) and the Laser safety switch.
 
-![hat_assembly_5](images\hat_assembly_5.jpg)
+![drawing_400](images\hat_assembly_5.jpg)
 
 
 
@@ -119,7 +119,7 @@ The next connector to be installed is the 6-port screw terminal. It must be sold
 
 Now the DC-jack power connector will be installed into three oval pin holes close to the 2x20-pin socket header. Soldering is done from the rear side of the PCB.
 
-![hat_assembly_7](images\hat_assembly_6.jpg)
+![drawing_400](images\hat_assembly_6.jpg)
 
 
 
@@ -127,7 +127,7 @@ Now the DC-jack power connector will be installed into three oval pin holes clos
 
 Now the 2x20-pin socket connector must be installed from the rear side of the PCB (where we only did soldering till now). Soldering of the 2x20-pin connector is done on the front side (where all our parts are placed). This connector is used as interface for the Raspberry-Pi.
 
-![hat_assembly_7](images\hat_assembly_7.jpg)
+![drawing_400](images\hat_assembly_7.jpg)
 
 
 
