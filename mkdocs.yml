@@ -11,6 +11,7 @@ pages:
 - F.A.Q: faq.md
 extra_css:
   - css/extra.css
+  - css/font-awesome.min.css
 extra_javascript:
   - js/main.js
 theme: readthedocs
