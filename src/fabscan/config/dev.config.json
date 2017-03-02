@@ -14,6 +14,9 @@
           "columns": 6,
           "square_size":11
       },
+     "plane": {
+        "distance": 0
+     },
      "camera_matrix":[],
      "dist_coefficients":[]
    },
@@ -25,8 +28,8 @@
         "height": 320
      },
      "resolution":{
-          "width": 1232,
-          "height":1640
+          "width": 972,
+          "height":1296
       },
       "position":{
           "x": 0.0,

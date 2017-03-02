@@ -32,8 +32,25 @@ The HAT communicates over a serial connection with the Rasperry Pi.
 (GPIO14 and GPIO15 of the Raspberry Pi). The firmware and also updates are 
 flashed automatically by the FabscanPi-Server application.
 
-
 ![drawing_400](images/fabscanpihat.png)
+
+# How to Asselmble the FabScanPi HAT
+
+**Materials & Tools**
+
+* Soldering Iron
+* Solder Wire
+* Side Cutter
+* FabScanPi HAT Kit
+* V7805-2000 voltage regulator ( optional but recommended )
+
+![drawing_400](images/RPi-FabScan-HAT05.jpg)
+
+** 1. Prepare Pin Headers**
+
+![drawing_400](images/RPi-FabScan-HAT07.jpg)
+
+Use the side cutter to cut two pieces of 3 pins from the male header, like you on the picture above.
 
 #Connecting the Stepper Motor
 There are different kinds of stepper motos. Mostly with 4 or 6 leads. For

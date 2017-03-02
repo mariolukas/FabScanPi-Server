@@ -68,6 +68,7 @@ class FSCalibrationSingleton(FSCalibrationInterface):
         self.capture_images()
         self.do_camera_calibration()
         self.do_pose_detection()
+        self.config.save()
 
 
     def load_calibration_images(self):
@@ -114,7 +115,7 @@ class FSCalibrationSingleton(FSCalibrationInterface):
 
         self.config.calibration.camera_matrix = camera_matrix
         self.config.calibration.dist_coefficients = dist_coefficients
-        self.config.save()
+
 
         self._logger.debug("RMS:" + str(rms))
         self._logger.debug("camera matrix:" + str(camera_matrix))
@@ -132,7 +133,6 @@ class FSCalibrationSingleton(FSCalibrationInterface):
         gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         ret, corners = cv2.findChessboardCorners(gray, self.pattern_size, None)
 
-        print(corners)
         # termination criteria
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
@@ -154,6 +154,11 @@ class FSCalibrationSingleton(FSCalibrationInterface):
             self._logger.debug("Translation vector {0} mm".format(t))
             self._logger.debug("Plane normal {0}".format(n))
             self._logger.debug("Plane distance {0} mm".format(d))
+
+        self.config.calibration.plane.distance = d
+        self.config.calibration.plane.normal = n
+        self.config.calibration.plane.rotation = R
+        self.config.calibration.plane.translation = t
 
     def capture_images(self):
         self._logger.debug("Camera Calibration started... ")
