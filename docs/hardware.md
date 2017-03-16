@@ -46,6 +46,8 @@ flashed automatically by the FabscanPi-Server application.
 _If you are soldering for the very fist time, we suggest to read the comic ["Soldering is Easy"](https://mightyohm.com/files/soldercomic/FullSolderComic_EN.pdf) by Mitch Altman (soldering wisdom), Andie Nordgren (comic adaption) and Jeff Keyzer (layout and editing)._
 * * *
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/DogfNxk277Y" frameborder="0" allowfullscreen></iframe>
+
 The FabScanPi HAT will be delivered with the main components already assembled. You only need to install the headers and connectors which fit your demand.
 ![drawing_400](images\hat_assembly_1.jpg)
 
