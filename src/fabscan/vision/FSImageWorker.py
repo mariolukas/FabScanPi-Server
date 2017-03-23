@@ -135,7 +135,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             self.image.save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)
                             color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
 
-                            points, image = self.image_processor.process_image(angle, image_task.image, color_image)
+                            points = self.image_processor.process_image(angle, image_task.image, color_image)
 
                             data['points'] = points
                             data['image_type'] = 'depth'

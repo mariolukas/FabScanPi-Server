@@ -165,7 +165,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
 
-        self.calibration.start_calibration()
+        self.calibration.start()
         # do calibration here....
 
 
@@ -290,7 +290,6 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self._logger.info("Started object scan initialisation")
 
         self.current_position = 0
-
         self._laser_positions = self.settings.laser_positions
 
         self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)

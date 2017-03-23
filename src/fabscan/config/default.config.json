@@ -9,13 +9,18 @@
      "port": "/dev/ttyAMA0"
    },
    "calibration": {
-      "pattern" : {
+     "pattern" : {
           "rows": 11,
           "columns": 6,
           "square_size":11
-      },
+     },
+     "laser_planes":[],
+     "dist_camera_matrix":[],
+     "distortion_vector":[],
      "camera_matrix":[],
-     "dist_coefs":[]
+     "weight_matrix":[],
+     "platform_rotation":[],
+     "platform_translation":[]
    },
    "camera" : {
      "type" : "PICAM",

@@ -8,17 +8,18 @@
      "autoflash": "True",
      "port": "/dev/ttyAMA0"
    },
-     "calibration": {
-      "pattern" : {
+   "calibration": {
+     "pattern" : {
           "rows": 11,
           "columns": 6,
-          "square_size":11
-      },
-     "plane": {
-        "distance": 0
+          "square_size":11,
+          "origin_distance": 24
      },
-     "camera_matrix":[],
-     "dist_coefficients":[]
+     "platform_rotation":[],
+     "platform_translation":[],
+     "laser_planes":[],
+     "distortion_vector":[],
+     "camera_matrix":[]
    },
    "camera" : {
      "type" : "PICAM",
@@ -41,6 +42,7 @@
       }
    },
    "laser": {
+      "numbers": 1,
       "position":{
         "x": 8,
         "y": 3.9,

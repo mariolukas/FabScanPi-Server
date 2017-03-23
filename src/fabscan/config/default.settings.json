@@ -30,5 +30,5 @@
      },
      "resolution": 8,
      "laser_positions": 1,
-     "color" : "True"
+     "color" : "False"
 }

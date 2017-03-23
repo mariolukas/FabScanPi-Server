@@ -91,12 +91,14 @@ def main():
         fh.setLevel(level)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
+        logger.propagate = False
         logger.setLevel(level)
     else:
         ch = logging.StreamHandler()
         ch.setLevel(level)
         ch.setFormatter(formatter)
         logger.addHandler(ch)
+        logger.propagate = False
         logger.setLevel(level)
 
     if args.version:

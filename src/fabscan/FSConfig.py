@@ -37,8 +37,8 @@ class Config(ConfigInterface):
                 config['texture_illumination'] = 40
                 #config.texture_illumination = 40
 
-            if not hasattr(config, 'weight_matirx'):
-                config['weight_matrix'] = self._compute_weight_matrix(config)
+            #if not hasattr(config, 'weight_matirx'):
+            #    config['weight_matrix'] = self._compute_weight_matrix(config)
 
         def _traverse(key, element):
             if isinstance(element, dict):
@@ -93,12 +93,6 @@ class Config(ConfigInterface):
         self.calibration.pattern.square_size = config.calibration.pattern.square_size
         self.calibration.plane.distance = config.calibration.plane.distance
 
-
-    def _compute_weight_matrix(self,config):
-        _weight_matrix = np.array(
-            (np.matrix(np.linspace(0, config['camera']['resolution']['width'] - 1, config['camera']['resolution']['width'])).T *
-             np.matrix(np.ones(config['camera']['resolution']['height']))).T)
-        return _weight_matrix
 
 @singleton(
     instance=Config

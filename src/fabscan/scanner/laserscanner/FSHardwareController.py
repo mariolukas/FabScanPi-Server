@@ -52,9 +52,8 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.led.off()
         self.turntable.stop_turning()
         self.turntable.disable_motors()
-
         self._logger.debug("Hardware controller initialized...")
-        #self.hardware_calibration()
+
 
     def settings_mode_on(self):
         self.laser.on()
@@ -74,6 +73,22 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def get_picture(self):
         img = self.camera.device.getFrame()
         return img
+
+    def get_pattern_image(self):
+        self.led.on(110, 110, 110)
+        #self.camera.device.contrast = 40
+        time.sleep(5)
+        pattern_image = self.get_picture()
+        self.led.off()
+        return pattern_image
+
+    def get_laser_image(self, index):
+        self.laser.on()
+        self.camera.device.flushStream()
+        time.sleep(2)
+        laser_image = self.get_picture()
+        self.laser.off()
+        return laser_image
 
     def scan_at_position(self, steps=180, color=False):
         '''
