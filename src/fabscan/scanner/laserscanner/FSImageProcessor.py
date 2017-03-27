@@ -62,16 +62,16 @@ class ImageProcessor(ImageProcessorInterface):
         self.window_enable = False
         self.window_value = 0
         self.refinement_method = ''
-        self.image_height = self.config.camera.resolution.height
-        self.image_width = self.config.camera.resolution.width
+        self.image_height = self.config.camera.resolution.width
+        self.image_width = self.config.camera.resolution.height
         self._weight_matrix = self._compute_weight_matrix()
         self._criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
         self.object_pattern_points = self.create_object_pattern_points()
 
     def _compute_weight_matrix(self):
         _weight_matrix = np.array(
-            (np.matrix(np.linspace(0, self.config.camera.resolution.width - 1, self.config.camera.resolution.width)).T *
-             np.matrix(np.ones(self.config.camera.resolution.height))).T)
+            (np.matrix(np.linspace(0, self.image_width - 1, self.image_width)).T *
+             np.matrix(np.ones(self.image_height))).T)
         return _weight_matrix
 
     def create_object_pattern_points(self):
@@ -263,24 +263,27 @@ class ImageProcessor(ImageProcessorInterface):
     def process_image(self, angle, laser_image, color_image=None):
         ''' Takes picture and angle (in degrees).  Adds to point cloud '''
 
-        #x_center = laser_image.shape[1] * self.settings.center
-        #x_center_delta = laser_image.shape[1] * 0.5 - x_center
+        try:
+            #x_center = laser_image.shape[1] * self.settings.center
+            #x_center_delta = laser_image.shape[1] * 0.5 - x_center
 
-        #pixels, image = self.line_coords(laser_image, filter=True, fast=False,
-        #                                 x_center_delta=x_center_delta)  # Get line coords from image
-        #points = self.process_line(pixels, angle, color_image)
-        _theta = np.deg2rad(angle)
-        points_2d, image = self.compute_2d_points(laser_image)
-        point_cloud = self.compute_point_cloud(_theta, points_2d, 0)
-        point_cloud = zip(point_cloud[0], point_cloud[1], point_cloud[2])
-        points = []
-        for point in point_cloud:
-            new_point = {}
-            new_point['x'] = point[0]
-            new_point['y'] = point[1]
-            new_point['z'] = -point[2]
-            points.append(new_point)
-        return points
+            #pixels, image = self.line_coords(laser_image, filter=True, fast=False,
+            #                                 x_center_delta=x_center_delta)  # Get line coords from image
+            #points = self.process_line(pixels, angle, color_image)
+            _theta = np.deg2rad(angle)
+            points_2d, image = self.compute_2d_points(laser_image)
+            point_cloud = self.compute_point_cloud(_theta, points_2d, 0)
+            point_cloud = zip(point_cloud[0], point_cloud[1], point_cloud[2])
+            points = []
+            for point in point_cloud:
+                new_point = {}
+                new_point['x'] = point[0]
+                new_point['y'] = point[1]
+                new_point['z'] = point[2]
+                points.append(new_point)
+            return points
+        except:
+            return []
 
     def compute_point_cloud(self, theta, points_2d, index):
         # Load calibration values
@@ -328,7 +331,7 @@ class ImageProcessor(ImageProcessorInterface):
         if corners is not None:
             ret, rvecs, tvecs = cv2.solvePnP(
                 self.object_pattern_points, corners,
-                np.matrix(self.config.calibration.camera_matrix), np.matrix(self.config.calibration.distortion_vector).T)
+                self.config.calibration.camera_matrix, self.config.calibration.distortion_vector)
             if ret:
                 return (cv2.Rodrigues(rvecs)[0], tvecs, corners)
 
@@ -340,6 +343,7 @@ class ImageProcessor(ImageProcessorInterface):
             n = R.T[2]
             d = np.dot(n, t)
             return (d, n, c)
+
 
     def pattern_mask(self, image, corners):
         if image is not None:

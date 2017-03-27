@@ -51,7 +51,7 @@ class FSCalibration(FSCalibrationInterface):
         self._logger = logging.getLogger(__name__)
 
     def start(self):
-        self._hardwarecontroller.led.on(115, 115, 115)
+        self._hardwarecontroller.led.on(130, 130, 130)
         self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
         self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
         self._hardwarecontroller.led.off()
@@ -73,6 +73,7 @@ class FSCalibration(FSCalibrationInterface):
         self._hardwarecontroller.turntable.step_blocking(-quater_turn, speed=900)
         time.sleep(2)
 
+        self._hardwarecontroller.turntable.enable_motors()
         position = 0
         while abs(position) < quater_turn * 2:
             _capture(position)
@@ -82,6 +83,7 @@ class FSCalibration(FSCalibrationInterface):
             position += steps_five_degree
 
         self._hardwarecontroller.turntable.step_blocking(-quater_turn, speed=900)
+        self._hardwarecontroller.turntable.disable_motors()
         self._hardwarecontroller.camera.device.stopStream()
 
 
@@ -143,26 +145,29 @@ class FSCalibration(FSCalibrationInterface):
             distance, normal, corners = plane
             self._logger.debug("Pose detected... staring laser capture... ")
             # Laser triangulation ( Between 60 and 115 degree )
-            if (position > 533 and position < 1022):
-                for i in xrange(self.config.laser.numbers):
-                    image = self._capture_laser(i)
-                    image = self._imageprocessor.pattern_mask(image, corners)
-                    self.image = image
-                    points_2d, _ = self._imageprocessor.compute_2d_points(image)
-                    point_3d = self._imageprocessor.compute_camera_point_cloud(
-                        points_2d, distance, normal)
-                    if self._point_cloud[i] is None:
-                        self._point_cloud[i] = point_3d.T
-                    else:
-                        self._point_cloud[i] = np.concatenate(
-                            (self._point_cloud[i], point_3d.T))
+            try:
+                if (position > 533 and position < 1022):
+                    for i in xrange(self.config.laser.numbers):
+                        image = self._capture_laser(i)
+                        image = self._imageprocessor.pattern_mask(image, corners)
+                        self.image = image
+                        points_2d, _ = self._imageprocessor.compute_2d_points(image)
+                        point_3d = self._imageprocessor.compute_camera_point_cloud(
+                            points_2d, distance, normal)
+                        if self._point_cloud[i] is None:
+                            self._point_cloud[i] = point_3d.T
+                        else:
+                            self._point_cloud[i] = np.concatenate(
+                                (self._point_cloud[i], point_3d.T))
 
-            # Platform extrinsics
-            origin = corners[self.config.calibration.pattern.columns * (self.config.calibration.pattern.rows - 1)][0]
-            origin = np.array([[origin[0]], [origin[1]]])
-            t = self._imageprocessor.compute_camera_point_cloud(
-                origin, distance, normal)
+                # Platform extrinsics
+                origin = corners[self.config.calibration.pattern.columns * (self.config.calibration.pattern.rows - 1)][0]
+                origin = np.array([[origin[0]], [origin[1]]])
+                t = self._imageprocessor.compute_camera_point_cloud(
+                    origin, distance, normal)
 
+            except:
+                t = None
 
             if t is not None:
                 self.x += [t[0][0]]
@@ -172,7 +177,7 @@ class FSCalibration(FSCalibrationInterface):
             else:
                 self.image = image
 
-        self._hardwarecontroller.led.on(115, 115, 115)
+        self._hardwarecontroller.led.on(130, 130, 130)
 
     def _capture_pattern(self):
         #pattern_image = self._hardwarecontroller.get_pattern_image()
@@ -218,6 +223,7 @@ class FSCalibration(FSCalibrationInterface):
             self.t = center - self.config.calibration.pattern.origin_distance * np.array(normal)
 
             self._logger.info("Platform calibration ")
+            self._logger.info(" Center Point: "+str(center))
             self._logger.info(" Translation: " + str(self.t))
             self._logger.info(" Rotation: " + str(self.R).replace('\n', ''))
             self._logger.info(" Normal: " + str(normal))

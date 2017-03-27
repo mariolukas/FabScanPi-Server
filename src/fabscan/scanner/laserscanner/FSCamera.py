@@ -189,9 +189,9 @@ class PiCam(threading.Thread):
                 except picamera:
                     self._logger.error("Can not create camera device.")
 
-                #self.awb_default_gain = self.camera.awb_gains
                 self.camera.resolution = (self.config.camera.resolution.width, self.config.camera.resolution.height)
-                self.camera.rotation = self.config.camera.rotation_angle
+                self.camera.framerate = 24
+                time.sleep(2)
 
                 while True:
                     if not self.is_idle:
@@ -203,12 +203,23 @@ class PiCam(threading.Thread):
                                 self.camera.brightness = self.settings.camera.brightness
                                 self.camera.saturation = self.settings.camera.saturation
                                 stream.seek(0)
+
+                                self.camera.capture(stream, format='jpeg')
+                                # Construct a numpy array from the stream
                                 data = np.fromstring(stream.getvalue(), dtype=np.uint8)
-                                data = cv2.imdecode(data, 1)
+                                # "Decode" the image from the array, preserving colour
+                                image = cv2.imdecode(data, 1)
+
+                                if self.config.camera.rotate == "True":
+                                    image = cv2.transpose(image)
+                                if self.config.camera.hflip == "True":
+                                    image = cv2.flip(image, 1)
+                                if self.config.camera.vflip == "True":
+                                    image = cv2.flip(image, 0)
 
                                 try:
                                     self.semaphore.acquire()
-                                    self.camera_buffer.append(data)
+                                    self.camera_buffer.append(image)
                                 finally:
                                     self.semaphore.release()
                                 stream.truncate()
@@ -233,6 +244,13 @@ class PiCam(threading.Thread):
 
     def setResolution(self, width, height):
         self.camera.resolution = (width, height)
+
+    def get_resolution(self):
+        if self._rotate:
+            return int(self.config.camera.resolution.height), int(self.config.camera.resolution.width)
+        else:
+            return int(self.config.camera.resolution.width), int(self.config.camera.resolution.height)
+
 
     def getFrame(self):
         return self.camera_buffer.get()

@@ -10,8 +10,8 @@
    },
    "calibration": {
      "pattern" : {
-          "rows": 11,
-          "columns": 6,
+          "rows": 6,
+          "columns": 11,
           "square_size":11,
           "origin_distance": 24
      },
@@ -21,16 +21,18 @@
      "distortion_vector":[],
      "camera_matrix":[]
    },
-   "camera" : {
-     "type" : "PICAM",
-     "rotation_angle" : 90,
+   "camera": {
+     "type": "PICAM",
+     "rotate": "True",
+     "hflip": "True",
+     "vflip": "False",
      "preview_resolution":{
         "width": 240,
         "height": 320
      },
      "resolution":{
-          "width": 972,
-          "height":1296
+          "height": 1232,
+          "width": 1640
       },
       "position":{
           "x": 0.0,
