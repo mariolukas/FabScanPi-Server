@@ -384,6 +384,8 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
             "resolution": self._total
         }
 
+        # FIXME: The images don't come necessarily in order,
+        # therefore we have to wait for every message instead of only the last
         if self._progress == self._total:
             self.scan_complete()
 
