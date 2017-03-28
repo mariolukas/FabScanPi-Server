@@ -70,10 +70,10 @@ class FSCalibration(FSCalibrationInterface):
 
         self._hardwarecontroller.camera.device.startStream()
         time.sleep(0.5)
+        self._hardwarecontroller.turntable.enable_motors()
         self._hardwarecontroller.turntable.step_blocking(-quater_turn, speed=900)
         time.sleep(2)
 
-        self._hardwarecontroller.turntable.enable_motors()
         position = 0
         while abs(position) < quater_turn * 2:
             _capture(position)
