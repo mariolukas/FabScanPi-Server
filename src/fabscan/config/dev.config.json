@@ -1,75 +1,132 @@
 {
-   "folders" : {
-    "www": "/home/pi/fabscan/src/www/",
-    "scans": "/var/scans/"
-   },
-   "serial" : {
-     "baudrate" : 115200,
-     "autoflash": "True",
-     "port": "/dev/ttyAMA0"
-   },
-   "calibration": {
-     "pattern" : {
-          "rows": 6,
-          "columns": 11,
-          "square_size":11,
-          "origin_distance": 24
-     },
-     "platform_rotation":[],
-     "platform_translation":[],
-     "laser_planes":[],
-     "distortion_vector":[],
-     "camera_matrix":[]
-   },
-   "camera": {
-     "type": "PICAM",
-     "rotate": "True",
-     "hflip": "True",
-     "vflip": "False",
-     "preview_resolution":{
-        "width": 240,
-        "height": 320
-     },
-     "resolution":{
-          "height": 1232,
-          "width": 1640
-      },
-      "position":{
-          "x": 0.0,
-          "y": 5.2,
-          "z": 24.5
-      },
-      "frame":{
-          "dimension": 22.3
-      }
-   },
-   "laser": {
-      "numbers": 1,
-      "position":{
-        "x": 8,
-        "y": 3.9,
-        "z": 20
-      },
-      "angle": 28.7,
-      "detection_limit": 0.20,
-      "rotation_steps": 5,
-      "steps": 3200
-   },
-   "turntable":{
-     "position": {
-       "x": 0.0,
-       "y": 0.0,
-       "z": 7.5
-     },
-     "steps":3200
-   },
-   "scanner": {
-      "origin":{
-        "y" : 0.72
-      }
-   },
-  "process_numbers": 4,
-   "meshlab":{
-     "path": "/usr/bin/"
-   }
+    "folders": {
+        "www": "/var/www/",
+        "scans": "/var/scans/"
+    },
+    "laser": {
+        "angle": 28.7,
+        "detection_limit": 0.2,
+        "steps": 3200,
+        "numbers": 1,
+        "position": {
+            "y": 5.3,
+            "x": 8.3,
+            "z": 20
+        },
+        "rotation_steps": 5
+    },
+    "scanner": {
+        "origin": {
+            "y": 0.69
+        }
+    },
+    "scanner_type": "laserscanner",
+    "calibration": {
+        "weight_matrix": [],
+        "dist_camera_matrix": [],
+        "pattern": {
+            "square_size": 11,
+            "rows": 6,
+            "columns": 11,
+            "origin_distance": 24
+        },
+        "camera_matrix": [
+            [
+                1285.5809999999999,
+                0.0,
+                647.60199999999998
+            ],
+            [
+                0.0,
+                1289.9490000000001,
+                835.84400000000005
+            ],
+            [
+                0.0,
+                0.0,
+                1.0
+            ]
+        ],
+        "distortion_vector": [
+            0.151,
+            -0.20300000000000001,
+            -0.0050000000000000001,
+            0.0060000000000000001,
+            -0.70899999999999996
+        ],
+        "laser_planes": [
+            {
+                "deviation": 0.052318819865,
+                "distance": 137.366403938,
+                "normal": [
+                    0.56199451,
+                    -0.01896656,
+                    0.82692348
+                ]
+            }
+        ],
+        "platform_translation": [
+            4.21176054e-03,
+            4.26178340e+01,
+            1.66114592e+02
+        ],
+        "platform_rotation": [
+            [
+                0.0,
+                9.99977231e-01,
+                6.74816764e-03
+            ],
+            [
+                4.51612662e-02,
+                6.74128255e-03,
+                -9.98956964e-01
+            ],
+            [
+                -0.99903697271524872,
+                0.00030800546235732861,
+                -0.043875189806843448
+            ]
+        ]
+    },
+    "meshlab": {
+        "path": "/usr/bin/"
+    },
+    "process_numbers": 4,
+    "turntable": {
+        "position": {
+            "y": 0.0,
+            "x": 0.0,
+            "z": 7.5
+        },
+        "steps": 3200
+    },
+    "camera": {
+        "rotation_angle": 90,
+        "rotate": "True",
+        "resolution": {
+            "width": 1640,
+            "height": 1232
+        },
+        "frame": {
+            "dimension": 27
+        },
+        "preview_resolution": {
+            "width": 240,
+            "height": 320
+        },
+        "hflip": "True",
+        "position": {
+            "y": 6.6,
+            "x": 0.0,
+            "z": 24.6
+        },
+        "type": "PICAM"
+    },
+    "file": "/etc/fabscanpi/default.config.json",
+    "serial": {
+        "baudrate": 115200,
+        "autoflash": "True",
+        "port": "/dev/ttyAMA0"
+    },
+    "texture_illumination": 40
 }
