@@ -99,6 +99,9 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
         #print "process "+str(self.pid)+" started"
 
+        #import pydevd
+        #pydevd.settrace('192.168.98.104', port=12011, stdoutToServer=True, stderrToServer=True)
+
         while not self.exit:
             if not self.image_task_q.empty():
                 #print "process "+str(self.pid)+" handle image"
@@ -130,13 +133,15 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
                         if (image_task.task_type == "PROCESS_DEPTH_IMAGE"):
 
+                            # FIXME: angle should result in a float, not int
+                            # see http://stackoverflow.com/questions/1282945/python-integer-division-yields-float
                             angle = (image_task.progress) * 360 / image_task.resolution
                             #self._logger.debug("Progress "+str(image_task.progress)+" Resolution "+str(image_task.resolution)+" angle "+str(angle))
                             self.image.save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)
                             color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
 
                             points = self.image_processor.process_image(angle, image_task.image, color_image)
-
+                            # TODO: Only send event if points is non-empty
                             data['points'] = points
                             data['image_type'] = 'depth'
                             #data['progress'] = image_task.progress
