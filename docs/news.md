@@ -7,6 +7,16 @@
 [comment]: <> ()
 [comment]: <> (Have fun!)
 
+**First FabScanPi Workshop (2017-03-30)**
+
+On 1th of april 2017 we will provide the first FabScanPi workshop. 
+It will take place at Watterott electronic? . The workshop will include all the 
+needed parts to build your own FabScanPi. You will be guided during the whole workshop. 
+And finally you will get a sneak preview to the nex release of the FabScanPi 
+software which includes autocalibration!
+
+More information can be found at: https://goo.gl/mC9cHs
+
 **Added some example scans (2017-01-31)**
 
 We uploaded some FabScan example scans. You can explore them by visiting the example page. 
