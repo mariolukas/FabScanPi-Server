@@ -272,6 +272,7 @@ class ImageProcessor(ImageProcessorInterface):
             #points = self.process_line(pixels, angle, color_image)
             _theta = np.deg2rad(angle)
             points_2d, image = self.compute_2d_points(laser_image)
+            # FIXME; points_2d could contain empty arrays, resulting point_cloud to be None
             point_cloud = self.compute_point_cloud(_theta, points_2d, 0)
             point_cloud = zip(point_cloud[0], point_cloud[1], point_cloud[2])
             points = []

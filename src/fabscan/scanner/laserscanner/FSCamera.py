@@ -210,11 +210,11 @@ class PiCam(threading.Thread):
                                 # "Decode" the image from the array, preserving colour
                                 image = cv2.imdecode(data, 1)
 
-                                if self.config.camera.rotate == "True":
+                                if hasattr(self.config.camera, 'rotate') and self.config.camera.rotate == "True":
                                     image = cv2.transpose(image)
-                                if self.config.camera.hflip == "True":
+                                if hasattr(self.config.camera, 'hflip') and self.config.camera.hflip == "True":
                                     image = cv2.flip(image, 1)
-                                if self.config.camera.vflip == "True":
+                                if hasattr(self.config.camera, 'vflip') and self.config.camera.vflip == "True":
                                     image = cv2.flip(image, 0)
 
                                 try:

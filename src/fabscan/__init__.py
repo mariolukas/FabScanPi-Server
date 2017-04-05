@@ -74,10 +74,20 @@ def main():
     parser.add_argument("--iknowwhatimdoing", action="store_true", dest="allowRoot",
                         help="Allow FabScan Pi to fabscanpi-server as user root")
 
+    parser.add_argument("--debugger-host", action="store", dest="debugger_host", default=False,
+                        help="Allow to connect to a remote debug server")
+
+    parser.add_argument("--debugger-port", action="store", dest="debugger_port", default=12011, type=int,
+                        help="Use port for debug server")
+
     args = parser.parse_args()
 
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     logger=logging.getLogger("fabscan")
+
+    if args.debugger_host:
+        import pydevd
+        pydevd.settrace(args.debugger_host, port=args.debugger_port, stdoutToServer=True, stderrToServer=True)
 
     log_level= {
         "debug": logging.DEBUG,
@@ -105,21 +115,25 @@ def main():
         print "FabScan Pi version %s" % __version__
         sys.exit(0)
 
-    if args.daemon:
-        if sys.platform == "darwin" or sys.platform == "win32":
-            print >> sys.stderr, "Sorry, daemon mode is only supported under Linux right now"
-            sys.exit(2)
+    try:
+        if args.daemon:
+            if sys.platform == "darwin" or sys.platform == "win32":
+                print >> sys.stderr, "Sorry, daemon mode is only supported under Linux right now"
+                sys.exit(2)
 
-        daemon = Main(args.pidfile, args.config, args.basedir, args.host, args.port, args.debug, args.allowRoot, args.logConf)
-        if "start" == args.daemon:
-            daemon.start()
-        elif "stop" == args.daemon:
-            daemon.stop()
-        elif "restart" == args.daemon:
-            daemon.restart()
-    else:
-        fabscan = FSServer(args.config, args.settings)
-        fabscan.run()
+            daemon = Main(args.pidfile, args.config, args.basedir, args.host, args.port, args.debug, args.allowRoot, args.logConf)
+            if "start" == args.daemon:
+                daemon.start()
+            elif "stop" == args.daemon:
+                daemon.stop()
+            elif "restart" == args.daemon:
+                daemon.restart()
+        else:
+            fabscan = FSServer(args.config, args.settings)
+            fabscan.run()
+    except Exception, e:
+        logger.fatal("Fatal error: %s", e)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
