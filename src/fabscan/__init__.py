@@ -59,7 +59,7 @@ def main():
 
     parser.add_argument("-s", "--settings", required=True, action="store", dest="settings",
                         help="Specify the config file to use. FabScan Pi needs to have write access for the settings dialog to work. Defaults to /etc/fabscanpi/default.settings.json")
-
+    #FIXME: help comment is miss leading and/or parameter should be --logfile
     parser.add_argument("--logging", action="store", dest="logConf", default=None,
                         help="Specify the config file to use for configuring logging. Defaults to /var/log/fabscanpi/fabscan.log")
 

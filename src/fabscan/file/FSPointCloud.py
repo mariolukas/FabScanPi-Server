@@ -54,9 +54,9 @@ class FSPointCloud():
             f.write("end_header\n")
             scaler_in_mm = 10
             for point in self.points:
-                x = float(point['x'])*scaler_in_mm
-                y = float(point['y'])*scaler_in_mm
-                z = float(point['z'])*scaler_in_mm
+                x = float(point['x'])
+                y = float(point['y'])
+                z = float(point['z'])
                 if self.color:
                     f.write("{0} {1} {2} {3} {4} {5}\n".format( str(x),str(z),str(y) , point['r'], point['g'], point['b']))
                 else:

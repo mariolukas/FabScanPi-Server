@@ -15,7 +15,7 @@ class Laser:
 
             signal = "M21;"
             self.serial_connection.send(signal+'\n')
-            #time.sleep(0.2)
+            time.sleep(0.5)
             #self.serial_connection.write("\n".encode('ascii'))
             self.serial_connection.wait()
             time.sleep(0.7)  # Wait for laser to warm up
@@ -25,7 +25,7 @@ class Laser:
 
             signal = "M22;"
             self.serial_connection.send(signal+'\n')
-            #time.sleep(0.2)
+            time.sleep(0.5)
             #self.serial_connection.write("\n".encode('ascii'))
             self.serial_connection.wait()
 

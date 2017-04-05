@@ -143,13 +143,13 @@ class ImageProcessor(ImageProcessorInterface):
         # if self.threshold_enable:
 
         image = cv2.threshold(
-            image, 20, 255, cv2.THRESH_TOZERO)[1]
+            image, 30, 255, cv2.THRESH_TOZERO)[1]
 
         if blur_enable:
             image = cv2.blur(image, (5, 5))
 
         image = cv2.threshold(
-            image, 30, 255, cv2.THRESH_TOZERO)[1]
+            image, 40, 255, cv2.THRESH_TOZERO)[1]
 
         return image
 
@@ -278,8 +278,8 @@ class ImageProcessor(ImageProcessorInterface):
             for point in point_cloud:
                 new_point = {}
                 new_point['x'] = point[0]
-                new_point['y'] = point[1]
-                new_point['z'] = point[2]
+                new_point['y'] = point[2]
+                new_point['z'] = point[1]
                 points.append(new_point)
             return points
         except:

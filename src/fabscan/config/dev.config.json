@@ -13,7 +13,7 @@
           "rows": 6,
           "columns": 11,
           "square_size":11,
-          "origin_distance": 24
+          "origin_distance": 25
      },
      "platform_rotation":[],
      "platform_translation":[],

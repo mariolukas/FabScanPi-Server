@@ -4,7 +4,9 @@ import time
 import logging
 import struct
 from fabscan.util.FSInject import singleton
+from fabscan.file.FSImage import FSImage
 import cv2
+
 
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
@@ -41,7 +43,7 @@ class FSCalibration(FSCalibrationInterface):
         self.image_points = []
         self.object_points = []
 
-        self.estimated_t = [-5, 90, 320]
+        self.estimated_t = [-1, 26, 168]
 
         self._point_cloud = [None, None]
         self.x = []
@@ -51,7 +53,7 @@ class FSCalibration(FSCalibrationInterface):
         self._logger = logging.getLogger(__name__)
 
     def start(self):
-        self._hardwarecontroller.led.on(130, 130, 130)
+        self._hardwarecontroller.led.on(120, 120, 120)
         self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
         self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
         self._hardwarecontroller.led.off()
@@ -89,8 +91,6 @@ class FSCalibration(FSCalibrationInterface):
 
         _calibrate()
 
-    def _calibration_dummy(self):
-        pass
 
     def _calculate_camera_calibration(self):
         error = 0
@@ -107,6 +107,7 @@ class FSCalibration(FSCalibrationInterface):
 
         self.config.calibration.camera_matrix = np.round(cmat, 3)
         self.config.calibration.distortion_vector = np.round(dvec.ravel(), 3)
+
         return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
 
     def _capture_camera_calibration(self, position):
@@ -141,17 +142,22 @@ class FSCalibration(FSCalibrationInterface):
         #self._logger.debug("Position: " + str(position))
 
         if plane is not None:
-            self._hardwarecontroller.led.off()
+
             distance, normal, corners = plane
-            self._logger.debug("Pose detected... staring laser capture... ")
+            self._logger.debug("Pose detected...  ")
             # Laser triangulation ( Between 60 and 115 degree )
             try:
                 if (position > 533 and position < 1022):
+                    #self._logger.debug("Starting laser capture...")
+                    #self._hardwarecontroller.led.on(10, 10, 10)
+                    self._hardwarecontroller.led.off()
                     for i in xrange(self.config.laser.numbers):
                         image = self._capture_laser(i)
                         image = self._imageprocessor.pattern_mask(image, corners)
                         self.image = image
-                        points_2d, _ = self._imageprocessor.compute_2d_points(image)
+                        fs_image = FSImage()
+                        fs_image.save_image(image, position, "laser", dir_name="calibration")
+                        points_2d, _ = self._imageprocessor.compute_2d_points(image, refinement_method='RANSAC')
                         point_3d = self._imageprocessor.compute_camera_point_cloud(
                             points_2d, distance, normal)
                         if self._point_cloud[i] is None:
@@ -177,7 +183,7 @@ class FSCalibration(FSCalibrationInterface):
             else:
                 self.image = image
 
-        self._hardwarecontroller.led.on(130, 130, 130)
+        self._hardwarecontroller.led.on(120, 120, 120)
 
     def _capture_pattern(self):
         #pattern_image = self._hardwarecontroller.get_pattern_image()
@@ -355,8 +361,6 @@ class FSCalibration(FSCalibrationInterface):
             best_model = model_class.fit(data[best_inliers])
         return best_model, best_inliers
 
-    def _save_calibration_data(self):
-        pass
 
     def save_point_cloud(self, filename, point_cloud):
         if point_cloud is not None:

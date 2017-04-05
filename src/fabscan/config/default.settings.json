@@ -25,7 +25,7 @@
      },
      "camera":{
        "brightness" : 50,
-       "contrast": 0,
+       "contrast": 10,
        "saturation": 0
      },
      "resolution": 8,
