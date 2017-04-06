@@ -264,12 +264,6 @@ class ImageProcessor(ImageProcessorInterface):
         ''' Takes picture and angle (in degrees).  Adds to point cloud '''
 
         try:
-            #x_center = laser_image.shape[1] * self.settings.center
-            #x_center_delta = laser_image.shape[1] * 0.5 - x_center
-
-            #pixels, image = self.line_coords(laser_image, filter=True, fast=False,
-            #                                 x_center_delta=x_center_delta)  # Get line coords from image
-            #points = self.process_line(pixels, angle, color_image)
             _theta = np.deg2rad(angle)
             points_2d, image = self.compute_2d_points(laser_image)
             # FIXME; points_2d could contain empty arrays, resulting point_cloud to be None
@@ -279,34 +273,24 @@ class ImageProcessor(ImageProcessorInterface):
 
             if color_image is not None:
                 u, v = points_2d
-                #color_pairs = zip(u, v)
-                texture = color_image[v, np.around(u).astype(int)].T
 
-
-            index = 0
-            for point in point_cloud:
+            for index, point in enumerate(point_cloud):
                 new_point = {}
                 new_point['x'] = point[0]
                 new_point['y'] = point[2]
                 new_point['z'] = point[1]
 
-                #self._logger.debug(color_image[u[index]][index])
-
-                b, g, r = color_image[v[index]][u[index]]
-
-
-                new_point['r'] = int(r)
-                new_point['g'] = int(g)
-                new_point['b'] = int(b)
-                #self._logger.debug("color: "+str(color_image[texture[index]][index]))
-
-                index += 1
+                if color_image is not None:
+                    b, g, r = color_image[v[index]][u[index]]
+                    new_point['r'] = int(r)
+                    new_point['g'] = int(g)
+                    new_point['b'] = int(b)
 
                 points.append(new_point)
 
             return points
         except Exception as e:
-            self._logger.debug(e)
+            self._logger.error(e)
             return []
 
     def compute_point_cloud(self, theta, points_2d, index):
