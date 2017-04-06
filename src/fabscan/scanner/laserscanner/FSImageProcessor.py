@@ -276,14 +276,37 @@ class ImageProcessor(ImageProcessorInterface):
             point_cloud = self.compute_point_cloud(_theta, points_2d, 0)
             point_cloud = zip(point_cloud[0], point_cloud[1], point_cloud[2])
             points = []
+
+            if color_image is not None:
+                u, v = points_2d
+                #color_pairs = zip(u, v)
+                texture = color_image[v, np.around(u).astype(int)].T
+
+
+            index = 0
             for point in point_cloud:
                 new_point = {}
                 new_point['x'] = point[0]
                 new_point['y'] = point[2]
                 new_point['z'] = point[1]
+
+                #self._logger.debug(color_image[u[index]][index])
+
+                b, g, r = color_image[v[index]][u[index]]
+
+
+                new_point['r'] = int(r)
+                new_point['g'] = int(g)
+                new_point['b'] = int(b)
+                #self._logger.debug("color: "+str(color_image[texture[index]][index]))
+
+                index += 1
+
                 points.append(new_point)
+
             return points
-        except:
+        except Exception as e:
+            self._logger.debug(e)
             return []
 
     def compute_point_cloud(self, theta, points_2d, index):

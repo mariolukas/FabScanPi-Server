@@ -53,12 +53,12 @@ class Turntable(object):
     def enable_motors(self):
         if self.serial_connection != None:
             self.serial_connection.send("M17;\n")
-            self.serial_connection.wait()
+      #      self.serial_connection.wait()
 
     def disable_motors(self):
         if self.serial_connection != None:
             self.serial_connection.send("M18;\n")
-            self.serial_connection.wait()
+#            self.serial_connection.wait()
 
 
     def start_turning(self):
