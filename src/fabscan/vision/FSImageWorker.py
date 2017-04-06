@@ -58,21 +58,24 @@ class FSImageWorkerPool():
             '''
                 Kill Processes in Pool
             '''
-            #print "killing "+str(self._number_of_workers)+" processes"
-            i=0
             for _ in range(self._number_of_workers):
-
-                task = ImageTask(None,None,None,task_type="KILL")
-                self._task_q.put(task,True)
-                i += 1
+                task = ImageTask(None, None, None, task_type="KILL")
+                self._task_q.put(task, True)
 
             self._workers_active = False
+
+            while not self._task_q.empty():
+                time.sleep(0.2)
+
+            for worker in self.workers:
+                self.workers.remove(worker)
+
 
     def workers_active(self):
         return self._workers_active
 
     def set_number_of_workers(self, number):
-        self._number_of_workers =  number
+        self._number_of_workers = number
 
 
 class FSImageWorkerProcess(multiprocessing.Process):
@@ -150,7 +153,6 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             event = dict()
                             event['event'] = "ON_IMAGE_PROCESSED"
                             event['data'] = data
-
 
                             self.event_q.put(event)
 
