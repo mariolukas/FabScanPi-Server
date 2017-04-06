@@ -71,7 +71,6 @@ class FSCalibration(FSCalibrationInterface):
         steps_five_degree = 5.0 / (360.0 / self.config.turntable.steps)
 
         self._hardwarecontroller.camera.device.startStream()
-        time.sleep(0.5)
         self._hardwarecontroller.turntable.enable_motors()
         self._hardwarecontroller.turntable.step_blocking(-quater_turn, speed=900)
         time.sleep(2)

@@ -210,11 +210,11 @@ class PiCam(threading.Thread):
                                 # "Decode" the image from the array, preserving colour
                                 image = cv2.imdecode(data, 1)
 
-                                if hasattr(self.config.camera, 'rotate') and self.config.camera.rotate == "True":
+                                if self.config.camera.rotate == "True":
                                     image = cv2.transpose(image)
-                                if hasattr(self.config.camera, 'hflip') and self.config.camera.hflip == "True":
+                                if self.config.camera.hflip == "True":
                                     image = cv2.flip(image, 1)
-                                if hasattr(self.config.camera, 'vflip') and self.config.camera.vflip == "True":
+                                if self.config.camera.vflip == "True":
                                     image = cv2.flip(image, 0)
 
                                 try:
@@ -251,9 +251,11 @@ class PiCam(threading.Thread):
         else:
             return int(self.config.camera.resolution.width), int(self.config.camera.resolution.height)
 
-
     def getFrame(self):
-        return self.camera_buffer.get()
+        image = None
+        while image is None:
+           image = self.camera_buffer.get()
+        return image
 
     def startStream(self, auto_exposure=False):
         self.setExposureMode(auto_exposure=auto_exposure)
@@ -261,7 +263,6 @@ class PiCam(threading.Thread):
         self.is_idle = False
         self.semaphore.release()
         self.camera_buffer.flush()
-        time.sleep(0.5)
 
     def stopStream(self):
         self.semaphore.acquire()

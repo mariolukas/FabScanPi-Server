@@ -251,7 +251,6 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
         time.sleep(1)
         self.hardwareController.camera.device.startStream(auto_exposure=True)
-        time.sleep(2)
 
         #time.sleep(2)
 
@@ -266,7 +265,6 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
         self.hardwareController.camera.device.stopStream()
         self.hardwareController.camera.device.flushStream()
-        time.sleep(0.8)
 
         self._worker_pool.kill()
 
@@ -297,7 +295,6 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         time.sleep(0.5)
         self.hardwareController.camera.device.startStream()
         self.hardwareController.camera.device.flushStream()
-        time.sleep(1.5)
 
         #self._laser_angle = self.image_processor.calculate_laser_angle(self.hardwareController.camera.device.getFrame())
         self._laser_angle = self.settings.backwall.laser_angle
