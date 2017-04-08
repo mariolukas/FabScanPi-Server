@@ -47,7 +47,6 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.eventmanager = eventmanager.instance
         self.calibration = calibration
 
-        # individual package classes for each of different scan method/priciple (e.g laser scan, kinect, etc.)
         self.hardwareController = hardwarecontroller
         self.image_processor = imageprocessor
 
@@ -61,7 +60,6 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.point_cloud = None
         self.image_task_q = multiprocessing.Queue(self.config.process_numbers + 1)
         self.current_position = 0
-        self._laser_angle = 33.0
         self._stop_scan = False
         self._current_laser_position = 1
 
@@ -173,7 +171,6 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         event.command = 'CALIBRATION_COMPLETE'
         self.eventmanager.publish(FSEvents.COMMAND, event)
 
-        #self.hardwareController.calibrate_scanner()
 
         # send information to client that calibration is finished
         message = {
@@ -251,6 +248,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
         time.sleep(1)
         self.hardwareController.camera.device.startStream(auto_exposure=True)
+        time.sleep(2)
 
         #time.sleep(2)
 
@@ -265,8 +263,9 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
         self.hardwareController.camera.device.stopStream()
         self.hardwareController.camera.device.flushStream()
+        time.sleep(0.8)
 
-        self._worker_pool.kill()
+        #self._worker_pool.kill()
 
     def scan_next_texture_position(self):
         if not self._stop_scan:
@@ -292,26 +291,18 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
         self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
         self.hardwareController.laser.on()
-        time.sleep(0.5)
+
         self.hardwareController.camera.device.startStream()
         self.hardwareController.camera.device.flushStream()
 
-        #self._laser_angle = self.image_processor.calculate_laser_angle(self.hardwareController.camera.device.getFrame())
-        self._laser_angle = self.settings.backwall.laser_angle
 
-        if self._laser_angle == None:
-            event = FSEvent()
-            event.command = 'SCANNER_ERROR'
-            self.eventmanager.publish(FSEvents.COMMAND,event)
-            self.on_laser_detection_failed()
-            self._logger.debug("Send laser detection failure event")
-        else:
-            message = {
-                "message": "SCANNING_OBJECT",
-                "level": "info"
-            }
-            self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-            self._logger.debug("Detected Laser Angle at: %f deg" % (self._laser_angle,))
+        message = {
+            "message": "SCANNING_OBJECT",
+            "level": "info"
+        }
+        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+
+        if not self._worker_pool.workers_active():
             self._worker_pool.create(self.config.process_numbers)
 
     def finish_object_scan(self):
@@ -321,12 +312,12 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.hardwareController.led.off()
         self.hardwareController.camera.device.stopStream()
 
-
     def scan_next_object_position(self):
         if not self._stop_scan:
             if self.current_position <= self._number_of_pictures:
                 if self.current_position == 0:
                     self.init_object_scan()
+
 
                 laser_image = self.hardwareController.scan_at_position(self._resolution)
                 task = ImageTask(laser_image, self._prefix, self.current_position, self._number_of_pictures)
@@ -354,7 +345,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
     def stop_scan(self):
         self._stop_scan = True
         self._worker_pool.kill()
-        time.sleep(1)
+
         self.utils.delete_scan(self._prefix)
         self.reset_scanner_state()
         self._logger.info("Scan stoped")
@@ -439,7 +430,6 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.hardwareController.laser.off()
         self.hardwareController.led.off()
         self.hardwareController.turntable.disable_motors()
-        self._command = None
         self._progress = 0
         self.current_position = 0
         self._number_of_pictures = 0

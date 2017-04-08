@@ -62,13 +62,15 @@ class FSImageWorkerPool():
                 task = ImageTask(None, None, None, task_type="KILL")
                 self._task_q.put(task, True)
 
-            self._workers_active = False
-
             while not self._task_q.empty():
                 time.sleep(0.2)
 
+            #self._task_q.clear()
+
             for worker in self.workers:
                 self.workers.remove(worker)
+
+            self._workers_active = False
 
 
     def workers_active(self):
@@ -93,7 +95,6 @@ class FSImageWorkerProcess(multiprocessing.Process):
         self.image_processor = imageprocessor
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
-
 
     def run(self):
         '''
@@ -138,7 +139,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
                             # FIXME: angle should result in a float, not int
                             # see http://stackoverflow.com/questions/1282945/python-integer-division-yields-float
-                            angle = (image_task.progress) * 360 / image_task.resolution
+                            angle = float(image_task.progress * 360) / float(image_task.resolution)
                             #self._logger.debug("Progress "+str(image_task.progress)+" Resolution "+str(image_task.resolution)+" angle "+str(angle))
                             self.image.save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)
                             color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)

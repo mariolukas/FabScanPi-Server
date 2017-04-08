@@ -115,6 +115,7 @@
             "height": 320
         },
         "hflip": "True",
+        "vflip": "False",
         "position": {
             "y": 6.6,
             "x": 0.0,

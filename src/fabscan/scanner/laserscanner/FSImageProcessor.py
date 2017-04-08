@@ -285,6 +285,8 @@ class ImageProcessor(ImageProcessorInterface):
                     new_point['r'] = int(r)
                     new_point['g'] = int(g)
                     new_point['b'] = int(b)
+                else:
+                    new_point['r'] = new_point['g'] = new_point['b'] = 255
 
                 points.append(new_point)
 

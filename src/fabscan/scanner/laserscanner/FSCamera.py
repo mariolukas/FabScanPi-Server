@@ -61,11 +61,10 @@ class FSRingBuffer(threading.Thread):
 
     # Retrieve the newest element in the buffer.
     def get(self):
-        if len(self.data) > 1:
+        if len(self.data) >= 1:
             image = self.data[-1]
         else:
             image = None
-
         return image
 
     def flush(self):
