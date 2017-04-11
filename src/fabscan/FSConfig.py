@@ -20,7 +20,7 @@ class ConfigInterface(object):
         pass
 
 
-#TODO: define and use default settings if not specified e.g. config.laser.numbers, config.pattern.origin_distance
+#FIXME: define and use default settings if not specified e.g. config.laser.numbers, config.pattern.origin_distance
 
 class Config(ConfigInterface):
     def __init__(self, config, first=True):

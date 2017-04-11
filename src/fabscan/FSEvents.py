@@ -112,7 +112,7 @@ class FSEventManager(FSEventManagerInterface):
         if not self.event_q.empty():
             try:
                 event = self.event_q.get_nowait()
-                self.publish(event['event'],event['data'])
+                self.publish(event['event'], event['data'])
 
             except Empty:
                     pass

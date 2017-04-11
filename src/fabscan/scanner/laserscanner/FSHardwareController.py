@@ -12,6 +12,7 @@ from FSLed import Led
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.util.FSInject import singleton
+import cv2
 
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
@@ -44,14 +45,13 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.serial_connection = FSSerialCom()
 
         self.turntable = Turntable(serial_object=self.serial_connection)
-
         self.laser = Laser(self.serial_connection)
         self.led = Led(self.serial_connection)
 
+        self._logger.debug("Reset FabScanPi HAT...")
         self.laser.off()
         self.led.off()
         self.turntable.stop_turning()
-        self.turntable.disable_motors()
         self._logger.debug("Hardware controller initialized...")
 
 
@@ -65,10 +65,6 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.turntable.stop_turning()
         self.led.off()
         self.laser.off()
-        time.sleep(0.3)
-        self.camera.device.flushStream()
-        self.camera.device.stopStream()
-
 
     def get_picture(self):
         img = self.camera.device.getFrame()
@@ -77,15 +73,15 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def get_pattern_image(self):
         self.led.on(110, 110, 110)
         #self.camera.device.contrast = 40
-        time.sleep(5)
         pattern_image = self.get_picture()
         self.led.off()
         return pattern_image
 
     def get_laser_image(self, index):
+        self._hardwarecontroller.led.on(30, 30, 30)
         self.laser.on()
         self.camera.device.flushStream()
-        time.sleep(2)
+        time.sleep(1)
         laser_image = self.get_picture()
         self.laser.off()
         return laser_image
@@ -131,7 +127,6 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self._logger.debug("Startup calibration sequence started.")
         #self.laser.on()
         #self.camera.device.startStream()
-        time.sleep(2)
         laser_angle = self.get_laser_angle()
         self._logger.debug(laser_angle)
         #self.camera.device.stopStream()

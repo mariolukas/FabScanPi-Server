@@ -12,26 +12,17 @@ class Laser:
 
     def on(self, selected_laser=False):
         if (selected_laser != None) and (self.serial_connection != None):
-
             signal = "M21;"
             self.serial_connection.send(signal+'\n')
-            time.sleep(0.5)
-            #self.serial_connection.write("\n".encode('ascii'))
-            self.serial_connection.wait()
-            time.sleep(0.7)  # Wait for laser to warm up
+            self.serial_connection.wait_until_ready()
 
     def off(self, selected_laser=False):
         if (selected_laser != None) and (self.serial_connection != None):
-
             signal = "M22;"
             self.serial_connection.send(signal+'\n')
-            time.sleep(0.5)
-            #self.serial_connection.write("\n".encode('ascii'))
-            self.serial_connection.wait()
+            self.serial_connection.wait_until_ready()
 
     def turn(self, steps):
-
         signal = "G04 L"+str(steps)+" F200"
-
         self.serial_connection.send(signal+'\n')
-        self.serial_connection.wait()
+        self.serial_connection.wait_until_ready()

@@ -7,7 +7,7 @@
      "line_coords_buffer": 5,
      "percent_top_pixels": 0.1,
      "center": 0.50,
-     "threshold": 100,
+     "threshold": 25,
      "crop": {
        "upper": -128,
        "lower": -810
@@ -28,6 +28,8 @@
        "contrast": 10,
        "saturation": 0
      },
+     "calibration_contrast": 30,
+     "calibration_brightness": 40,
      "resolution": 8,
      "laser_positions": 1,
      "color" : "False"

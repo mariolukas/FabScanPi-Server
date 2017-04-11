@@ -246,9 +246,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.settings.camera.contrast = 0
         self.settings.camera.saturation = 0
         self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
-        time.sleep(1)
         self.hardwareController.camera.device.startStream(auto_exposure=True)
-        time.sleep(2)
 
         #time.sleep(2)
 
@@ -263,7 +261,6 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
         self.hardwareController.camera.device.stopStream()
         self.hardwareController.camera.device.flushStream()
-        time.sleep(0.8)
 
         #self._worker_pool.kill()
 

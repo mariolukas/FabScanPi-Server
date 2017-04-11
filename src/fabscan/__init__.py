@@ -59,15 +59,16 @@ def main():
 
     parser.add_argument("-s", "--settings", required=True, action="store", dest="settings",
                         help="Specify the config file to use. FabScan Pi needs to have write access for the settings dialog to work. Defaults to /etc/fabscanpi/default.settings.json")
-    #FIXME: help comment is miss leading and/or parameter should be --logfile
-    parser.add_argument("--logging", action="store", dest="logConf", default=None,
-                        help="Specify the config file to use for configuring logging. Defaults to /var/log/fabscanpi/fabscan.log")
+
+    parser.add_argument("--logfile", action="store", dest="logConf", default=None,
+                        help="Define the log file and path for logging. Defaults to /var/log/fabscanpi/fabscan.log")
 
     parser.add_argument("--loglevel", action="store", dest="logLevel", default="debug",
                         help="Specify the Log level. Possible Params are debug, info and warning")
 
     parser.add_argument("--daemon", action="store", type=str, choices=["start", "stop", "restart"],
                         help="Daemonize/control daemonized FabScan Pi instance (only supported under Linux right now)")
+
     parser.add_argument("--pid", action="store", type=str, dest="pidfile", default="/tmp/fabscanpi.pid",
                         help="Pidfile to use for daemonizing, defaults to /tmp/fabscanpi.pid")
 

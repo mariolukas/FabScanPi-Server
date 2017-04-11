@@ -286,7 +286,7 @@ class PiCam(threading.Thread):
                     self.camera.awb_gains = g
 
                 else:
-                    self.camera.awb_mode = "flash"
+                    self.camera.awb_mode = "auto"
                     time.sleep(1)
 
 

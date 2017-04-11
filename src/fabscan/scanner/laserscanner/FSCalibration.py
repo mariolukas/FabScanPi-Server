@@ -42,6 +42,7 @@ class FSCalibration(FSCalibrationInterface):
         self.distortion_vector = None
         self.image_points = []
         self.object_points = []
+        self.calibration_brightness = [80, 80, 80]
 
         self.estimated_t = [-1, 26, 168]
 
@@ -53,10 +54,14 @@ class FSCalibration(FSCalibrationInterface):
         self._logger = logging.getLogger(__name__)
 
     def start(self):
-        self._hardwarecontroller.led.on(120, 120, 120)
+        self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
+        self.settings.camera.contrast = 40
+        self.settings.camera.saturation = 20
+        #self.settings.camera.brightness = 20
         self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
         self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
         self._hardwarecontroller.led.off()
+
 
         self.config.save()
 
@@ -71,19 +76,17 @@ class FSCalibration(FSCalibrationInterface):
         steps_five_degree = 5.0 / (360.0 / self.config.turntable.steps)
 
         self._hardwarecontroller.camera.device.startStream()
+        #self._hardwarecontroller.camera.device.setExposureMode(auto_exposure=False)
         self._hardwarecontroller.turntable.enable_motors()
-        self._hardwarecontroller.turntable.step_blocking(-quater_turn, speed=900)
-        time.sleep(2)
+        self._hardwarecontroller.turntable.step_blocking(quater_turn, speed=900)
 
         position = 0
         while abs(position) < quater_turn * 2:
             _capture(position)
-            time.sleep(0.5)
-            self._hardwarecontroller.turntable.step_blocking(steps_five_degree, speed=900)
-            time.sleep(0.5)
+            self._hardwarecontroller.turntable.step_blocking(-steps_five_degree, speed=900)
             position += steps_five_degree
 
-        self._hardwarecontroller.turntable.step_blocking(-quater_turn, speed=900)
+        self._hardwarecontroller.turntable.step_blocking(quater_turn, speed=900)
         self._hardwarecontroller.turntable.disable_motors()
         self._hardwarecontroller.camera.device.stopStream()
 
@@ -112,13 +115,16 @@ class FSCalibration(FSCalibrationInterface):
     def _capture_camera_calibration(self, position):
         image = self._capture_pattern()
         self.shape = image[:, :, 0].shape
+
         if (position > 533 and position < 1022):
-            flags = None
+            flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
         else:
             flags = cv2.CALIB_CB_FAST_CHECK
 
         corners = self._imageprocessor.detect_corners(image, flags)
+
         if corners is not None:
+            self._logger.debug("Corners detected...")
             if len(self.object_points) < 15:
                 self.image_points.append(corners)
                 self.object_points.append(self._imageprocessor.object_pattern_points)
@@ -127,11 +133,10 @@ class FSCalibration(FSCalibrationInterface):
 
     def _capture_scanner_calibration(self, position):
 
-        time.sleep(3)
         image = self._capture_pattern()
 
         if (position > 533 and position < 1022):
-            flags = None
+            flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
         else:
             flags = cv2.CALIB_CB_FAST_CHECK
 
@@ -147,8 +152,7 @@ class FSCalibration(FSCalibrationInterface):
             # Laser triangulation ( Between 60 and 115 degree )
             try:
                 if (position > 533 and position < 1022):
-                    #self._logger.debug("Starting laser capture...")
-                    #self._hardwarecontroller.led.on(10, 10, 10)
+
                     self._hardwarecontroller.led.off()
                     for i in xrange(self.config.laser.numbers):
                         image = self._capture_laser(i)
@@ -182,7 +186,7 @@ class FSCalibration(FSCalibrationInterface):
             else:
                 self.image = image
 
-        self._hardwarecontroller.led.on(120, 120, 120)
+        self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
     def _capture_pattern(self):
         #pattern_image = self._hardwarecontroller.get_pattern_image()
@@ -190,6 +194,7 @@ class FSCalibration(FSCalibrationInterface):
         return pattern_image
 
     def _capture_laser(self, index):
+        self._logger.debug("Starting laser capture...")
         laser_image = self._hardwarecontroller.get_laser_image(index)
         return laser_image
 

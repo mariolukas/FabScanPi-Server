@@ -54,6 +54,13 @@ class FSImageWorkerPool():
 
         return self.workers
 
+    def clear_task_queue(self):
+        try:
+            while not self._task_q.empty():
+                self._task_q.get_nowait()
+        except Empty:
+            pass
+
     def kill(self):
             '''
                 Kill Processes in Pool
@@ -65,7 +72,7 @@ class FSImageWorkerPool():
             while not self._task_q.empty():
                 time.sleep(0.2)
 
-            #self._task_q.clear()
+            self.clear_task_queue()
 
             for worker in self.workers:
                 self.workers.remove(worker)
@@ -145,7 +152,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
 
                             points = self.image_processor.process_image(angle, image_task.image, color_image)
-                            # TODO: Only send event if points is non-empty
+                            # FIXME: Only send event if points is non-empty
                             data['points'] = points
                             data['image_type'] = 'depth'
                             #data['progress'] = image_task.progress

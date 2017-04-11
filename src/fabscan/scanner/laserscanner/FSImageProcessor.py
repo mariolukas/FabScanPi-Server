@@ -143,13 +143,13 @@ class ImageProcessor(ImageProcessorInterface):
         # if self.threshold_enable:
 
         image = cv2.threshold(
-            image, 30, 255, cv2.THRESH_TOZERO)[1]
+            image, self.settings.threshold, 255, cv2.THRESH_TOZERO)[1]
 
         if blur_enable:
             image = cv2.blur(image, (5, 5))
 
         image = cv2.threshold(
-            image, 40, 255, cv2.THRESH_TOZERO)[1]
+            image, self.settings.threshold, 255, cv2.THRESH_TOZERO)[1]
 
         return image
 

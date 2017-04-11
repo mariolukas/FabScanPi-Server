@@ -27,7 +27,7 @@
         "pattern": {
             "square_size": 11,
             "rows": 6,
-            "columns": 11,
+            "columns": 9,
             "origin_distance": 24
         },
         "camera_matrix": [
