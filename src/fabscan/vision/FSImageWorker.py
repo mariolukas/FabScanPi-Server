@@ -144,8 +144,6 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
                         if (image_task.task_type == "PROCESS_DEPTH_IMAGE"):
 
-                            # FIXME: angle should result in a float, not int
-                            # see http://stackoverflow.com/questions/1282945/python-integer-division-yields-float
                             angle = float(image_task.progress * 360) / float(image_task.resolution)
                             #self._logger.debug("Progress "+str(image_task.progress)+" Resolution "+str(image_task.resolution)+" angle "+str(angle))
                             self.image.save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)

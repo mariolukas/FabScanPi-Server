@@ -4,21 +4,9 @@
         "scans": "/var/scans/"
     },
     "laser": {
-        "angle": 28.7,
-        "detection_limit": 0.2,
         "steps": 3200,
         "numbers": 1,
-        "position": {
-            "y": 5.3,
-            "x": 8.3,
-            "z": 20
-        },
         "rotation_steps": 5
-    },
-    "scanner": {
-        "origin": {
-            "y": 0.69
-        }
     },
     "scanner_type": "laserscanner",
     "calibration": {
@@ -28,7 +16,7 @@
             "square_size": 11,
             "rows": 6,
             "columns": 9,
-            "origin_distance": 24
+            "origin_distance": 29
         },
         "camera_matrix": [
             [
@@ -93,37 +81,22 @@
     },
     "process_numbers": 4,
     "turntable": {
-        "position": {
-            "y": 0.0,
-            "x": 0.0,
-            "z": 7.5
-        },
         "steps": 3200
     },
     "camera": {
-        "rotation_angle": 90,
-        "rotate": "True",
         "resolution": {
             "width": 1640,
             "height": 1232
-        },
-        "frame": {
-            "dimension": 27
         },
         "preview_resolution": {
             "width": 240,
             "height": 320
         },
+        "rotate": "True",
         "hflip": "True",
         "vflip": "False",
-        "position": {
-            "y": 6.6,
-            "x": 0.0,
-            "z": 24.6
-        },
         "type": "PICAM"
     },
-    "file": "/etc/fabscanpi/default.config.json",
     "serial": {
         "baudrate": 115200,
         "autoflash": "True",

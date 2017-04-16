@@ -149,7 +149,8 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
     def update_settings(self, settings):
         try:
             self.settings.update(settings)
-            self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
+            #FIXME: Only change Color Settings when values changed.
+            #self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
         except StandardError, e:
             # images are dropped this cateched exception.. no error hanlder needed here.
             pass

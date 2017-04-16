@@ -163,7 +163,7 @@ class FSSerialCom():
             value = self._serial.readline()
             self.flush()
             self._serial.readline()
-            self._logger.debug("Received ACK for command: " + value.rstrip('\n'))
+            self._logger.debug("Received command: " + value.rstrip('\n'))
             return value
 
 

@@ -42,9 +42,9 @@ class FSCalibration(FSCalibrationInterface):
         self.distortion_vector = None
         self.image_points = []
         self.object_points = []
-        self.calibration_brightness = [80, 80, 80]
+        self.calibration_brightness = [60, 60, 60]
 
-        self.estimated_t = [-1, 26, 168]
+        self.estimated_t = [-5, 90, 320]
 
         self._point_cloud = [None, None]
         self.x = []
@@ -56,8 +56,8 @@ class FSCalibration(FSCalibrationInterface):
     def start(self):
         self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
         self.settings.camera.contrast = 40
-        self.settings.camera.saturation = 20
-        #self.settings.camera.brightness = 20
+        #self.settings.camera.saturation = 20
+        self.settings.camera.brightness = 50
         self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
         self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
         self._hardwarecontroller.led.off()
@@ -116,7 +116,7 @@ class FSCalibration(FSCalibrationInterface):
         image = self._capture_pattern()
         self.shape = image[:, :, 0].shape
 
-        if (position > 533 and position < 1022):
+        if (position > 577 and position < 1022):
             flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
         else:
             flags = cv2.CALIB_CB_FAST_CHECK
@@ -135,7 +135,7 @@ class FSCalibration(FSCalibrationInterface):
 
         image = self._capture_pattern()
 
-        if (position > 533 and position < 1022):
+        if (position > 577 and position < 1022):
             flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
         else:
             flags = cv2.CALIB_CB_FAST_CHECK
@@ -150,9 +150,12 @@ class FSCalibration(FSCalibrationInterface):
             distance, normal, corners = plane
             self._logger.debug("Pose detected...  ")
             # Laser triangulation ( Between 60 and 115 degree )
+            # angel/(360/3200)
             try:
-                if (position > 533 and position < 1022):
-
+                #Laser Calibration
+                if (position > 577 and position < 1022):
+                    #self.settings.camera.contrast = 40
+                    self.settings.camera.brightness = 70
                     self._hardwarecontroller.led.off()
                     for i in xrange(self.config.laser.numbers):
                         image = self._capture_laser(i)
@@ -168,6 +171,8 @@ class FSCalibration(FSCalibrationInterface):
                         else:
                             self._point_cloud[i] = np.concatenate(
                                 (self._point_cloud[i], point_3d.T))
+                    self.settings.camera.contrast = 40
+                    self.settings.camera.brightness = 50
 
                 # Platform extrinsics
                 origin = corners[self.config.calibration.pattern.columns * (self.config.calibration.pattern.rows - 1)][0]

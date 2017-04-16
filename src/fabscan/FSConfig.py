@@ -59,12 +59,22 @@ class Config(ConfigInterface):
 
     def save(self):
         current_config = self.todict(self.__dict__)
+        try:
+            del current_config['file']
+        except KeyError:
+            pass
+
         with open(self.file, 'w+') as outfile:
             json.dump(current_config, outfile, indent=4, ensure_ascii=False)
             #outfile.write(to_unicode(str_))
 
     def saveAsFile(self, filename):
         current_config = self.todict(self.__dict__)
+        try:
+            del current_config['file']
+        except KeyError:
+            pass
+
         with open(filename, 'w+') as outfile:
             json.dump(current_config, outfile,  indent=4, ensure_ascii=False)
             #outfile.write(to_unicode(str_))

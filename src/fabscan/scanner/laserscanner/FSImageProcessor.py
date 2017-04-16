@@ -140,7 +140,6 @@ class ImageProcessor(ImageProcessorInterface):
         return image
 
     def _threshold_image(self, image, blur_enable=True):
-        # if self.threshold_enable:
 
         image = cv2.threshold(
             image, self.settings.threshold, 255, cv2.THRESH_TOZERO)[1]
@@ -149,7 +148,7 @@ class ImageProcessor(ImageProcessorInterface):
             image = cv2.blur(image, (5, 5))
 
         image = cv2.threshold(
-            image, self.settings.threshold, 255, cv2.THRESH_TOZERO)[1]
+            image, self.settings.threshold+10, 255, cv2.THRESH_TOZERO)[1]
 
         return image
 
@@ -167,11 +166,7 @@ class ImageProcessor(ImageProcessorInterface):
 
     def compute_line_segmentation(self, image, roi_mask=False):
         if image is not None:
-            # Apply ROI mask
-            # if roi_mask:
-            #   image = self.point_cloud_roi.mask_image(image)
-            # Obtain red channel
-
+            image = self.mask_image(image)
             image = self._obtain_red_channel(image)
             if image is not None:
                 # Threshold image
@@ -211,8 +206,8 @@ class ImageProcessor(ImageProcessorInterface):
         if image is not None:
 
             image = self.compute_line_segmentation(image)
-            # Peak detection: center of mass
 
+            # Peak detection: center of mass
             s = image.sum(axis=1)
             v = np.where(s > 0)[0]
             u = (self._weight_matrix * image).sum(axis=1)[v] / s[v]
@@ -224,8 +219,6 @@ class ImageProcessor(ImageProcessorInterface):
                 # Random sample consensus
                 u, v = self._ransac(u, v)
             return (u, v), image
-
-    #### END NEW CODE
 
     def get_texture_stream_frame(self, cam_image):
         return cam_image
@@ -267,13 +260,15 @@ class ImageProcessor(ImageProcessorInterface):
             _theta = np.deg2rad(angle)
             points_2d, image = self.compute_2d_points(laser_image)
             # FIXME; points_2d could contain empty arrays, resulting point_cloud to be None
-            point_cloud = self.compute_point_cloud(_theta, points_2d, 0)
+            point_cloud = self.compute_point_cloud(_theta, points_2d, index=0)
+            point_cloud = self.mask_point_cloud(point_cloud)
+
             point_cloud = zip(point_cloud[0], point_cloud[1], point_cloud[2])
-            points = []
 
             if color_image is not None:
                 u, v = points_2d
 
+            points = []
             for index, point in enumerate(point_cloud):
                 new_point = {}
                 new_point['x'] = point[0]
@@ -294,6 +289,25 @@ class ImageProcessor(ImageProcessorInterface):
         except Exception as e:
             self._logger.error(e)
             return []
+
+    def mask_image(self, image):
+            mask = np.zeros(image.shape, np.uint8)
+            mask[0:self.image_height, (self.image_width/2):self.image_width] = image[0:self.image_height, (self.image_width/2):self.image_width]
+            return mask
+
+    def mask_point_cloud(self, point_cloud):
+        if point_cloud is not None and len(point_cloud) > 0:
+            rho = np.sqrt(np.square(point_cloud[0, :]) + np.square(point_cloud[1, :]))
+            z = point_cloud[2, :]
+            turntable_radius = 70
+            idx = np.where((z >= 0) &
+                           (rho >= -turntable_radius) &
+                           (rho <= turntable_radius))[0]
+
+            return point_cloud[:, idx]
+        else:
+            return point_cloud
+
 
     def compute_point_cloud(self, theta, points_2d, index):
         # Load calibration values
