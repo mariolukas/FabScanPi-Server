@@ -148,9 +148,15 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
     def update_settings(self, settings):
         try:
+            if self.settings.second_laser == "True":
+                self.hardwareController.laser.on(selected_laser=1)
+            else:
+                self.hardwareController.laser.off(selected_laser=1)
+
             self.settings.update(settings)
             #FIXME: Only change Color Settings when values changed.
             #self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
+
         except StandardError, e:
             # images are dropped this cateched exception.. no error hanlder needed here.
             pass

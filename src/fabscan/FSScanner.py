@@ -139,6 +139,9 @@ class FSScanner(threading.Thread):
 
             self._logger.debug("Upgrade available:"+str(upgrade_is_available()))
 
+            # FIXME: add start Time to message, wehn scan is running
+            # When new Client connects should know about scanning time.
+
             message = {
                 "client": event['client'],
                 "state": self._state,

@@ -4,21 +4,27 @@ __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
-import time
-
 class Laser:
     def __init__(self, serial_object):
         self.serial_connection = serial_object
 
-    def on(self, selected_laser=False):
-        if (selected_laser != None) and (self.serial_connection != None):
-            signal = "M21;"
-            self.serial_connection.send(signal+'\n')
+    def on(self, laser=0):
+        if (laser != None) and (self.serial_connection != None):
+            if laser == 0:
+                signal = "M21;"
+            else:
+                signal = "M19;"
+
+            self.serial_connection.send(signal + '\n')
             self.serial_connection.wait_until_ready()
 
-    def off(self, selected_laser=False):
-        if (selected_laser != None) and (self.serial_connection != None):
-            signal = "M22;"
+    def off(self, laser=0):
+        if (laser != None) and (self.serial_connection != None):
+            if laser == 0:
+                signal = "M22;"
+            else:
+                signal = "M20;"
+
             self.serial_connection.send(signal+'\n')
             self.serial_connection.wait_until_ready()
 

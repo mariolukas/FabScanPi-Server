@@ -49,22 +49,20 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.led = Led(self.serial_connection)
 
         self._logger.debug("Reset FabScanPi HAT...")
-        self.laser.off()
+        self.laser.off(laser=0)
         self.led.off()
         self.turntable.stop_turning()
         self._logger.debug("Hardware controller initialized...")
 
-
     def settings_mode_on(self):
-        self.laser.on()
+        self.laser.on(laser=0)
         self.turntable.start_turning()
         self.camera.device.startStream()
-
 
     def settings_mode_off(self):
         self.turntable.stop_turning()
         self.led.off()
-        self.laser.off()
+        self.laser.off(laser=0)
 
     def get_picture(self):
         img = self.camera.device.getFrame()
@@ -79,7 +77,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
     def get_laser_image(self, index):
         #self._hardwarecontroller.led.on(30, 30, 30)
-        self.laser.on()
+        self.laser.on(laser=index)
 
         #self.camera.device.flushStream()
         time.sleep(2)
@@ -104,11 +102,6 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         return img
 
 
-    def get_laser_angle(self):
-        image = self.camera.device.getFrame()
-        angle = self._image_processor.calculate_laser_angle(image)
-        return angle
-
     def arduino_is_connected(self):
         return self.serial_connection.is_connected()
 
@@ -123,22 +116,3 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
     def stop_camera_stream(self):
         self.camera.device.stopStream()
-
-    def calibrate_scanner(self):
-        self._logger.debug("Startup calibration sequence started.")
-        #self.laser.on()
-        #self.camera.device.startStream()
-        laser_angle = self.get_laser_angle()
-        self._logger.debug(laser_angle)
-        #self.camera.device.stopStream()
-        #self.laser.off()
-        self.settings.save()
-        self._logger.debug("Calibration sequence finished.")
-
-    def calibrate_laser(self):
-        self.laser.on()
-        time.sleep(0.8)
-        last_angle = 0
-        current_angle = self.get_laser_angle()
-        self.laser.off()
-        return current_angle

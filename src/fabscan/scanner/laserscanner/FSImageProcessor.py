@@ -148,7 +148,7 @@ class ImageProcessor(ImageProcessorInterface):
             image = cv2.blur(image, (5, 5))
 
         image = cv2.threshold(
-            image, self.settings.threshold+10, 255, cv2.THRESH_TOZERO)[1]
+            image, self.settings.threshold, 255, cv2.THRESH_TOZERO)[1]
 
         return image
 
@@ -166,7 +166,8 @@ class ImageProcessor(ImageProcessorInterface):
 
     def compute_line_segmentation(self, image, roi_mask=False):
         if image is not None:
-            image = self.mask_image(image)
+            if roi_mask is True:
+                image = self.mask_image(image)
             image = self._obtain_red_channel(image)
             if image is not None:
                 # Threshold image
@@ -202,10 +203,10 @@ class ImageProcessor(ImageProcessorInterface):
             u = (dr - v * math.sin(thetar)) / math.cos(thetar)
         return u, v
 
-    def compute_2d_points(self, image, refinement_method='SGF'):
+    def compute_2d_points(self, image, roi_mask=True, refinement_method='SGF'):
         if image is not None:
 
-            image = self.compute_line_segmentation(image)
+            image = self.compute_line_segmentation(image, roi_mask=roi_mask)
 
             # Peak detection: center of mass
             s = image.sum(axis=1)
@@ -224,22 +225,18 @@ class ImageProcessor(ImageProcessorInterface):
         return cam_image
 
     def get_calibration_stream_frame(self, cam_image):
-        cv2.line(cam_image, (0, int(self.config.scanner.origin.y * cam_image.shape[0])),
-                 (cam_image.shape[1], int(self.config.scanner.origin.y * cam_image.shape[0])), (0, 255, 0), thickness=1,
-                 lineType=8, shift=0)
-        cv2.line(cam_image, (int(0.5 * cam_image.shape[1]), 0), (int(0.5 * cam_image.shape[1]), cam_image.shape[0]),
-                 (0, 255, 0), thickness=1, lineType=8, shift=0)
-        cv2.line(cam_image, (0, int(cam_image.shape[0] * self.config.laser.detection_limit)),
-                 (int(cam_image.shape[1]), int(cam_image.shape[0] * self.config.laser.detection_limit)), (0, 0, 255),
-                 thickness=1, lineType=8, shift=0)
-        r = 320.0 / cam_image.shape[1]
-        dim = (320, int(cam_image.shape[0] * r))
-        cam_image = cv2.resize(cam_image, dim, interpolation=cv2.INTER_AREA)
+        cam_image = self.drawCorners(cam_image)
         return cam_image
+
+    def drawCorners(self, image):
+        corners = self.detect_corners(image)
+        cv2.drawChessboardCorners(
+            image, (self.config.calibration.pattern.columns, self.config.calibration.pattern.rows), corners, True)
+        return image
 
     def get_laser_stream_frame(self, image, type='CAMERA'):
 
-        points, ret_img = self.compute_2d_points(image)
+        points, ret_img = self.compute_2d_points(image, roi_mask=False)
         u, v = points
         c = zip(u, v)
 
@@ -257,7 +254,7 @@ class ImageProcessor(ImageProcessorInterface):
         ''' Takes picture and angle (in degrees).  Adds to point cloud '''
 
         try:
-            _theta = np.deg2rad(angle)
+            _theta = np.deg2rad(-angle)
             points_2d, image = self.compute_2d_points(laser_image)
             # FIXME; points_2d could contain empty arrays, resulting point_cloud to be None
             point_cloud = self.compute_point_cloud(_theta, points_2d, index=0)

@@ -163,7 +163,7 @@ class FSCalibration(FSCalibrationInterface):
                         self.image = image
                         fs_image = FSImage()
                         fs_image.save_image(image, position, "laser", dir_name="calibration")
-                        points_2d, _ = self._imageprocessor.compute_2d_points(image, refinement_method='RANSAC')
+                        points_2d, _ = self._imageprocessor.compute_2d_points(image, roi_mask=False, refinement_method='RANSAC')
                         point_3d = self._imageprocessor.compute_camera_point_cloud(
                             points_2d, distance, normal)
                         if self._point_cloud[i] is None:

@@ -52,7 +52,6 @@ class FSPointCloud():
             f.write("element face 0\n")
             f.write("property list uchar int vertex_indices\n")
             f.write("end_header\n")
-            scaler_in_mm = 10
             for point in self.points:
                 x = float(point['x'])
                 y = float(point['y'])
