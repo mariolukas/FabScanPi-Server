@@ -19,6 +19,12 @@ Password: **raspberry**
 
 
 
+- What is the login username and password?
+
+FabScan Pi is based on Raspbian. Thus, you can use the default login:
+username: pi
+password: raspberry
+
 - What are the standard values in the config-file for the box dimensions?
 
 The values may vary a bit, depending on your assembly. But for getting started these values can be used:
