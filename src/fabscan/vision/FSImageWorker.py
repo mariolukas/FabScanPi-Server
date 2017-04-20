@@ -149,9 +149,10 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             self.image.save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)
                             color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
 
-                            points = self.image_processor.process_image(angle, image_task.image, color_image)
+                            point_cloud, texture = self.image_processor.process_image(angle, image_task.image, color_image)
                             # FIXME: Only send event if points is non-empty
-                            data['points'] = points
+                            data['point_cloud'] = point_cloud
+                            data['texture'] = texture
                             data['image_type'] = 'depth'
                             #data['progress'] = image_task.progress
                             #data['resolution'] = image_task.resolution

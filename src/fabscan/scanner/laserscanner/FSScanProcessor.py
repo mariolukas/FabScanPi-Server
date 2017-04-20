@@ -148,15 +148,11 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
     def update_settings(self, settings):
         try:
-            if self.settings.second_laser == "True":
-                self.hardwareController.laser.on(selected_laser=1)
-            else:
-                self.hardwareController.laser.off(selected_laser=1)
-
+            self._logger.debug(settings.color)
             self.settings.update(settings)
+
             #FIXME: Only change Color Settings when values changed.
             #self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
-
         except StandardError, e:
             # images are dropped this cateched exception.. no error hanlder needed here.
             pass
@@ -362,16 +358,32 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
     def image_processed(self, eventmanager, event):
+        points = []
 
         if event['image_type'] == 'depth':
-            self.append_points(event['points'])
+
+            self.append_points(event['point_cloud'], event['texture'])
+            point_cloud = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2])
+            texture = zip(event['texture'][0], event['texture'][1], event['texture'][2])
+
+            for index, point in enumerate(point_cloud):
+                new_point = dict()
+                new_point['x'] = str(point[0])
+                new_point['y'] = str(point[2])
+                new_point['z'] = str(point[1])
+
+                new_point['r'] = str(texture[0])
+                new_point['g'] = str(texture[1])
+                new_point['b'] = str(texture[2])
+
+                points.append(new_point)
 
         self.semaphore.acquire()
         self._progress += 1
         self.semaphore.release()
 
         message = {
-            "points": event['points'],
+            "points": points,
             "progress": self._progress,
             "resolution": self._total
         }
@@ -383,10 +395,11 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
         self.eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
 
+
     def scan_complete(self):
 
         self._logger.info("Scan complete writing pointcloud files with %i points." % (self.point_cloud.get_size(),))
-        self.point_cloud.saveAsFile(self._prefix)
+        #self.point_cloud.saveAsFile(self._prefix)
         settings_filename = self.config.folders.scans+self._prefix+"/"+self._prefix+".fab"
         self.settings.saveAsFile(settings_filename)
 
@@ -414,10 +427,11 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
         self.hardwareController.camera.device.stopStream()
 
-    def append_points(self, point_set):
+    def append_points(self, point_cloud_set, texture_set):
         if self.point_cloud:
-            for point in point_set:
-                self.point_cloud.append_point(point)
+            #for point in point_set:
+            self.point_cloud.append_points(point_cloud_set)
+            self.point_cloud.append_texture(texture_set)
 
     def get_resolution(self):
         return self.settings.resolution

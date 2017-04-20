@@ -61,6 +61,7 @@ class ImageProcessor(ImageProcessorInterface):
         self.blur_value = 0
         self.window_enable = False
         self.window_value = 0
+        self.color = (255,255,255)
         self.refinement_method = ''
         self.image_height = self.config.camera.resolution.width
         self.image_width = self.config.camera.resolution.height
@@ -250,6 +251,7 @@ class ImageProcessor(ImageProcessorInterface):
 
         return image
 
+    #FIXME: rename color_image into texture_image
     def process_image(self, angle, laser_image, color_image=None):
         ''' Takes picture and angle (in degrees).  Adds to point cloud '''
 
@@ -260,32 +262,48 @@ class ImageProcessor(ImageProcessorInterface):
             point_cloud = self.compute_point_cloud(_theta, points_2d, index=0)
             point_cloud = self.mask_point_cloud(point_cloud)
 
-            point_cloud = zip(point_cloud[0], point_cloud[1], point_cloud[2])
+            #point_cloud = zip(point_cloud[0], point_cloud[1], point_cloud[2])
 
-            if color_image is not None:
-                u, v = points_2d
+            if color_image is None:
 
-            points = []
-            for index, point in enumerate(point_cloud):
-                new_point = {}
-                new_point['x'] = point[0]
-                new_point['y'] = point[2]
-                new_point['z'] = point[1]
+                r, g, b = self.color
 
-                if color_image is not None:
-                    b, g, r = color_image[v[index]][u[index]]
-                    new_point['r'] = int(r)
-                    new_point['g'] = int(g)
-                    new_point['b'] = int(b)
-                else:
-                    new_point['r'] = new_point['g'] = new_point['b'] = 255
+                color_image = np.zeros((self.image_height, self.image_width, 3), np.uint8)
+                color_image[:, :, 0] = r
+                color_image[:, :, 1] = g
+                color_image[:, :, 2] = b
 
-                points.append(new_point)
+            u, v = points_2d
 
-            return points
+            texture = color_image[v, np.around(u).astype(int)].T
+
+#                r, g, b = self.color
+#                texture = np.zeros((3, len(v)), np.uint8)
+#                texture[0, :] = r
+#                texture[1, :] = g
+#                texture[2, :] = b
+
+#            points = []
+#           for index, point in enumerate(point_cloud):
+#                new_point = {}
+#                new_point['x'] = point[0]
+#                new_point['y'] = point[2]
+#                new_point['z'] = point[1]
+
+#                if color_image is not None:
+#                    b, g, r = color_image[v[index]][u[index]]
+#                    new_point['r'] = int(r)
+#                    new_point['g'] = int(g)
+#                    new_point['b'] = int(b)
+#                else:
+#                    new_point['r'] = new_point['g'] = new_point['b'] = 255
+
+#                points.append(new_point)
+
+            return point_cloud, texture
         except Exception as e:
             self._logger.error(e)
-            return []
+            return [], []
 
     def mask_image(self, image):
             mask = np.zeros(image.shape, np.uint8)

@@ -15,13 +15,17 @@ class FSPointCloud():
 
     def __init__(self, config, color=True):
         self.points = []
+        self.texture = []
         self.file_name = None
         self._dir_name = None
         self.color = color
         self.config = config
 
-    def append_point(self, points):
+    def append_points(self, points):
         self.points.append(points)
+
+    def append_texture(self, texture):
+        self.texture.append(texture)
 
     def get_size(self):
         return len(self.points)
