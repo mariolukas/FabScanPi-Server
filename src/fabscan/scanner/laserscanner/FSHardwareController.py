@@ -106,6 +106,12 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def camera_is_connected(self):
        return self.camera.is_connected()
 
+    def start_camera_stream(self):
+        self.camera.device.startStream()
+
+    def stop_camera_stream(self):
+        self.camera.device.stopStream()
+
     def calibrate_scanner(self):
         self._logger.debug("Startup calibration sequence started.")
         #self.laser.on()
