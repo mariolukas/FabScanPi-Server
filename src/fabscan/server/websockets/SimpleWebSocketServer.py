@@ -285,7 +285,7 @@ class WebSocket(object):
                time.sleep(0.001)
             else:
                raise e
-
+               pass
 
    #if s is a string then websocket TEXT is sent else BINARY
    def sendMessage(self, s):

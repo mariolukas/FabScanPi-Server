@@ -318,13 +318,12 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
                 if self.current_position == 0:
                     self.init_object_scan()
 
-
                 laser_image = self.hardwareController.scan_at_position(self._resolution)
                 task = ImageTask(laser_image, self._prefix, self.current_position, self._number_of_pictures)
                 self.image_task_q.put(task)
-                #self._logger.debug("Laser Progress: %i of %i at laser position %i" % (
-                #   self.current_position, self._number_of_pictures, self._current_laser_position
-                #))
+                self._logger.debug("Laser Progress: %i of %i at laser position %i" % (
+                   self.current_position, self._number_of_pictures, self._current_laser_position
+                ))
                 self.current_position += 1
                 self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
 
@@ -399,7 +398,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
     def scan_complete(self):
 
         self._logger.info("Scan complete writing pointcloud files with %i points." % (self.point_cloud.get_size(),))
-        #self.point_cloud.saveAsFile(self._prefix)
+        self.point_cloud.saveAsFile(self._prefix)
         settings_filename = self.config.folders.scans+self._prefix+"/"+self._prefix+".fab"
         self.settings.saveAsFile(settings_filename)
 
@@ -427,9 +426,9 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
         self.hardwareController.camera.device.stopStream()
 
+
     def append_points(self, point_cloud_set, texture_set):
         if self.point_cloud:
-            #for point in point_set:
             self.point_cloud.append_points(point_cloud_set)
             self.point_cloud.append_texture(texture_set)
 
@@ -452,3 +451,4 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.current_position = 0
         self._number_of_pictures = 0
         self._total = 0
+        self.point_cloud = None

@@ -89,6 +89,8 @@ class FSScanner(threading.Thread):
         elif command == FSCommand.START:
             if self._state is FSState.SETTINGS:
                 self._logger.info("Start command received...")
+                self.settings.startTime = event.startTime
+
                 self.set_state(FSState.SCANNING)
                 self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START})
 
