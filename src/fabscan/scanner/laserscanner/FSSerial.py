@@ -160,11 +160,18 @@ class FSSerialCom():
 
     def wait_until_ready(self):
         if self._serial:
-            value = self._serial.readline()
-            self.flush()
-            self._serial.readline()
-            self._logger.debug("Received command: " + value.rstrip('\n'))
+            try:
+                value = self._serial.readline()
+                self.flush()
+                self._serial.readline()
+                self._logger.debug("Received command: " + value.rstrip('\n'))
+
+            except Exception as e:
+                self._logger.error(e.message)
+                value = ""
+
             return value
+        return ""
 
 
     def is_connected(self):

@@ -50,9 +50,14 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
         self._logger.debug("Reset FabScanPi HAT...")
         self.laser.off(laser=0)
+        self.laser.off(laser=1)
         self.led.off()
         self.turntable.stop_turning()
         self._logger.debug("Hardware controller initialized...")
+
+    def flush(self):
+        self.camera.camera_buffer.flush()
+        self.serial_connection.flush()
 
     def settings_mode_on(self):
         self.laser.on(laser=0)
@@ -78,11 +83,10 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def get_laser_image(self, index):
         #self._hardwarecontroller.led.on(30, 30, 30)
         self.laser.on(laser=index)
-
-        #self.camera.device.flushStream()
         time.sleep(2)
+        #self.camera.device.flushStream()
         laser_image = self.get_picture()
-        self.laser.off()
+        self.laser.off(laser=index)
         return laser_image
 
     def scan_at_position(self, steps=180, color=False):

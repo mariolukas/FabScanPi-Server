@@ -245,7 +245,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self._scan_contrast = self.settings.camera.contrast
         self._scan_saturation = self.settings.camera.saturation
 
-        self.settings.camera.brightness = 50
+        self.settings.camera.brightness = 70
         self.settings.camera.contrast = 0
         self.settings.camera.saturation = 0
         self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
@@ -363,7 +363,8 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
             self.append_points(event['point_cloud'], event['texture'])
             point_cloud = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2])
-            texture = zip(event['texture'][0], event['texture'][1], event['texture'][2])
+            #texture = zip(event['texture'][0], event['texture'][1], event['texture'][2])
+            texture = event['texture']
 
             for index, point in enumerate(point_cloud):
                 new_point = dict()
@@ -371,9 +372,9 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
                 new_point['y'] = str(point[2])
                 new_point['z'] = str(point[1])
 
-                new_point['r'] = str(texture[0])
-                new_point['g'] = str(texture[1])
-                new_point['b'] = str(texture[2])
+                new_point['r'] = str(texture[0][index])
+                new_point['g'] = str(texture[1][index])
+                new_point['b'] = str(texture[2][index])
 
                 points.append(new_point)
 

@@ -55,9 +55,10 @@ class FSCalibration(FSCalibrationInterface):
 
     def start(self):
         self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
-        self.settings.camera.contrast = 40
+        self.settings.camera.contrast = 30
         #self.settings.camera.saturation = 20
-        self.settings.camera.brightness = 50
+        self.settings.camera.brightness = 60
+        self._hardwarecontroller.flush()
         self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
         self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
         self._hardwarecontroller.led.off()

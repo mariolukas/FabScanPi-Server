@@ -5,7 +5,7 @@
     },
     "laser": {
         "steps": 3200,
-        "numbers": 1,
+        "numbers": 2,
         "rotation_steps": 5
     },
     "scanner_type": "laserscanner",
@@ -102,5 +102,5 @@
         "autoflash": "True",
         "port": "/dev/ttyAMA0"
     },
-    "texture_illumination": 40
+    "texture_illumination": 200
 }
