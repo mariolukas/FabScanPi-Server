@@ -1,24 +1,50 @@
+import os
+import re
+import urllib2
+
+import semver
+
+
 __author__ = 'mariolukas'
 
-import urllib2
-from fabscan.FSVersion import __version__
-import logging
 
-def version(v):
-    return tuple(map(int, (v.split("."))))
+PACKAGE_PATTERN = re.compile('^Package: fabscanpi-server$')
+
+VERSION_PATTERN = re.compile('^Version: (.+)$')
+
 
 def get_latest_version_tag():
     try:
-        response = urllib2.urlopen("http://archive.fabscan.org/dists/jessie/main/binary-armhf/Packages").read()
-        line_with_verion_number = 6
-        latest_version = response.splitlines(True)[line_with_verion_number].split(" ")[1]
+        response = urllib2.urlopen("http://archive.fabscan.org/dists/jessie/main/binary-armhf/Packages")
+
+        latest_version = "0.0.0"
+        line = 'START'
+        while line != '':
+            line = response.readline()
+            if PACKAGE_PATTERN.match(line):
+                while line != '':
+                    line = response.readline()
+                    match = VERSION_PATTERN.match(line)
+                    if match is not None:
+                        package_version = match.group(1)
+                        try:
+                            if semver.compare(latest_version, package_version) == -1:
+                                latest_version = package_version
+                        except ValueError:
+                            # ignore invalid version number
+                            pass
+                        break
         return latest_version
-    except:
+    except Exception:
         return "0.0.0"
 
-def upgrade_is_available():
 
-    current_version = __version__[2:]
+def upgrade_is_available(current_version):
+
     latest_version = get_latest_version_tag()
 
-    return version(current_version) < version(latest_version)
+    return semver.compare(latest_version, current_version) == 1, latest_version
+
+
+def do_upgrade():
+    os.system('nohup bash -c "sudo apt-get update && sudo apt-get dist-upgrade" > /var/log/fabscanpi/upgrade.log')

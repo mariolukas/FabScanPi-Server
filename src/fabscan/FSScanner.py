@@ -15,13 +15,14 @@ from fabscan.vision.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import SettingsInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
 from fabscan.util.FSInject import inject, singleton
-from fabscan.util.FSUpdate import upgrade_is_available, get_latest_version_tag
+from fabscan.util.FSUpdate import upgrade_is_available, do_upgrade
 
 class FSState(object):
     IDLE = "IDLE"
     SCANNING = "SCANNING"
     SETTINGS = "SETTINGS"
     CALIBRATING = "CALIBRATING"
+    UPGRADING = "UPGRADING"
 
 class FSCommand(object):
     SCAN = "SCAN"
@@ -54,11 +55,15 @@ class FSScanner(threading.Thread):
         self._exit_requested = False
         self.meshingTaskRunning = False
 
+        self._upgrade_available = False
+        self._update_version = None
+
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self.on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self.on_command)
 
         self._logger.info("Scanner initialized...")
         self._logger.info("Number of cpu cores: " + str(multiprocessing.cpu_count()))
+
 
     def run(self):
         while not self._exit_requested:
@@ -130,6 +135,12 @@ class FSScanner(threading.Thread):
             meshlab_task = FSMeshlabTask(event.scan_id, event.filter, event.format)
             meshlab_task.start()
 
+        # Upgrade server
+        elif command == FSCommand.UPGRADE_SERVER:
+            if self._upgrade_available:
+                self._logger.info("Upgrade server")
+                self.set_state(FSState.UPGRADING)
+
 
     # new client conneted
     def on_client_connected(self, eventManager, event):
@@ -139,20 +150,18 @@ class FSScanner(threading.Thread):
             except:
                 hardware_info = "undefined"
 
-            self._logger.debug("Upgrade available:"+str(upgrade_is_available()))
-
-            # FIXME: add start Time to message, wehn scan is running
-            # When new Client connects should know about scanning time.
+            self._upgrade_available, self._upgrade_version = upgrade_is_available(__version__)
+            self._logger.debug("Upgrade available: "+str(self._upgrade_available)+" "+self._upgrade_version)
 
             message = {
                 "client": event['client'],
                 "state": self._state,
-                "server_version": str(__version__),
+                "server_version": 'v.'+__version__,
                 "firmware_version": str(hardware_info),
                 "settings": self.settings.todict(self.settings),
                 "upgrade": {
-                    #"available": upgrade_is_available(),
-                    #"version": str(get_latest_version_tag())
+                    "available": self._upgrade_available,
+                    "version": self._upgrade_version
                 }
             }
 

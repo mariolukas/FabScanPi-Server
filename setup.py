@@ -1,13 +1,14 @@
+from distutils.core import setup
+from setuptools import find_packages
+import re
+import os
+import sys
+
 __author__ = "Mario Lukas"
 __copyright__ = "Copyright 2015"
 __license__ = "AGPL"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
-from distutils.core import setup
-from setuptools import find_packages
-import os
-import sys
-import subprocess
 
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "src"))
@@ -17,19 +18,21 @@ DEPENDENCY_LINKS = []
 INSTALL_REQUIRES = []
 EXTRA_REQUIRES = dict()
 
+
 def version_number():
-    # get latest version number out of debian/changelog file
-    version = subprocess.Popen("head -1 debian/changelog | awk -F'[()]' '{print $2}'", shell=True, stdout=subprocess.PIPE).stdout.read()
-    version = version.rstrip(os.linesep)
-    # write version file in www folder for delivery
+    with open('debian/changelog', 'r') as changelog_file:
+        first_line = changelog_file.readline(100)
+        result = re.match("fabscanpi-server \(([0-9\.a-z\-]+)\) ([a-zA-Z]+); urgency=([a-z]+)", first_line)
+        if result is None:
+            return '0.0.0'
+        return result.group(1)
 
-    return version
 
-def create_verion_file():
+def create_version_file():
     with open("src/fabscan/FSVersion.py","w+") as version_file:
-        version_file.write('__version__ = "v.%s"\n ' % str(version_number()))
+        version_file.write('__version__ = "%s"\n ' % str(version_number()))
 
-create_verion_file()
+create_version_file()
 
 
 def package_data_dirs(source, sub_folders):
@@ -102,16 +105,17 @@ def params():
 
 
     data_files = [
+        ('/etc/sudoers.d/', ['debian/fabscanpi-sudoers']),
         ('/etc/fabscanpi/', ['src/fabscan/config/default.settings.json']),
         ('/etc/fabscanpi/', ['src/fabscan/config/default.config.json']),
-        ('/var/www/', ['src/www/index.html']),
-        ('/var/www/style/',['src/www/style/app.css', 'src/www/style/lib.css']),
-        ('/var/www/js/',['src/www/js/app.js', 'src/www/js/lib.js']),
-        ('/var/www/js/locales/en/',['src/www/js/locales/en/i18n.js']),
-        ('/var/www/js/locales/de/',['src/www/js/locales/de/i18n.js']),
-        ('/var/www/icons/', ['src/www/icons/icon_mesh.svg','src/www/icons/icon_scan.svg','src/www/icons/icon_pointcloud.svg','src/www/icons/favicon.png', 'src/www/icons/spinner.gif', 'src/www/icons/logo.png']),
-        ('/var/www/fonts/', ['src/www/fonts/fontawesome-webfont.woff2', 'src/www/fonts/fontawesome-webfont.woff', 'src/www/fonts/fontawesome-webfont.ttf']),
-        ('/var/www/style/fonts/', ['src/www/style/fonts/slick.woff', 'src/www/style/fonts/slick.ttf'])
+        ('/usr/share/fabscanpi/', ['src/www/index.html']),
+        ('/usr/share/fabscanpi/style/',['src/www/style/app.css', 'src/www/style/lib.css']),
+        ('/usr/share/fabscanpi/js/',['src/www/js/app.js', 'src/www/js/lib.js']),
+        ('/usr/share/fabscanpi/js/locales/en/',['src/www/js/locales/en/i18n.js']),
+        ('/usr/share/fabscanpi/locales/de/',['src/www/js/locales/de/i18n.js']),
+        ('/usr/share/fabscanpi/icons/', ['src/www/icons/icon_mesh.svg','src/www/icons/icon_scan.svg','src/www/icons/icon_pointcloud.svg','src/www/icons/favicon.png', 'src/www/icons/spinner.gif', 'src/www/icons/logo.png']),
+        ('/usr/share/fabscanpi/fonts/', ['src/www/fonts/fontawesome-webfont.woff2', 'src/www/fonts/fontawesome-webfont.woff', 'src/www/fonts/fontawesome-webfont.ttf']),
+        ('/usr/share/fabscanpi/style/fonts/', ['src/www/style/fonts/slick.woff', 'src/www/style/fonts/slick.ttf'])
 
     ]
 

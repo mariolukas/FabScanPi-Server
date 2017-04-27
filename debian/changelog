@@ -1,3 +1,10 @@
+fabscanpi-server (0.3.2-alpha.1) UNRELEASED; urgency=medium
+
+  * first fixes for upgrade
+  * added news to documentation 
+
+ -- Christoph Emonds <info@christoph-emonds.de>  Fri, 13 Jan 2017 12:22:42 +0100
+
 fabscanpi-server (0.3.1) unstable; urgency=medium
 
   * fixed bug which created multiple instances for websocket server
