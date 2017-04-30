@@ -109,12 +109,15 @@ class FSScanner(threading.Thread):
                 self._logger.debug("Close Settings")
                 self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.SETTINGS_MODE_OFF})
 
+            if self._state is FSState.CALIBRATING:
+                self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.STOP_CALIBRATION})
+
             self.set_state(FSState.IDLE)
 
         # Start calibration
         elif command == FSCommand.CALIBRATE:
             self._logger.debug("Calibration started....")
-            self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.CALIBRATE_SCANNER})
+            self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START_CALIBRATION})
             self.set_state(FSState.CALIBRATING)
 
         elif command == FSCommand.CALIBRATION_COMPLETE:

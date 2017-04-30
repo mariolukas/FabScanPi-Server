@@ -115,8 +115,11 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         if event[FSEvents.COMMAND] == FSScanProcessorCommand.GET_TEXTURE_STREAM:
             return self.create_texture_stream()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.CALIBRATE_SCANNER:
-            return self.calibrate_scanner()
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.START_CALIBRATION:
+            return self.start_calibration()
+
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.STOP_CALIBRATION:
+            return self.stop_calibration()
 
     def create_texture_stream(self):
         try:
@@ -157,7 +160,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
             # images are dropped this cateched exception.. no error hanlder needed here.
             pass
 
-    def calibrate_scanner(self):
+    def start_calibration(self):
 
         message = {
             "message": "START_CALIBRATION",
@@ -167,8 +170,6 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
 
         self.calibration.start()
-        # do calibration here....
-
 
         event = FSEvent()
         event.command = 'CALIBRATION_COMPLETE'
@@ -181,6 +182,9 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
             "level": "info"
         }
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+
+    def stop_calibration(self):
+        self.calibration.stop()
 
     def send_hardware_state_notification(self):
         self._logger.debug("Checking Hardware connections")
