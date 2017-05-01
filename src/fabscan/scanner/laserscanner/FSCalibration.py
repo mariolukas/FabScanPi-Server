@@ -14,6 +14,7 @@ from fabscan.FSEvents import FSEventManagerSingleton
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
+from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
 
 
 # focal_pixel = (focal_mm / sensor_width_mm) * image_width_in_pixels
@@ -36,6 +37,7 @@ class FSCalibration(FSCalibrationInterface):
         self._hardwarecontroller = hardwarecontroller
         self.config = config
         self.settings = settings
+        self.eventmanager = eventmanager
 
         self.shape = None
         self.camera_matrix = None
@@ -43,6 +45,10 @@ class FSCalibration(FSCalibrationInterface):
         self.image_points = []
         self.object_points = []
         self.calibration_brightness = [60, 60, 60]
+        self.quater_turn = int(self.config.turntable.steps / 4)
+        self.steps_five_degree = 5.0 / (360.0 / self.config.turntable.steps)
+        self.total_positions = (self.quater_turn/self.steps_five_degree)*4
+        self.current_position = 0
 
         self.estimated_t = [-5, 90, 320]
 
@@ -70,6 +76,8 @@ class FSCalibration(FSCalibrationInterface):
         else:
             self.config.save()
 
+        self.current_position = 0
+
     def stop(self):
         self._stop = True
 
@@ -77,29 +85,30 @@ class FSCalibration(FSCalibrationInterface):
     def _do_calibration(self, _capture, _calibrate):
 
         # 90 degree turn
-        quater_turn = int(self.config.turntable.steps / 4)
         # number of steps for 5 degree turn
-        steps_five_degree = 5.0 / (360.0 / self.config.turntable.steps)
+
 
         if not self._stop:
             self._hardwarecontroller.camera.device.startStream()
             #self._hardwarecontroller.camera.device.setExposureMode(auto_exposure=False)
             self._hardwarecontroller.turntable.enable_motors()
-            self._hardwarecontroller.turntable.step_blocking(quater_turn, speed=900)
+            self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
 
         position = 0
-        while abs(position) < quater_turn * 2:
+        while abs(position) < self.quater_turn * 2:
 
             if not self._stop:
 
                 _capture(position)
-                self._hardwarecontroller.turntable.step_blocking(-steps_five_degree, speed=900)
-                position += steps_five_degree
+                self._hardwarecontroller.turntable.step_blocking(-self.steps_five_degree, speed=900)
+                position += self.steps_five_degree
+                self.current_position +=1
+
             else:
                 break
 
         if not self._stop:
-            self._hardwarecontroller.turntable.step_blocking(quater_turn, speed=900)
+            self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
             self._hardwarecontroller.turntable.disable_motors()
             self._hardwarecontroller.camera.device.stopStream()
 
