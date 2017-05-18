@@ -7,6 +7,8 @@
      "baudrate" : 115200,
      "autoflash": "True",
      "port": "/dev/ttyAMA0"
+     "flash_baudrate" : 115200,
+     "devicemodel" : "m328p"
    },
    "camera" : {
      "type" : "PICAM",

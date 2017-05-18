@@ -24,11 +24,35 @@ LOG=/var/log/$PKGNAME/$PKGNAME.log
 
 # Read configuration variable file if it is present
 [ -r /etc/default/$PKGNAME ] && . /etc/default/$PKGNAME
+PORT=`grep -i port $CONFIG | cut -f2 -d":" | tr -d '"'`
+BAUDRATE=`grep '"baudrate"' $CONFIG | cut -f2 -d":" | tr -d '"'`
+BAUDRATEFLASH=`grep flash_baudrate $CONFIG | cut -f2 -d":" | tr -d '"'`
+DEVICEMODEL=`grep devicemodel $CONFIG | cut -f2 -d":"`
+case "$PORT" in 
+  *","*)
+    PORT=`echo "$PORT" | cut -f1 -d","`
+    ;;
+esac
+case "$BAUDRATE" in 
+  *","*)
+    BAUDRATE=`echo "$BAUDRATE" | cut -f1 -d","`
+    ;;
+esac
+case "$BAUDRATEFLASH" in 
+  *","*)
+    BAUDRATEFLASH=`echo "$BAUDRATEFLASH" | cut -f1 -d","`
+    ;;
+esac
+case "$DEVICEMODEL" in 
+  *","*)
+    DEVICEMODEL=`echo "$DEVICEMODEL" | cut -f1 -d","`
+    ;;
+esac
 
 
 start() {
     echo "Starting fabscanpi-server..."
-    avrdude -c arduino -p m328p -P /dev/ttyAMA0 -b 57600 -l /dev/null
+    avrdude -c arduino -p $DEVICEMODEL -P $PORT -b $BAUDRATEFLASH -l /dev/null
     /sbin/start-stop-daemon --start --quiet --user $DAEMONUSER    \
             --make-pidfile --pidfile $PIDFILE --background       \
             --exec /bin/bash -- -c "$DAEMON $DAEMON_ARGS"

@@ -29,11 +29,20 @@ class FSSerialCom():
             self._port = self._port = self.serialList()[0]
 
         if hasattr(self.config.serial, 'flash_baudrate'):
-            self.flash_baudrate = self.config.serial.flash_baudrate
+            self._flash_baudrate = self.config.serial.flash_baudrate
         else:
-            self.flash_baudrate = 115200
+            self._flash_baudrate = 115200
 
-        self._baudrate = self.config.serial.baudrate
+        if hasattr(self.config.serial, 'devicemodel'):
+            self._flash_model = self.config.serial.devicemodel
+        else:
+            self._flash_model = "m328p"  # "m1284p"
+  
+        if hasattr(self.config.serial, 'baudrate'):
+            self._baudrate = self.config.serial.baudrate
+        else:
+            self._baudrate = 115200
+  
         self._serial = None
         self._connected = False
         self._firmware_version = None
@@ -56,12 +65,12 @@ class FSSerialCom():
 
 
     def avr_device_is_available(self):
-        status = FSSystem.run_command("avrdude -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port))
+        status = FSSystem.run_command("avrdude -p "+str(self._flash_model)+" -b "+str(self._flash_baudrate)+" -carduino -P"+str(self._port))
         return status == 0
 
     def avr_flash(self,fname):
         FSSystem.run_command("wc -l "+str(fname))
-        status = FSSystem.run_command("avrdude -D -V -U flash:w:"+str(fname)+":i -b "+str(self.flash_baudrate)+" -carduino -pm328p -P"+str(self._port))
+        status = FSSystem.run_command("avrdude -D -V -U flash:w:"+str(fname)+":i -b "+str(self._flash_baudrate)+" -carduino -p"+str(self._flash_model)+" -P"+str(self._port))
         if status != 0:
             self._logger.error("Failed to flash firmware")
         return status == 0
@@ -141,12 +150,18 @@ class FSSerialCom():
         if self._serial:
             self.send("\r\n\r\n")
             time.sleep(2) # Wait for FabScan to initialize
-            self._serial.flushInput() # Flush startup text in serial input
-            self.send("M200;\n")
-            self._serial.readline()
-            #self._serial.flushInput()
-            value = self._serial.readline()
-            value = value.strip()
+            tryCt = 0
+            while tryCt < 10:
+                self.send("M200;\n")
+                time.sleep(.1) # Wait for FabScan to reply
+                value = self._serial.readline()
+                value = self._serial.readline()
+                value = value.strip()
+                if value != "":  # we got something, break out of loop
+                    break
+                else:  # try another time
+                    self._serial.flushInput() # Flush startup text in serial input
+                    tryCt += 1
             if value != "":
                 return value
             else:
