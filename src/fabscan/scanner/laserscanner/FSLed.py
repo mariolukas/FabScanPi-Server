@@ -11,12 +11,10 @@ class Led:
 
     def on(self, red, green, blue):
             signal = "M05 R"+str(red)+" G"+str(green)+" B"+str(blue)+";"
-            self.serial_connection.send(signal+'\n')
-            #self.serial_connection.write("\n".encode('ascii'))
+            self.serial_connection.send(signal)
             self.serial_connection.wait_until_ready()
 
     def off(self):
             signal = "M05 R0 G0 B0;"
-            self.serial_connection.send(signal+'\n')
-            #self.serial_connection.write("\n".encode('ascii'))
+            self.serial_connection.send(signal)
             self.serial_connection.wait_until_ready()

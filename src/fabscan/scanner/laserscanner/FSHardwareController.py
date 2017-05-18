@@ -12,8 +12,6 @@ from FSLed import Led
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.util.FSInject import singleton
-import cv2
-
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 
@@ -50,14 +48,14 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
         self._logger.debug("Reset FabScanPi HAT...")
         self.laser.off(laser=0)
-        self.laser.off(laser=1)
+        #self.laser.off(laser=1)
         self.led.off()
         self.turntable.stop_turning()
         self._logger.debug("Hardware controller initialized...")
 
     def flush(self):
         self.camera.camera_buffer.flush()
-        self.serial_connection.flush()
+        #self.serial_connection.flush()
 
     def settings_mode_on(self):
         self.laser.on(laser=0)

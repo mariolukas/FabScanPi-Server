@@ -134,10 +134,10 @@ class FSSerialCom():
 
     def checkVersion(self):
         if self._serial:
-            self.send("\r\n\r\n")
+            self._serial.write("\r\n\r\n")
             time.sleep(2) # Wait for FabScan to initialize
             self._serial.flushInput() # Flush startup text in serial input
-            self.send("M200;\n")
+            self._serial.write("M200;\n")
             self._serial.readline()
             value = self._serial.readline()
             value = value.strip()
@@ -149,29 +149,40 @@ class FSSerialCom():
             return "None"
 
     def send(self, message):
-        if self._serial:
-            self.flush()
-            self._serial.write(message)
-        time.sleep(0.3)
+        self._serial.write(message+"\n")
+        time.sleep(0.1)
+        while True:
+            try:
+                time.sleep(0.2)
+                command = self._serial.readline()
+                time.sleep(0.2)
+                command = self._serial.readline()
+                self._logger.debug(command.rstrip("\n"))
+                #if state.rstrip("\n") == ">":
+                return command
+            except:
+                pass
+        time.sleep(0.1)
 
     def flush(self):
        self._serial.flushInput()
        self._serial.flushOutput()
 
     def wait_until_ready(self):
-        if self._serial:
-            try:
-                value = self._serial.readline()
-                self.flush()
-                self._serial.readline()
-                self._logger.debug("Received command: " + value.rstrip('\n'))
+        pass
+        # if self._serial:
+        #     try:
+        #         value = self._serial.readline()
+        #         self._serial.readline()
+        #         self._logger.debug("Received command: " + value.rstrip('\n'))
+        #
+        #     except Exception as e:
+        #         self._logger.error(e.message)
+        #         value = ""
+        #
+        #     return value
 
-            except Exception as e:
-                self._logger.error(e.message)
-                value = ""
-
-            return value
-        return ""
+    #def send_and_receive(theinput):
 
 
     def is_connected(self):

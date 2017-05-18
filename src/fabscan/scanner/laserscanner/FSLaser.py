@@ -15,7 +15,7 @@ class Laser:
             else:
                 signal = "M19;"
 
-            self.serial_connection.send(signal + '\n')
+            self.serial_connection.send(signal)
             self.serial_connection.wait_until_ready()
 
     def off(self, laser=0):
@@ -25,10 +25,10 @@ class Laser:
             else:
                 signal = "M20;"
 
-            self.serial_connection.send(signal+'\n')
+            self.serial_connection.send(signal)
             self.serial_connection.wait_until_ready()
 
     def turn(self, steps):
-        signal = "G04 L"+str(steps)+" F200"
-        self.serial_connection.send(signal+'\n')
+        signal = "G04 L"+str(steps)+" F200;"
+        self.serial_connection.send(signal)
         self.serial_connection.wait_until_ready()
