@@ -137,7 +137,7 @@ class FSSerialCom():
             self._serial.write("\r\n\r\n")
             time.sleep(2) # Wait for FabScan to initialize
             self._serial.flushInput() # Flush startup text in serial input
-            self._serial.write("M200;\n")
+            self.send("M200;")
             self._serial.readline()
             value = self._serial.readline()
             value = value.strip()
@@ -148,8 +148,8 @@ class FSSerialCom():
         else:
             return "None"
 
-    def send(self, message):
-        self._serial.write(message+"\n")
+    def send_and_receive(self, message):
+        self.send(message)
         time.sleep(0.1)
         while True:
             try:
@@ -159,6 +159,7 @@ class FSSerialCom():
                 command = self._serial.readline()
                 self._logger.debug(command.rstrip("\n"))
                 #if state.rstrip("\n") == ">":
+
                 return command
             except:
                 pass
@@ -168,22 +169,8 @@ class FSSerialCom():
        self._serial.flushInput()
        self._serial.flushOutput()
 
-    def wait_until_ready(self):
-        pass
-        # if self._serial:
-        #     try:
-        #         value = self._serial.readline()
-        #         self._serial.readline()
-        #         self._logger.debug("Received command: " + value.rstrip('\n'))
-        #
-        #     except Exception as e:
-        #         self._logger.error(e.message)
-        #         value = ""
-        #
-        #     return value
-
-    #def send_and_receive(theinput):
-
+    def send(self, message):
+        self._serial.write(message + "\n")
 
     def is_connected(self):
         return self._connected
