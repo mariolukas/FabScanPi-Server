@@ -3,6 +3,7 @@ import re
 import urllib2
 
 import semver
+import logging
 
 
 __author__ = 'mariolukas'
@@ -11,11 +12,12 @@ __author__ = 'mariolukas'
 PACKAGE_PATTERN = re.compile('^Package: fabscanpi-server$')
 
 VERSION_PATTERN = re.compile('^Version: (.+)$')
-
+_logger = logging.getLogger(__name__)
 
 def get_latest_version_tag():
     try:
-        response = urllib2.urlopen("http://archive.fabscan.org/dists/jessie/main/binary-armhf/Packages")
+
+        response = urllib2.urlopen("http://archive.fabscan.org/dists/jessie/main/binary-armhf/Packages", timeout=5)
 
         latest_version = "0.0.0"
         line = 'START'
@@ -35,7 +37,8 @@ def get_latest_version_tag():
                             pass
                         break
         return latest_version
-    except Exception:
+    except (Exception, urllib2.URLError) as e:
+        _logger.debug(e)
         return "0.0.0"
 
 

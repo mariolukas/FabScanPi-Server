@@ -151,9 +151,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
     def update_settings(self, settings):
         try:
-            self._logger.debug(settings.color)
             self.settings.update(settings)
-
             #FIXME: Only change Color Settings when values changed.
             #self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
         except StandardError, e:
@@ -249,7 +247,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self._scan_contrast = self.settings.camera.contrast
         self._scan_saturation = self.settings.camera.saturation
 
-        self.settings.camera.brightness = 70
+        self.settings.camera.brightness = 45
         self.settings.camera.contrast = 0
         self.settings.camera.saturation = 0
         self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
@@ -312,8 +310,6 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
     def finish_object_scan(self):
         self._logger.info("Finishing object scan.")
         self._worker_pool.kill()
-        self.hardwareController.laser.off()
-        self.hardwareController.led.off()
         self.hardwareController.camera.device.stopStream()
 
     def scan_next_object_position(self):
@@ -367,7 +363,6 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
             self.append_points(event['point_cloud'], event['texture'])
             point_cloud = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2])
-            #texture = zip(event['texture'][0], event['texture'][1], event['texture'][2])
             texture = event['texture']
 
             for index, point in enumerate(point_cloud):
@@ -392,13 +387,14 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
             "resolution": self._total
         }
 
-        # FIXME: The images don't come necessarily in order,
-        # therefore we have to wait for every message instead of only the last
-        if self._progress == self._total:
-            self.scan_complete()
-
         self.eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
 
+        if self._progress == self._total:
+            while not self.image_task_q.empty():
+                #wait until the last image is processed and send to the client.
+                time.sleep(0.1)
+
+            self.scan_complete()
 
     def scan_complete(self):
 
@@ -420,7 +416,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
         event = FSEvent()
         event.command = 'COMPLETE'
-        self.eventmanager.publish(FSEvents.COMMAND,event)
+        self.eventmanager.publish(FSEvents.COMMAND, event)
 
         message = {
             "message": "SCAN_COMPLETE",
