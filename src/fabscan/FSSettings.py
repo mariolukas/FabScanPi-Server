@@ -38,13 +38,19 @@ class Settings(SettingsInterface):
 
     def save(self):
         current_settings = self.todict(self.__dict__)
+
+        try:
+            del current_settings['file']
+        except KeyError:
+            pass
+
         with open(self.file, 'w+') as outfile:
-            json.dump(current_settings, outfile)
+            json.dump(current_settings, outfile, indent=4, ensure_ascii=False)
 
     def saveAsFile(self, filename):
         current_settings = self.todict(self.__dict__)
         with open(filename, 'w+') as outfile:
-            json.dump(current_settings, outfile)
+            json.dump(current_settings, outfile, indent=4, ensure_ascii=False)
 
     def update(self, settings):
         self.threshold = settings.threshold

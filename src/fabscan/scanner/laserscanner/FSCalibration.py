@@ -60,13 +60,25 @@ class FSCalibration(FSCalibrationInterface):
 
         self._logger = logging.getLogger(__name__)
 
+    def reset_calibration_values(self):
+        self._point_cloud = [None, None]
+        self.x = []
+        self.y = []
+        self.z = []
+        self.current_position = 0
+        self.shape = None
+        self.camera_matrix = None
+        self.distortion_vector = None
+        self.image_points = []
+        self.object_points = []
+
     def start(self):
         self._hardwarecontroller.turntable.enable_motors()
         self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
         self.settings.camera.contrast = 30
         #self.settings.camera.saturation = 20
         self.settings.camera.brightness = 60
-
+        self.reset_calibration_values()
 
         self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
         self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
