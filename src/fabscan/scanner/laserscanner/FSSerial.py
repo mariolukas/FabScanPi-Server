@@ -161,8 +161,8 @@ class FSSerialCom():
                 #if state.rstrip("\n") == ">":
 
                 return command
-            except:
-                pass
+            except Exception as e:
+                self._logger.debug(e)
         time.sleep(0.1)
 
     def flush(self):
