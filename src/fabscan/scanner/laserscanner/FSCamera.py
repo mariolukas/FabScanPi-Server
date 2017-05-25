@@ -270,6 +270,7 @@ class PiCam(threading.Thread):
 
     def flushStream(self):
         self.camera_buffer.flush()
+        time.sleep(2)
 
 
     def setExposureMode(self, auto_exposure=False):
@@ -287,7 +288,7 @@ class PiCam(threading.Thread):
 
                 else:
                     self.camera.awb_mode = "flash"
-                    time.sleep(2)
+                    time.sleep(1.4)
                     self.flushStream()
 
 

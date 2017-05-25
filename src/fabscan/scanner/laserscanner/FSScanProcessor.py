@@ -253,19 +253,24 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
         self.hardwareController.camera.device.startStream(auto_exposure=True)
 
-        #time.sleep(2)
+        time.sleep(3)
+        self.hardwareController.camera.device.flushStream()
+
 
     def finish_texture_scan(self):
         self._logger.info("Finishing texture scan.")
         self.current_position = 0
+
+        self.hardwareController.camera.device.stopStream()
+        self.hardwareController.camera.device.flushStream()
+
         self.hardwareController.led.off()
 
         self.settings.camera.brightness = self._scan_brightness
         self.settings.camera.contrast = self._scan_contrast
         self.settings.camera.saturation = self._scan_saturation
 
-        self.hardwareController.camera.device.stopStream()
-        self.hardwareController.camera.device.flushStream()
+
 
         #self._worker_pool.kill()
 
@@ -282,27 +287,31 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
                 self.current_position += 1
                 self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
             else:
+                while not self.image_task_q.empty():
+                    # wait until texture scan stream is ready.
+                    time.sleep(0.1)
+
                 self.finish_texture_scan()
                 self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
 
     def init_object_scan(self):
         self._logger.info("Started object scan initialisation")
 
+        message = {
+            "message": "SCANNING_OBJECT",
+            "level": "info"
+        }
+        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+
         self.current_position = 0
         self._laser_positions = self.settings.laser_positions
+        # wait for ending of texture stream
 
         self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
         self.hardwareController.laser.on()
 
         self.hardwareController.camera.device.startStream()
         self.hardwareController.camera.device.flushStream()
-
-
-        message = {
-            "message": "SCANNING_OBJECT",
-            "level": "info"
-        }
-        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
         if not self._worker_pool.workers_active():
             self._worker_pool.create(self.config.process_numbers)
