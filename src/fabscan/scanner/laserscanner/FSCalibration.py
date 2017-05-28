@@ -104,7 +104,7 @@ class FSCalibration(FSCalibrationInterface):
 
         if not self._stop:
             self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
-            self._hardwarecontroller.camera.device.startStream()
+            self._hardwarecontroller.camera.device.startStream(exposure_type="auto")
 
         position = 0
         while abs(position) < self.quater_turn * 2:

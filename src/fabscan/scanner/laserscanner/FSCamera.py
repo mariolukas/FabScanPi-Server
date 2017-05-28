@@ -256,8 +256,8 @@ class PiCam(threading.Thread):
            image = self.camera_buffer.get()
         return image
 
-    def startStream(self, auto_exposure=False):
-        self.setExposureMode(auto_exposure=auto_exposure)
+    def startStream(self, auto_exposure=False, exposure_type="flash"):
+        self.setExposureMode(auto_exposure=auto_exposure, exposure_type=exposure_type)
         self.semaphore.acquire()
         self.is_idle = False
         self.semaphore.release()
@@ -273,7 +273,7 @@ class PiCam(threading.Thread):
         time.sleep(2)
 
 
-    def setExposureMode(self, auto_exposure=False):
+    def setExposureMode(self, auto_exposure=False, exposure_type="flash"):
                 if not auto_exposure:
 
                     self.camera.iso = 120
@@ -287,7 +287,7 @@ class PiCam(threading.Thread):
                     self.camera.awb_gains = g
 
                 else:
-                    self.camera.awb_mode = "flash"
+                    self.camera.awb_mode = exposure_type
                     time.sleep(1.4)
                     self.flushStream()
 

@@ -69,9 +69,6 @@ class FSImageWorkerPool():
                 task = ImageTask(None, None, None, task_type="KILL")
                 self._task_q.put(task, True)
 
-            while not self._task_q.empty():
-                time.sleep(0.2)
-
             self.clear_task_queue()
 
             for worker in self.workers:
