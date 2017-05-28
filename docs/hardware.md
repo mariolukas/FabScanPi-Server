@@ -131,6 +131,9 @@ Now the 2x20-pin socket connector must be installed from the rear side of the PC
 
 ![drawing_400](images\hat_assembly_7.jpg)
 
+_Attention: The power connector in this image is soldered in an alternative way. The recommended way 
+is shown in the image before._
+
 
 
 **Mount the 5V DC/DC converter or 5V external Power Source**
