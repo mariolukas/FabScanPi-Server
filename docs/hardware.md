@@ -119,9 +119,9 @@ The next connector to be installed is the 6-port screw terminal. It must be sold
 
 **Power Connector** (DC- jack)
 
-Now the DC-jack power connector will be installed into three oval pin holes close to the 2x20-pin socket header. Soldering is done from the rear side of the PCB.
+Now the DC-jack power connector will be installed into three oval pin holes across from the 2x20-pin socket header. Soldering is done from the top side of the PCB.
 
-![drawing_400](images\hat_assembly_6.jpg)
+![drawing_400](images\RPi-FabScan-HAT13.jpg)
 
 
 
@@ -151,7 +151,7 @@ There are different kinds of stepper motos. Mostly with 4 or 6 leads. For
 connecting the stepper motor to the FabScanPi HAT you need to know the
 corresponding lead pairs of the motor coils. The best way to find out something
 about the motor is to have a look at the datasheet of the motor manufacturer.
-In the following desciptions the pairs are called (1A, 1B) and (2A, 2B).
+In the following desciptions the pairs are called (2B, 1B) and (1A, 2A).
 
 ![drawing_300](images/4wires.jpg) 
 ![drawing_300](images/6wires.jpg)
