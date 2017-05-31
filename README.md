@@ -18,7 +18,7 @@ the interface can be found at: http://github.com/mariolukas/FabScanPi-Frontend
 That enables people with different programming skills to [contribute to this project](http://mariolukas.github.io/FabScanPi-Server/contributing/).
 
 FabScan PI is Free Software and released under the [GNU Affero General Public License V3](http://www.gnu.org/licenses/agpl.html).
- 
+
 ## Documentation
 The FabScan documentation can be found at [http://www.fabscan.org](http://www.fabscan.org)
 
