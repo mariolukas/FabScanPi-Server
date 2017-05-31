@@ -22,7 +22,6 @@ FabScan PI is Free Software and released under the [GNU Affero General Public Li
 ## Documentation
 The FabScan documentation can be found at [http://www.fabscan.org](http://www.fabscan.org)
  
-
 ## Core Team
 * Mario Lukas (project lead, core development)
 * Watterott electronic (hardware)
