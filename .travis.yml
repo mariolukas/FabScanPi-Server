@@ -11,7 +11,7 @@ before_script:
 - if [ $TRAVIS_BRANCH != 'master' ]; then sed -i -e 's/'"$VERSION"'/'"$VERSION"'-b'"$TRAVIS_BUILD_NUMBER"'/g' debian/changelog; fi
 script: make deb
 after_success:
-- if [ $TRAVIS_BRANCH != 'master' ]; then curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/build/; fi
+- if [ $TRAVIS_BRANCH != 'master' ]; then curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/testing/; fi
 - NOW=`date +%Y-%m-%d-%H-%M`
 - mkdocs build
 - cd ..
@@ -35,7 +35,7 @@ env:
 before_deploy:
 - export RELEASE_FILE_NAME=$(ls ../*.deb)
 after_deploy: 
-- curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/deploy/
+- curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/stable/
 - NOW=`date +%Y-%m-%d-%H-%M`
 - cd ..
 - git clone https://github.com/mariolukas/FabScanPi-Build-Raspbian.git
