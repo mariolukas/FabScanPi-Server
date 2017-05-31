@@ -1,9 +1,13 @@
-fabscanpi-server (0.3.2-alpha.1) UNRELEASED; urgency=medium
+fabscanpi-server (0.4.0) UNRELEASED; urgency=medium
 
   * first fixes for upgrade
   * added news to documentation 
+  * added auto calibration
+  * fixed major bug with serial connection
+  * improved laser line detection
+  * added news screen to fabscan server start screen
 
- -- Christoph Emonds <info@christoph-emonds.de>  Fri, 13 Jan 2017 12:22:42 +0100
+ -- Mario Lukas <info@fabscan.org>  Wed, 31 May 2017 12:22:42 +0100
 
 fabscanpi-server (0.3.1) unstable; urgency=medium
 
