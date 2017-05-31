@@ -8,10 +8,10 @@ before_install:
 before_script:
 - pip install mkdocs
 - VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}')
-- if [ $TRAVIS_BRANCH != 'master' ];then sed -i -e 's/'"$VERSION"'/'"$VERSION"'_b'"$TRAVIS_BUILD_NUMBER"'/g' debian/changelog fi
+- if [ $TRAVIS_BRANCH != 'master' ]; then sed -i -e 's/'"$VERSION"'/'"$VERSION"'_b'"$TRAVIS_BUILD_NUMBER"'/g' debian/changelog fi
 script: make deb
 after_success:
-- if [ $TRAVIS_BRANCH != 'master' ];then curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/build/ fi
+- if [ $TRAVIS_BRANCH != 'master' ]; then curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/build/ fi
 - NOW=`date +%Y-%m-%d-%H-%M`
 - mkdocs build
 - cd ..
