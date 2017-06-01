@@ -8,6 +8,7 @@ set -e
 FABSCAN_USER=fabscan
 SERVICE=fabscanpi-server
 INIT_SCRIPT=/etc/init.d/$SERVICE
+SCANS_DIR=/var/scans
 
 if ps ax | grep -v grep | grep -v $0 | grep $SERVICE > /dev/null
 then
