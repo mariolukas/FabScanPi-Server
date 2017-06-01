@@ -20,4 +20,5 @@ window.i18n["main"]["MESHING_STARTED"] = function(d){return "Meshing started."}
 window.i18n["main"]["MESHING_DONE"] = function(d){return "Meshed file is available now"}
 window.i18n["main"]["START_CALIBRATION"] = function(d){return "Calibration started."}
 window.i18n["main"]["FINISHED_CALIBRATION"] = function(d){return "Calibration finished."}
+window.i18n["main"]["UPGRADE_IN_PROGRESS"] = function(d){return "Software wird aktualisiert..."}
 })();

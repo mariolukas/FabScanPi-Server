@@ -1,5 +1,5 @@
 <!doctype html>
-<div lang="en" class="ng-cloak">
+<html lang="en" class="ng-cloak">
 	<head>
 		<title>FabScanPi</title>
         <link rel="icon"
@@ -16,44 +16,71 @@
 			#wrap {display:table;height:100%}
 		</style>
 		<![endif]-->
-
 		<script src="js/lib.js"></script>
         <script src="js/locales/en/i18n.js"></script>
 		<script src="js/app.js"></script>
 
-    </head>
+  </head>
+	<body>
     <div ng-controller="fabscan.controller.FSAppController">
-        <div ng-if="!appIsInitialized" class="splash">
-            <div>
-                <img class="logo" src="icons/logo.png">
-                <div ng-if="!initError">
-                    <div class="sk-three-bounce">
-                        <div class="sk-child sk-bounce1"></div>
-                        <div class="sk-child sk-bounce2"></div>
-                        <div class="sk-child sk-bounce3"></div>
-                    </div>
-                </div>
-                <div ng-if="initError">
-                    Can not initialize UI, try to refresh Window.
-                    <br>
-                    (Press 'F5')
-                </div>
-            </div>
-        </div>
+
+			<div ng-if="!appIsInitialized" class="splash">
+					<div>
+							<img class="logo" src="icons/logo.png">
+							<div ng-if="!initError">
+									<div class="sk-three-bounce">
+											<div class="sk-child sk-bounce1"></div>
+											<div class="sk-child sk-bounce2"></div>
+											<div class="sk-child sk-bounce3"></div>
+									</div>
+							</div>
+							<div ng-if="initError">
+									Can not initialize UI, try to refresh Window.
+									<br>
+									(Press 'F5')
+							</div>
+					</div>
+			</div>
+			<div ng-if="appIsUpgrading" class="splash">
+					<div>
+							<img class="logo" src="icons/logo.png">
+							<div>
+									<div class="sk-three-bounce">
+											<div class="sk-child sk-bounce1"></div>
+											<div class="sk-child sk-bounce2"></div>
+											<div class="sk-child sk-bounce3"></div>
+									</div>
+							</div>
+							<div text="main.UPGRADE_IN_PROGRESS">
+							</div>
+					</div>
+			</div>
     <div id="top-bar">
 
     </div>
     <div ng-controller="fabscan.controller.FSScanController">
           <div class="header row" id="header">
           </div>
-           <div id="mainview"  class="row scroll-y">
+           <div id="mainview"  class="row scroll-y" ng-click="displayNews(false)">
           <!--     <div class="configWindow" ng-class="{'open':(configDialog)}">
                    <div ng-jsoneditor ng-model="obj.data" options="obj.options" style="width: 100%; height: 80%;"></div>
                    <a class="hvr-grow" style="margin-right: 13%; margin-top:0.2em; text-decoration:none; float:right; color:white; font-size:1.5em;" ng-click="hideConfigDialog()" href="#">Save & Restart</a>
                    <a class="hvr-grow" style="margin-right: 13%; margin-top:0.2em; text-decoration:none; float:right; color:white; font-size:1.5em;" ng-click="hideConfigDialog()" href="#">Cancel</a>
                </div>
            -->
-               <!-- Settings View -->
+					 <!-- News View -->
+							<div class="newsWindow" ng-if="showNews" ng-class="{'open': showNews}">
+                                <div style="float:right; margin-bottom:0.3em;">
+                                    <span class="hvr-grow">
+                                        <i class="fa fa-close" ng-click="displayNews(false)"></i>
+                                    </span>
+                                </div>
+									<div ng-controller="fabscan.controller.FSNewsController" >
+											<div ng-bind-html="news"></div>
+									</div>
+							</div>
+
+								<!-- Settings View -->
                 <div class="settingsWindow" ng-class="{'open':('SETTINGS' | currentState)}">
                     <div ng-if="('SETTINGS' | currentState)" ng-controller="fabscan.controller.FSSettingsController" >
 
@@ -73,9 +100,11 @@
                             <div ng-click="selectTab('light')" class="tab icon settings" ng-class="{'active':(selectedTab == 'light')}">
                                 <i class="fa fa-sun-o fa-2x"></i>
                             </div>
+                            <!--
                             <div ng-click="setCalibrationTab()" class="tab icon settings" ng-class="{'active':(selectedTab == 'calibration')}">
                                 <i class="fa fa-crosshairs fa-2x"></i>
                             </div>
+                            -->
                             <div class="tab" sytle="width:100%">
                             </div>
                         </div>
@@ -100,6 +129,7 @@
                             -->
                             <div>
                                 <div style="display:inline-block; width:5em; color:white; padding-left:1em;" >Color Scan</div><input  style="width:1em; height:1em; margin-left:1.5em; margin-top:0.5em;" type="checkbox"  ng-change="setColor()" ng-checked="colorIsSelected()" ng-model="settings.color">
+
                                 <a class="hvr-grow" style="margin-right: 13%; margin-top:0.2em; text-decoration:none; float:right; color:white; font-size:1.5em;" ng-click="startScan()" href="#">Start Scan</a>
                             </div>
                         </div>
@@ -138,6 +168,7 @@
                                <slider style="width:70%; margin-left:1em;" floor="0" ceiling="255" step="1" precision="1" ng-model="settings.led.blue"></slider>
                             </div>
                         </div>
+                        <!--
                         <div class="tab-content" ng-if="(selectedTab == 'calibration')">
                             <div style="display:inline-block; width:100%; margin-top:1em; color:white; padding-left:1em;">
                                 Calibration<br>
@@ -145,7 +176,7 @@
                                 Before calibration remove objects!
                                 <a class="hvr-grow" style="margin-right: 13%; margin-top:0.2em; bottom: 0px; text-decoration:none; float:right; color:white; font-size:1.5em;" ng-click="startCalibration()" href="#">Start Calibration</a>
                             </div>
-                        </div>
+                        </div>-->
                         </div>
                     </div>
 
@@ -153,9 +184,11 @@
 
                <!-- Scan View -->
                  <div  ng-controller="fabscan.controller.FSPreviewController"  style="margin: 0 auto; z-index:-100;">
-                     <div ng-if="showTextureScan" class="texture-preview">
+
+                     <div ng-if="showStream" class="texture-preview">
                          <mjpeg mode="'texture'" url="streamUrl"></mjpeg>
                      </div>
+
                      <div ng-click="manviewhandler()">
                          <div
                          id="webgl"
@@ -167,12 +200,19 @@
                          material-type="materialType"
                          new-points="newPoints"
                          >
+
                              <div style="position:absolute; right:10px; top:2px; color:white">
                                  <span>Server: {{server_version}} <br> Firmware: {{firmware_version}}</span>
                              </div>
-                           <!--  <div style="position:absolute; left:10px; top:2px; color:white">
-                                 <span class="hvr-grow"><i ng-click="showConfigDialog()" class="fa fa-gear fa-2x"></i></span>
-                             </div>-->
+
+                            <div style="position:absolute; left:10px; top:2px; color:white">
+                                <a class="icon" style="" ng-click="startCalibration()" ng-show="(!scanIsLoading() && ('IDLE' | currentState) && !('CALIBRATING' | currentState))">
+                                     <span class="hvr-grow">
+                                        <i tooltips title="Calibrate Scanner" tooltip-side="right" class="fa fa-crosshairs fa-2x"></i>
+                                     </span>
+                                </a>
+                             </div>
+
                          <!--<div style="position:absolute;">
                              <a href="#" ng-click="renderObjectAsType('MESH')">Show Mesh</a>
                              <a href="#" ng-click="renderObjectAsType('POINTCLOUD')">Show Pointcloud</a>
@@ -335,7 +375,7 @@
 
                          </div>
                      </div>
-                     <div style="font-size:1.2em; color:white;" ng-if="sampledRemainingTime > 0 && ('SCANNING' | currentState)"  class="timeRemaining">About {{sampledRemainingTime}} seconds remaining</div>
+                     <div style="font-size:1.2em; color:darkslategrey;" ng-if="sampledRemainingTime > 0 && ('SCANNING' | currentState)"  class="timeRemaining">About {{remainingTimeString}} remaining</div>
            </div>
 
         <div id="controlpanel" class="footer row" style="background-color: grey">
@@ -344,7 +384,7 @@
             <div ng-if="appIsInitialized">
             <!-- Left Icon Group -->
             <div class="icongroup left" >
-                <a class="icon" tooltips title="Load Scan" tooltip-side="top" ng-if="!('SETTINGS' | currentState) && !('SCANNING' | currentState)" ng-click="toggleLoadDialog()" href="#">
+                <a class="icon" tooltips title="Load Scan" tooltip-side="top" ng-if="!('SETTINGS' | currentState) && !('SCANNING' | currentState) && !('CALIBRATING' | currentState)" ng-click="toggleLoadDialog()" href="#">
                     <span class="hvr-grow">
                          <i class="fa fa-folder fa-3x"></i>
                     </span>
@@ -353,7 +393,8 @@
 
             <!-- Center Icon Group -->
             <div class="icongroup middle">
-                <a class="icon" tooltips title="Cancel Scan" ng-click="stopScan()" ng-if="('SCANNING' | currentState)"  href="#">
+
+                <a class="icon" tooltips title="Cancel Scan" ng-click="stopScan()" ng-if="(('SCANNING' | currentState) || ('CALIBRATING' | currentState))"  href="#">
                      <span  class="hvr-grow">
                          <i class="fa fa-close fa-3x"></i>
                      </span>
@@ -364,12 +405,13 @@
                     </span>
                 </a>
 
-                <a class="icon" tooltips title="New Scan" tooltip-side="top" ng-click="newScan()" ng-show="(!scanIsLoading() && ('IDLE' | currentState))"  href="#">
+                <a class="icon" tooltips title="New Scan" tooltip-side="top" ng-click="newScan()" ng-show="(!scanIsLoading() && !('SETTINGS' | currentState) && ('IDLE' | currentState) && !('CALIBRATING' | currentState) )"  href="#">
                     <span class="hvr-grow">
                         <img style="height:3em; margin-top:0.3em;" src="icons/icon_scan.svg"/>
                       <!-- <i class="fa fa-camera fa-3x"></i>-->
                     </span>
                 </a>
+
             </div>
 
             <!-- Right Icon Group -->
@@ -385,6 +427,5 @@
         </div>
     </div>
     </div>
-    </body>
-</div>
+	</body>
 </html>

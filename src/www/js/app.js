@@ -9,7 +9,7 @@
 (function() {
   var m, mods;
 
-  mods = ['common.services.envProvider', 'common.filters.currentStateFilter', 'common.filters.toLabelFilter', 'common.filters.toResolutionValue', 'fabscan.directives.FSWebglDirective', 'fabscan.directives.FSMJPEGStream', 'fabscan.directives.FSModalDialog', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSEnumService', 'fabscan.services.FSWebsocketConnectionFactory', 'fabscan.services.FSScanService', 'fabscan.services.FSi18nService', 'common.filters.scanDataAvailableFilter', 'common.services.Configuration', 'common.services.toastrWrapperSvc', 'fabscan.controller.FSPreviewController', 'fabscan.controller.FSAppController', 'fabscan.controller.FSSettingsController', 'fabscan.controller.FSScanController', 'fabscan.controller.FSLoadingController', 'fabscan.controller.FSShareController', 'ngTouch', '720kb.tooltips', 'ngProgress', 'vr.directives.slider', 'slickCarousel'];
+  mods = ['common.services.envProvider', 'common.filters.currentStateFilter', 'common.filters.toLabelFilter', 'common.filters.toResolutionValue', 'fabscan.directives.FSWebglDirective', 'fabscan.directives.FSMJPEGStream', 'fabscan.directives.FSModalDialog', 'fabscan.directives.text', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSEnumService', 'fabscan.services.FSWebsocketConnectionFactory', 'fabscan.services.FSScanService', 'fabscan.services.FSi18nService', 'common.filters.scanDataAvailableFilter', 'common.services.Configuration', 'common.services.toastrWrapperSvc', 'fabscan.controller.FSPreviewController', 'fabscan.controller.FSAppController', 'fabscan.controller.FSNewsController', 'fabscan.controller.FSSettingsController', 'fabscan.controller.FSScanController', 'fabscan.controller.FSLoadingController', 'fabscan.controller.FSShareController', 'ngSanitize', 'ngTouch', '720kb.tooltips', 'ngProgress', 'vr.directives.slider', 'slickCarousel'];
 
   /*
   */
@@ -88,7 +88,7 @@
             }
             if (scope.mode === "texture") {
               iframe.setAttribute('width', '100%');
-              iframeHtml = '<html><head><base target="_parent" /><style type="text/css">html, body { margin: 0; padding: 0; height: 320px; }</style><script> function resizeParent() { var ifs = window.top.document.getElementsByTagName("iframe"); for (var i = 0, len = ifs.length; i < len; i++) { var f = ifs[i]; var fDoc = f.contentDocument || f.contentWindow.document; if (fDoc === document) { f.height = 0; f.height = document.body.scrollHeight; } } }</script></head><body style="" onresize="resizeParent()"><img src="' + newVal + '" style="z-index:1000; opacity: 0.4; height: 100%; left:20%;  position:absolute;" onload="resizeParent()" /></body></html>';
+              iframeHtml = '<html><head><base target="_parent" /><style type="text/css">html, body { margin: 0; padding: 0; height: 320px; }</style><script> function resizeParent() { var ifs = window.top.document.getElementsByTagName("iframe"); for (var i = 0, len = ifs.length; i < len; i++) { var f = ifs[i]; var fDoc = f.contentDocument || f.contentWindow.document; if (fDoc === document) { f.height = 0; f.height = document.body.scrollHeight; } } }</script></head><body style="" onresize="resizeParent()"><img src="' + newVal + '" style="z-index:1000; opacity: 1.0; height: 100%; left:20%;  position:absolute;" onload="resizeParent()" /></body></html>';
             }
             if (scope.mode === "preview") {
               iframe.setAttribute('height', '240px');
@@ -168,6 +168,33 @@
 (function() {
   var name;
 
+  name = 'fabscan.directives.text';
+
+  angular.module(name, []).directive("text", [
+    'fabscan.services.FSi18nService', function(i18n) {
+      return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+          var renderText;
+
+          renderText = function() {
+            return element[0].textContent = i18n.formatText(attrs.text);
+          };
+          scope.$watch(function() {
+            return attrs.text;
+          }, function() {
+            return renderText();
+          });
+        }
+      };
+    }
+  ]);
+
+}).call(this);
+
+(function() {
+  var name;
+
   name = 'fabscan.directives.FSWebglDirective';
 
   angular.module(name, []).directive("fsWebgl", [
@@ -177,7 +204,7 @@
       return {
         restrict: "A",
         link: postLink = function(scope, element, attrs) {
-          var camera, cameraTarget, colors, contH, contW, controls, currentPointcloudAngle, current_point, materials, mesh, mouseX, mouseY, mousedown, pointcloud, positions, rad, renderer, scanLoaded, scene, turntable, windowHalfX, windowHalfY;
+          var camera, cameraTarget, colors, contH, contW, controls, currentPointcloudAngle, current_point, materials, mesh, mouseX, mouseY, mousedown, pointcloud, positions, rad, renderer, scanLoaded, scene, turntable, turntable_radius, turntable_thickness, windowHalfX, windowHalfY;
 
           camera = void 0;
           scene = void 0;
@@ -213,6 +240,8 @@
           windowHalfX = contW / 2;
           windowHalfY = contH / 2;
           materials = {};
+          turntable_radius = 70;
+          turntable_thickness = 5;
           $rootScope.$on('clearcanvas', function() {
             $log.info("view cleared");
             return scope.clearView();
@@ -247,27 +276,27 @@
             var axes, geometry, material, plane;
 
             current_point = 0;
-            camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 1, 800);
-            camera.position.set(27, 5, 0);
-            cameraTarget = new THREE.Vector3(10, 5, 0);
+            camera = new THREE.PerspectiveCamera(48.8, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.z = 180;
+            camera.position.y = 40;
             scene = new THREE.Scene();
-            scene.fog = new THREE.Fog(0x72645b, 20, 60);
-            plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(140, 100), new THREE.MeshPhongMaterial({
+            scene.fog = new THREE.Fog(0x72645b, 200, 600);
+            plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(2000, 2000), new THREE.MeshPhongMaterial({
               ambient: 0x999999,
               color: 0x999999,
               specular: 0x101010
             }));
             plane.rotation.x = -Math.PI / 2;
-            plane.position.y = -0.5;
+            plane.position.y = -turntable_thickness;
             scene.add(plane);
             plane.receiveShadow = true;
             scene.add(new THREE.AmbientLight(0x777777));
             scope.addShadowedLight(1, 1, 1, 0xffffff, 0.35);
             scope.addShadowedLight(0.5, 1, -1, 0xffaa00, 1);
             axes = new THREE.AxisHelper(10);
-            geometry = new THREE.CylinderGeometry(7, 7, 0.2, 32);
-            material = new THREE.MeshBasicMaterial({
-              color: 0xDEDEDE
+            geometry = new THREE.CylinderGeometry(turntable_radius, turntable_radius, turntable_thickness, 32);
+            material = new THREE.MeshPhongMaterial({
+              color: 0xd3d2c9
             });
             turntable = new THREE.Mesh(geometry, material);
             turntable.name = "turntable";
@@ -436,13 +465,11 @@
 
             pointcloud = new THREE.Object3D;
             material = new THREE.PointsMaterial({
-              size: 0.15,
+              size: 0.5,
               vertexColors: THREE.FaceColors
             });
             pointcloud = new THREE.Points(scope.objectGeometry, material);
-            pointcloud.position.set(0, -0.25, 0);
             pointcloud.rotation.set(-Math.PI / 2, 0, 0);
-            pointcloud.scale.set(0.1, 0.1, 0.1);
             return scene.add(pointcloud);
           };
           scope.renderObjectAsType = function(type) {
@@ -468,10 +495,10 @@
               }
               return scope.scanLoaded = true;
             });
-            loader.addEventListener('progress', function(item) {
-              return scope.progressHandler(item);
+            return loader.addEventListener('progress', function(item) {
+              scope.progressHandler(item);
+              return $log.info("Not implemented yet");
             });
-            return $log.info("Not implemented yet");
           };
           scope.loadPLY = function(file) {
             var loader;
@@ -494,24 +521,22 @@
             });
           };
           scope.addPoints = function(points, progress, resolution) {
-            var color, degree, geometry, i, material, new_colors, new_positions, _results;
+            var color, degree, geometry, i, material, new_colors, new_positions;
 
             scope.scanComplete = false;
             if (points.length > 0) {
               if (pointcloud) {
-                currentPointcloudAngle = pointcloud.rotation.y;
+                currentPointcloudAngle = pointcloud.rotation.y + 80;
                 scene.remove(pointcloud);
               } else {
-                currentPointcloudAngle = 90 * (Math.PI / 180);
+                currentPointcloudAngle = 90 * (Math.PI / 180) + 80;
               }
-              geometry = new THREE.BufferGeometry();
-              geometry.dynamic = true;
               new_positions = new Float32Array(points.length * 3);
               new_colors = new Float32Array(points.length * 3);
               i = 0;
               while (i < points.length) {
                 new_positions[3 * i] = parseFloat(points[i]['x']);
-                new_positions[3 * i + 1] = parseFloat(points[i]['y'] - 0.5);
+                new_positions[3 * i + 1] = parseFloat(points[i]['y']);
                 new_positions[3 * i + 2] = parseFloat(points[i]['z']);
                 color = new THREE.Color("rgb(" + points[i]['r'] + "," + points[i]['g'] + "," + points[i]['b'] + ")");
                 new_colors[3 * i] = color.r;
@@ -526,25 +551,28 @@
                 positions = scope.Float32Concat(positions, new_positions);
                 colors = scope.Float32Concat(colors, new_colors);
               }
+              geometry = new THREE.BufferGeometry();
+              geometry.dynamic = true;
               geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
               geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
-              material = new THREE.PointsMaterial({
-                size: 0.2,
-                vertexColors: THREE.VertexColors
-              });
-              pointcloud = new THREE.Points(geometry, material);
+              if (!pointcloud) {
+                material = new THREE.PointsMaterial({
+                  size: 0.5,
+                  vertexColors: THREE.VertexColors
+                });
+                pointcloud = new THREE.Points(geometry, material);
+              } else {
+                pointcloud.geometry.dispose();
+                pointcloud.geometry = geometry;
+              }
               degree = 360 / resolution;
               $log.info(degree);
               scope.rad = degree * (Math.PI / 180);
               scene.add(pointcloud);
+              if (pointcloud) {
+                return pointcloud.rotation.y += scope.rad;
+              }
             }
-            _results = [];
-            while (i < points.length) {
-              _points[current_point] = points;
-              i++;
-              _results.push(current_point++);
-            }
-            return _results;
           };
           scope.clearView = function() {
             if (pointcloud) {
@@ -559,7 +587,6 @@
             scope.render();
           };
           scope.render = function() {
-            camera.lookAt(cameraTarget);
             renderer.render(scene, camera);
           };
           scope.$watch("newPoints", function(newValue, oldValue) {
@@ -719,22 +746,22 @@ Example of a 'common' filter that can be shared by all views
       localDebug = $location.host() === 'localhost';
       config = null;
       devDebug = true;
-      if (localDebug) {
-        host = "fabscanpi.local";
+      host = $location.host();
+      if (devDebug) {
+        config = {
+          installation: {
+            host: 'fabscanpi.local',
+            websocketurl: 'ws://fabscanpi.local:8010/',
+            httpurl: 'http://fabscanpi.local:8080/',
+            newsurl: 'http://mariolukas.github.io/FabScanPi-Server/news/'
+          }
+        };
+      } else {
         config = {
           installation: {
             host: host,
             websocketurl: 'ws://' + host + ':8010/',
             httpurl: 'http://' + host + ':8080/'
-          }
-        };
-      } else {
-        host = $location.host();
-        config = {
-          installation: {
-            host: host,
-            websocketurl: 'ws://' + $location.host() + ':8010/',
-            httpurl: 'http://' + $location.host() + ':8080/'
           }
         };
       }
@@ -764,7 +791,9 @@ Example of a 'common' filter that can be shared by all views
     FSEnumService.states = {
       IDLE: 'IDLE',
       SCANNING: 'SCANNING',
-      SETTINGS: 'SETTINGS'
+      SETTINGS: 'SETTINGS',
+      CALIBRATING: 'CALIBRATING',
+      UPGRADING: 'UPGRADING'
     };
     FSEnumService.commands = {
       SCAN: 'SCAN',
@@ -819,6 +848,7 @@ Example of a 'common' filter that can be shared by all views
           var message;
 
           message = jQuery.parseJSON(event.data);
+          $log.info(message['data']);
           return $rootScope.$broadcast(message['type'], message['data']);
         };
       };
@@ -843,6 +873,16 @@ Example of a 'common' filter that can be shared by all views
       service = {};
       service.state = FSEnumService.states.IDLE;
       service.scanId = null;
+      service.startTime = null;
+      service.initStartTime = function() {
+        return service.startTime = Date.now();
+      };
+      service.setStartTime = function(time) {
+        return service.startTime = time;
+      };
+      service.getStartTime = function() {
+        return service.startTime;
+      };
       service.getScanId = function() {
         return service.scanId;
       };
@@ -854,11 +894,13 @@ Example of a 'common' filter that can be shared by all views
 
         service.state = FSEnumService.states.SCANNING;
         service.setScanId(null);
+        service.initStartTime();
         message = {};
         message = {
           event: FSEnumService.events.COMMAND,
           data: {
-            command: FSEnumService.commands.START
+            command: FSEnumService.commands.START,
+            startTime: service.getStartTime()
           }
         };
         FSMessageHandlerService.sendData(message);
@@ -1011,12 +1053,26 @@ Example of a 'common' filter that can be shared by all views
   name = 'fabscan.services.FSi18nService';
 
   angular.module(name, []).factory(name, [
-    '$log', '$rootScope', 'fabscan.services.FSEnumService', function($log, $rootScope, FSEnumService) {
+    '$window', function($window) {
       var service;
 
       service = {};
-      service.translateKey = function(key, value) {
-        return window.i18n[key][value]();
+      service.formatText = function(key, values) {
+        var catalog, catalogId, textId, _ref;
+
+        if (values == null) {
+          values = {};
+        }
+        _ref = key.split("."), catalogId = _ref[0], textId = _ref[1];
+        if (catalogId && textId) {
+          if (catalogId in $window.i18n) {
+            catalog = $window.i18n[catalogId];
+            if (textId in catalog) {
+              return catalog[textId](values);
+            }
+          }
+        }
+        return key;
       };
       return service;
     }
@@ -1083,8 +1139,6 @@ DEV
 
     Environment.prototype.env = 'DEV';
 
-    Environment.prototype.apiUrl = 'http://planungstool-testing.ambihome.de/api';
-
     return Environment;
 
   })();
@@ -1140,6 +1194,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       $scope.firmware_version = void 0;
       $scope.scanLoading = false;
       $scope.appIsInitialized = false;
+      $scope.appIsUpgrading = false;
       $scope.isConnected = false;
       $scope.initError = false;
       $timeout((function() {
@@ -1206,14 +1261,24 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
           });
         }
         _settings = data['settings'];
+        FSScanService.setStartTime(_settings.startTime);
+        $log.debug(_settings.startTime);
         _settings.resolution *= -1;
         angular.copy(_settings, $scope.settings);
         FSScanService.setScannerState(data['state']);
+        $scope.appIsUpgrading = data['state'] === FSEnumService.states.UPGRADING;
+        if (data['state'] === FSEnumService.states.IDLE) {
+          $scope.displayNews(true);
+        }
         $log.debug("WebSocket connection ready...");
         $scope.appIsInitialized = true;
         return $scope.$apply();
       });
+      $scope.displayNews = function(value) {
+        return $scope.showNews = value;
+      };
       $scope.$on(FSEnumService.events.ON_STATE_CHANGED, function(event, data) {
+        $scope.showNews = false;
         $log.info("NEW STATE: " + data['state']);
         FSScanService.setScannerState(data['state']);
         $log.info(data);
@@ -1226,7 +1291,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         var message;
 
         $log.info(data['message']);
-        message = FSi18nService.translateKey('main', data['message']);
+        message = FSi18nService.formatText('main.' + data['message']);
         switch (data['level']) {
           case "info":
             toastr.info(message, {
@@ -1280,6 +1345,27 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
 (function() {
   var name;
 
+  name = "fabscan.controller.FSNewsController";
+
+  angular.module(name, []).controller(name, [
+    '$log', '$scope', '$http', 'common.services.Configuration', function($log, $scope, $http, configuration) {
+      $scope.news = "No news available.";
+      return $http({
+        method: 'GET',
+        url: configuration.installation.newsurl
+      }).success(function(data, status, headers, config) {
+        return $scope.news = data;
+      }).error(function(data, status, headers, config) {
+        return $scope.news = "Error retrieving news.";
+      });
+    }
+  ]);
+
+}).call(this);
+
+(function() {
+  var name;
+
   name = "fabscan.controller.FSPreviewController";
 
   angular.module(name, []).controller(name, [
@@ -1298,12 +1384,13 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       $scope.loadPLY = null;
       $scope.loadSTL = null;
       $scope.renderer = null;
-      $scope.showTextureScan = false;
+      $scope.showStream = false;
       $scope.startTime = null;
       $scope.sampledRemainingTime = 0;
+      $scope.remainingTimeString = "0 minutes 0 seconds";
       $scope.$on(FSEnum.events.ON_STATE_CHANGED, function(event, data) {
         if (data['state'] === FSEnum.states.IDLE) {
-          return $scope.showTextureScan = false;
+          return $scope.showStream = false;
         }
       });
       $rootScope.$on('clearView', function() {
@@ -1311,17 +1398,25 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       });
       $scope.$on(FSEnum.events.ON_INFO_MESSAGE, function(event, data) {
         if (data['message'] === 'SCANNING_TEXTURE') {
-          $scope.streamUrl = Configuration.installation.httpurl + '/stream/texture.mjpeg';
-          $scope.showTextureScan = true;
+          $scope.streamUrl = Configuration.installation.httpurl + 'stream/texture.mjpeg';
+          $scope.showStream = true;
+        }
+        if (data['message'] === 'START_CALIBRATION') {
+          $scope.streamUrl = Configuration.installation.httpurl + 'stream/texture.mjpeg';
+          $scope.showStream = true;
+        }
+        if (data['message'] === 'STOP_CALIBRATION') {
+          $scope.showStream = false;
+          $scope.streamUrl = "";
         }
         if (data['message'] === 'SCANNING_OBJECT') {
-          $scope.showTextureScan = false;
+          $scope.showStream = false;
           $scope.streamUrl = "";
         }
         if (data['message'] === 'SCAN_COMPLETE') {
           FSScanService.setScanId(data['scan_id']);
           $scope.setScanIsComplete(true);
-          $scope.showTextureScan = false;
+          $scope.showStream = false;
           $scope.remainingTime = [];
           $scope.startTime = null;
           $scope.sampledRemainingTime = 0;
@@ -1329,7 +1424,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         }
         if (data['message'] === 'SCAN_CANCELED' || data['message'] === 'SCAN_STOPED') {
           $scope.remainingTime = [];
-          $scope.showTextureScan = false;
+          $scope.showStream = false;
           $scope.startTime = null;
           $scope.progress = 0;
           return $scope.sampledRemainingTime = 0;
@@ -1341,13 +1436,11 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         if (FSScanService.state !== FSEnum.states.IDLE) {
           $scope.resolution = data['resolution'];
           $scope.progress = data['progress'];
-          $log.info($scope.progress);
           percentage = $scope.progress / $scope.resolution * 100;
-          if ($scope.progress === 1) {
+          $scope.startTime = FSScanService.getStartTime();
+          if ($scope.progress <= 1) {
             $scope.sampledRemainingTime = 0;
             _time_values = [];
-            $scope.startTime = Date.now();
-            ngProgress.start();
           } else {
             timeTaken = Date.now() - $scope.startTime;
             $scope.remainingTime.push(parseFloat(Math.floor(((timeTaken / $scope.progress) * ($scope.resolution - $scope.progress)) / 1000)));
@@ -1357,10 +1450,15 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
               _time_values = $scope.remainingTime;
             }
             $scope.sampledRemainingTime = parseFloat(Math.floor(median(_time_values)));
-            $log.info(percentage.toFixed(2) + "% complete");
+            if ($scope.sampledRemainingTime >= 60) {
+              $scope.remainingTimeString = parseInt($scope.sampledRemainingTime / 60) + " minutes";
+            } else {
+              $scope.remainingTimeString = $scope.sampledRemainingTime + " seconds";
+            }
+            $log.debug(percentage.toFixed(2) + "% complete");
             ngProgress.set(percentage);
           }
-          if (percentage >= 100) {
+          if (percentage >= 98) {
             $scope.sampledRemainingTime = 0;
             _time_values = [];
           }
@@ -1499,6 +1597,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       $scope.toggleLoadDialog = function() {
         var promise;
 
+        $scope.displayNews(false);
         if (!$scope.loadDialog) {
           promise = $http.get(Configuration.installation.httpurl + 'api/v1/scans');
           return promise.then(function(payload) {
@@ -1725,7 +1824,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
 
         scan_promise = $http.get(Configuration.installation.httpurl + 'api/v1/scans/' + FSScanService.getScanId());
         return scan_promise.then(function(payload) {
-          $log.info(payload);
+          $log.debug(payload);
           $scope.raw_scans = payload.data.raw_scans;
           $scope.meshes = payload.data.meshes;
           return $scope.settings = payload.data.settings;
