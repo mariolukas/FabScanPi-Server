@@ -9,6 +9,7 @@ FABSCAN_USER=fabscan
 CONF_DIR=/etc/fabscanpi
 LOG_DIR=/var/log/fabscanpi
 SCANS_DIR=/var/scans
+PID_DIR=/var/run/fabscanpi
 
 # Allow $FABSCAN_USER to change the config and setting files
 chown -R $FABSCAN_USER:nogroup $CONF_DIR
@@ -25,6 +26,13 @@ chown -R $FABSCAN_USER:nogroup $LOG_DIR
 if [ ! -d $SCANS_DIR ];then
     mkdir -p $SCANS_DIR
 fi
+
+#create folder for pid file
+if [ ! -d $PID_DIR ];then
+    mkdir -p $PID_DIR
+    chown -R $FABSCAN_USER:nogroup $PID_DIR
+fi
+
 # Change permission to allow $FABSCAN_USER to write data
 chown -R $FABSCAN_USER:nogroup $SCANS_DIR
 
