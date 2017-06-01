@@ -47,6 +47,7 @@ stop() {
                     then
                         echo "$NAME is running shutting down..."
                         kill -9 $PID
+                        rm $PIDFILE
                     fi
                 fi
             fi
