@@ -9,7 +9,7 @@
 (function() {
   var m, mods;
 
-  mods = ['common.services.envProvider', 'common.filters.currentStateFilter', 'common.filters.toLabelFilter', 'common.filters.toResolutionValue', 'fabscan.directives.FSWebglDirective', 'fabscan.directives.FSMJPEGStream', 'fabscan.directives.FSModalDialog', 'fabscan.directives.text', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSEnumService', 'fabscan.services.FSWebsocketConnectionFactory', 'fabscan.services.FSScanService', 'fabscan.services.FSi18nService', 'common.filters.scanDataAvailableFilter', 'common.services.Configuration', 'common.services.toastrWrapperSvc', 'fabscan.controller.FSPreviewController', 'fabscan.controller.FSAppController', 'fabscan.controller.FSNewsController', 'fabscan.controller.FSSettingsController', 'fabscan.controller.FSScanController', 'fabscan.controller.FSLoadingController', 'fabscan.controller.FSShareController', 'ngSanitize', 'ngTouch', '720kb.tooltips', 'ngProgress', 'vr.directives.slider', 'slickCarousel'];
+  mods = ['common.services.envProvider', 'common.filters.currentStateFilter', 'common.filters.toLabelFilter', 'common.filters.toResolutionValue', 'fabscan.directives.FSWebglDirective', 'fabscan.directives.FSMJPEGStream', 'fabscan.directives.FSModalDialog', 'fabscan.directives.text', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSEnumService', 'fabscan.services.FSWebsocketConnectionFactory', 'fabscan.services.FSScanService', 'fabscan.services.FSi18nService', 'common.filters.scanDataAvailableFilter', 'common.services.Configuration', 'common.services.toastrWrapperSvc', 'fabscan.controller.FSPreviewController', 'fabscan.controller.FSAppController', 'fabscan.controller.FSNewsController', 'fabscan.controller.FSSettingsController', 'fabscan.controller.FSScanController', 'fabscan.controller.FSLoadingController', 'fabscan.controller.FSShareController', 'ngSanitize', 'ngTouch', 'ngCookies', '720kb.tooltips', 'ngProgress', 'vr.directives.slider', 'slickCarousel'];
 
   /*
   */
@@ -252,7 +252,7 @@
             }
           });
           scope.$on(FSEnumService.events.ON_INFO_MESSAGE, function(event, data) {
-            if (data['message'] === 'SCANNING_TEXTURE') {
+            if (data['message'] === 'SCANNING_TEXTURE' || data['message'] === 'START_CALIBRATION') {
               scene.remove(turntable);
             }
             if (data['message'] === 'SCANNING_OBJECT') {
@@ -260,7 +260,7 @@
                 scene.add(turntable);
               }
             }
-            if (data['message'] === 'SCAN_CANCELED') {
+            if (data['message'] === 'SCAN_CANCELED' || data['message'] === 'FINISHED_CALIBRATION') {
               scope.clearView();
               if (!scene.getObjectByName('turntable')) {
                 scene.add(turntable);
@@ -590,8 +590,10 @@
             renderer.render(scene, camera);
           };
           scope.$watch("newPoints", function(newValue, oldValue) {
-            if (newValue !== oldValue) {
-              scope.addPoints(newValue);
+            if (newValue !== [] || newVlaue !== void 0 || newValue !== null) {
+              if (newValue !== oldValue) {
+                scope.addPoints(newValue);
+              }
             }
           });
           scope.$watch("fillcontainer + width + height", function() {
@@ -974,10 +976,12 @@ Example of a 'common' filter that can be shared by all views
         var message;
 
         message = {};
+        service.initStartTime();
         message = {
           event: FSEnumService.events.COMMAND,
           data: {
-            command: FSEnumService.commands.CALIBRATE
+            command: FSEnumService.commands.CALIBRATE,
+            startTime: service.getStartTime()
           }
         };
         FSMessageHandlerService.sendData(message);
@@ -1194,6 +1198,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       $scope.firmware_version = void 0;
       $scope.scanLoading = false;
       $scope.appIsInitialized = false;
+      $scope.isCalibrating = false;
       $scope.appIsUpgrading = false;
       $scope.isConnected = false;
       $scope.initError = false;
@@ -1285,6 +1290,11 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         if (data['state'] === FSEnumService.states.IDLE) {
           ngProgress.complete();
         }
+        if (data['state'] === FSEnumService.states.CALIBRATING) {
+          $scope.isCalibrating = true;
+        } else {
+          $scope.isCalibrating = false;
+        }
         return $scope.$apply();
       });
       $scope.$on(FSEnumService.events.ON_INFO_MESSAGE, function(event, data) {
@@ -1348,13 +1358,47 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
   name = "fabscan.controller.FSNewsController";
 
   angular.module(name, []).controller(name, [
-    '$log', '$scope', '$http', 'common.services.Configuration', function($log, $scope, $http, configuration) {
+    '$log', '$scope', '$http', '$timeout', '$cookies', '$q', 'common.services.Configuration', function($log, $scope, $http, $timeout, $cookies, $q, configuration) {
+      var deferred, hashCode, timeoutPromise;
+
+      hashCode = function(str) {
+        var char, hash, i;
+
+        hash = 0;
+        if (str.length === 0) {
+          return hash;
+        }
+        i = 0;
+        while (i < str.length) {
+          char = str.charCodeAt(i);
+          hash = (hash << 5) - hash + char;
+          hash = hash & hash;
+          i++;
+        }
+        return hash;
+      };
+      timeoutPromise = $timeout((function() {
+        deferred.resolve();
+        console.log('News request timeout...');
+        $scope.displayNews(false);
+      }), 250);
+      deferred = $q.defer();
       $scope.news = "No news available.";
       return $http({
         method: 'GET',
-        url: configuration.installation.newsurl
+        url: configuration.installation.newsurl,
+        timeout: deferred.promise
       }).success(function(data, status, headers, config) {
-        return $scope.news = data;
+        var newsHASH;
+
+        newsHASH = hashCode(data);
+        if (newsHASH === $cookies.newsHASH) {
+          $log.debug("Nothing new here");
+        } else {
+          $log.debug("Some news are available");
+        }
+        $scope.news = data;
+        return $timeout.cancel(timeoutPromise);
       }).error(function(data, status, headers, config) {
         return $scope.news = "Error retrieving news.";
       });
@@ -1388,6 +1432,9 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       $scope.startTime = null;
       $scope.sampledRemainingTime = 0;
       $scope.remainingTimeString = "0 minutes 0 seconds";
+      if (FSScanService.getScannerState() === FSEnum.states.CALIBRATING) {
+        $scope.showStream = true;
+      }
       $scope.$on(FSEnum.events.ON_STATE_CHANGED, function(event, data) {
         if (data['state'] === FSEnum.states.IDLE) {
           return $scope.showStream = false;

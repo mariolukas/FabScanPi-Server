@@ -78398,6 +78398,204 @@ angular.module('vr.directives.slider', ['ngTouch']).directive('slider',
 
 !function(a){"use strict";a.module("720kb.tooltips",[]).directive("tooltips",["$window","$compile","$interpolate",function(b,c,d){var e=8,f=9,g=10,h="_720kb-tooltip-",i=d.startSymbol(),j=d.endSymbol();return{restrict:"A",scope:{},link:function(d,k,l){function m(){M&&x||(x=!0,d.initTooltip(G)),I&&d.tooltipTryPosition(),d.showTooltip()}function n(){d.hideTooltip()}function o(){d.hideTooltip(),d.initTooltip(F)}var p,q,r,s,t,u,v,w,x=!1,y=a.element(k[0]),z=a.element(b.document.getElementsByTagName("body")[0]),A=l.tooltipTitle||l.title||"",B=l.tooltipContent||"",C=l.tooltipHtml||"",D=l.tooltipShowTrigger||"mouseover",E=l.tooltipHideTrigger||"mouseleave",F=l.tooltipSide||"top",G=F,H=l.tooltipSize||"medium",I="undefined"!=typeof l.tooltipTry&&null!==l.tooltipTry?d.$eval(l.tooltipTry):!0,J=l.tooltipClass||"",K=(l.tooltipSpeed||"medium").toLowerCase(),L=l.tooltipDelay||0,M="undefined"!=typeof l.tooltipLazy&&null!==l.tooltipLazy?d.$eval(l.tooltipLazy):!0,N="undefined"!=typeof l.tooltipCloseButton&&null!==l.tooltipCloseButton,O=l.tooltipCloseButton||"",P='<div class="_720kb-tooltip '+h+H+'">';N&&(P=P+'<span class="'+h+'close-button" ng-click="hideTooltip()"> '+O+" </span>"),P=P+'<div class="'+h+'title"> '+i+"title"+j+"</div>"+i+"content"+j+C+' <span class="'+h+'caret"></span></div>',d.title=A,d.content=B,d.html=C,d.parseSpeed=function(){switch(K){case"fast":K=100;break;case"medium":K=450;break;case"slow":K=800;break;default:K=Number(K)}},p=c(P)(d),p.addClass(J),z.append(p),d.isTooltipEmpty=function(){return d.title||d.content||d.html?void 0:!0},d.initTooltip=function(a){d.isTooltipEmpty()?p.css("visibility","hidden"):(p.css("visibility",""),t=y[0].offsetHeight,u=y[0].offsetWidth,v=d.getRootOffsetTop(y[0],0),w=d.getRootOffsetLeft(y[0],0),q=p[0].offsetHeight,r=p[0].offsetWidth,d.parseSpeed(),d.tooltipPositioning(a))},d.getRootOffsetTop=function(a,b){return null===a.offsetParent?b+a.offsetTop:d.getRootOffsetTop(a.offsetParent,b+a.offsetTop-a.scrollTop)},d.getRootOffsetLeft=function(a,b){return null===a.offsetParent?b+a.offsetLeft:d.getRootOffsetLeft(a.offsetParent,b+a.offsetLeft-a.scrollLeft)},d.bindShowTriggers=function(){y.bind(D,m)},d.bindHideTriggers=function(){y.bind(E,n)},d.clearTriggers=function(){y.unbind(D,m),y.unbind(E,n)},d.bindShowTriggers(),d.showTooltip=function(){p.addClass(h+"open"),p.css("transition","opacity "+K+"ms linear"),L&&p.css("transition-delay",L+"ms"),d.clearTriggers(),d.bindHideTriggers()},d.hideTooltip=function(){p.removeClass(h+"open"),p.css("transition",""),d.clearTriggers(),d.bindShowTriggers()},d.removePosition=function(){p.removeClass(h+"left").removeClass(h+"right").removeClass(h+"top").removeClass(h+"bottom ")},d.tooltipPositioning=function(a){d.removePosition();var b,c;"small"===H?s=e:"medium"===H?s=f:"large"===H&&(s=g),"left"===a&&(b=v+t/2-q/2,c=w-(r+s),p.css("top",b+"px"),p.css("left",c+"px"),p.addClass(h+"left")),"right"===a&&(b=v+t/2-q/2,c=w+u+s,p.css("top",b+"px"),p.css("left",c+"px"),p.addClass(h+"right")),"top"===a&&(b=v-s-q,c=w+u/2-r/2,p.css("top",b+"px"),p.css("left",c+"px"),p.addClass(h+"top")),"bottom"===a&&(b=v+t+s,c=w+u/2-r/2,p.css("top",b+"px"),p.css("left",c+"px"),p.addClass(h+"bottom"))},d.tooltipTryPosition=function(){var a=p[0].offsetHeight,c=p[0].offsetWidth,e=p[0].offsetTop,f=p[0].offsetLeft,g=b.outerWidth,h=b.outerHeight,i=g-(c+f),j=h-(a+e),k=y[0].offsetHeight,l=y[0].offsetWidth,m=y[0].offsetLeft,n=y[0].offsetTop,o=g-(m+l),q=h-(k+n),r={left:f,top:e,bottom:j,right:i},s={left:m,right:o,top:n,bottom:q},t=Object.keys(s).reduce(function(a,b){return s[a]>s[b]?a:b}),u=Object.keys(r).reduce(function(a,b){return r[a]<r[b]?a:b});F!==t&&r[u]<20&&(G=t,d.tooltipPositioning(G),d.initTooltip(t))},a.element(b).bind("resize",o),d.$on("$destroy",function(){a.element(b).unbind("resize",o),d.clearTriggers(),p.remove()}),l.tooltipTitle&&l.$observe("tooltipTitle",function(a){d.title=a,d.initTooltip(G)}),l.title&&l.$observe("title",function(a){d.title=a,d.initTooltip(G)}),l.tooltipContent&&l.$observe("tooltipContent",function(a){d.content=a,d.initTooltip(G)}),l.tooltipHtml&&l.$observe("tooltipHtml",function(a){d.html=a,d.initTooltip(G)})}}}])}(angular);
 //# sourceMappingURL=angular-tooltips.sourcemap.map
+'use strict';
+
+/**
+ * @ngdoc module
+ * @name ngCookies
+ * @description
+ *
+ * # ngCookies
+ *
+ * The `ngCookies` module provides a convenient wrapper for reading and writing browser cookies.
+ *
+ *
+ * <div doc-module-components="ngCookies"></div>
+ *
+ * See {@link ngCookies.$cookies `$cookies`} and
+ * {@link ngCookies.$cookieStore `$cookieStore`} for usage.
+ */
+
+
+angular.module('ngCookies', ['ng']).
+/**
+ * @ngdoc service
+ * @name $cookies
+ *
+ * @description
+ * Provides read/write access to browser's cookies.
+ *
+ * Only a simple Object is exposed and by adding or removing properties to/from this object, new
+ * cookies are created/deleted at the end of current $eval.
+ * The object's properties can only be strings.
+ *
+ * Requires the {@link ngCookies `ngCookies`} module to be installed.
+ *
+ * @example
+ *
+ * ```js
+ * angular.module('cookiesExample', ['ngCookies'])
+ *   .controller('ExampleController', ['$cookies', function($cookies) {
+   *     // Retrieving a cookie
+   *     var favoriteCookie = $cookies.myFavorite;
+   *     // Setting a cookie
+   *     $cookies.myFavorite = 'oatmeal';
+   *   }]);
+ * ```
+ */
+factory('$cookies', ['$rootScope', '$browser', function ($rootScope, $browser) {
+    var cookies = {},
+        lastCookies = {},
+        lastBrowserCookies,
+        runEval = false,
+        copy = angular.copy,
+        isUndefined = angular.isUndefined;
+
+    //creates a poller fn that copies all cookies from the $browser to service & inits the service
+    $browser.addPollFn(function() {
+        var currentCookies = $browser.cookies();
+        if (lastBrowserCookies != currentCookies) { //relies on browser.cookies() impl
+            lastBrowserCookies = currentCookies;
+            copy(currentCookies, lastCookies);
+            copy(currentCookies, cookies);
+            if (runEval) $rootScope.$apply();
+        }
+    })();
+
+    runEval = true;
+
+    //at the end of each eval, push cookies
+    //TODO: this should happen before the "delayed" watches fire, because if some cookies are not
+    //      strings or browser refuses to store some cookies, we update the model in the push fn.
+    $rootScope.$watch(push);
+
+    return cookies;
+
+
+    /**
+     * Pushes all the cookies from the service to the browser and verifies if all cookies were
+     * stored.
+     */
+    function push() {
+        var name,
+            value,
+            browserCookies,
+            updated;
+
+        //delete any cookies deleted in $cookies
+        for (name in lastCookies) {
+            if (isUndefined(cookies[name])) {
+                $browser.cookies(name, undefined);
+            }
+        }
+
+        //update all cookies updated in $cookies
+        for(name in cookies) {
+            value = cookies[name];
+            if (!angular.isString(value)) {
+                value = '' + value;
+                cookies[name] = value;
+            }
+            if (value !== lastCookies[name]) {
+                $browser.cookies(name, value);
+                updated = true;
+            }
+        }
+
+        //verify what was actually stored
+        if (updated){
+            updated = false;
+            browserCookies = $browser.cookies();
+
+            for (name in cookies) {
+                if (cookies[name] !== browserCookies[name]) {
+                    //delete or reset all cookies that the browser dropped from $cookies
+                    if (isUndefined(browserCookies[name])) {
+                        delete cookies[name];
+                    } else {
+                        cookies[name] = browserCookies[name];
+                    }
+                    updated = true;
+                }
+            }
+        }
+    }
+}]).
+
+
+/**
+ * @ngdoc service
+ * @name $cookieStore
+ * @requires $cookies
+ *
+ * @description
+ * Provides a key-value (string-object) storage, that is backed by session cookies.
+ * Objects put or retrieved from this storage are automatically serialized or
+ * deserialized by angular's toJson/fromJson.
+ *
+ * Requires the {@link ngCookies `ngCookies`} module to be installed.
+ *
+ * @example
+ *
+ * ```js
+ * angular.module('cookieStoreExample', ['ngCookies'])
+ *   .controller('ExampleController', ['$cookieStore', function($cookieStore) {
+   *     // Put cookie
+   *     $cookieStore.put('myFavorite','oatmeal');
+   *     // Get cookie
+   *     var favoriteCookie = $cookieStore.get('myFavorite');
+   *     // Removing a cookie
+   *     $cookieStore.remove('myFavorite');
+   *   }]);
+ * ```
+ */
+factory('$cookieStore', ['$cookies', function($cookies) {
+
+    return {
+        /**
+         * @ngdoc method
+         * @name $cookieStore#get
+         *
+         * @description
+         * Returns the value of given cookie key
+         *
+         * @param {string} key Id to use for lookup.
+         * @returns {Object} Deserialized cookie value.
+         */
+        get: function(key) {
+            var value = $cookies[key];
+            return value ? angular.fromJson(value) : value;
+        },
+
+        /**
+         * @ngdoc method
+         * @name $cookieStore#put
+         *
+         * @description
+         * Sets a value for given cookie key
+         *
+         * @param {string} key Id for the `value`.
+         * @param {Object} value Value to be stored.
+         */
+        put: function(key, value) {
+            $cookies[key] = angular.toJson(value);
+        },
+
+        /**
+         * @ngdoc method
+         * @name $cookieStore#remove
+         *
+         * @description
+         * Remove given cookie
+         *
+         * @param {string} key Id of the key-value pair to delete.
+         */
+        remove: function(key) {
+            delete $cookies[key];
+        }
+    };
+
+}]);
 /**
  * @license AngularJS v1.2.26
  * (c) 2010-2014 Google, Inc. http://angularjs.org

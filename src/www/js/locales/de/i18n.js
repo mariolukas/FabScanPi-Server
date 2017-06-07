@@ -21,4 +21,5 @@ window.i18n["main"]["MESHING_DONE"] = function(d){return "Meshed file is availab
 window.i18n["main"]["START_CALIBRATION"] = function(d){return "Calibration started."}
 window.i18n["main"]["FINISHED_CALIBRATION"] = function(d){return "Calibration finished."}
 window.i18n["main"]["UPGRADE_IN_PROGRESS"] = function(d){return "Software wird aktualisiert..."}
+window.i18n["main"]["SCANNER_IN_CALIBRATION_MODE"] = function(d){return "Scanner wird kalibriert. Bitte warten..."}
 })();

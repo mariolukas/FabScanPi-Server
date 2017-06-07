@@ -55,6 +55,7 @@
 							</div>
 					</div>
 			</div>
+
     <div id="top-bar">
 
     </div>
@@ -375,8 +376,11 @@
 
                          </div>
                      </div>
-                     <div style="font-size:1.2em; color:darkslategrey;" ng-if="sampledRemainingTime > 0 && ('SCANNING' | currentState)"  class="timeRemaining">About {{remainingTimeString}} remaining</div>
-           </div>
+                     <div style="font-size:1.2em; color:white;" ng-if="sampledRemainingTime > 0 && ('SCANNING' | currentState)"  class="timeRemaining">About {{remainingTimeString}} remaining</div>
+                     <div style="font-size:1.2em; color:white; bottom: 100px" class="timeRemaining" ng-if="isCalibrating">
+                         <div text="main.SCANNER_IN_CALIBRATION_MODE"></div>
+                     </div>
+                 </div>
 
         <div id="controlpanel" class="footer row" style="background-color: grey">
 
