@@ -3,8 +3,8 @@ Generic linux daemon base class for python 3.x
 Originally from http://www.jejik.com/articles/2007/02/a_simple_unix_linux_daemon_in_python/#c35
 """
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
+__copyright__ = "Copyright 2017"
+__license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 

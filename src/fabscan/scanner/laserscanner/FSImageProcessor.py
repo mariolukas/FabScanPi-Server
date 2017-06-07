@@ -1,6 +1,6 @@
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
+__copyright__ = "Copyright 2017"
+__license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
@@ -289,7 +289,7 @@ class ImageProcessor(ImageProcessorInterface):
         if point_cloud is not None and len(point_cloud) > 0:
             rho = np.sqrt(np.square(point_cloud[0, :]) + np.square(point_cloud[1, :]))
             z = point_cloud[2, :]
-            turntable_radius = 70
+            turntable_radius = int(self.config.turntable.radius)
             idx = np.where((z >= 0) &
                            (rho >= -turntable_radius) &
                            (rho <= turntable_radius))[0]

@@ -1,6 +1,5 @@
 import numpy as np
 from scipy import optimize
-import time
 import logging
 import struct
 from fabscan.util.FSInject import singleton
@@ -10,7 +9,6 @@ import cv2
 
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
-from fabscan.FSEvents import FSEventManagerSingleton
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
@@ -31,7 +29,7 @@ from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
 )
 class FSCalibration(FSCalibrationInterface):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
-        # super(FSCalibrationInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
+        #super(FSCalibrationInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
 
         self._imageprocessor = imageprocessor
         self._hardwarecontroller = hardwarecontroller
@@ -47,7 +45,7 @@ class FSCalibration(FSCalibrationInterface):
         self.calibration_brightness = [60, 60, 60]
         self.quater_turn = int(self.config.turntable.steps / 4)
         self.steps_five_degree = 5.0 / (360.0 / self.config.turntable.steps)
-        self.total_positions = (self.quater_turn/self.steps_five_degree)*4
+        self.total_positions = int(((self.quater_turn/self.steps_five_degree)*4)+2)
         self.current_position = 0
 
         self.estimated_t = [-5, 90, 320]
@@ -114,8 +112,14 @@ class FSCalibration(FSCalibrationInterface):
                 _capture(position)
                 self._hardwarecontroller.turntable.step_interval(-self.steps_five_degree, speed=900)
                 position += self.steps_five_degree
-                self.current_position +=1
 
+                self._logger.debug("Calibration Position "+str(self.current_position)+ " of "+str(self.total_positions))
+                message = {
+                    "progress": self.current_position,
+                    "resolution": self.total_positions
+                }
+                #self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+                self.current_position += 1
             else:
                 break
 
@@ -190,7 +194,7 @@ class FSCalibration(FSCalibrationInterface):
                     #self.settings.camera.contrast = 40
                     self.settings.camera.brightness = 70
                     self._hardwarecontroller.led.off()
-                    for i in xrange(self.config.laser.numbers):
+                    for i in xrange(self.config.laser.number):
                         image = self._capture_laser(i)
                         image = self._imageprocessor.pattern_mask(image, corners)
                         self.image = image
@@ -240,7 +244,7 @@ class FSCalibration(FSCalibrationInterface):
         response = None
         # Laser triangulation
         # Save point clouds
-        for i in xrange(self.config.laser.numbers):
+        for i in xrange(self.config.laser.number):
             self.save_point_cloud('PC' + str(i) + '.ply', self._point_cloud[i])
 
         self.distance = [None, None]
@@ -248,7 +252,7 @@ class FSCalibration(FSCalibrationInterface):
         self.std = [None, None]
 
         # Compute planes
-        for i in xrange(self.config.laser.numbers):
+        for i in xrange(self.config.laser.number):
             #if self._is_calibrating:
                 plane = self.compute_plane(i, self._point_cloud[i])
                 self.distance[i], self.normal[i], self.std[i] = plane

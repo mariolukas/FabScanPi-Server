@@ -1,6 +1,6 @@
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
+__copyright__ = "Copyright 2017"
+__license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
@@ -247,7 +247,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self._scan_contrast = self.settings.camera.contrast
         self._scan_saturation = self.settings.camera.saturation
 
-        self.settings.camera.brightness = 45
+        self.settings.camera.brightness = 50
         self.settings.camera.contrast = 0
         self.settings.camera.saturation = 0
         self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)

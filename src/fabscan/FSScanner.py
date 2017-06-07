@@ -1,6 +1,6 @@
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
+__copyright__ = "Copyright 2017"
+__license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
@@ -94,7 +94,10 @@ class FSScanner(threading.Thread):
         elif command == FSCommand.START:
             if self._state is FSState.SETTINGS:
                 self._logger.info("Start command received...")
-
+                # FIXME: ( or find better solution )
+                # needed to be done here, cause raspberry has not a real time clock,
+                # when no internet connection is availabale on the fabscan the time
+                # will be set (default) to 1970, this leads to a wrong calculation
                 self.settings.startTime = event.startTime
 
                 self.set_state(FSState.SCANNING)
@@ -118,8 +121,9 @@ class FSScanner(threading.Thread):
         # Start calibration
         elif command == FSCommand.CALIBRATE:
             self._logger.debug("Calibration started....")
-            self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START_CALIBRATION})
+
             self.set_state(FSState.CALIBRATING)
+            self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START_CALIBRATION})
 
         elif command == FSCommand.CALIBRATION_COMPLETE:
             self.set_state(FSState.IDLE)

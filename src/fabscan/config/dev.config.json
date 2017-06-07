@@ -5,7 +5,7 @@
     },
     "laser": {
         "steps": 3200,
-        "numbers": 1,
+        "number": 1,
         "rotation_steps": 5
     },
     "scanner_type": "laserscanner",
@@ -81,7 +81,8 @@
     },
     "process_numbers": 4,
     "turntable": {
-        "steps": 3200
+        "steps": 3200,
+        "radius": 70
     },
     "camera": {
         "resolution": {
@@ -102,5 +103,5 @@
         "autoflash": "True",
         "port": "/dev/ttyAMA0"
     },
-    "texture_illumination": 200
+    "texture_illumination": 140
 }

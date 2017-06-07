@@ -1,6 +1,6 @@
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
+__copyright__ = "Copyright 2017"
+__license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
@@ -273,7 +273,7 @@ class PiCam(threading.Thread):
         time.sleep(2)
 
 
-    def setExposureMode(self, auto_exposure=False, exposure_type="flash"):
+    def setExposureMode(self, auto_exposure=False, exposure_type="flash" ):
                 if not auto_exposure:
 
                     self.camera.iso = 120
@@ -287,9 +287,10 @@ class PiCam(threading.Thread):
                     self.camera.awb_gains = g
 
                 else:
+                    # Now fix the values
+                    #self.camera.exposure_mode = exposure_type
                     self.camera.awb_mode = exposure_type
-                    time.sleep(1.4)
-                    self.flushStream()
+                    time.sleep(1)
 
 
 class DummyCam:
