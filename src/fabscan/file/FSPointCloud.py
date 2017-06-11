@@ -81,9 +81,9 @@ class FSPointCloud():
                 for i in xrange(self.get_size()):
                     stream.write(struct.pack("<fffBBB",
                                             self.points[0][i], self.points[1][i], self.points[2][i],
-                                            int(self.texture[0][i]), int(self.texture[1][i]), int(self.texture[2][i])))
+                                            int(self.texture[2][i]), int(self.texture[1][i]), int(self.texture[0][i])))
             else:
                 for i in xrange(self.get_size()):
                     stream.write("{0} {1} {2} {3} {4} {5}\n".format(
                         self.points[0][i], self.points[1][i], self.points[2][i],
-                        int(self.texture[0][i]), int(self.texture[1][i]), int(self.texture[2][i])))
+                        int(self.texture[2][i]), int(self.texture[1][i]), int(self.texture[0][i])))

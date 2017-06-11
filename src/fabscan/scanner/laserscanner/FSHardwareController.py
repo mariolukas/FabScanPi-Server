@@ -36,7 +36,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.settings = settings
 
         self._logger = logging.getLogger(__name__)
-
+        self._settings_mode_is_off = True
         self.camera = None
         self._image_processor = imageprocessor
         self.camera = FSCamera()
@@ -58,14 +58,19 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         #self.serial_connection.flush()
 
     def settings_mode_on(self):
+        self._settings_mode_is_off = False
+        self.camera.device.flushStream()
+        self.camera.device.startStream()
         self.laser.on(laser=0)
         self.turntable.start_turning()
-        self.camera.device.startStream()
+
 
     def settings_mode_off(self):
+        self._settings_mode_is_off = True
         self.turntable.stop_turning()
         self.led.off()
         self.laser.off(laser=0)
+        self.camera.device.stopStream()
 
     def get_picture(self):
         img = self.camera.device.getFrame()

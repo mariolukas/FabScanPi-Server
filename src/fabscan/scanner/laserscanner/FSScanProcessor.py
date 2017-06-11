@@ -234,10 +234,8 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.settings.camera.contrast = 0
         self.settings.camera.saturation = 0
         self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
-        self.hardwareController.camera.device.startStream(auto_exposure=True)
-
-        time.sleep(3)
         self.hardwareController.camera.device.flushStream()
+        self.hardwareController.camera.device.startStream(exposure_type="flash")
 
 
     def finish_texture_scan(self):

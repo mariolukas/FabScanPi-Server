@@ -176,6 +176,7 @@ class PiCam(threading.Thread):
         self.camera_buffer = cambuffer
         self.awb_default_gain = 0
         self.is_idle = True
+        self._current_mode = 'custom'
         self._logger = logging.getLogger(__name__)
 
         self.start()
@@ -190,7 +191,6 @@ class PiCam(threading.Thread):
 
                 self.camera.resolution = (self.config.camera.resolution.width, self.config.camera.resolution.height)
                 self.camera.framerate = 24
-                time.sleep(2)
 
                 while True:
                     if not self.is_idle:
@@ -261,7 +261,6 @@ class PiCam(threading.Thread):
         self.semaphore.acquire()
         self.is_idle = False
         self.semaphore.release()
-        self.camera_buffer.flush()
 
     def stopStream(self):
         self.semaphore.acquire()
@@ -270,27 +269,29 @@ class PiCam(threading.Thread):
 
     def flushStream(self):
         self.camera_buffer.flush()
-        time.sleep(2)
 
 
-    def setExposureMode(self, auto_exposure=False, exposure_type="flash" ):
+    def setExposureMode(self, auto_exposure=False, exposure_type="flash"):
                 if not auto_exposure:
-
-                    self.camera.iso = 120
-                    # Wait for the automatic gain control to settle
-                    time.sleep(1.4)
-                    # Now fix the values
-                    self.camera.shutter_speed = self.camera.exposure_speed
-                    self.camera.exposure_mode = 'off'
-                    g = self.camera.awb_gains
-                    self.camera.awb_mode = 'off'
-                    self.camera.awb_gains = g
+                    if self._current_mode is not 'custom':
+                        self.camera.iso = 120
+                        # Wait for the automatic gain control to settle
+                        time.sleep(1.4)
+                        # Now fix the values
+                        self.camera.shutter_speed = self.camera.exposure_speed
+                        self.camera.exposure_mode = 'off'
+                        g = self.camera.awb_gains
+                        self.camera.awb_mode = 'off'
+                        self.camera.awb_gains = g
+                        self._current_mode = 'custom'
 
                 else:
-                    # Now fix the values
-                    #self.camera.exposure_mode = exposure_type
-                    self.camera.awb_mode = exposure_type
-                    time.sleep(1)
+                    if self._current_mode is not 'auto':
+                        # Now fix the values
+                        #self.camera.exposure_mode = exposure_type
+                        self.camera.awb_mode = exposure_type
+                        time.sleep(1)
+                        self._current_mode = 'auto'
 
 
 class DummyCam:

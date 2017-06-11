@@ -1447,6 +1447,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         if (data['message'] === 'SCANNING_TEXTURE') {
           $scope.streamUrl = Configuration.installation.httpurl + 'stream/texture.mjpeg';
           $scope.showStream = true;
+          $scope.$apply();
         }
         if (data['message'] === 'START_CALIBRATION') {
           $scope.streamUrl = Configuration.installation.httpurl + 'stream/texture.mjpeg';
@@ -1459,6 +1460,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         if (data['message'] === 'SCANNING_OBJECT') {
           $scope.showStream = false;
           $scope.streamUrl = "";
+          $scope.$apply();
         }
         if (data['message'] === 'SCAN_COMPLETE') {
           FSScanService.setScanId(data['scan_id']);
