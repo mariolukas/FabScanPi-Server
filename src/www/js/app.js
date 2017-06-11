@@ -524,7 +524,7 @@
             var color, degree, geometry, i, material, new_colors, new_positions;
 
             scope.scanComplete = false;
-            if (points.length > 0) {
+            if (points && (points.length > 0)) {
               if (pointcloud) {
                 currentPointcloudAngle = pointcloud.rotation.y + 80;
                 scene.remove(pointcloud);
@@ -590,7 +590,7 @@
             renderer.render(scene, camera);
           };
           scope.$watch("newPoints", function(newValue, oldValue) {
-            if (newValue !== [] || newVlaue !== void 0 || newValue !== null) {
+            if (newValue !== []) {
               if (newValue !== oldValue) {
                 scope.addPoints(newValue);
               }

@@ -121,7 +121,7 @@ class FSScanner(threading.Thread):
         # Start calibration
         elif command == FSCommand.CALIBRATE:
             self._logger.debug("Calibration started....")
-
+            self.settings.startTime = event.startTime
             self.set_state(FSState.CALIBRATING)
             self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START_CALIBRATION})
 
@@ -163,7 +163,7 @@ class FSScanner(threading.Thread):
 
             message = {
                 "client": event['client'],
-                "state": self._state,
+                "state": self.get_state(),
                 "server_version": 'v.'+__version__,
                 "firmware_version": str(hardware_info),
                 "settings": self.settings.todict(self.settings),
@@ -182,3 +182,6 @@ class FSScanner(threading.Thread):
     def set_state(self, state):
         self._state = state
         self.eventManager.broadcast_client_message(FSEvents.ON_STATE_CHANGED, {'state': state})
+
+    def get_state(self):
+        return self._state

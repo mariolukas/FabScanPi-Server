@@ -29,13 +29,13 @@ from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
 )
 class FSCalibration(FSCalibrationInterface):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
-        #super(FSCalibrationInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
+        #super(FSCalibration, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
 
         self._imageprocessor = imageprocessor
         self._hardwarecontroller = hardwarecontroller
         self.config = config
         self.settings = settings
-        self.eventmanager = eventmanager
+        self._eventmanager = eventmanager.instance
 
         self.shape = None
         self.camera_matrix = None
@@ -78,18 +78,43 @@ class FSCalibration(FSCalibrationInterface):
         self.settings.camera.brightness = 60
         self.reset_calibration_values()
 
+        message = {
+            "message": "START_CALIBRATION",
+            "level": "info"
+        }
+        self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+
         self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
         self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
         self._hardwarecontroller.led.off()
         self._hardwarecontroller.turntable.disable_motors()
 
         if self._stop:
-            self._logger.debug("Calibration Stoped")
+            self._logger.debug("Calibration canceled...")
+            # send information to client that calibration is finished
+            message = {
+                "message": "STOPPED_CALIBRATION",
+                "level": "info"
+            }
+            self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
             self._stop = False
         else:
+
+            event = FSEvent()
+            event.command = 'CALIBRATION_COMPLETE'
+            self._eventmanager.publish(FSEvents.COMMAND, event)
+
+            # send information to client that calibration is finished
+            message = {
+                "message": "FINISHED_CALIBRATION",
+                "level": "info"
+            }
+            self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+
             self.config.save()
 
         self.current_position = 0
+
 
     def stop(self):
         self._stop = True
@@ -118,7 +143,7 @@ class FSCalibration(FSCalibrationInterface):
                     "progress": self.current_position,
                     "resolution": self.total_positions
                 }
-                #self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+                self._eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
                 self.current_position += 1
             else:
                 break

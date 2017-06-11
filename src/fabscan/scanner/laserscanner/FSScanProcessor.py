@@ -160,26 +160,9 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
     def start_calibration(self):
 
-        message = {
-            "message": "START_CALIBRATION",
-            "level": "info"
-        }
-        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-
-
         self.calibration.start()
 
-        event = FSEvent()
-        event.command = 'CALIBRATION_COMPLETE'
-        self.eventmanager.publish(FSEvents.COMMAND, event)
 
-
-        # send information to client that calibration is finished
-        message = {
-            "message": "FINISHED_CALIBRATION",
-            "level": "info"
-        }
-        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
     def stop_calibration(self):
         self.calibration.stop()
@@ -380,9 +363,9 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
                 new_point['y'] = str(point[2])
                 new_point['z'] = str(point[1])
 
-                new_point['r'] = str(texture[0][index])
+                new_point['b'] = str(texture[0][index])
                 new_point['g'] = str(texture[1][index])
-                new_point['b'] = str(texture[2][index])
+                new_point['r'] = str(texture[2][index])
 
                 points.append(new_point)
 

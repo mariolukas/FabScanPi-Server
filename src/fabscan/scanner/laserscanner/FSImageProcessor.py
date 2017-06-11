@@ -61,7 +61,7 @@ class ImageProcessor(ImageProcessorInterface):
         self.blur_value = 0
         self.window_enable = False
         self.window_value = 0
-        self.color = (255,255,255)
+        self.color = (255, 255, 255)
         self.refinement_method = ''
         self.image_height = self.config.camera.resolution.width
         self.image_width = self.config.camera.resolution.height

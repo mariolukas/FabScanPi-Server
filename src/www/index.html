@@ -114,7 +114,7 @@
                             <div>
                                 <div ng-class="{'fadeOut':!showThresholdValue}" class="slider-value-label">{{settings.threshold}}</div>
                                 <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Threshold</div>
-                                <slider style="width:70%; margin-left:1em;" floor="0" ceiling="255" step="1" precision="1" ng-model="settings.threshold"></slider>
+                                <slider style="width:70%; margin-left:1em;" floor="0" ceiling="60" step="1" precision="1" ng-model="settings.threshold"></slider>
                             </div>
                             <div>
                                 <div ng-class="{'longFadeOut':!showResolutionValue}" class="slider-value-label" >{{settings.resolution | toResolutionValue }}</div>
@@ -376,10 +376,8 @@
 
                          </div>
                      </div>
-                     <div style="font-size:1.2em; color:white;" ng-if="sampledRemainingTime > 0 && ('SCANNING' | currentState)"  class="timeRemaining">About {{remainingTimeString}} remaining</div>
-                     <div style="font-size:1.2em; color:white; bottom: 100px" class="timeRemaining" ng-if="isCalibrating">
-                         <div text="main.SCANNER_IN_CALIBRATION_MODE"></div>
-                     </div>
+                     <div style="font-size:1.2em; color:white;" ng-if="sampledRemainingTime > 0 && (('SCANNING' | currentState) || isCalibrating)"  class="timeRemaining"><span ng-if="isCalibrating" text="main.SCANNER_IN_CALIBRATION_MODE"><br></span><br> About {{remainingTimeString}} remaining</div>
+
                  </div>
 
         <div id="controlpanel" class="footer row" style="background-color: grey">
