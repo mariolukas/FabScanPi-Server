@@ -291,7 +291,10 @@ class PiCam(threading.Thread):
                         #self.camera.exposure_mode = exposure_type
                         self.camera.awb_mode = exposure_type
                         time.sleep(1)
+                        self.flushStream()
                         self._current_mode = 'auto'
+
+
 
 
 class DummyCam:

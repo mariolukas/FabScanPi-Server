@@ -2,6 +2,7 @@ import numpy as np
 from scipy import optimize
 import logging
 import struct
+import time
 from fabscan.util.FSInject import singleton
 from fabscan.file.FSImage import FSImage
 import cv2
@@ -75,9 +76,9 @@ class FSCalibration(FSCalibrationInterface):
         self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
         self.settings.camera.contrast = 30
         #self.settings.camera.saturation = 20
-        self.settings.camera.brightness = 60
+        self.settings.camera.brightness = 50
         self.reset_calibration_values()
-
+        self.settings.threshold = 25
         message = {
             "message": "START_CALIBRATION",
             "level": "info"
@@ -127,7 +128,7 @@ class FSCalibration(FSCalibrationInterface):
 
         if not self._stop:
             self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
-            self._hardwarecontroller.camera.device.startStream(exposure_type="auto")
+            self._hardwarecontroller.camera.device.startStream(auto_exposure=True, exposure_type="auto")
 
         position = 0
         while abs(position) < self.quater_turn * 2:

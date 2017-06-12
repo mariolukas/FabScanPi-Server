@@ -351,9 +351,9 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
         if event['image_type'] == 'depth':
 
-            self.append_points(event['point_cloud'], event['texture'])
-            point_cloud = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2])
+            point_cloud = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2], event['texture'][0], event['texture'][1], event['texture'][2])
             texture = event['texture']
+            self.append_points(point_cloud)
 
             for index, point in enumerate(point_cloud):
                 new_point = dict()
@@ -361,9 +361,9 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
                 new_point['y'] = str(point[2])
                 new_point['z'] = str(point[1])
 
-                new_point['b'] = str(texture[0][index])
-                new_point['g'] = str(texture[1][index])
                 new_point['r'] = str(texture[2][index])
+                new_point['g'] = str(texture[1][index])
+                new_point['b'] = str(texture[0][index])
 
                 points.append(new_point)
 
@@ -378,6 +378,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         }
 
         self.eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
+        del points[:]
 
         if self._progress == self._total:
             while not self.image_task_q.empty():
@@ -418,10 +419,10 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         self.hardwareController.camera.device.stopStream()
 
 
-    def append_points(self, point_cloud_set, texture_set):
+    def append_points(self, point_cloud_set):
         if self.point_cloud:
             self.point_cloud.append_points(point_cloud_set)
-            self.point_cloud.append_texture(texture_set)
+            #self.point_cloud.append_texture(texture_set)
 
     def get_resolution(self):
         return self.settings.resolution

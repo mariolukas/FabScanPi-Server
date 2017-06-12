@@ -1499,7 +1499,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
               _time_values = $scope.remainingTime;
             }
             $scope.sampledRemainingTime = parseFloat(Math.floor(median(_time_values)));
-            if ($scope.sampledRemainingTime >= 60) {
+            if ($scope.sampledRemainingTime > 60) {
               $scope.remainingTimeString = parseInt($scope.sampledRemainingTime / 60) + " minutes";
             } else {
               $scope.remainingTimeString = $scope.sampledRemainingTime + " seconds";

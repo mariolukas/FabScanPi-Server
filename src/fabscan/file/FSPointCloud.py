@@ -27,11 +27,13 @@ class FSPointCloud():
 
     def append_points(self, points):
         points = np.array(points)
+        #self.points = np.concatenate((self.points, points), axis=1)
         self.points = np.concatenate((self.points, points), axis=1)
 
     def append_texture(self, texture):
         texture = np.array(texture)
-        self.texture = np.concatenate((self.texture, texture), axis=1)
+        self.texture = np.hstack((self.texture, texture))
+        #self.texture = np.concatenate((self.texture, texture), axis=1)
 
     def get_size(self):
         return len(self.points[0])
@@ -55,7 +57,10 @@ class FSPointCloud():
         with open(self._dir_name +'/scan_' +filename + '.ply', 'wb') as f:
             self.save_scene_stream(f)
 
-    def save_scene_stream(self, stream, binary=True):
+        del self.points[:]
+        self.points = []
+
+    def save_scene_stream(self, stream, binary=False):
 
         frame = "ply\n"
         if binary:
@@ -81,9 +86,10 @@ class FSPointCloud():
                 for i in xrange(self.get_size()):
                     stream.write(struct.pack("<fffBBB",
                                             self.points[0][i], self.points[1][i], self.points[2][i],
-                                            int(self.texture[2][i]), int(self.texture[1][i]), int(self.texture[0][i])))
+                                            int(self.points[3][i]), int(self.points[4][i]), int(self.points[5][i])))
             else:
                 for i in xrange(self.get_size()):
+
                     stream.write("{0} {1} {2} {3} {4} {5}\n".format(
                         self.points[0][i], self.points[1][i], self.points[2][i],
-                        int(self.texture[2][i]), int(self.texture[1][i]), int(self.texture[0][i])))
+                        int(self.points[3][i]), int(self.points[4][i]), int(self.points[5][i])))
