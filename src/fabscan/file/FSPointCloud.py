@@ -6,6 +6,7 @@ __email__ = "info@mariolukas.de"
 
 import os
 import datetime
+import logging
 import struct
 import numpy as np
 from fabscan.FSConfig import ConfigInterface
@@ -18,17 +19,21 @@ from fabscan.FSVersion import __version__
 class FSPointCloud():
 
     def __init__(self, config, color=True):
-        self.points = np.array([[],[],[]])
+        self.points = []
         self.texture = np.array([[],[],[]])
         self.file_name = None
         self._dir_name = None
         self.color = color
         self.config = config
+        self._logger = logging.getLogger(__name__)
+
 
     def append_points(self, points):
-        points = np.array(points)
+        self.points += points
+        #points = np.array(points)
         #self.points = np.concatenate((self.points, points), axis=1)
-        self.points = np.concatenate((self.points, points), axis=1)
+        #self.points = np.concatenate((self.points, points), axis=1)
+
 
     def append_texture(self, texture):
         texture = np.array(texture)
@@ -36,7 +41,7 @@ class FSPointCloud():
         #self.texture = np.concatenate((self.texture, texture), axis=1)
 
     def get_size(self):
-        return len(self.points[0])
+        return len(self.points)
 
     def writeHeader(self):
         pass
@@ -83,13 +88,12 @@ class FSPointCloud():
         stream.write(frame)
         if self.get_size() > 0:
             if binary:
-                for i in xrange(self.get_size()):
+                for index, point in enumerate(self.points):
                     stream.write(struct.pack("<fffBBB",
-                                            self.points[0][i], self.points[1][i], self.points[2][i],
-                                            int(self.points[3][i]), int(self.points[4][i]), int(self.points[5][i])))
+                                            point[0], point[1], point[2],
+                                            int(point[5]), int(point[4]), int(point[3])))
             else:
-                for i in xrange(self.get_size()):
-
+                for index, point in enumerate(self.points):
                     stream.write("{0} {1} {2} {3} {4} {5}\n".format(
-                        self.points[0][i], self.points[1][i], self.points[2][i],
-                        int(self.points[3][i]), int(self.points[4][i]), int(self.points[5][i])))
+                        point[0], point[1], point[2],
+                        int(point[5]), int(point[4]), int(point[3])))

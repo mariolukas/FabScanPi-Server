@@ -8,6 +8,7 @@ import time
 import datetime
 import multiprocessing
 import logging
+import numpy as np
 
 
 from fabscan.FSConfig import ConfigInterface
@@ -351,8 +352,9 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
         if event['image_type'] == 'depth':
 
-            point_cloud = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2], event['texture'][0], event['texture'][1], event['texture'][2])
-            texture = event['texture']
+            point_cloud = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2],
+                              event['texture'][0], event['texture'][1], event['texture'][2])
+
             self.append_points(point_cloud)
 
             for index, point in enumerate(point_cloud):
@@ -361,9 +363,9 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
                 new_point['y'] = str(point[2])
                 new_point['z'] = str(point[1])
 
-                new_point['r'] = str(texture[2][index])
-                new_point['g'] = str(texture[1][index])
-                new_point['b'] = str(texture[0][index])
+                new_point['r'] = str(point[5])
+                new_point['g'] = str(point[4])
+                new_point['b'] = str(point[3])
 
                 points.append(new_point)
 
@@ -378,7 +380,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         }
 
         self.eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
-        del points[:]
+
 
         if self._progress == self._total:
             while not self.image_task_q.empty():
