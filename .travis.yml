@@ -8,11 +8,11 @@ before_install:
 before_script:
 - pip install mkdocs
 - VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}')
-- if [ -n $TRAVIS_TAG ]; then sed -i -e 's/'"$VERSION"'/'"$VERSION"'-b'"$TRAVIS_BUILD_NUMBER"'/g' debian/changelog; fi
+- if [ ! -z ${TRAVIS_TAG} ]; then sed -i -e 's/'"$VERSION"'/'"$VERSION"'-b'"$TRAVIS_BUILD_NUMBER"'/g' debian/changelog; fi
 - echo $TRAVIS_TAG
 script: make deb
 after_success:
-- if [ -n $TRAVIS_TAG ]; then curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/testing/; fi
+- if [ ! -z ${TRAVIS_TAG} ]; then curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/testing/; fi
 - NOW=`date +%Y-%m-%d-%H-%M`
 - mkdocs build
 - cd ..
