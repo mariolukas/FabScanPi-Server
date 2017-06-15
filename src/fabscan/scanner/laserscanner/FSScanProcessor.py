@@ -160,10 +160,7 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
             pass
 
     def start_calibration(self):
-
         self.calibration.start()
-
-
 
     def stop_calibration(self):
         self.calibration.stop()
@@ -213,10 +210,10 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
 
 
         if self._is_color_scan:
-            self._total = self._number_of_pictures * 2
+            self._total = self._number_of_pictures * 2 * self.config.laser.number
             self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
         else:
-            self._total = self._number_of_pictures
+            self._total = self._number_of_pictures * self.config.laser.number
             self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
 
     def init_texture_scan(self):
