@@ -170,6 +170,7 @@ class FSScanner(threading.Thread):
                 "upgrade": {
                     "available": self._upgrade_available,
                     "version": self._upgrade_version
+
                 }
             }
 

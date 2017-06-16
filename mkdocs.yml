@@ -15,7 +15,7 @@ extra_javascript:
 theme: readthedocs
 theme_dir: docs-theme
 extra:
-    version: 1.0
+    version: 0.4.0
 repo_url: https://github.com/mariolukas/FabScanPi-Server
 site_author: Mario Lukas
 site_favicon: images/fabscanpi_ICON.png
