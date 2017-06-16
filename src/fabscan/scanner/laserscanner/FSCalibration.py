@@ -43,11 +43,13 @@ class FSCalibration(FSCalibrationInterface):
         self.distortion_vector = None
         self.image_points = []
         self.object_points = []
-        self.calibration_brightness = [60, 60, 60]
+        self.calibration_illumination = [60, 60, 60]
         self.quater_turn = int(self.config.turntable.steps / 4)
         self.steps_five_degree = 5.0 / (360.0 / self.config.turntable.steps)
         self.total_positions = int(((self.quater_turn/self.steps_five_degree)*4)+2)
         self.current_position = 0
+        self.calibration_brightness = 60
+        self.calibration_contrast = 30
 
         self.estimated_t = [-5, 90, 320]
 
@@ -73,10 +75,10 @@ class FSCalibration(FSCalibrationInterface):
 
     def start(self):
         self._hardwarecontroller.turntable.enable_motors()
-        self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
-        self.settings.camera.contrast = 30
+        self._hardwarecontroller.led.on(self.calibration_illumination[0], self.calibration_illumination[1], self.calibration_illumination[2])
+        self.settings.camera.contrast = self.calibration_contrast
         #self.settings.camera.saturation = 20
-        self.settings.camera.brightness = 50
+        self.settings.camera.brightness = self.calibration_contrast
         self.reset_calibration_values()
         self.settings.threshold = 25
         message = {
@@ -85,10 +87,14 @@ class FSCalibration(FSCalibrationInterface):
         }
         self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
+        self._hardwarecontroller.camera.device.startStream(exposure_type="auto")
+
         self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
         self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
         self._hardwarecontroller.led.off()
         self._hardwarecontroller.turntable.disable_motors()
+
+        self._hardwarecontroller.camera.device.stopStream()
 
         if self._stop:
             self._logger.debug("Calibration canceled...")
@@ -128,7 +134,6 @@ class FSCalibration(FSCalibrationInterface):
 
         if not self._stop:
             self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
-            self._hardwarecontroller.camera.device.startStream(auto_exposure=True, exposure_type="auto")
 
         position = 0
         while abs(position) < self.quater_turn * 2:
@@ -151,7 +156,6 @@ class FSCalibration(FSCalibrationInterface):
 
         if not self._stop:
             self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
-            self._hardwarecontroller.camera.device.stopStream()
 
             _calibrate()
 
@@ -217,8 +221,7 @@ class FSCalibration(FSCalibrationInterface):
             try:
                 #Laser Calibration
                 if (position > 577 and position < 1022):
-                    #self.settings.camera.contrast = 40
-                    self.settings.camera.brightness = 70
+                    self.settings.camera.brightness = self.calibration_brightness+10
                     self._hardwarecontroller.led.off()
                     for i in xrange(self.config.laser.number):
                         image = self._capture_laser(i)
@@ -234,8 +237,8 @@ class FSCalibration(FSCalibrationInterface):
                         else:
                             self._point_cloud[i] = np.concatenate(
                                 (self._point_cloud[i], point_3d.T))
-                    self.settings.camera.contrast = 40
-                    self.settings.camera.brightness = 50
+                    self.settings.camera.contrast = self.calibration_contrast
+                    self.settings.camera.brightness = self.calibration_brightness
 
                 # Platform extrinsics
                 origin = corners[self.config.calibration.pattern.columns * (self.config.calibration.pattern.rows - 1)][0]
@@ -243,7 +246,8 @@ class FSCalibration(FSCalibrationInterface):
                 t = self._imageprocessor.compute_camera_point_cloud(
                     origin, distance, normal)
 
-            except:
+            except StandardError, e:
+                self._logger.error(e)
                 t = None
 
             if t is not None:
@@ -254,7 +258,7 @@ class FSCalibration(FSCalibrationInterface):
             else:
                 self.image = image
 
-        self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
+        self._hardwarecontroller.led.on(self.calibration_illumination[0], self.calibration_illumination[1], self.calibration_illumination[2])
 
     def _capture_pattern(self):
         #pattern_image = self._hardwarecontroller.get_pattern_image()
@@ -330,13 +334,9 @@ class FSCalibration(FSCalibrationInterface):
             self.config.calibration.laser_planes = response_laser_triangulation
             response = (True, (response_platform_extrinsics, response_laser_triangulation))
         else:
-            pass
-            # response = (False, ComboCalibrationError())
-        #else:
-        #    pass
-            # response = (False, CalibrationCancel())
+            self._logger.error("Calibration error...")
+            response = None
 
-        #self._is_calibrating = False
         self.image = None
 
         return response

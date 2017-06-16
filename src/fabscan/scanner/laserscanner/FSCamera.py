@@ -273,7 +273,6 @@ class PiCam(threading.Thread):
 
     def setExposureMode(self, auto_exposure=False, exposure_type="flash"):
                 if not auto_exposure:
-                    if self._current_mode is not 'custom':
                         self.camera.iso = 120
                         # Wait for the automatic gain control to settle
                         time.sleep(1.4)
@@ -286,15 +285,12 @@ class PiCam(threading.Thread):
                         self._current_mode = 'custom'
 
                 else:
-                    if self._current_mode is not 'auto':
                         # Now fix the values
                         #self.camera.exposure_mode = exposure_type
                         self.camera.awb_mode = exposure_type
                         time.sleep(1)
                         self.flushStream()
                         self._current_mode = 'auto'
-
-
 
 
 class DummyCam:
