@@ -5,7 +5,7 @@
     },
     "laser": {
         "steps": 3200,
-        "numbers": 1,
+        "number": 1,
         "rotation_steps": 5
     },
     "scanner_type": "laserscanner",
@@ -16,7 +16,7 @@
             "square_size": 11,
             "rows": 6,
             "columns": 9,
-            "origin_distance": 29
+            "origin_distance": 40
         },
         "camera_matrix": [
             [
