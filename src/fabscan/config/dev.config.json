@@ -5,7 +5,7 @@
     },
     "laser": {
         "steps": 3200,
-        "number": 2,
+        "number": 1,
         "rotation_steps": 5
     },
     "scanner_type": "laserscanner",

@@ -47,7 +47,7 @@ class FSCalibration(FSCalibrationInterface):
         self.quater_turn = int(self.config.turntable.steps / 4)
         self.steps_five_degree = 5.0 / (360.0 / self.config.turntable.steps)
         self.total_positions = int(((self.quater_turn/self.steps_five_degree)*4)+2)
-        self.current_position = 0
+        self.current_position = 1
         self.calibration_brightness = 60
         self.calibration_contrast = 30
 
@@ -66,7 +66,7 @@ class FSCalibration(FSCalibrationInterface):
         self.x = []
         self.y = []
         self.z = []
-        self.current_position = 0
+        self.current_position = 1
         self.shape = None
         self.camera_matrix = None
         self.distortion_vector = None
@@ -132,9 +132,8 @@ class FSCalibration(FSCalibrationInterface):
         # 90 degree turn
         # number of steps for 5 degree turn
 
-        if not self._stop:
-            self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
-
+        self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
+        time.sleep(0.5)
         position = 0
         while abs(position) < self.quater_turn * 2:
 
@@ -154,8 +153,9 @@ class FSCalibration(FSCalibrationInterface):
             else:
                 break
 
+        self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
+
         if not self._stop:
-            self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
 
             _calibrate()
 
@@ -247,7 +247,12 @@ class FSCalibration(FSCalibrationInterface):
                     origin, distance, normal)
 
             except StandardError, e:
-                self._logger.error(e)
+                self._logger.error("Laser Capture Error: "+str(e))
+                message = {
+                    "message": "LASER_CALIBRATION_ERROR",
+                    "level": "error"
+                }
+                self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
                 t = None
 
             if t is not None:
@@ -335,6 +340,11 @@ class FSCalibration(FSCalibrationInterface):
             response = (True, (response_platform_extrinsics, response_laser_triangulation))
         else:
             self._logger.error("Calibration error...")
+            message = {
+                "message": "CALIBRATION_CALCULATION_ERROR",
+                "level": "error"
+            }
+            self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
             response = None
 
         self.image = None
