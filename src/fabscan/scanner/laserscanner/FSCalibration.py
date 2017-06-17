@@ -1,8 +1,8 @@
 import numpy as np
 from scipy import optimize
+import time
 import logging
 import struct
-import time
 from fabscan.util.FSInject import singleton
 from fabscan.file.FSImage import FSImage
 import cv2
@@ -10,6 +10,7 @@ import cv2
 
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
+from fabscan.FSEvents import FSEventManagerSingleton
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
@@ -30,7 +31,7 @@ from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
 )
 class FSCalibration(FSCalibrationInterface):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
-        #super(FSCalibration, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
+        # super(FSCalibrationInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
 
         self._imageprocessor = imageprocessor
         self._hardwarecontroller = hardwarecontroller
@@ -43,13 +44,11 @@ class FSCalibration(FSCalibrationInterface):
         self.distortion_vector = None
         self.image_points = []
         self.object_points = []
-        self.calibration_illumination = [60, 60, 60]
+        self.calibration_brightness = [60, 60, 60]
         self.quater_turn = int(self.config.turntable.steps / 4)
         self.steps_five_degree = 5.0 / (360.0 / self.config.turntable.steps)
-        self.total_positions = int(((self.quater_turn/self.steps_five_degree)*4)+2)
-        self.current_position = 1
-        self.calibration_brightness = 60
-        self.calibration_contrast = 30
+        self.total_positions = (self.quater_turn/self.steps_five_degree)*4
+        self.current_position = 0
 
         self.estimated_t = [-5, 90, 320]
 
@@ -75,12 +74,13 @@ class FSCalibration(FSCalibrationInterface):
 
     def start(self):
         self._hardwarecontroller.turntable.enable_motors()
-        self._hardwarecontroller.led.on(self.calibration_illumination[0], self.calibration_illumination[1], self.calibration_illumination[2])
-        self.settings.camera.contrast = self.calibration_contrast
+        self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
+        self.settings.camera.contrast = 30
         #self.settings.camera.saturation = 20
-        self.settings.camera.brightness = self.calibration_contrast
+        self.settings.camera.brightness = 60
         self.reset_calibration_values()
         self.settings.threshold = 25
+
         message = {
             "message": "START_CALIBRATION",
             "level": "info"
@@ -93,8 +93,6 @@ class FSCalibration(FSCalibrationInterface):
         self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
         self._hardwarecontroller.led.off()
         self._hardwarecontroller.turntable.disable_motors()
-
-        self._hardwarecontroller.camera.device.stopStream()
 
         if self._stop:
             self._logger.debug("Calibration canceled...")
@@ -118,10 +116,9 @@ class FSCalibration(FSCalibrationInterface):
             }
             self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
-            self.config.save()
+
 
         self.current_position = 0
-
 
     def stop(self):
         self._stop = True
@@ -132,8 +129,10 @@ class FSCalibration(FSCalibrationInterface):
         # 90 degree turn
         # number of steps for 5 degree turn
 
-        self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
-        time.sleep(0.5)
+        if not self._stop:
+            self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
+            self._hardwarecontroller.camera.device.startStream(exposure_type="auto")
+
         position = 0
         while abs(position) < self.quater_turn * 2:
 
@@ -153,9 +152,9 @@ class FSCalibration(FSCalibrationInterface):
             else:
                 break
 
-        self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
-
         if not self._stop:
+            self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
+            self._hardwarecontroller.camera.device.stopStream()
 
             _calibrate()
 
@@ -221,9 +220,10 @@ class FSCalibration(FSCalibrationInterface):
             try:
                 #Laser Calibration
                 if (position > 577 and position < 1022):
-                    self.settings.camera.brightness = self.calibration_brightness+10
+                    #self.settings.camera.contrast = 40
+                    self.settings.camera.brightness = 70
                     self._hardwarecontroller.led.off()
-                    for i in xrange(self.config.laser.number):
+                    for i in xrange(self.config.laser.numbers):
                         image = self._capture_laser(i)
                         image = self._imageprocessor.pattern_mask(image, corners)
                         self.image = image
@@ -237,8 +237,8 @@ class FSCalibration(FSCalibrationInterface):
                         else:
                             self._point_cloud[i] = np.concatenate(
                                 (self._point_cloud[i], point_3d.T))
-                    self.settings.camera.contrast = self.calibration_contrast
-                    self.settings.camera.brightness = self.calibration_brightness
+                    self.settings.camera.contrast = 40
+                    self.settings.camera.brightness = 50
 
                 # Platform extrinsics
                 origin = corners[self.config.calibration.pattern.columns * (self.config.calibration.pattern.rows - 1)][0]
@@ -263,7 +263,7 @@ class FSCalibration(FSCalibrationInterface):
             else:
                 self.image = image
 
-        self._hardwarecontroller.led.on(self.calibration_illumination[0], self.calibration_illumination[1], self.calibration_illumination[2])
+        self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
     def _capture_pattern(self):
         #pattern_image = self._hardwarecontroller.get_pattern_image()
@@ -279,7 +279,7 @@ class FSCalibration(FSCalibrationInterface):
         response = None
         # Laser triangulation
         # Save point clouds
-        for i in xrange(self.config.laser.number):
+        for i in xrange(self.config.laser.numbers):
             self.save_point_cloud('PC' + str(i) + '.ply', self._point_cloud[i])
 
         self.distance = [None, None]
@@ -287,7 +287,7 @@ class FSCalibration(FSCalibrationInterface):
         self.std = [None, None]
 
         # Compute planes
-        for i in xrange(self.config.laser.number):
+        for i in xrange(self.config.laser.numbers):
             #if self._is_calibrating:
                 plane = self.compute_plane(i, self._point_cloud[i])
                 self.distance[i], self.normal[i], self.std[i] = plane
@@ -328,8 +328,8 @@ class FSCalibration(FSCalibrationInterface):
         response_laser_triangulation = []
         if self.std[0] < 1.0 and self.normal[0] is not None:
             response_laser_triangulation = [{"distance": self.distance[0], "normal":self.normal[0], "deviation":self.std[0]}]
-        elif self.std[1] < 1.0 and self.normal[1] is not None:
-            response_laser_triangulation.append({"distance": self.distance[1], "normal": self.normal[1], "deviation": self.std[1]})
+            if self.std[1] < 1.0 and self.normal[1] is not None:
+                response_laser_triangulation.append({"distance": self.distance[1], "normal": self.normal[1], "deviation": self.std[1]})
         else:
             result = False
 
@@ -347,6 +347,7 @@ class FSCalibration(FSCalibrationInterface):
             self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
             response = None
 
+        #self._is_calibrating = False
         self.image = None
 
         return response
