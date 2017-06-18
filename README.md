@@ -28,10 +28,11 @@ The FabScan documentation can be found at [http://www.fabscan.org](http://www.fa
 * René Bohne (supervision until 2015)
 * Jan Borchers (supervision until 2015)
 
+
 ## Contributions from
 * Beckmann Mediendesign (FabScanPi Logo)
 * Doug LaRue (build log, bug reporting)
 * Christoph Emonds (code review)
 * Jan Thar (case design, bug reporting, general support)
-* Jens Hackel (documentation, bug reporting)
+* Jens Hackel (documentation, bug reporting, testing)
 * Francis Engelmann (original FabScan)
