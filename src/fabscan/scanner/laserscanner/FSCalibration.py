@@ -317,7 +317,7 @@ class FSCalibration(FSCalibrationInterface):
 
         # Return response
         result = True
-        self._logger.debug(np.linalg.norm(self.t - self.estimated_t))
+        #self._logger.debug(np.linalg.norm(self.t - self.estimated_t))
         #if self._is_calibrating:
         if self.t is not None and np.linalg.norm(self.t - self.estimated_t) < 180:
             response_platform_extrinsics = (
@@ -339,12 +339,12 @@ class FSCalibration(FSCalibrationInterface):
             self.config.calibration.laser_planes = response_laser_triangulation
             response = (True, (response_platform_extrinsics, response_laser_triangulation))
         else:
-            self._logger.error("Calibration error...")
-            message = {
-                "message": "CALIBRATION_CALCULATION_ERROR",
-                "level": "error"
-            }
-            self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+            self._logger.error("Calibration process was not able to estimate laser planes.")
+            #message = {
+            #    "message": "CALIBRATION_CALCULATION_ERROR",
+            #    "level": "error"
+            #}
+            #self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
             response = None
 
         #self._is_calibrating = False
