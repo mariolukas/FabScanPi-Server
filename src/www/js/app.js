@@ -742,16 +742,15 @@ Example of a 'common' filter that can be shared by all views
 
   angular.module(name, []).factory(name, [
     '$log', '$location', function($log, $location) {
-      var config, devDebug, host, localDebug;
+      var config, host, localDebug;
 
       localDebug = $location.host() === 'localhost';
       config = null;
-      devDebug = true;
       host = $location.host();
-      if (devDebug) {
+      if (localDebug) {
         config = {
           installation: {
-            host: 'fabscanpi.local',
+            host: host,
             websocketurl: 'ws://fabscanpi.local:8010/',
             httpurl: 'http://fabscanpi.local:8080/',
             newsurl: 'http://mariolukas.github.io/FabScanPi-Server/news/'
@@ -762,7 +761,8 @@ Example of a 'common' filter that can be shared by all views
           installation: {
             host: host,
             websocketurl: 'ws://' + host + ':8010/',
-            httpurl: 'http://' + host + ':8080/'
+            httpurl: 'http://' + host + ':8080/',
+            newsurl: 'http://mariolukas.github.io/FabScanPi-Server/news/'
           }
         };
       }
