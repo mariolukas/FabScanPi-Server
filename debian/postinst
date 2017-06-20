@@ -5,23 +5,36 @@
 
 set -e
 
+FABSCAN_USER=fabscan
+CONF_DIR=/etc/fabscanpi
 LOG_DIR=/var/log/fabscanpi
 SCANS_DIR=/var/scans
-WWW_DIR=/var/www
+PID_DIR=/var/run/fabscanpi
 
-if [ -d $WWW_DIR ];then
-    chown -R pi:pi $WWW_DIR
-fi
+# Allow $FABSCAN_USER to change the config and setting files
+chown -R $FABSCAN_USER:nogroup $CONF_DIR
 
+
+# Create log directory if necessary
 if [ ! -d $LOG_DIR ];then
     mkdir -p $LOG_DIR
-    chown -R pi:pi $LOG_DIR
 fi
+# Change permission to allow $FABSCAN_USER to write logs
+chown -R $FABSCAN_USER:nogroup $LOG_DIR
 
+# Create data directory if necessary
 if [ ! -d $SCANS_DIR ];then
     mkdir -p $SCANS_DIR
-    chown -R pi:pi $SCANS_DIR
 fi
+
+#create folder for pid file
+if [ ! -d $PID_DIR ];then
+    mkdir -p $PID_DIR
+    chown -R $FABSCAN_USER:nogroup $PID_DIR
+fi
+
+# Change permission to allow $FABSCAN_USER to write data
+chown -R $FABSCAN_USER:nogroup $SCANS_DIR
 
 /etc/init.d/fabscanpi-server start
 

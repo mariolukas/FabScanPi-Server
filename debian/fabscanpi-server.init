@@ -12,14 +12,14 @@
 # Description:       fabscanpi-server daemon
 ### END INIT INFO
 
-DAEMONUSER=pi
+DAEMONUSER=fabscan
 DESC="FabScanPi Daemon"
 NAME="fabscanpi-server"
 DAEMON=/usr/bin/fabscanpi-server
-PIDFILE=/var/run/$NAME.pid
+PIDFILE=/var/run/fabscanpi/$NAME.pid
 PKGNAME=fabscanpi-server
 SCRIPTNAME=/etc/init.d/$PKGNAME
-LOG=/var/log/$PKGNAME/$PKGNAME.log
+LOG=/var/log/fabscanpi/fabscanpi.log
 
 
 # Read configuration variable file if it is present
@@ -47,6 +47,7 @@ stop() {
                     then
                         echo "$NAME is running shutting down..."
                         kill -9 $PID
+                        rm $PIDFILE
                     fi
                 fi
             fi

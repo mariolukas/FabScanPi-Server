@@ -1,6 +1,6 @@
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
+__copyright__ = "Copyright 2017"
+__license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
@@ -15,12 +15,14 @@ from fabscan.vision.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import SettingsInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
 from fabscan.util.FSInject import inject, singleton
-from fabscan.util.FSUpdate import upgrade_is_available, get_latest_version_tag
+from fabscan.util.FSUpdate import upgrade_is_available, do_upgrade
 
 class FSState(object):
     IDLE = "IDLE"
     SCANNING = "SCANNING"
     SETTINGS = "SETTINGS"
+    CALIBRATING = "CALIBRATING"
+    UPGRADING = "UPGRADING"
 
 class FSCommand(object):
     SCAN = "SCAN"
@@ -33,6 +35,7 @@ class FSCommand(object):
     SCANNER_ERROR = "SCANNER_ERROR"
     UPGRADE_SERVER = "UPGRADE_SERVER"
     RESTART_SERVER = "RESTART_SERVER"
+    CALIBRATION_COMPLETE = "CALIBRATION_COMPLETE"
 
 @inject(
         settings=SettingsInterface,
@@ -52,11 +55,15 @@ class FSScanner(threading.Thread):
         self._exit_requested = False
         self.meshingTaskRunning = False
 
+        self._upgrade_available = False
+        self._update_version = None
+
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self.on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self.on_command)
 
         self._logger.info("Scanner initialized...")
         self._logger.info("Number of cpu cores: " + str(multiprocessing.cpu_count()))
+
 
     def run(self):
         while not self._exit_requested:
@@ -87,6 +94,12 @@ class FSScanner(threading.Thread):
         elif command == FSCommand.START:
             if self._state is FSState.SETTINGS:
                 self._logger.info("Start command received...")
+                # FIXME: ( or find better solution )
+                # needed to be done here, cause raspberry has not a real time clock,
+                # when no internet connection is availabale on the fabscan the time
+                # will be set (default) to 1970, this leads to a wrong calculation
+                self.settings.startTime = event.startTime
+
                 self.set_state(FSState.SCANNING)
                 self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START})
 
@@ -100,11 +113,20 @@ class FSScanner(threading.Thread):
                 self._logger.debug("Close Settings")
                 self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.SETTINGS_MODE_OFF})
 
+            if self._state is FSState.CALIBRATING:
+                self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.STOP_CALIBRATION})
+
             self.set_state(FSState.IDLE)
 
+        # Start calibration
         elif command == FSCommand.CALIBRATE:
-           self._logger.debug("Calibration started....")
-           self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.CALIBRATE_SCANNER})
+            self._logger.debug("Calibration started....")
+            self.settings.startTime = event.startTime
+            self.set_state(FSState.CALIBRATING)
+            self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START_CALIBRATION})
+
+        elif command == FSCommand.CALIBRATION_COMPLETE:
+            self.set_state(FSState.IDLE)
 
         # Scan is complete
         elif command == FSCommand.COMPLETE:
@@ -121,6 +143,12 @@ class FSScanner(threading.Thread):
             meshlab_task = FSMeshlabTask(event.scan_id, event.filter, event.format)
             meshlab_task.start()
 
+        # Upgrade server
+        elif command == FSCommand.UPGRADE_SERVER:
+            if self._upgrade_available:
+                self._logger.info("Upgrade server")
+                self.set_state(FSState.UPGRADING)
+
 
     # new client conneted
     def on_client_connected(self, eventManager, event):
@@ -130,18 +158,19 @@ class FSScanner(threading.Thread):
             except:
                 hardware_info = "undefined"
 
-            upgrade_available, upgrade_version = upgrade_is_available(__version__)
-            self._logger.debug("Upgrade available: "+str(upgrade_available)+" "+upgrade_version)
+            self._upgrade_available, self._upgrade_version = upgrade_is_available(__version__)
+            self._logger.debug("Upgrade available: "+str(self._upgrade_available)+" "+self._upgrade_version)
 
             message = {
                 "client": event['client'],
-                "state": self._state,
+                "state": self.get_state(),
                 "server_version": 'v.'+__version__,
                 "firmware_version": str(hardware_info),
                 "settings": self.settings.todict(self.settings),
                 "upgrade": {
-                    "available": upgrade_available,
-                    "version": upgrade_version
+                    "available": self._upgrade_available,
+                    "version": self._upgrade_version
+
                 }
             }
 
@@ -154,3 +183,6 @@ class FSScanner(threading.Thread):
     def set_state(self, state):
         self._state = state
         self.eventManager.broadcast_client_message(FSEvents.ON_STATE_CHANGED, {'state': state})
+
+    def get_state(self):
+        return self._state

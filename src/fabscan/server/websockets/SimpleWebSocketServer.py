@@ -1,5 +1,5 @@
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
+__copyright__ = "Copyright 2017"
 __license__ = "MIT"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
@@ -285,7 +285,7 @@ class WebSocket(object):
                time.sleep(0.001)
             else:
                raise e
-
+               pass
 
    #if s is a string then websocket TEXT is sent else BINARY
    def sendMessage(self, s):

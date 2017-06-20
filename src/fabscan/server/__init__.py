@@ -1,6 +1,6 @@
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
+__copyright__ = "Copyright 2017"
+__license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
@@ -19,6 +19,8 @@ from fabscan.FSEvents import FSEventManagerSingleton, FSEventManagerInterface, F
 from fabscan.FSConfig import ConfigInterface, ConfigSingleton, Config
 from fabscan.FSSettings import SettingsInterface, SettingsSingleton, Settings
 from fabscan.scanner.interfaces import FSScannerFactory
+from fabscan.util.FSUpdate import do_upgrade
+
 
 class FSServer(object):
     def __init__(self,config_file, settings_file):
@@ -41,7 +43,6 @@ class FSServer(object):
             self.exit = True
             self.restart = True
 
-
     def restart_server(self):
         try:
             FSSystem.run_command("/etc/init.d/fabscanpi-server restart", blocking=True)
@@ -50,11 +51,9 @@ class FSServer(object):
 
     def update_server(self):
          try:
-            FSSystem.run_command("apt-get update")
-            FSSystem.run_command("nohup  sh -c 'apt-get -y --only-upgrade install fabscanpi-server && reboot' > /dev/null &")
+             do_upgrade()
          except StandardError, e:
             self._logger.error(e)
-
 
     def run(self):
         self._logger.info("FabScanPi-Server "+str(__version__))
@@ -101,9 +100,3 @@ class FSServer(object):
 
         except (KeyboardInterrupt, SystemExit):
             sys.exit(0)
-
-
-
-
-
-

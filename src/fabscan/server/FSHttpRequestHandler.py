@@ -1,6 +1,6 @@
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
+__copyright__ = "Copyright 2017"
+__license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
@@ -112,7 +112,6 @@ def CreateRequestHandler(config, scanprocessor):
                try:
                     while True:
                         if self.close_mjpeg_stream:
-                            #self._settingsPreviewProcessor.stop()
                             break
 
                         future_image = self.scanprocessor.ask({FSEvents.COMMAND: type}, block=False)
@@ -120,17 +119,16 @@ def CreateRequestHandler(config, scanprocessor):
 
                         if image is not None:
                             image = image[:, :, ::-1]
-                            #stream = toimage(image)
                             stream = Image.fromarray(image)
                             tmpFile = StringIO.StringIO()
 
                             stream.save(tmpFile,'JPEG')
 
                             self.wfile.write('--jpgboundary\n\r')
-                            self.send_header('Content-Type:','image/jpeg')
-                            self.send_header('Content-length',str(tmpFile.len))
+                            self.send_header('Content-Type:', 'image/jpeg')
+                            self.send_header('Content-length', str(tmpFile.len))
                             BaseHTTPRequestHandler.end_headers(self)
-                            stream.save(self.wfile,'JPEG')
+                            stream.save(self.wfile, 'JPEG')
 
                         else:
                             time.sleep(0.05)

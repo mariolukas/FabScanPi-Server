@@ -1,54 +1,106 @@
 {
-   "serial" : {
-     "baudrate" : "115200",
-     "port": "/dev/tty.usbmodem1421",
-     "virtual": "false"
-   },
-   "camera" : {
-     "type" : "webcam",
-     "device" : 1,
-     "preview_resolution":{
-        "width": 426,
-        "height": 240
-     },
-     "resolution":{
-          "width": 1280,
-          "height": 720
-      },
-      "position":{
-          "x": 0.0,
-          "y": 4.68,
-          "z": 29.6
-      },
-      "frame":{
-          "dimension": 23.6
-      }
-   },
-   "laser": {
-      "position":{
-        "x": 14.0,
-        "y": 7.3,
-        "z": 28.8
-      },
-      "angle": 33.0,
-      "rotation_steps": 5,
-      "steps": 3200
-   },
-   "turntable":{
-     "position": {
-       "x": 0.0,
-       "y": 0.0,
-       "z": 7.5
-     },
-     "steps":3200
-   },
-   "scanner": {
-      "origin":{
-        "y" : 0.75
-      }
-   },
-   "process_number": 4,
-   "meshlab":{
-     "path": "/usr/bin/"
-   }
+    "folders": {
+        "www": "/var/www/",
+        "scans": "/var/scans/"
+    },
+    "laser": {
+        "steps": 3200,
+        "numbers": 1,
+        "rotation_steps": 5
+    },
+    "scanner_type": "laserscanner",
+    "calibration": {
+        "weight_matrix": [],
+        "dist_camera_matrix": [],
+        "pattern": {
+            "square_size": 11,
+            "rows": 6,
+            "columns": 9,
+            "origin_distance": 29
+        },
+        "camera_matrix": [
+            [
+                1285.5809999999999,
+                0.0,
+                647.60199999999998
+            ],
+            [
+                0.0,
+                1289.9490000000001,
+                835.84400000000005
+            ],
+            [
+                0.0,
+                0.0,
+                1.0
+            ]
+        ],
+        "distortion_vector": [
+            0.151,
+            -0.20300000000000001,
+            -0.0050000000000000001,
+            0.0060000000000000001,
+            -0.70899999999999996
+        ],
+        "laser_planes": [
+            {
+                "deviation": 0.052318819865,
+                "distance": 137.366403938,
+                "normal": [
+                    0.56199451,
+                    -0.01896656,
+                    0.82692348
+                ]
+            }
+        ],
+        "platform_translation": [
+            4.21176054e-03,
+            4.26178340e+01,
+            1.66114592e+02
+        ],
+        "platform_rotation": [
+            [
+                0.0,
+                9.99977231e-01,
+                6.74816764e-03
+            ],
+            [
+                4.51612662e-02,
+                6.74128255e-03,
+                -9.98956964e-01
+            ],
+            [
+                -0.99903697271524872,
+                0.00030800546235732861,
+                -0.043875189806843448
+            ]
+        ]
+    },
+    "meshlab": {
+        "path": "/usr/bin/"
+    },
+    "process_numbers": 4,
+    "turntable": {
+        "steps": 3200
+    },
+    "camera": {
+        "resolution": {
+            "width": 1640,
+            "height": 1232
+        },
+        "preview_resolution": {
+            "width": 240,
+            "height": 320
+        },
+        "rotate": "True",
+        "hflip": "True",
+        "vflip": "False",
+        "type": "webcam"
+    },
+    "serial": {
+        "baudrate": 115200,
+        "autoflash": "True",
+        "port": "/dev/ttyAMA0"
+    },
+    "texture_illumination": 200
 }

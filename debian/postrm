@@ -6,17 +6,8 @@
 set -e
 
 SERVICE=fabscanpi-server
-LOG_DIR=/var/log/fabscanpi
 PIDFILE=/var/run/$SERVICE.pid
 
 INIT_SCRIPT=/etc/init.d/$SERVICE
-
-if [ -d /var/www/ ];then
-    rm -R /var/www/
-fi
-
-if [ -d $LOG_DIR ];then
-    rm -R $LOG_DIR
-fi
 
 exit 0

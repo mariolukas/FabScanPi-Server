@@ -7,25 +7,14 @@
      "line_coords_buffer": 5,
      "percent_top_pixels": 0.1,
      "center": 0.50,
-     "threshold": 100,
+     "threshold": 30,
      "crop": {
        "upper": -128,
        "lower": -810
      },
-     "backwall": {
-       "laser_pixel_position" : 500,
-       "laser": {
-         "x": 0.0,
-         "y": 11.0,
-         "z": 0.0
-       },
-       "laser_angle": 32.506192762678744,
-       "margin": 15,
-       "offset": 100
-     },
      "camera":{
        "brightness" : 50,
-       "contrast": 0,
+       "contrast": 10,
        "saturation": 0
      },
      "resolution": 8,

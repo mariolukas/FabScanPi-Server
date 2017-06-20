@@ -1,6 +1,6 @@
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
+__copyright__ = "Copyright 2017"
+__license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
@@ -35,7 +35,7 @@ class FSEventManagerInterface(object):
 class FSEventManager(FSEventManagerInterface):
     def __init__(self):
         super(FSEventManagerInterface, self).__init__()
-        self._logger =  logging.getLogger(__name__)
+        self._logger = logging.getLogger(__name__)
         self.reset()
         self.event_q = multiprocessing.Queue()
 
@@ -112,7 +112,7 @@ class FSEventManager(FSEventManagerInterface):
         if not self.event_q.empty():
             try:
                 event = self.event_q.get_nowait()
-                self.publish(event['event'],event['data'])
+                self.publish(event['event'], event['data'])
 
             except Empty:
                     pass

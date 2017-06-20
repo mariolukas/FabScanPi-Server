@@ -34,9 +34,29 @@ The HAT communicates over a serial connection with the Rasperry Pi.
 (GPIO14 and GPIO15 of the Raspberry Pi). The firmware and also updates are 
 flashed automatically by the FabscanPi-Server application.
 
-
 ![drawing_400](images/fabscanpihat.png)
 
+<<<<<<< HEAD
+# How to Asselmble the FabScanPi HAT
+
+**Materials & Tools**
+
+* Soldering Iron
+* Solder Wire
+* Side Cutter
+* FabScanPi HAT Kit
+* V7805-2000 voltage regulator ( optional but recommended )
+
+![drawing_400](images/RPi-FabScan-HAT05.jpg)
+
+** 1. Prepare Pin Headers**
+
+![drawing_400](images/RPi-FabScan-HAT07.jpg)
+
+Use the side cutter to cut two pieces of 3 pins from the male header, like you on the picture above.
+
+#Connecting the Stepper Motor
+=======
 **How to Assemble the FabScanPi HAT**
 
 
@@ -45,6 +65,8 @@ flashed automatically by the FabscanPi-Server application.
  
 _If you are soldering for the very fist time, we suggest to read the comic ["Soldering is Easy"](https://mightyohm.com/files/soldercomic/FullSolderComic_EN.pdf) by Mitch Altman (soldering wisdom), Andie Nordgren (comic adaption) and Jeff Keyzer (layout and editing)._
 * * *
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/DogfNxk277Y" frameborder="0" allowfullscreen></iframe>
 
 The FabScanPi HAT will be delivered with the main components already assembled. You only need to install the headers and connectors which fit your demand.
 ![drawing_400](images\hat_assembly_1.jpg)
@@ -117,9 +139,9 @@ The next connector to be installed is the 6-port screw terminal. It must be sold
 
 **Power Connector** (DC- jack)
 
-Now the DC-jack power connector will be installed into three oval pin holes close to the 2x20-pin socket header. Soldering is done from the rear side of the PCB.
+Now the DC-jack power connector will be installed into three oval pin holes across from the 2x20-pin socket header. Soldering is done from the top side of the PCB.
 
-![drawing_400](images\hat_assembly_6.jpg)
+![drawing_400](images\RPi-FabScan-HAT13.jpg)
 
 
 
@@ -128,6 +150,9 @@ Now the DC-jack power connector will be installed into three oval pin holes clos
 Now the 2x20-pin socket connector must be installed from the rear side of the PCB (where we only did soldering till now). Soldering of the 2x20-pin connector is done on the front side (where all our parts are placed). This connector is used as interface for the Raspberry-Pi.
 
 ![drawing_400](images\hat_assembly_7.jpg)
+
+_Attention: The power connector in this image is soldered in an alternative way. The recommended way 
+is shown in the image before._
 
 
 
@@ -145,11 +170,12 @@ If you are using another power supply which is capable of delivering 12V and 5V 
 
 #Connecting the Stepper Motor(s)
 
+>>>>>>> master
 There are different kinds of stepper motos. Mostly with 4 or 6 leads. For
 connecting the stepper motor to the FabScanPi HAT you need to know the
 corresponding lead pairs of the motor coils. The best way to find out something
 about the motor is to have a look at the datasheet of the motor manufacturer.
-In the following desciptions the pairs are called (1A, 1B) and (2A, 2B).
+In the following desciptions the pairs are called (2B, 1B) and (1A, 2A).
 
 ![drawing_300](images/4wires.jpg) 
 ![drawing_300](images/6wires.jpg)

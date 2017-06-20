@@ -5,8 +5,10 @@
 
 set -e
 
+FABSCAN_USER=fabscan
 SERVICE=fabscanpi-server
 INIT_SCRIPT=/etc/init.d/$SERVICE
+SCANS_DIR=/var/scans
 
 if ps ax | grep -v grep | grep -v $0 | grep $SERVICE > /dev/null
 then
@@ -16,23 +18,6 @@ then
         fi
 fi
 
-
-LOG_DIR=/var/log/fabscanpi
-CONF_DIR=/etc/fabscanpi
-WWW_DIR=/var/www
-
-if [ -d $WWW_DIR ];then
-    echo "creating frontend folders"
-    mkdir -p $WWW_DIR
-    chown -R pi:pi $WWW_DIR
-fi
-
-if [ ! -d $CONF_DIR ];then
-    mkdir -p $CONF_DIR
-    chown -R pi:pi $CONF_DIR
-fi
-
-
-
+adduser --system $FABSCAN_USER --home $SCANS_DIR --no-create-home > /dev/null 2>&1 || true
 
 exit 0

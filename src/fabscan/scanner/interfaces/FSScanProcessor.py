@@ -1,6 +1,6 @@
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
+__copyright__ = "Copyright 2017"
+__license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
@@ -10,7 +10,8 @@ from pykka import ThreadingActor
 class FSScanProcessorCommand(object):
     START = "START"
     STOP = "STOP"
-    CALIBRATE_SCANNER = "CALIBRATE_SCANNER"
+    STOP_CALIBRATION = "STOP_CALIBRATION"
+    START_CALIBRATION = "START_CALIBRATION"
     SETTINGS_MODE_OFF = "SETTINGS_MODE_OFF"
     SETTINGS_MODE_ON = "SETTINGS_MODE_ON"
     NOTIFY_HARDWARE_STATE = "NOTIFY_HARDWARE_STATE"
@@ -23,6 +24,6 @@ class FSScanProcessorCommand(object):
     GET_TEXTURE_STREAM = "GET_TEXTURE_STREAM"
 
 class FSScanProcessorInterface(ThreadingActor):
-    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
-        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
+    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration):
+        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration)
         pass

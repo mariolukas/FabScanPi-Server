@@ -1,6 +1,6 @@
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
+__copyright__ = "Copyright 2017"
+__license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
@@ -54,25 +54,34 @@ class FSImageWorkerPool():
 
         return self.workers
 
+    def clear_task_queue(self):
+        try:
+            while not self._task_q.empty():
+                self._task_q.get_nowait()
+        except Empty:
+            pass
+
     def kill(self):
             '''
                 Kill Processes in Pool
             '''
-            #print "killing "+str(self._number_of_workers)+" processes"
-            i=0
             for _ in range(self._number_of_workers):
+                task = ImageTask(None, None, None, task_type="KILL")
+                self._task_q.put(task, True)
 
-                task = ImageTask(None,None,None,task_type="KILL")
-                self._task_q.put(task,True)
-                i += 1
+            self.clear_task_queue()
+
+            for worker in self.workers:
+                self.workers.remove(worker)
 
             self._workers_active = False
+
 
     def workers_active(self):
         return self._workers_active
 
     def set_number_of_workers(self, number):
-        self._number_of_workers =  number
+        self._number_of_workers = number
 
 
 class FSImageWorkerProcess(multiprocessing.Process):
@@ -91,13 +100,15 @@ class FSImageWorkerProcess(multiprocessing.Process):
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
 
-
     def run(self):
         '''
             Image Process runner
         '''
 
         #print "process "+str(self.pid)+" started"
+
+        #import pydevd
+        #pydevd.settrace('192.168.98.104', port=12011, stdoutToServer=True, stderrToServer=True)
 
         while not self.exit:
             if not self.image_task_q.empty():
@@ -130,14 +141,15 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
                         if (image_task.task_type == "PROCESS_DEPTH_IMAGE"):
 
-                            angle = (image_task.progress) * 360 / image_task.resolution
+                            angle = float(image_task.progress * 360) / float(image_task.resolution)
                             #self._logger.debug("Progress "+str(image_task.progress)+" Resolution "+str(image_task.resolution)+" angle "+str(angle))
                             self.image.save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)
                             color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
 
-                            points = self.image_processor.process_image(angle, image_task.image, color_image)
-
-                            data['points'] = points
+                            point_cloud, texture = self.image_processor.process_image(angle, image_task.image, color_image)
+                            # FIXME: Only send event if points is non-empty
+                            data['point_cloud'] = point_cloud
+                            data['texture'] = texture
                             data['image_type'] = 'depth'
                             #data['progress'] = image_task.progress
                             #data['resolution'] = image_task.resolution
@@ -145,7 +157,6 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             event = dict()
                             event['event'] = "ON_IMAGE_PROCESSED"
                             event['data'] = data
-
 
                             self.event_q.put(event)
 

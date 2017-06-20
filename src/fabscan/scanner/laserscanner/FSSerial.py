@@ -1,6 +1,6 @@
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
+__copyright__ = "Copyright 2017"
+__license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
@@ -21,7 +21,7 @@ class FSSerialCom():
 
         self.config = config
 
-        self._logger =  logging.getLogger(__name__)
+        self._logger = logging.getLogger(__name__)
 
         if hasattr(self.config.serial, 'port'):
             self._port = self.config.serial.port
@@ -39,7 +39,6 @@ class FSSerialCom():
         self._firmware_version = None
         self._openSerial()
 
-
     # Code modified from function serialList obtained from https://github.com/foosel/OctoPrint/blob/master/src/octoprint/util/comm.py
     def serialList(self):
         baselist=[]
@@ -54,7 +53,6 @@ class FSSerialCom():
 
         return baselist
 
-
     def avr_device_is_available(self):
         status = FSSystem.run_command("avrdude -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port))
         return status == 0
@@ -66,21 +64,19 @@ class FSSerialCom():
             self._logger.error("Failed to flash firmware")
         return status == 0
 
-
     def _connect(self):
         self._logger.debug("Trying to connect Arduino on port: "+str(self._port))
         # open serial port
         try:
             self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=1)
+            time.sleep(1)
         except:
             self._logger.error("Could not open serial port")
 
     def _close(self):
         self._serial.close()
 
-
     def _openSerial(self):
-
         basedir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
         flash_file_version = max(sorted(glob.iglob(basedir+'/firmware/*.hex'), key=os.path.getctime,reverse=True))
         flash_version_number = os.path.basename(os.path.normpath(os.path.splitext(flash_file_version)[0]))
@@ -136,15 +132,13 @@ class FSSerialCom():
         except:
             self._logger.error("Fatal Arduino connection error....")
 
-
     def checkVersion(self):
         if self._serial:
-            self.send("\r\n\r\n")
+            self._serial.write("\r\n\r\n")
             time.sleep(2) # Wait for FabScan to initialize
             self._serial.flushInput() # Flush startup text in serial input
-            self.send("M200;\n")
+            self.send("M200;")
             self._serial.readline()
-            #self._serial.flushInput()
             value = self._serial.readline()
             value = value.strip()
             if value != "":
@@ -154,19 +148,29 @@ class FSSerialCom():
         else:
             return "None"
 
-    def send(self, message):
-        if self._serial:
-            self._serial.write(message)
+    def send_and_receive(self, message):
+        self.send(message)
+        time.sleep(0.1)
+        while True:
+            try:
+                time.sleep(0.2)
+                command = self._serial.readline()
+                time.sleep(0.2)
+                command = self._serial.readline()
+                self._logger.debug(command.rstrip("\n"))
+                #if state.rstrip("\n") == ">":
+
+                return command
+            except Exception as e:
+                self._logger.debug(e)
+        time.sleep(0.1)
 
     def flush(self):
        self._serial.flushInput()
        self._serial.flushOutput()
 
-    def wait(self):
-        if self._serial:
-            value = self._serial.readline()
-            self.flush()
-            return value
+    def send(self, message):
+        self._serial.write(message + "\n")
 
     def is_connected(self):
         return self._connected

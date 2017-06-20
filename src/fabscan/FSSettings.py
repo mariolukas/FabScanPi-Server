@@ -1,6 +1,6 @@
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
+__copyright__ = "Copyright 2017"
+__license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
@@ -38,13 +38,19 @@ class Settings(SettingsInterface):
 
     def save(self):
         current_settings = self.todict(self.__dict__)
+
+        try:
+            del current_settings['file']
+        except KeyError:
+            pass
+
         with open(self.file, 'w+') as outfile:
-            json.dump(current_settings, outfile)
+            json.dump(current_settings, outfile, indent=4, ensure_ascii=False)
 
     def saveAsFile(self, filename):
         current_settings = self.todict(self.__dict__)
         with open(filename, 'w+') as outfile:
-            json.dump(current_settings, outfile)
+            json.dump(current_settings, outfile, indent=4, ensure_ascii=False)
 
     def update(self, settings):
         self.threshold = settings.threshold

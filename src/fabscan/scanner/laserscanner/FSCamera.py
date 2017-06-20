@@ -1,6 +1,6 @@
 __author__ = "Mario Lukas"
-__copyright__ = "Copyright 2015"
-__license__ = "AGPL"
+__copyright__ = "Copyright 2017"
+__license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
@@ -61,11 +61,10 @@ class FSRingBuffer(threading.Thread):
 
     # Retrieve the newest element in the buffer.
     def get(self):
-        if len(self.data) > 1:
+        if len(self.data) >= 1:
             image = self.data[-1]
         else:
             image = None
-
         return image
 
     def flush(self):
@@ -177,6 +176,7 @@ class PiCam(threading.Thread):
         self.camera_buffer = cambuffer
         self.awb_default_gain = 0
         self.is_idle = True
+        self._current_mode = 'custom'
         self._logger = logging.getLogger(__name__)
 
         self.start()
@@ -189,9 +189,8 @@ class PiCam(threading.Thread):
                 except picamera:
                     self._logger.error("Can not create camera device.")
 
-                #self.awb_default_gain = self.camera.awb_gains
                 self.camera.resolution = (self.config.camera.resolution.width, self.config.camera.resolution.height)
-                self.camera.rotation = self.config.camera.rotation_angle
+                self.camera.framerate = 24
 
                 while True:
                     if not self.is_idle:
@@ -203,12 +202,23 @@ class PiCam(threading.Thread):
                                 self.camera.brightness = self.settings.camera.brightness
                                 self.camera.saturation = self.settings.camera.saturation
                                 stream.seek(0)
+
+                                self.camera.capture(stream, format='jpeg')
+                                # Construct a numpy array from the stream
                                 data = np.fromstring(stream.getvalue(), dtype=np.uint8)
-                                data = cv2.imdecode(data, 1)
+                                # "Decode" the image from the array, preserving colour
+                                image = cv2.imdecode(data, 1)
+
+                                if self.config.camera.rotate == "True":
+                                    image = cv2.transpose(image)
+                                if self.config.camera.hflip == "True":
+                                    image = cv2.flip(image, 1)
+                                if self.config.camera.vflip == "True":
+                                    image = cv2.flip(image, 0)
 
                                 try:
                                     self.semaphore.acquire()
-                                    self.camera_buffer.append(data)
+                                    self.camera_buffer.append(image)
                                 finally:
                                     self.semaphore.release()
                                 stream.truncate()
@@ -234,16 +244,23 @@ class PiCam(threading.Thread):
     def setResolution(self, width, height):
         self.camera.resolution = (width, height)
 
-    def getFrame(self):
-        return self.camera_buffer.get()
+    def get_resolution(self):
+        if self._rotate:
+            return int(self.config.camera.resolution.height), int(self.config.camera.resolution.width)
+        else:
+            return int(self.config.camera.resolution.width), int(self.config.camera.resolution.height)
 
-    def startStream(self, auto_exposure=False):
-        self.setExposureMode(auto_exposure=auto_exposure)
+    def getFrame(self):
+        image = None
+        while image is None:
+           image = self.camera_buffer.get()
+        return image
+
+    def startStream(self, auto_exposure=False, exposure_type="flash"):
+        self.setExposureMode(auto_exposure=auto_exposure, exposure_type=exposure_type)
         self.semaphore.acquire()
         self.is_idle = False
         self.semaphore.release()
-        self.camera_buffer.flush()
-        time.sleep(0.5)
 
     def stopStream(self):
         self.semaphore.acquire()
@@ -254,22 +271,26 @@ class PiCam(threading.Thread):
         self.camera_buffer.flush()
 
 
-    def setExposureMode(self, auto_exposure=False):
+    def setExposureMode(self, auto_exposure=False, exposure_type="flash"):
                 if not auto_exposure:
-
-                    self.camera.iso = 120
-                    # Wait for the automatic gain control to settle
-                    time.sleep(1.4)
-                    # Now fix the values
-                    self.camera.shutter_speed = self.camera.exposure_speed
-                    self.camera.exposure_mode = 'off'
-                    g = self.camera.awb_gains
-                    self.camera.awb_mode = 'off'
-                    self.camera.awb_gains = g
+                        self.camera.iso = 120
+                        # Wait for the automatic gain control to settle
+                        time.sleep(1.4)
+                        # Now fix the values
+                        self.camera.shutter_speed = self.camera.exposure_speed
+                        self.camera.exposure_mode = 'off'
+                        g = self.camera.awb_gains
+                        self.camera.awb_mode = 'off'
+                        self.camera.awb_gains = g
+                        self._current_mode = 'custom'
 
                 else:
-                    self.camera.awb_mode = "flash"
-                    time.sleep(1)
+                        # Now fix the values
+                        #self.camera.exposure_mode = exposure_type
+                        self.camera.awb_mode = exposure_type
+                        time.sleep(1)
+                        self.flushStream()
+                        self._current_mode = 'auto'
 
 
 class DummyCam:

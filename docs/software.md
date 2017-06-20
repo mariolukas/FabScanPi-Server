@@ -83,7 +83,7 @@ apt-get update
 Finish the installation with the needed packages.
 
 ```
-apt-get install fabscanpi-server python-opencv-tbb libtbb2  python-pil python-serial python-pykka python-picamera avrdude
+apt-get install fabscanpi-server python-opencv-tbb libtbb2  python-pil python-serial python-pykka python-picamera avrdude python-semver python-scipy
 ```
 
 The FabScan PI server can be started with 

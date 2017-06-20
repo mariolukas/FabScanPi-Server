@@ -1,9 +1,20 @@
+fabscanpi-server (0.4.0) UNRELEASED; urgency=medium
+
+  * first fixes for upgrade
+  * added news to documentation 
+  * added auto calibration
+  * fixed major bug with serial connection
+  * improved laser line detection
+  * added news screen to fabscan server start screen
+
+ -- Mario Lukas <info@fabscan.org>  Wed, 31 May 2017 12:22:42 +0100
+
 fabscanpi-server (0.3.1) unstable; urgency=medium
 
   * fixed bug which created multiple instances for websocket server
   * fixed bug which calculated wrong version numbers in upgrade check
 
- -- Mario Lukas  <info@mariolukas.de>  Mo, 26 Sep 2016 20:34:00 +0000
+ -- Mario Lukas  <info@mariolukas.de>  Mon, 26 Sep 2016 20:34:00 +0000
 
 fabscanpi-server (0.3.0) unstable; urgency=medium
 

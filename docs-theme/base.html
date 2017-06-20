@@ -39,10 +39,13 @@
   <script src="{{ base_url }}/js/jquery-2.1.1.min.js"></script>
   <script src="{{ base_url }}/js/modernizr-2.8.3.min.js"></script>
   <script type="text/javascript" src="{{ base_url }}/js/highlight.pack.js"></script>
+<<<<<<< HEAD
+=======
   {% if page and page.title == 'Examples' %}
   <script src="{{ base_url }}/js/three.js"></script>
   <script src="{{ base_url }}/js/PLYLoader.js"></script>
   {% endif %}
+>>>>>>> master
   {%- endblock %}
 
   {%- block extrahead %} {% endblock %}
@@ -106,9 +109,12 @@
               {% block content %}
                 {{ page.content }}
               {% endblock %}
+<<<<<<< HEAD
+=======
               {% if page and page.title == 'Examples' %}
                 {% include "scans.html" %}
               {% endif %}
+>>>>>>> master
             </div>
           </div>
 	  {%- block footer %}
