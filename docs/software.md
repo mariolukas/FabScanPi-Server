@@ -141,7 +141,7 @@ updates with the following command.
 
 
 ```
-sudo apt-get update && apt-get upgrade
+sudo apt-get update && apt-get dist-upgrade
 ```
 
 
@@ -152,6 +152,8 @@ A configuration file can be found in /etc/fabscanpi/default.config.json. The con
 is in JSON format and can be edited with an editor of your choice (e.g. nano). Be careful and don't
 miss brackets. JSON is really sensitive in it's format.
 
+
+
 **Folders**
 
 
@@ -159,150 +161,197 @@ In this section you can change the scan output folder and the folder where the u
 you don't know what you are doing, it is a good decision to keep this section untouched.
 
 ```
-   "folders" : {
-    "www": "/home/pi/fabscan/src/www/",
-    "scans": "/usr/local/fabscanpi/scans/"
-   }
-```
-
-**Serial**
-
-In this section you can set your port. By default this value is not set, because the
-FabScanPi Server software autodetcts the correct port. Some Arduino and compatible boards differ 
-in the port name. The port can be set if you are not using an Arduino UNO or compatible Board. 
-In case that your Arduino is not detected and you can see an error in the /var/log/fabscanpi/fabscan.log
-you should add the "port" attribute to your config.
-
-The autoflash option is True by default, that means that the firmware is flashed automatically to 
-the Arduino or FabScanPi HAT. If you want to use a custom board e.g. sanguinololu, you can set this
-to False and flash the Firmware manually to your board. 
-
-```
-   "serial" : {
-     "baudrate" : 115200,
-     "port": "/dev/ttyACM0",
-     "autoflash": "True"
-   }
+   "folders": {
+        "www": "/usr/share/fabscanpi/",
+        "scans": "/var/scans/"
+    }
 ```
 
 
-**Camera**
-
-In this section some camera values are set. The type can be set to PICAM which is default value. There is 
-also an experimental mode for a C270 webcam. But this mode is not further developed. I used it in early 
-versions of fabscanpi. 
-
-The device is not used for the PICAM. Only if a webcam is used, you have to set the device to the count number
-of your webcam if you have one or more cameras connected to your pi.
-
-Preview Resolution is the resolution value for the settings window. 
-Resolution is the resolution for the picamera python module. You can have a look to the documentation of 
-picamera. If you set this to other values please be sure what you are doing, not all resolutions are supported
-by the picam. Some might lead to slower image capturing. 
-
-The position values are used to define where the camera is located in the case. All values are in cm. 
-Thre is an image later in this documentation which explains all the dimension related meassures. 
-
-Frame dimension is what your camera sees in the case. An easy way to validate this value is to put a 
-ruler to the backwall of the fabscan ( i used a paper one from IKEA ). Then activate the settings mode
-and read the last value you can read in the image. The default is 23.5 cm. The default value fits most
-of the FabScan setups. This value is used for tansforming image coordinates to world coordinates. 
-
-<img src="images/measure_dimension.png">
-
-```
-   "camera" : {
-     "type" : "PICAM",
-     "device" : 1,
-     "preview_resolution":{
-        "width": 320,
-        "height": 240
-     },
-     "resolution":{
-          "width": 1296,
-          "height":972
-      },
-      "position":{
-          "x": 0.0,
-          "y": 5.5,
-          "z": 27.6
-      },
-      "frame":{
-          "dimension": 23.5
-      }
-   }
-```
 
 **Laser**
 
-This section describes the laser position and laser stepper motor values. I mentioned position values in the section 
-before (Camera), have a look at the image. 
 
-The angle is set to the angle which was used in the last scan. The rotation_steps value should be used for a laser 
-angle change (not implemented yet).Steps defines how many steps the motor can do. In the default case the motor is 
-set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps. 
+This section describes the laser stepper motor values. The rotation_steps value should be used for a laser angle change (not implemented yet).Steps defines how many steps the motor can do. In the default case the motor is set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps. 
 
-``` 
-   "laser": {
-      "position":{
-        "x": 10.0,
-        "y": 7.3,
-        "z": 24.5
-      },
-      "angle": 33.0,
-      "rotation_steps": 5,
-      "steps": 3200
-   }
-```
+    ​```
+    "laser": {
+        "steps": 3200,
+        "numbers": 1,
+        "rotation_steps": 5
+    }
+    ​```
 
 
-**Turntable**
+**Scanner Calibration**
 
-In this section some turntable related values are set. For positioning have a look to the image. 
-Steps defines how many steps can be perfomed for a full rotation. This value depends on your motor and driver.
-In the default case the motor is set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps.
+In this section you can change the parameters of the configuration sheet. If your printout of the calibration sheet has not the exact scale you can adjust the parameters here instead of scaling the print. 
 
-```
-   "turntable":{
-     "position": {
-       "x": 0.0,
-       "y": 0.0,
-       "z": 7.5
-     },
-     "steps":3200
-   },
-```
+- Square Size is the side length of one black square in millimeters.
+- Rows and Columns are the connection points of the black squares.
 
-**Scanner**
+    ​```
+    "scanner_type": "laserscanner",
+    "calibration": {
+        "weight_matrix": [],
+        "dist_camera_matrix": [],
+        "pattern": {
+            "square_size": 10,
+            "rows": 6,
+            "columns": 9,
+            "origin_distance": 33.5
+        }
+     ```
 
-This section defines global scanner related values. Origin is defined as the green horizontal line in the settings
-preview window. It is a also here a good idea to keep that value untouched. Process number defines how many processes
-should be used for calculating the scan data. Due the Raspberry Pi2 serves 4 cores it is a good idea to keep this
-value. Increasing the proccess number does not mean inrceasing speed in all cases. 
-Meshlab is not supported in the curren verision of fabscan pi. So you can leave this value. 
+![PuTTY_Menu](images/Origin_Distance.jpg)
 
-```
-   "scanner": {
-      "origin":{
-        "y" : 0.75
-      }
-   },
-   "process_number": 4,
-   "meshlab":{
-     "path": "/usr/bin/"
-   }
-}
-```
+- Origin Distance is the distance between turntable surface and the upper edge of the black squares in the row close to the turntable.
 
 
-For a first try the default values should be fine. But the values in your setup may be different. To be sure measure your
-setup and modify the values in your default.conf.json file if needed. 
 
-Y values
-![y values](images/fabscan_dimensions_3.jpg)
+**Scanner Calibration Values**
 
-X and Z values
-![x and z values](images/fabscan_dimensions_2.jpg)
+
+In this section you can check the calibration parameters. Please make sure you have performed the auto-calibration before starting your first scan.
+
+
+     ```
+        "camera_matrix": [
+            [
+                1285.5809999999999,
+                0.0,
+                647.60199999999998
+            ],
+            [
+                0.0,
+                1289.9490000000001,
+                835.84400000000005
+            ],
+            [
+                0.0,
+                0.0,
+                1.0
+            ]
+        ],
+        "distortion_vector": [
+            0.151,
+            -0.20300000000000001,
+            -0.0050000000000000001,
+            0.0060000000000000001,
+            -0.70899999999999996
+        ],
+        "laser_planes": [
+            {
+                "deviation": 0.052318819865,
+                "distance": 137.366403938,
+                "normal": [
+                    0.56199451,
+                    -0.01896656,
+                    0.82692348
+                ]
+            }
+        ],
+        "platform_translation": [
+            4.21176054e-03,
+            4.26178340e+01,
+            1.66114592e+02
+        ],
+        "platform_rotation": [
+            [
+                0.0,
+                9.99977231e-01,
+                6.74816764e-03
+            ],
+            [
+                4.51612662e-02,
+                6.74128255e-03,
+                -9.98956964e-01
+            ],
+            [
+                -0.99903697271524872,
+                0.00030800546235732861,
+                -0.043875189806843448
+            ]
+        ]
+    }
+    ​```
+
+
+
+**Meshlab settings**
+
+
+​In this section you can change the path for the converter which transforms the scanned pixel data into another format (e.g. .stl).    
+    ​```
+    "meshlab": {
+        "path": "/usr/bin/"
+    }
+
+
+
+**Table settings**
+
+
+In this section you can change the turntable settings. The radius of the turntable is in millimetres (mm). In the default case the motor is set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps.    
+    "process_numbers": 4,
+    "turntable": {
+        "steps": 3200,
+        "radius": 70
+    }
+    ​```
+
+
+
+**Camera settings**
+
+Preview Resolution is the resolution value for the settings window. Resolution is the resolution for the picamera python module. You can have a look to the documentation of picamera. If you set this to other values please be sure what you are doing, not all resolutions are supportedby the picam. Some might lead to slower image capturing.    
+
+    ​```
+    "camera": {
+        "resolution": {
+            "width": 1640,
+            "height": 1232
+        },
+        "preview_resolution": {
+            "width": 240,
+            "height": 320
+        },
+        "rotate": "True",
+        "hflip": "True",
+        "vflip": "False",
+        "type": "PICAM"
+    }
+    ​```
+
+
+
+**Serial**
+
+
+In this section you can set your port. By default this value is not set, because theFabScanPi Server software autodetcts the correct port. Some Arduino and compatible boards differ in the port name. The port can be set if you are not using an Arduino UNO or compatible Board. In case that your Arduino is not detected and you can see an error in the /var/log/fabscanpi/fabscan.logyou should add the "port" attribute to your config.
+
+The autoflash option is True by default, that means that the firmware is flashed automatically to the Arduino or FabScanPi HAT. If you want to use a custom board e.g. sanguinololu, you can set thisto False and flash the Firmware manually to your board. 
+​    
+
+    ​```
+    "serial": {
+        "baudrate": 115200,
+        "autoflash": "True",
+        "port": "/dev/ttyAMA0"
+    }
+    ​```
+
+
+
+**Texture illumination**
+
+
+In this section you can change the pre-set brightness level of the LED-Ring during texture scan.
+    ​```
+    "texture_illumination": 140
+    }
+    ​```
+
 
 
 # How to Edit the Config File
@@ -514,26 +563,76 @@ FabScan Pi is tested on:
 | :--------------------------------------: | :----------: | :--------------------: |
 | ![browser_logo](images/chrome-logo.png)  | OSX, Windows | 47.0.2526.106 (64-bit) |
 | ![browser_logo](images/firefox-logo.png) |     OSX      |         43.0.4         |
-| ![browser_logo](images/firefox-logo.png) |   Windows    |      43.0.4, 47.0      |
+| ![browser_logo](images/firefox-logo.png) |   Windows    |      54.0 (32bit)      |
 
 
 
 **Getting Started<a name="gettingStarted"></a>**
 
 - By default the FabScanPi server binds to all interfaces on port 8080. Pointing your browser to http://ip-of-your-raspberry-pi:8080 will open the user interface. 
-  Note: Status messages will always appear in the upper left corner. 
 
-- Right after the start you should see a notification about the camera status and one confirming that the FabScanPi HAT has been found. 
-  Note: The messages will fade away after a short period of time.
+  If your FabScanPi has access to the internet an information window with the latest project news will pop-up. You can close it by left-clicking on the black x in the upper right corner of the grey info window.
+
+  ![main_menu](images/Manual_0.jpg)
 
 
-  ![main_menu](images/Manual_1.jpg)
 
-Now your FabScanPI is ready.
+
+ Now your can start using your FabScanPi.
 
 ------
 
-**Presets<a name="presets"></a>**
+**Calibration<a name="calibration"></a>**
+
+Before you can start with your first scans you must perform an calibration. That is necessary because every Scanner housing is a bit different.  By calibrating your scanner the software will get the exact parameters of your FabScanPi. Only after finishing the calibration successfully you will have good scan results .
+
+The calibration will be done by scanning an calibration sheet with a specific pattern which must be placed on the turntable:
+
+Option 1: You can decide between the standard calibration sheet which must be glued onto a paperboard sheet. The standard sheet can be put up without an additional holder. You maybe have to fix the calibration sheet on the turntable by using some adhesive tape.
+
+Option 2: You have an 3D-printer available and can print out our calibration sheet holder. There's also a different calibration sheet for external holder use.
+
+
+
+Note: Please check if your print of the calibration sheet has the correct scale. Each black square should have the side length of 10 mm (1 cm). If the size is not correct please correct the parameter "pattern square size" in the configuration file. 
+
+You can find all details in the chapter "How to Edit the Config File".
+
+
+
+
+
+
+
+
+
+You can start the calibration procedure by clicking on the gun sight icon in the very upper left corner.
+
+![main_menu](images/Manual_1.jpg)
+
+
+
+An information "Calibration started" will be displayed in the upper left corner.
+
+![main_menu](images/Manual_2a.jpg)
+
+
+
+The calibration may need several minutes. During the calibration an information about the remaining time is displayed. 
+
+![main_menu](images/Manual_2b.jpg)
+
+
+
+When the calibration was finished successfully another notification will appear for a short time in the upper left corner.
+
+![main_menu](images/Manual_2c.jpg)
+
+Now you can remove the calibration pattern sheet from the turntable and start your first scan.
+
+
+
+**Scan Settings<a name="scansettings"></a>**
 
 Note: The current settings are only persistent as long as the pi is up and running. The settings are saved with the scan data after a successful scan. They can be loaded to scan another object with the same settings. E.g. an object what consists of the same material, color etc. 
 
@@ -541,10 +640,13 @@ Note: The current settings are only persistent as long as the pi is up and runni
 
 ![open_the_scan_menu](images/Manual_4.jpg)
 
-- The threshold-slider (5) can be used to adjust the sensitivity of the captured data. Select the scan quality by using the other slider (6). 
+
+
+- The threshold-slider (6) can be used to adjust the sensitivity of the captured data. Select the scan quality by using the other slider (7). 
   Note: The better the scan the longer is the required capture time. Sometimes it is better to start with a low resolution to control the selected settings result. If the result is nice you can perform a higher resolution scan with the same settings.
 
   ![scan_menu](images/Manual_5a.jpg)
+
 
 
 
@@ -571,9 +673,6 @@ Click on the  arrows-and-circle symbol (5) to get access to the alignment menu.
 ![scan_menu](images/Manual_5a.jpg)
 
 
-
-The preview in the lower left corner is showing the camera view completed with calibration bars. This preview must be used for aligning the camera after the assembly of the scanner. When the scan results are not flawless this menu can be used to check the correct adjustment.
-![alignment_menu](images/Manual_8.jpg)
 
 
 **Perform a scan<a name="performAScan"></a>**
