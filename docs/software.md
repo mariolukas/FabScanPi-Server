@@ -145,6 +145,328 @@ sudo apt-get update && apt-get dist-upgrade
 ```
 
 
+# Software User Manual
+
+* [Getting Started](#gettingStarted)
+
+* [Presets](#presets)
+
+* [Perform a scan](#performAScan)
+
+* [Generate Mesh](#generateMesh)
+
+* [File Operations](#fileOperations)
+
+
+FabScan Pi is tested on: 
+
+
+|                   Browser                   |      OS      |        Versions        |
+| :--------------------------------------: | :----------: | :--------------------: |
+| ![browser_logo](images/chrome-logo.png)  | OSX, Windows | 47.0.2526.106 (64-bit), 58.0.3029.110 (64-bit) |
+| ![browser_logo](images/firefox-logo.png) |     OSX, Windows      |         43.0.4,  53.0.3 (64-Bit) , 54.0 (32bit)        |
+| ![browser_logo](images/safari-logo.png)  |  OSX   | Version 9.1.1 (11601.6.17) |
+
+
+**Getting Started<a name="gettingStarted"></a>**
+
+- By default the FabScanPi server binds to all interfaces on port 8080. Pointing your browser to http://ip-of-your-raspberry-pi:8080 will open the user interface. 
+
+  If your FabScanPi has access to the internet an information window with the latest project news will pop-up. You can close it by left-clicking on the black x in the upper right corner of the grey info window.
+
+  ![main_menu](images/Manual_0.jpg)
+
+
+
+
+ Now your can start using your FabScanPi.
+
+------
+
+**Calibration<a name="calibration"></a>**
+
+Before you can start with your first scans you must perform an calibration. That is necessary because every Scanner housing is a bit different.  By calibrating your scanner the software will get the exact parameters of your FabScanPi. Only after finishing the calibration successfully you will have good scan results .
+
+The calibration will be done by scanning an calibration sheet with a specific pattern which must be placed on the turntable. The pattern must face the camera:
+
+
+![main_menu](images/calibration_start_position.jpg)
+NOTICE: The second laser in the image is not supported by the software yet. This will be a featrue available within the next release.
+
+Option 1: You can decide between the standard calibration sheet which must be glued onto a paperboard sheet. The standard sheet can be put up without an additional holder. You maybe have to fix the calibration sheet on the turntable by using some adhesive tape.
+
+Option 2: You have an 3D-printer available and can print out our calibration sheet holder. There's also a different calibration sheet for external holder use.
+
+ [Download calibration mount and sheet!](https://github.com/mariolukas/FabScan-Case/tree/master/calibration)
+
+
+Note: Please check if your print of the calibration sheet has the correct scale. Each black square should have the side length of 10 mm (1 cm). If the size is not correct please correct the parameter "pattern square size" in the configuration file. 
+
+You can find all details in the chapter "[How to Edit the Config File](#editConfigFile)".
+
+
+
+Start the calibration procedure by clicking on the gun sight icon in the very upper left corner.
+
+![main_menu](images/Manual_1.jpg)
+
+
+
+An information "Calibration started" will be displayed in the upper left corner.
+
+![main_menu](images/Manual_2a.jpg)
+
+
+
+The calibration may need several minutes. During the calibration an information about the remaining time is displayed. 
+
+![main_menu](images/Manual_2b.jpg)
+
+
+
+When the calibration was finished successfully another notification will appear for a short time in the upper left corner.
+
+![main_menu](images/Manual_2c.jpg)
+
+Now you can remove the calibration pattern sheet from the turntable and start your first scan.
+
+
+
+**Scan Settings<a name="scansettings"></a>**
+
+Note: The current settings are only persistent as long as the pi is up and running. The settings are saved with the scan data after a successful scan. They can be loaded to scan another object with the same settings. E.g. an object what consists of the same material, color etc. 
+
+- Click on the duckling-symbol to open the scan menu.
+
+![open_the_scan_menu](images/Manual_4.jpg)
+
+
+
+- The threshold-slider (6) can be used to adjust the sensitivity of the captured data. Select the scan quality by using the other slider (7). 
+  Note: The better the scan the longer is the required capture time. Sometimes it is better to start with a low resolution to control the selected settings result. If the result is nice you can perform a higher resolution scan with the same settings.
+
+  ![scan_menu](images/Manual_5a.jpg)
+
+
+
+
+By clicking on the contrast-icon (3) you will get access to the camera settings menu. For adjusting the camera presets three sliders for saturation, brightness and contrast are available.
+
+
+![camera_settings_menu](images/Manual_6.jpg)
+
+
+
+Click on the light-symbol (4) to get access to the lighting menu.
+
+![scan_menu](images/Manual_5a.jpg)
+
+
+
+Here you can use the sliders to change the brightness and color of the (optional) light source. When all three sliders are at the very left end the light is off. Watch the preview in the lower left corner of the menu.
+![lighting_menu](images/Manual_7.jpg)
+
+
+
+Note: The setting in the lighting menu will only cause an effect if an optional WS2812-compatible light source (e.g. Adafruit NeoPixel LED-Ring or FabScanPi-Camera-Holder) is installed.
+Click on the  arrows-and-circle symbol (5) to get access to the alignment menu.
+![scan_menu](images/Manual_5a.jpg)
+
+
+
+
+**Perform a scan<a name="performAScan"></a>**
+
+**Color Scan**<a name="colorScan"></a>
+
+- Make sure your FabScanPi is switched on, an object is placed on the turntable and the lid / the optional laser safety switch is closed.
+- Open the web-interface as described in chapter 
+  [Getting Started](#gettingStarted).
+- Click on the duckling-symbol to open the scan menu.
+
+![open_scan_menu](images/Manual_4.jpg)
+
+
+
+Note: If you do not have installed a light source you should perform a [monochrome scan](#monochromeScan).
+
+- Adjust the scan preset values to your needs as described in chapter [Presets](#presets).
+
+![scan_menu](images/Manual_TextureScan_1.jpg)
+
+
+
+- Click on .Start Scan. to initiate the process
+  A starting message will be displayed. Now the texture will be processed.
+
+
+![texture_capturing](images/Manual_TextureScan_2.jpg)
+
+
+The latest photo will be displayed during the capturing process.
+
+![capturing_starts](images/Manual_TextureScan_3.jpg)
+
+
+
+When the texture has been captured (progress bar at 50 percent) the actual scan is initiated. A notification is displayed.
+![scan_starts](images/Manual_TextureScan_4.jpg)
+
+
+
+A notification will be displayed when the scan is completed / file is saved.
+![scan_completed](images/Manual_TextureScan_5.jpg)
+
+
+- You can now check, download or delete the scan-data.
+
+
+**Monochrome scan**<a name="monochromeScan"></a>
+
+- Make sure your FabScanPi is switched on, an object is placed on the turntable and the lid / the optional laser safety switch is closed.
+- Open the web-interface as described in chapter 
+  [Getting Started](#gettingStarted).
+- Click on the duckling-symbol to open the scan menu.
+
+![open_scan_menu](images/Manual_4.jpg)
+
+
+
+- Adjust the scan preset values to your needs as described in chapter [Presets](#presets).
+- Uncheck the color-scan option (8)
+
+![scan_menu](images/Manual_5a.jpg)
+
+
+
+- Click on .Start Scan. to initiate the process
+  A starting message will be displayed and the scan process is started.
+
+![scan_starts](images/Manual_Scan_2.jpg)
+
+
+
+When the scan is completed / file is saved a notification will be displayed. 
+![scan_completed](images/Manual_Scan_3.jpg)
+
+
+- You can now check, download or delete the scan-data.
+
+** Generate Mesh<a name="generateMesh"></a>
+
+The FabScanPi software includes a feature to convert a scan into a mesh-file. This mesh-file can be used for 3D-printing.
+Note: To generate a mesh-file a scan must have been performed. It is also possible to load a scan-file which has been saved previously. 
+
+- Click on the options icon to open the options menu.
+  ![open_options_menu](images/Manual_CreateMash_1.jpg)
+
+
+
+- The options menu will open and you can see the index card of the loaded file.
+  ![open_options_menu](images/Manual_CreateMash_1.jpg)
+
+
+
+- Click on the magic wand icon to open the menu for the MeshLab filter.
+  ![open_options_menu](images/Manual_CreateMash_3.jpg)
+
+
+
+- Now select one of the Meshlab filters and the file format for the future mesh file.
+
+- Click on "Start Meshing" to activate the conversion process. 
+  ![open_options_menu](images/Manual_CreateMash_4.jpg)
+
+
+
+The conversion starts and the main menu appears. A notification is displayed as well.
+Note: Depending on the size and complexity of the scan file as well as the type of selected filter the conversion process may take some time.
+![open_options_menu](images/Manual_CreateMash_5.jpg)
+
+
+
+When the mesh-file is available a notification is displayed.
+![open_options_menu](images/Manual_CreateMash_6.jpg)
+
+
+
+- Again open the options menu. Another index card for the mesh-file has been added.
+
+- Click on the mesh-file index card.
+
+- You can now click on the download-icon to download the mesh-file to your computer or click on the trashbasket icon to delete the mesh-file.
+  ![open_options_menu](images/Manual_CreateMash_8.jpg)
+
+
+** File Operations<a name="fileOperations"></a>
+
+- Load files<a name="loadFiles"></a>
+
+A scan result which has been saved to the FabScanPi memory previously can be reloaded. Go to the main menu and click on the folder-icon at the left side of the menu bar.
+![main_menu-load_scan](images/Manual_LoadScan_1.jpg)
+
+
+
+- Scroll through the displayed file inventory and click on the icon of the wanted file.
+
+![load_scan](images/Manual_LoadScan_2.jpg)
+
+
+
+Now the selected file will be loaded which may need some time. After the loading process is finished a notification will be displayed.
+![loaded_scan-file](images/Manual_LoadScan_3.jpg)
+
+
+
+- Delete files<a name="deleteFiles"></a>
+
+**Delete a scan-file**
+A scan result which has been saved to the FabScanPi memory previously can be deleted. To do that it must be loaded and displayed on the virtual turntable in the main menu.
+-Click on the options-icon on the right side of the menu bar.
+![delete_files](images/Manual_CreateMash_1.jpg)
+
+Click on the wastebasket-icon to delete the scan-file.
+NOTE: By deleting a scan file the corresponding mesh file (if available) will be deleted instantly.
+
+
+
+**Delete a mesh-file**
+Note: If a mesh file is available a second slide for the mesh file will be displayed.
+![mesh_slide_available](images/Manual_CreateMash_1.jpg)
+
+
+
+By selecting the mesh slide and clicking on the wastebasket-icon the mesh-file can be deleted separately. 
+![loaded_scan-file](images/Manual_DeleteScan_1.jpg)
+
+- Download Files<a name="downloadFiles"></a>
+  It is possible to download generated files (either scan- or mesh-files) from the FabScanPi via the web-based user interface. 
+
+
+**Download a scan-file**
+Note: Before you can download a file it must be [loaded](#loadFiles) and displayed on the virtual turntable in the main menu.
+
+- Go to the main menu.
+
+- Click on the options-icon on the right side of the menu bar.
+
+
+  ![delete_files](images/Manual_CreateMash_1.jpg)
+
+- Click on the download-icon to download the mesh-file
+
+- A download message (depending on the used web-browser) will be displayed
+
+**Download a mesh-file**
+Note: If a mesh file is available a second slide for the mesh file will be displayed.
+![mesh_slide_available](images/Manual_CreateMash_1.jpg)
+
+- Select the mesh slide
+- Click on the download-icon to download the mesh-file
+- A download message (depending on the used web-browser) will be displayed
+
+
+
 
 # Config File Values
 
@@ -559,338 +881,3 @@ After you changed the file you can restart your network daemon.
 ```
 sudo /etc/init.d/networking restart
 ```
-
-
-
-# Software User Manual
-
-* [Getting Started](#gettingStarted)
-
-* [Presets](#presets)
-
-* [Perform a scan](#performAScan)
-
-* [Generate Mesh](#generateMesh)
-
-* [File Operations](#fileOperations)
-
-
-FabScan Pi is tested on: 
-
-*** PLEASE UPDATE THE VERSION NUMBERS OF THE TESTED OSX BROWSERS
-
-
-
-|                   Logo                   |      OS      |        Versions        |
-| :--------------------------------------: | :----------: | :--------------------: |
-| ![browser_logo](images/chrome-logo.png)  | OSX, Windows | 47.0.2526.106 (64-bit) |
-| ![browser_logo](images/firefox-logo.png) |     OSX      |         43.0.4         |
-| ![browser_logo](images/firefox-logo.png) |   Windows    |      54.0 (32bit)      |
-
-
-
-**Getting Started<a name="gettingStarted"></a>**
-
-- By default the FabScanPi server binds to all interfaces on port 8080. Pointing your browser to http://ip-of-your-raspberry-pi:8080 will open the user interface. 
-
-  If your FabScanPi has access to the internet an information window with the latest project news will pop-up. You can close it by left-clicking on the black x in the upper right corner of the grey info window.
-
-  ![main_menu](images/Manual_0.jpg)
-
-
-
-
- Now your can start using your FabScanPi.
-
-------
-
-**Calibration<a name="calibration"></a>**
-
-Before you can start with your first scans you must perform an calibration. That is necessary because every Scanner housing is a bit different.  By calibrating your scanner the software will get the exact parameters of your FabScanPi. Only after finishing the calibration successfully you will have good scan results .
-
-The calibration will be done by scanning an calibration sheet with a specific pattern which must be placed on the turntable. The pattern must face the camera:
-
-
-
-***PICTURE OF CALIBRATION SHEET IN START POSITION
-
-
-
-Option 1: You can decide between the standard calibration sheet which must be glued onto a paperboard sheet. The standard sheet can be put up without an additional holder. You maybe have to fix the calibration sheet on the turntable by using some adhesive tape.
-
-Option 2: You have an 3D-printer available and can print out our calibration sheet holder. There's also a different calibration sheet for external holder use.
-
-
-
-***LINK TO THE CALIBRATION SHEET DOWNLOAD
-
-
-
-Note: Please check if your print of the calibration sheet has the correct scale. Each black square should have the side length of 10 mm (1 cm). If the size is not correct please correct the parameter "pattern square size" in the configuration file. 
-
-You can find all details in the chapter "[How to Edit the Config File](#editConfigFile)".
-
-
-
-Start the calibration procedure by clicking on the gun sight icon in the very upper left corner.
-
-![main_menu](images/Manual_1.jpg)
-
-
-
-An information "Calibration started" will be displayed in the upper left corner.
-
-![main_menu](images/Manual_2a.jpg)
-
-
-
-The calibration may need several minutes. During the calibration an information about the remaining time is displayed. 
-
-![main_menu](images/Manual_2b.jpg)
-
-
-
-When the calibration was finished successfully another notification will appear for a short time in the upper left corner.
-
-![main_menu](images/Manual_2c.jpg)
-
-Now you can remove the calibration pattern sheet from the turntable and start your first scan.
-
-
-
-**Scan Settings<a name="scansettings"></a>**
-
-Note: The current settings are only persistent as long as the pi is up and running. The settings are saved with the scan data after a successful scan. They can be loaded to scan another object with the same settings. E.g. an object what consists of the same material, color etc. 
-
-- Click on the duckling-symbol to open the scan menu.
-
-![open_the_scan_menu](images/Manual_4.jpg)
-
-
-
-- The threshold-slider (6) can be used to adjust the sensitivity of the captured data. Select the scan quality by using the other slider (7). 
-  Note: The better the scan the longer is the required capture time. Sometimes it is better to start with a low resolution to control the selected settings result. If the result is nice you can perform a higher resolution scan with the same settings.
-
-  ![scan_menu](images/Manual_5a.jpg)
-
-
-
-
-By clicking on the contrast-icon (3) you will get access to the camera settings menu. For adjusting the camera presets three sliders for saturation, brightness and contrast are available.
-
-
-![camera_settings_menu](images/Manual_6.jpg)
-
-
-
-Click on the light-symbol (4) to get access to the lighting menu.
-
-![scan_menu](images/Manual_5a.jpg)
-
-
-
-Here you can use the sliders to change the brightness and color of the (optional) light source. When all three sliders are at the very left end the light is off. Watch the preview in the lower left corner of the menu.
-![lighting_menu](images/Manual_7.jpg)
-
-
-
-Note: The setting in the lighting menu will only cause an effect if an optional WS2812-compatible light source (e.g. Adafruit NeoPixel LED-Ring or FabScanPi-Camera-Holder) is installed.
-Click on the  arrows-and-circle symbol (5) to get access to the alignment menu.
-![scan_menu](images/Manual_5a.jpg)
-
-
-
-
-**Perform a scan<a name="performAScan"></a>**
-
-**Color Scan**<a name="colorScan"></a>
-
-- Make sure your FabScanPi is switched on, an object is placed on the turntable and the lid / the optional laser safety switch is closed.
-- Open the web-interface as described in chapter 
-  [Getting Started](#gettingStarted).
-- Click on the duckling-symbol to open the scan menu.
-
-![open_scan_menu](images/Manual_4.jpg)
-
-
-
-Note: If you do not have installed a light source you should perform a [monochrome scan](#monochromeScan).
-
-- Adjust the scan preset values to your needs as described in chapter [Presets](#presets).
-
-![scan_menu](images/Manual_TextureScan_1.jpg)
-
-
-
-- Click on .Start Scan. to initiate the process
-  A starting message will be displayed. Now the texture will be processed.
-
-
-![texture_capturing](images/Manual_TextureScan_2.jpg)
-
-
-The latest photo will be displayed during the capturing process.
-
-![capturing_starts](images/Manual_TextureScan_3.jpg)
-
-
-
-When the texture has been captured (progress bar at 50 percent) the actual scan is initiated. A notification is displayed.
-![scan_starts](images/Manual_TextureScan_4.jpg)
-
-
-
-A notification will be displayed when the scan is completed / file is saved.
-![scan_completed](images/Manual_TextureScan_5.jpg)
-
-
-- You can now check, download or delete the scan-data.
-
-
-**Monochrome scan**<a name="monochromeScan"></a>
-
-- Make sure your FabScanPi is switched on, an object is placed on the turntable and the lid / the optional laser safety switch is closed.
-- Open the web-interface as described in chapter 
-  [Getting Started](#gettingStarted).
-- Click on the duckling-symbol to open the scan menu.
-
-![open_scan_menu](images/Manual_4.jpg)
-
-
-
-- Adjust the scan preset values to your needs as described in chapter [Presets](#presets).
-- Uncheck the color-scan option (8)
-
-![scan_menu](images/Manual_5a.jpg)
-
-
-
-- Click on .Start Scan. to initiate the process
-  A starting message will be displayed and the scan process is started.
-
-![scan_starts](images/Manual_Scan_2.jpg)
-
-
-
-When the scan is completed / file is saved a notification will be displayed. 
-![scan_completed](images/Manual_Scan_3.jpg)
-
-
-- You can now check, download or delete the scan-data.
-
-** Generate Mesh<a name="generateMesh"></a>
-
-The FabScanPi software includes a feature to convert a scan into a mesh-file. This mesh-file can be used for 3D-printing.
-Note: To generate a mesh-file a scan must have been performed. It is also possible to load a scan-file which has been saved previously. 
-
-- Click on the options icon to open the options menu.
-  ![open_options_menu](images/Manual_CreateMash_1.jpg)
-
-
-
-- The options menu will open and you can see the index card of the loaded file.
-  ![open_options_menu](images/Manual_CreateMash_1.jpg)
-
-
-
-- Click on the magic wand icon to open the menu for the MeshLab filter.
-  ![open_options_menu](images/Manual_CreateMash_3.jpg)
-
-
-
-- Now select one of the Meshlab filters and the file format for the future mesh file.
-
-- Click on "Start Meshing" to activate the conversion process. 
-  ![open_options_menu](images/Manual_CreateMash_4.jpg)
-
-
-
-The conversion starts and the main menu appears. A notification is displayed as well.
-Note: Depending on the size and complexity of the scan file as well as the type of selected filter the conversion process may take some time.
-![open_options_menu](images/Manual_CreateMash_5.jpg)
-
-
-
-When the mesh-file is available a notification is displayed.
-![open_options_menu](images/Manual_CreateMash_6.jpg)
-
-
-
-- Again open the options menu. Another index card for the mesh-file has been added.
-
-- Click on the mesh-file index card.
-  ![open_options_menu](images/Manual_CreateMash_7.jpg)
-
-
-
-- You can now click on the download-icon to download the mesh-file to your computer or click on the trashbasket icon to delete the mesh-file.
-  ![open_options_menu](images/Manual_CreateMash_8.jpg)
-
-
-** File Operations<a name="fileOperations"></a>
-
-- Load files<a name="loadFiles"></a>
-
-A scan result which has been saved to the FabScanPi memory previously can be reloaded. Go to the main menu and click on the folder-icon at the left side of the menu bar.
-![main_menu-load_scan](images/Manual_LoadScan_1.jpg)
-
-
-
-- Scroll through the displayed file inventory and click on the icon of the wanted file.
-
-![load_scan](images/Manual_LoadScan_2.jpg)
-
-
-
-Now the selected file will be loaded which may need some time. After the loading process is finished a notification will be displayed.
-![loaded_scan-file](images/Manual_LoadScan_3.jpg)
-
-
-
-- Delete files<a name="deleteFiles"></a>
-
-**Delete a scan-file**
-A scan result which has been saved to the FabScanPi memory previously can be deleted. To do that it must be loaded and displayed on the virtual turntable in the main menu.
--Click on the options-icon on the right side of the menu bar.
-![delete_files](images/Manual_CreateMash_1.jpg)
-
-Click on the wastebasket-icon to delete the scan-file.
-NOTE: By deleting a scan file the corresponding mesh file (if available) will be deleted instantly.
-
-
-
-**Delete a mesh-file**
-Note: If a mesh file is available a second slide for the mesh file will be displayed.
-![mesh_slide_available](images/Manual_CreateMash_1.jpg)
-
-
-
-By selecting the mesh slide and clicking on the wastebasket-icon the mesh-file can be deleted separately. 
-![loaded_scan-file](images/Manual_DeleteScan_1.jpg)
-
-- Download Files<a name="downloadFiles"></a>
-  It is possible to download generated files (either scan- or mesh-files) from the FabScanPi via the web-based user interface. 
-
-
-**Download a scan-file**
-Note: Before you can download a file it must be [loaded](#loadFiles) and displayed on the virtual turntable in the main menu.
-
-- Go to the main menu.
-
-- Click on the options-icon on the right side of the menu bar.
-
-
-  ![delete_files](images/Manual_CreateMash_1.jpg)
-
-- Click on the download-icon to download the mesh-file
-
-- A download message (depending on the used web-browser) will be displayed
-
-**Download a mesh-file**
-Note: If a mesh file is available a second slide for the mesh file will be displayed.
-![mesh_slide_available](images/Manual_CreateMash_1.jpg)
-
-- Select the mesh slide
-- Click on the download-icon to download the mesh-file
-- A download message (depending on the used web-browser) will be displayed
-

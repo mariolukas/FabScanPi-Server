@@ -36,27 +36,7 @@ flashed automatically by the FabscanPi-Server application.
 
 ![drawing_400](images/fabscanpihat.png)
 
-<<<<<<< HEAD
-# How to assemble the FabScanPi HAT
 
-**Materials & Tools**
-
-* Soldering Iron
-* Solder Wire
-* Side Cutter
-* FabScanPi HAT Kit
-* V7805-2000 voltage regulator ( optional but recommended )
-
-![drawing_400](images/RPi-FabScan-HAT05.jpg)
-
-** 1. Prepare Pin Headers**
-
-![drawing_400](images/RPi-FabScan-HAT07.jpg)
-
-Use the side cutter to cut two pieces of 3 pins from the male header, like you can see on the picture above.
-
-#Connecting the Stepper Motor
-=======
 **How to assemble the FabScanPi HAT**
 
 
@@ -169,12 +149,12 @@ If you are using another power supply which is capable of delivering 12V and 5V 
 
 #Connecting the Stepper Motor(s)
 
->>>>>>> master
->>>>>>> There are different kinds of stepper motos. Mostly with 4 or 6 leads. For
->>>>>>> connecting the stepper motor to the FabScanPi HAT you need to know the
->>>>>>> corresponding lead pairs of the motor coils. The best way to find out something
->>>>>>> about the motor is to have a look at the datasheet of the motor manufacturer.
->>>>>>> In the following desciptions the pairs are called (2B, 1B) and (1A, 2A).
+
+There are different kinds of stepper motos. Mostly with 4 or 6 leads. For
+connecting the stepper motor to the FabScanPi HAT you need to know the
+corresponding lead pairs of the motor coils. The best way to find out something
+about the motor is to have a look at the datasheet of the motor manufacturer.
+In the following desciptions the pairs are called (2B, 1B) and (1A, 2A).
 
 ![drawing_300](images/4wires.jpg) 
 ![drawing_300](images/6wires.jpg)
