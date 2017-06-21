@@ -37,7 +37,7 @@ flashed automatically by the FabscanPi-Server application.
 ![drawing_400](images/fabscanpihat.png)
 
 <<<<<<< HEAD
-# How to Asselmble the FabScanPi HAT
+# How to assemble the FabScanPi HAT
 
 **Materials & Tools**
 
@@ -53,16 +53,16 @@ flashed automatically by the FabscanPi-Server application.
 
 ![drawing_400](images/RPi-FabScan-HAT07.jpg)
 
-Use the side cutter to cut two pieces of 3 pins from the male header, like you on the picture above.
+Use the side cutter to cut two pieces of 3 pins from the male header, like you can see on the picture above.
 
 #Connecting the Stepper Motor
 =======
-**How to Assemble the FabScanPi HAT**
+**How to assemble the FabScanPi HAT**
 
 
 * * *
-<i class="fa fa-info-circle spacer" aria-hidden="true"></i> _About Soldering_
- 
+    <i class="fa fa-info-circle spacer" aria-hidden="true"></i> _About soldering_
+
 _If you are soldering for the very fist time, we suggest to read the comic ["Soldering is Easy"](https://mightyohm.com/files/soldercomic/FullSolderComic_EN.pdf) by Mitch Altman (soldering wisdom), Andie Nordgren (comic adaption) and Jeff Keyzer (layout and editing)._
 * * *
 
@@ -151,8 +151,7 @@ Now the 2x20-pin socket connector must be installed from the rear side of the PC
 
 ![drawing_400](images\hat_assembly_7.jpg)
 
-_Attention: The power connector in this image is soldered in an alternative way. The recommended way 
-is shown in the image before._
+**ATTENTION:** The power connector in the image above image is soldered in an alternative way. The recommended way is shown in the second last image.
 
 
 
@@ -171,11 +170,11 @@ If you are using another power supply which is capable of delivering 12V and 5V 
 #Connecting the Stepper Motor(s)
 
 >>>>>>> master
-There are different kinds of stepper motos. Mostly with 4 or 6 leads. For
-connecting the stepper motor to the FabScanPi HAT you need to know the
-corresponding lead pairs of the motor coils. The best way to find out something
-about the motor is to have a look at the datasheet of the motor manufacturer.
-In the following desciptions the pairs are called (2B, 1B) and (1A, 2A).
+>>>>>>> There are different kinds of stepper motos. Mostly with 4 or 6 leads. For
+>>>>>>> connecting the stepper motor to the FabScanPi HAT you need to know the
+>>>>>>> corresponding lead pairs of the motor coils. The best way to find out something
+>>>>>>> about the motor is to have a look at the datasheet of the motor manufacturer.
+>>>>>>> In the following desciptions the pairs are called (2B, 1B) and (1A, 2A).
 
 ![drawing_300](images/4wires.jpg) 
 ![drawing_300](images/6wires.jpg)
@@ -283,11 +282,56 @@ NOTE: For the final stage of constuction a more powerful power supply is needed.
 
 
 #Connecting the LED Ring
-TODO
+This small manual will help you to assemble the Camera and LED ring combination. You will need a light if you want to perform texture scans (Check mark is set for Color Scan).
+
+![drawing_400](images/RingLicht_1.jpg)
+
+This is how it should look like if you finished the assembly.
+
+
+
+The Ring-Light will include the  parts you can see in the next picture below (the camera modul is sold separately):
+
+![drawing_400](images/RingLicht_1b.jpg)
+
+IMPORTANT: You will need the standard camera modul (which has a green pcb). The module used in the pictures is the IR version which has the same dimensions but different optical specifications.
+
+
+
+Step 1: Slide one end of the flat ribbon cable into the connector of the camera module (1). Make sure the blue plastic is on the side facing away from the camera. Push the lock bar of the connector gently into the lock position (2).
+
+![drawing_400](images/RingLicht_2.jpg)
+
+
+
+Step 2: Merge the flat ribbon cable through the elongated hole in the LED board.
+
+![drawing_400](images/RingLicht_3.jpg)
+
+
+
+Step 3: Put the four Screws through the holes in the camera board. The heads must be on the side where the lens is situated. Then put a spacer on every screw (as shown in the next picture). 
+
+![drawing_400](images/RingLicht_4.jpg)
+
+
+
+Step 4: Put the Camera modul on the LED board. All four screws must fit the appropriate hole. This can be a bit tricky but it is doable.
+
+![drawing_400](images/RingLicht_5.jpg)
+
+
+
+Step 5: Put a nut on each screw an pull them hand-tight. 
+
+![drawing_400](images/RingLicht_6.jpg)
+
+Now the Camera-LED assembly is ready for installation.
 
 
 
 #Additional Motors for the Lasers
+
 TODO
 
 #Screws and Washers

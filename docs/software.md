@@ -148,6 +148,12 @@ sudo apt-get update && apt-get dist-upgrade
 
 # Config File Values
 
+
+
+***CHECK THE TEXT OF THE VALUES - MAYBE SOMETHING IS MISSING
+
+
+
 A configuration file can be found in /etc/fabscanpi/default.config.json. The content of this file 
 is in JSON format and can be edited with an editor of your choice (e.g. nano). Be careful and don't
 miss brackets. JSON is really sensitive in it's format.
@@ -187,25 +193,37 @@ This section describes the laser stepper motor values. The rotation_steps value 
 
 In this section you can change the parameters of the configuration sheet. If your printout of the calibration sheet has not the exact scale you can adjust the parameters here instead of scaling the print. 
 
+
+
+"scanner_type": "laserscanner",
+"calibration": {
+
+```
+"weight_matrix": [],
+"dist_camera_matrix": [],
+"pattern": {
+    "square_size": 10,
+    "rows": 6,
+    "columns": 9,
+    "origin_distance": 29
+}
+```
+
+
 - Square Size is the side length of one black square in millimeters.
-- Rows and Columns are the connection points of the black squares.
 
-    ​```
-    "scanner_type": "laserscanner",
-    "calibration": {
-        "weight_matrix": [],
-        "dist_camera_matrix": [],
-        "pattern": {
-            "square_size": 10,
-            "rows": 6,
-            "columns": 9,
-            "origin_distance": 33.5
-        }
-     ```
+  ![PuTTY_Menu](images/calibration_sheet_info_2.png)
 
-![PuTTY_Menu](images/Origin_Distance.jpg)
 
-- Origin Distance is the distance between turntable surface and the upper edge of the black squares in the row close to the turntable.
+
+- Rows and Columns are the connection points of the black squares. The correct number is 9 for columns and 6 for rows :
+
+![PuTTY_Menu](images/calibration_sheet_info_1.png)
+
+
+
+- Origin Distance is the distance between turntable surface and the upper edge of the black squares in the row close to the turntable.![PuTTY_Menu](images/Origin_Distance.jpg)
+
 
 
 
@@ -292,7 +310,7 @@ In this section you can check the calibration parameters. Please make sure you h
 **Table settings**
 
 
-In this section you can change the turntable settings. The radius of the turntable is in millimetres (mm). In the default case the motor is set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps.    
+In this section you can change the turntable settings. The radius of the turntable is in millimeters (mm). In the default case the motor is set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps. Radius is the radius of the turntable in millimeters (mm). 
     "process_numbers": 4,
     "turntable": {
         "steps": 3200,
@@ -354,7 +372,7 @@ In this section you can change the pre-set brightness level of the LED-Ring duri
 
 
 
-# How to Edit the Config File
+# How to Edit the Config File<a name="editConfigFile"></a>
 
 **Remote access to change the configuration settings**
 
@@ -559,6 +577,10 @@ sudo /etc/init.d/networking restart
 
 FabScan Pi is tested on: 
 
+*** PLEASE UPDATE THE VERSION NUMBERS OF THE TESTED OSX BROWSERS
+
+
+
 |                   Logo                   |      OS      |        Versions        |
 | :--------------------------------------: | :----------: | :--------------------: |
 | ![browser_logo](images/chrome-logo.png)  | OSX, Windows | 47.0.2526.106 (64-bit) |
@@ -586,7 +608,13 @@ FabScan Pi is tested on:
 
 Before you can start with your first scans you must perform an calibration. That is necessary because every Scanner housing is a bit different.  By calibrating your scanner the software will get the exact parameters of your FabScanPi. Only after finishing the calibration successfully you will have good scan results .
 
-The calibration will be done by scanning an calibration sheet with a specific pattern which must be placed on the turntable:
+The calibration will be done by scanning an calibration sheet with a specific pattern which must be placed on the turntable. The pattern must face the camera:
+
+
+
+***PICTURE OF CALIBRATION SHEET IN START POSITION
+
+
 
 Option 1: You can decide between the standard calibration sheet which must be glued onto a paperboard sheet. The standard sheet can be put up without an additional holder. You maybe have to fix the calibration sheet on the turntable by using some adhesive tape.
 
@@ -594,19 +622,17 @@ Option 2: You have an 3D-printer available and can print out our calibration she
 
 
 
+***LINK TO THE CALIBRATION SHEET DOWNLOAD
+
+
+
 Note: Please check if your print of the calibration sheet has the correct scale. Each black square should have the side length of 10 mm (1 cm). If the size is not correct please correct the parameter "pattern square size" in the configuration file. 
 
-You can find all details in the chapter "How to Edit the Config File".
+You can find all details in the chapter "[How to Edit the Config File](#editConfigFile)".
 
 
 
-
-
-
-
-
-
-You can start the calibration procedure by clicking on the gun sight icon in the very upper left corner.
+Start the calibration procedure by clicking on the gun sight icon in the very upper left corner.
 
 ![main_menu](images/Manual_1.jpg)
 
