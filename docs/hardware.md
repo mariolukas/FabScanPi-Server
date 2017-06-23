@@ -41,7 +41,7 @@ flashed automatically by the FabscanPi-Server application.
 
 
 * * *
-    <i class="fa fa-info-circle spacer" aria-hidden="true"></i> _About soldering_
+ _About soldering_
 
 _If you are soldering for the very fist time, we suggest to read the comic ["Soldering is Easy"](https://mightyohm.com/files/soldercomic/FullSolderComic_EN.pdf) by Mitch Altman (soldering wisdom), Andie Nordgren (comic adaption) and Jeff Keyzer (layout and editing)._
 * * *
