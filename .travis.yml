@@ -5,15 +5,18 @@ python:
 - 2.7_with_system_site_packages
 before_install:
 - sudo apt-get -qq update
-- sudo apt-get install -y build-essential python-setuptools debhelper cdbs dh-python python-pip rsync 
+- sudo apt-get install -y build-essential python-setuptools debhelper cdbs dh-python
+  python-pip rsync
 before_script:
 - pip install mkdocs
 - VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}')
-- if [ -z ${TRAVIS_TAG} ]; then sed -i -e 's/'"$VERSION"'/'"$VERSION"'-b'"$TRAVIS_BUILD_NUMBER"'/g' debian/changelog; fi
+- if [ -z ${TRAVIS_TAG} ]; then sed -i -e 's/'"$VERSION"'/'"$VERSION"'-b'"$TRAVIS_BUILD_NUMBER"'/g'
+  debian/changelog; fi
 - echo $TRAVIS_TAG
 script: sudo make deb
 after_success:
-- if [ -z ${TRAVIS_TAG} ]; then curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/testing/; fi
+- if [ -z ${TRAVIS_TAG} ]; then curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/testing/;
+  fi
 - NOW=`date +%Y-%m-%d-%H-%M`
 - mkdocs build
 - cd ..
@@ -31,12 +34,12 @@ after_success:
 - cd ../../FabScanPi-Server/
 env:
   global:
-  - secure: "m+zIuupfcmWS8Sby7CB6gAG9cdPLS6DzS+ZjA+9JispYr1rQRYJMPPgP54/XE1UNp8wCU9cPLDHTcllkzKh2PBUXcDy0BOqA+2n1pz3sXloQKM+4uIpBywru4VLCIymw3f2AhfV//50X95w8p/9lH7/K0kUWHNpAkFeMfiVpYN9Fcj5V2NhJ1EYjU5fgwdJ9GACMyiwkxt/GQiiLSLcffHBvN+HOSU19xGBEQx7LEKMJzVs48DT9ZCsjOH4O+rYFyZUW2qzRqJFidSg8SbJAzxiXSiJpgexBji6PkheGAu3DzPLXQAjacW7V0gwqeyuEl9ETcnAt3ZN0UrsYh6zCSLJUBDdJjsypcxgAtz+RddgUCTLIM/TaLSDw6YaOhUsT5CtdDRIflK7LdHhK0oGzVrG8rA2VfKGEKlSC10ZyhenazM6MLTjErGqAcdg6QtN5JXVkubTSytJbs1vEqRTdwo9DI8p2RFa5o4wUobHleFN9GFWwdeKDob86bYna886q5fq6mCLNoOf/KCCMCAcy/hEaOyFb3JYRxhrTCa4lQQ1JNe3YveuiY2P5d+DF7liRpXXpMqBK6RfwmLVn3JfYS6Y33b6h9pYRtu6Cjcm+nc6UhTaM1qxqyJkd2X/yPByJYyt4JjKJkkyVzrN5jzxn3CTPXnNHyYF6uIs4Eoq7m+Q="
-  - secure: "Aimc+MrAZvmd+0XxaO5e8GcEFI9tLiAS/mC9cf+cB8hJfZqKPgVqZ5kfrG4GEC4ymQkZ+Uhbitc51+ml/8I5/3rkc7+cRDG7zn7e6k+E1TLPM/UYett8Qu60hK+QUA7ZgUIXbTOVIKzR/mluTfY38MOxNlLeLV6cSqyRj+OnXZw5H4rR/s/sKRscgS3oedj5lWQiwLED4PhqCnbLFTncC0FPIr8C3o3UKFK3jRlVGm1gAMJWDkFu/EM5K6HAP2SRBQBfC9wACjsqLyRw9jjIeoVD4vFsK9KJdvfgKh/w+UZR3vySrd2pn3L3/7B/+TNEdex3UpzePmHsfGkWPsqULO/OahpEmxS9BUpiqgTQkousaWEG5F9Zv+oJHvFgcAmMSXUGCWepiWhtNDYROnQwj2mNb1+GZv58bhzMLU6l2BXBxIs2Kju8RMLnFi+0vzUyo8pIQT0a0Up/rI40ljkuEzuw683TeryThUAwfFuqMHE/RalWkdujLpigJZS5E/5nNX+MZsCUv7v34PdMFWrkxr/6K/JnwamgNcmU1WKweYwGxIsorDqGEEGkjpbOt1ynZg3KEiLMlEkCMQpLJ1oAptItw8CnGJufHndoZIGktMffYSa+Xe4Gi7ficU25K4ckMRsAJzr9Zzub2Sr4wx8hswafos3xhgpXKOQk8EiUnRo="
-  - secure: "iKV7rjdri+dxUlyr0C01195QFREbfIt0nL1ocdMrxDZdp8hb25pDl3UPrbC8pBSHIfOvbucfN7BMukS4EsD3Jxw0YCInwwUR5hZRZkiegU5TuUdzKHpbSCHl8+gtv9IcQKSYryHeFGAtCnW+52XIlNkLH8pzjKJyLkMB/uIVDdcQn1az7t8MR21ucTJdyGf/oJBmabmq9nwqEgumA+Ei+6J+/jdzK+M3do1iON1yHFJS2yGU21QdRIRxvEIat8Ss6JV/nfWFMbWQH/YRHKTrMXkgscqgDB/hJtfDgIvlObgsssrScRSoOm3a7vKEn4OoefUV0oFsPBrCKYEjWMqyEutz/nX25bV2gytrKbzyurI8Qr1QMJhcFZiobLkhMWTyAS/lJqQl45/Ffxj2pJFiUXvKCz+dwKYaQ/zjAu2ZUhxFw4f7KR7yTz3ifQFHy6imZ/1P/J7LLLiMXENN2xQCP80nsuLdRVFFms3z/nSbm/dLosudWHWu+x0tdbMd9XswfRqcaAr2WePNbGLAzb3mivKoP1hIG7yMVgc6dnLWoH2QPtcSdwSsBkkUZPMMRrk4Hy1GqYGPrqJ+CuHhffRKlnL+Irj3uMO0Uxxl0w/YK6h4UJu6bnvIsLIKNR84ZeoQqm8q10tXOZrlInAYYfYthRumBzNNNeCfneTHeqRL/PI="
+  - secure: m+zIuupfcmWS8Sby7CB6gAG9cdPLS6DzS+ZjA+9JispYr1rQRYJMPPgP54/XE1UNp8wCU9cPLDHTcllkzKh2PBUXcDy0BOqA+2n1pz3sXloQKM+4uIpBywru4VLCIymw3f2AhfV//50X95w8p/9lH7/K0kUWHNpAkFeMfiVpYN9Fcj5V2NhJ1EYjU5fgwdJ9GACMyiwkxt/GQiiLSLcffHBvN+HOSU19xGBEQx7LEKMJzVs48DT9ZCsjOH4O+rYFyZUW2qzRqJFidSg8SbJAzxiXSiJpgexBji6PkheGAu3DzPLXQAjacW7V0gwqeyuEl9ETcnAt3ZN0UrsYh6zCSLJUBDdJjsypcxgAtz+RddgUCTLIM/TaLSDw6YaOhUsT5CtdDRIflK7LdHhK0oGzVrG8rA2VfKGEKlSC10ZyhenazM6MLTjErGqAcdg6QtN5JXVkubTSytJbs1vEqRTdwo9DI8p2RFa5o4wUobHleFN9GFWwdeKDob86bYna886q5fq6mCLNoOf/KCCMCAcy/hEaOyFb3JYRxhrTCa4lQQ1JNe3YveuiY2P5d+DF7liRpXXpMqBK6RfwmLVn3JfYS6Y33b6h9pYRtu6Cjcm+nc6UhTaM1qxqyJkd2X/yPByJYyt4JjKJkkyVzrN5jzxn3CTPXnNHyYF6uIs4Eoq7m+Q=
+  - secure: Aimc+MrAZvmd+0XxaO5e8GcEFI9tLiAS/mC9cf+cB8hJfZqKPgVqZ5kfrG4GEC4ymQkZ+Uhbitc51+ml/8I5/3rkc7+cRDG7zn7e6k+E1TLPM/UYett8Qu60hK+QUA7ZgUIXbTOVIKzR/mluTfY38MOxNlLeLV6cSqyRj+OnXZw5H4rR/s/sKRscgS3oedj5lWQiwLED4PhqCnbLFTncC0FPIr8C3o3UKFK3jRlVGm1gAMJWDkFu/EM5K6HAP2SRBQBfC9wACjsqLyRw9jjIeoVD4vFsK9KJdvfgKh/w+UZR3vySrd2pn3L3/7B/+TNEdex3UpzePmHsfGkWPsqULO/OahpEmxS9BUpiqgTQkousaWEG5F9Zv+oJHvFgcAmMSXUGCWepiWhtNDYROnQwj2mNb1+GZv58bhzMLU6l2BXBxIs2Kju8RMLnFi+0vzUyo8pIQT0a0Up/rI40ljkuEzuw683TeryThUAwfFuqMHE/RalWkdujLpigJZS5E/5nNX+MZsCUv7v34PdMFWrkxr/6K/JnwamgNcmU1WKweYwGxIsorDqGEEGkjpbOt1ynZg3KEiLMlEkCMQpLJ1oAptItw8CnGJufHndoZIGktMffYSa+Xe4Gi7ficU25K4ckMRsAJzr9Zzub2Sr4wx8hswafos3xhgpXKOQk8EiUnRo=
+  - secure: iKV7rjdri+dxUlyr0C01195QFREbfIt0nL1ocdMrxDZdp8hb25pDl3UPrbC8pBSHIfOvbucfN7BMukS4EsD3Jxw0YCInwwUR5hZRZkiegU5TuUdzKHpbSCHl8+gtv9IcQKSYryHeFGAtCnW+52XIlNkLH8pzjKJyLkMB/uIVDdcQn1az7t8MR21ucTJdyGf/oJBmabmq9nwqEgumA+Ei+6J+/jdzK+M3do1iON1yHFJS2yGU21QdRIRxvEIat8Ss6JV/nfWFMbWQH/YRHKTrMXkgscqgDB/hJtfDgIvlObgsssrScRSoOm3a7vKEn4OoefUV0oFsPBrCKYEjWMqyEutz/nX25bV2gytrKbzyurI8Qr1QMJhcFZiobLkhMWTyAS/lJqQl45/Ffxj2pJFiUXvKCz+dwKYaQ/zjAu2ZUhxFw4f7KR7yTz3ifQFHy6imZ/1P/J7LLLiMXENN2xQCP80nsuLdRVFFms3z/nSbm/dLosudWHWu+x0tdbMd9XswfRqcaAr2WePNbGLAzb3mivKoP1hIG7yMVgc6dnLWoH2QPtcSdwSsBkkUZPMMRrk4Hy1GqYGPrqJ+CuHhffRKlnL+Irj3uMO0Uxxl0w/YK6h4UJu6bnvIsLIKNR84ZeoQqm8q10tXOZrlInAYYfYthRumBzNNNeCfneTHeqRL/PI=
 before_deploy:
 - export RELEASE_FILE_NAME=$(ls ../*.deb)
-after_deploy: 
+after_deploy:
 - curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/stable/
 - NOW=`date +%Y-%m-%d-%H-%M`
 - cd ..
@@ -48,10 +51,8 @@ after_deploy:
 - git push origin --tags
 deploy:
   provider: releases
-  skip_cleanup: true
-  api_key: "owiL0HsnVVNoqRLr4Ui9atU4knqYOWJqRB7rPwr2RwZR70TaHHJWYiAoBNRhdjAEtSD7Uo+6BwhMhyIcpkYOJ4P1JQPnS6QGvnUgt11g2yiLuVPaz3o5EKE8ETtfzPpAwbSw9hESmxtKHxu6ei+2DbDeg2YQzhVPXJRgJjm7oE7BUqJRp7MIrrwFfUBLdLAEs3lg/f/sNFJVR6abKQdoNfH1bZ0RNTgsH0gwCQtKLQm6MhfXmYVI4JFNGpjXYJR3gwdnwZkAeA/BE9bqKPx4B6A89X6Ld3qxU9TAkQTC1sIAWtjOeL5mIL8J+znZ0ldEjPZ1IaZ8uEq2UOcO12H3mSN+Pn2doAZJKS1470I5OREreu84jTKAjkofmB8O/k6I/+G5KnaPNUWtUYNew+o0wKL8RITGX+DF56sTWIwuSzD4RbXWkB0Tid12I4wEqnbnbalD9InVFZmYTNeI8KSKKLFbEMZEa7hzyZBLqmtKVGI4dGt9fx0Hg+WLOfKlNhSWiieXWoA4bb1c0zHaX5aDl/6iUm4ucQ/5d/a5ll/malLiufvEwtKoKzBj4MH33qL6OxySMCyc0uKeV2oeHMP2CU6DMXEil/lCG9KHFv8q/2lDsc32/FFLFC4fupI1rlR5IvlGf3pl0silNpEGslynJtZDA572B0SWiLdgH1fvW5Q="
-  file_glob: true
-  file: "${RELEASE_FILE_NAME}"
+  api_key:
+    secure: l9WBnXvPhC9/melElR2TRukBFpLrWh0ANoYUb5me44+RjU7nRRC4GkdVsMTyv445RaA71ndyHJhwL0wCgooloZd6stU9zNFYKFnchfyYDTy6kZggGt5xh1p4TczAAVk7p8MO+QFl9T529ZhOniIJbOE8AqTw3rjcNvuTsmb/Z/QelyGER+HSsV8SZEvDaIPBnYtOJnbKcJD65NXXDY8lDI5YWJ0b8PatJWIesEEf7f+79YLBhaYVpQXfhd1fuDMeIypS3m5T8CY56cL9E4bAKqQdpk+rq88qfgcTe7x0kpDjnWlguCjyO+vs+WMcCTZ4twmNoIG7x/ok4C3MUx3W8h9qm/xYrsr6howKITsKylOz4QuCBYkWCpLz8YAbcJo0uIjy+0/vqKIvOlui/aA95exF4zc3L/4foZSjjz68yuTeG2e09FBb3IGjwafzFVVnP8NHFFqtWhHMoDMOfaLO5p/WTIttOtIcXNAb4qh5+Sf/RT04BYVEUFfMtOnpj2n8TJUlYNIa3MMOlXigqNZ0FDf268fJ42anN//RGKwAtXvddZnwwcNRcZ7AbLOkbPh3g8ZTxZG0AiD8pr/RKC9K6DA0BMsf4HLwnCUiNhCmuuxfo0GaHbixe2ZjmkqqlsgYD1yH0vi7CSj3CmzlCFxox459g3klSJ8ADAiuQDKPeg8=
+  file: des
   on:
-    tags: true
     repo: mariolukas/FabScanPi-Server
