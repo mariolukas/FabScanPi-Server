@@ -54,3 +54,6 @@ deploy:
   api_key:
     secure: dmGlVHwZYiYEucvDsT4dVAkXRhD0DNM9Xrt5ALpwMdhH2nyu38E8aDXzMpRg4dR0DFAmhOIajOxBl4m+WhTAagZr4djND282+8u7YgTKKWaSCXdUmp7tJDvj7YtReJ2DpcLq/ydEwrvO5Ayt2RVZb1yiw8TXNw6hRaVwfcqNcQ0LFFgz8UwBXgrVaasJACQWU1T0kfG74Q3NuPU/CwKhPvaciMClw29n6eMBtNBV8lGLFFw5g/JnmMQrm4BcqeeuNEM3w4vWVUcETIhsOi69iotkWKcWNwXed48A/YvzK+UFefq/ErKmdiDVe6yseEUuF2d+04mSegqTOAho9QTMonmJcMnnyC3kYmcAcMYPTjDgJjot7AsBmCQvn9dppDeI4EUmdA4bMhQ/Gtg0W/dfpj3zQymrOhSIp/WiA1LLAuNegsTmBWXz8wQnize9c5GDKlpnIWhSm9aj3JVXVcY0HREUJ0uM/vCvXen5j48/aVvBU4R/KUlWRLKVn8XpKa4jVzcFI6gGF9yXMhyQ86mgLsM/v8n+4poBYud6nUL6hQHGd+COZ8vVG3NV+eHQrL/yXMMxMQHBajktLhL5+N6R89nvaVYDKPFHAV94vpSt35sTEmuLy9p08fyDxA8HdW/hxljzUCPWNXyRF95qHteRhd54d536X/JaIMOgV938k6A=
   file: '"${RELEASE_FILE_NAME}"'
+  on:
+    tags: true
+    repo: mariolukas/FabScanPi-Server
