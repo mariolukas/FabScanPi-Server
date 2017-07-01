@@ -290,7 +290,8 @@ class ImageProcessor(ImageProcessorInterface):
             rho = np.sqrt(np.square(point_cloud[0, :]) + np.square(point_cloud[1, :]))
             z = point_cloud[2, :]
             turntable_radius = int(self.config.turntable.radius)
-            idx = np.where((z > 0) &
+            additional_offset = 0.1
+            idx = np.where((z > self.config.calibration.platform_translation[0]+additional_offset) &
                            (rho >= -turntable_radius) &
                            (rho <= turntable_radius))[0]
 
