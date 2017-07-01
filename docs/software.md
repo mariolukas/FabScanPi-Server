@@ -193,7 +193,7 @@ The calibration will be done by scanning an calibration sheet with a specific pa
 ![main_menu](images/calibration_start_position.jpg)
 NOTICE: The second laser in the image is not supported by the software yet. This will be a featrue available within the next release.
 
-Option 1: You can can build yout own calibration sheet from a cardboard sheet. Print the calibration sheet onto paper and glue it to cardboard. Build a stand of another piece of cardboard. You maybe have to fix the calibration sheet on the turntable by using some adhesive tape.
+Option 1: You can can build your own calibration tool from cardboard. Print the calibration sheet onto paper and glue it to cardboard. Build a stand of another piece of cardboard. Maybe you have to fix the calibration sheet on the turntable by using some adhesive tape.
 
 Option 2: You have an 3D-printer available and can print out our calibration sheet holder. There's also a different calibration sheet for external holder use.
 

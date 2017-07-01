@@ -103,10 +103,10 @@ def CreateRequestHandler(config, scanprocessor):
         def get_stream(self, type):
 
                self.send_response(200)
-               self.send_header('Pragma:', 'no-cache');
+               #self.send_header('Pragma:', 'no-cache');
                self.send_header('Cache-Control:', 'no-cache')
-               self.send_header('Content-Encoding:', 'identify')
-               self.send_header('Content-Type','multipart/x-mixed-replace;boundary=--jpgboundary')
+               #self.send_header('Content-Encoding:', 'identify')
+               self.send_header('Content-type', 'multipart/x-mixed-replace; boundary=--jpgboundary')
                BaseHTTPRequestHandler.end_headers(self)
 
                try:
@@ -122,13 +122,15 @@ def CreateRequestHandler(config, scanprocessor):
                             stream = Image.fromarray(image)
                             tmpFile = StringIO.StringIO()
 
-                            stream.save(tmpFile,'JPEG')
+                            stream.save(tmpFile, 'JPEG')
 
-                            self.wfile.write('--jpgboundary\n\r')
+                            self.wfile.write("--jpgboundary\r\n")
                             self.send_header('Content-Type:', 'image/jpeg')
                             self.send_header('Content-length', str(tmpFile.len))
                             BaseHTTPRequestHandler.end_headers(self)
                             stream.save(self.wfile, 'JPEG')
+                            self.wfile.write('\r\n')
+                            time.sleep(0.5)
 
                         else:
                             time.sleep(0.05)

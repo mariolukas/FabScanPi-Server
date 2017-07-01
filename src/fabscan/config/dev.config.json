@@ -1,7 +1,7 @@
 {
     "folders": {
         "www": "/usr/share/fabscanpi/",
-        "scans": "/var/scans/"
+        "scans": "/home/pi/scans/"
     },
     "laser": {
         "steps": 3200,
@@ -16,7 +16,7 @@
             "square_size": 11,
             "rows": 6,
             "columns": 9,
-            "origin_distance": 40
+            "origin_distance": 30
         },
         "camera_matrix": [
             [

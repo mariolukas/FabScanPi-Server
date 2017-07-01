@@ -16,7 +16,7 @@
             "square_size": 10,
             "rows": 6,
             "columns": 9,
-            "origin_distance": 40
+            "origin_distance": 30
         },
         "camera_matrix": [
             [

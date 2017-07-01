@@ -21,7 +21,7 @@ class ThreadedHTTPServer(ThreadingMixIn, TCPServer):
 class WebServer(ThreadingMixIn, HTTPServer):
     def __init__(self, config, scanprocessor):
         handler = FSHttpRequestHandler.CreateRequestHandler(config, scanprocessor)
-        HTTPServer.__init__(self, ('',8080), handler)
+        HTTPServer.__init__(self, ('', 8080), handler)
 
 @inject(
     config=ConfigInterface,

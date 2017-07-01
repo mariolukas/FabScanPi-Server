@@ -77,7 +77,7 @@ class FSCalibration(FSCalibrationInterface):
         self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
         self.settings.camera.contrast = 30
         #self.settings.camera.saturation = 20
-        self.settings.camera.brightness = 60
+        self.settings.camera.brightness = 50
         self.reset_calibration_values()
         self.settings.threshold = 25
 
