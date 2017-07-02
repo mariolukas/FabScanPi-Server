@@ -4,6 +4,7 @@ pages:
 - News: news.md
 - Hardware: hardware.md
 - Software: software.md
+- Examples: examples.md
 - Developing: developing.md
 - Contributing: contributing.md
 - Community: community.md

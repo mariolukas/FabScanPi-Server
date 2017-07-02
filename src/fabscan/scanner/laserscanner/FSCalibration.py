@@ -47,7 +47,7 @@ class FSCalibration(FSCalibrationInterface):
         self.calibration_brightness = [60, 60, 60]
         self.quater_turn = int(self.config.turntable.steps / 4)
         self.steps_five_degree = 5.0 / (360.0 / self.config.turntable.steps)
-        self.total_positions = (self.quater_turn/self.steps_five_degree)*4
+        self.total_positions = int(((self.quater_turn/self.steps_five_degree)*4)+2)
         self.current_position = 0
 
         self.estimated_t = [-5, 90, 320]

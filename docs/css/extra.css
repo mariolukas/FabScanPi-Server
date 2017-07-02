@@ -68,6 +68,10 @@ img[alt=browser_logo] {
     width: 40px;
 }
 
+img[alt=browser_logo_sf] {
+    width: 100px;
+}
+
 ul.example-preview {
 }
 

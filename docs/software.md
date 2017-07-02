@@ -145,423 +145,6 @@ sudo apt-get update && apt-get dist-upgrade
 ```
 
 
-
-# Config File Values
-
-
-
-***CHECK THE TEXT OF THE VALUES - MAYBE SOMETHING IS MISSING
-
-
-
-A configuration file can be found in /etc/fabscanpi/default.config.json. The content of this file 
-is in JSON format and can be edited with an editor of your choice (e.g. nano). Be careful and don't
-miss brackets. JSON is really sensitive in it's format.
-
-
-
-**Folders**
-
-
-In this section you can change the scan output folder and the folder where the ui is located. If 
-you don't know what you are doing, it is a good decision to keep this section untouched.
-
-```
-   "folders": {
-        "www": "/usr/share/fabscanpi/",
-        "scans": "/var/scans/"
-    }
-```
-
-
-
-**Laser**
-
-
-This section describes the laser stepper motor values. The rotation_steps value should be used for a laser angle change (not implemented yet).Steps defines how many steps the motor can do. In the default case the motor is set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps. 
-
-    ​```
-    "laser": {
-        "steps": 3200,
-        "numbers": 1,
-        "rotation_steps": 5
-    }
-    ​```
-
-
-**Scanner Calibration**
-
-In this section you can change the parameters of the configuration sheet. If your printout of the calibration sheet has not the exact scale you can adjust the parameters here instead of scaling the print. 
-
-
-
-"scanner_type": "laserscanner",
-"calibration": {
-
-```
-"weight_matrix": [],
-"dist_camera_matrix": [],
-"pattern": {
-    "square_size": 10,
-    "rows": 6,
-    "columns": 9,
-    "origin_distance": 29
-}
-```
-
-
-- Square Size is the side length of one black square in millimeters.
-
-  ![PuTTY_Menu](images/calibration_sheet_info_2.png)
-
-
-
-- Rows and Columns are the connection points of the black squares. The correct number is 9 for columns and 6 for rows :
-
-![PuTTY_Menu](images/calibration_sheet_info_1.png)
-
-
-
-- Origin Distance is the distance between turntable surface and the upper edge of the black squares in the row close to the turntable.![PuTTY_Menu](images/Origin_Distance.jpg)
-
-
-
-
-**Scanner Calibration Values**
-
-
-In this section you can check the calibration parameters. Please make sure you have performed the auto-calibration before starting your first scan.
-
-
-     ```
-        "camera_matrix": [
-            [
-                1285.5809999999999,
-                0.0,
-                647.60199999999998
-            ],
-            [
-                0.0,
-                1289.9490000000001,
-                835.84400000000005
-            ],
-            [
-                0.0,
-                0.0,
-                1.0
-            ]
-        ],
-        "distortion_vector": [
-            0.151,
-            -0.20300000000000001,
-            -0.0050000000000000001,
-            0.0060000000000000001,
-            -0.70899999999999996
-        ],
-        "laser_planes": [
-            {
-                "deviation": 0.052318819865,
-                "distance": 137.366403938,
-                "normal": [
-                    0.56199451,
-                    -0.01896656,
-                    0.82692348
-                ]
-            }
-        ],
-        "platform_translation": [
-            4.21176054e-03,
-            4.26178340e+01,
-            1.66114592e+02
-        ],
-        "platform_rotation": [
-            [
-                0.0,
-                9.99977231e-01,
-                6.74816764e-03
-            ],
-            [
-                4.51612662e-02,
-                6.74128255e-03,
-                -9.98956964e-01
-            ],
-            [
-                -0.99903697271524872,
-                0.00030800546235732861,
-                -0.043875189806843448
-            ]
-        ]
-    }
-    ​```
-
-
-
-**Meshlab settings**
-
-
-​In this section you can change the path for the converter which transforms the scanned pixel data into another format (e.g. .stl).    
-    ​```
-    "meshlab": {
-        "path": "/usr/bin/"
-    }
-
-
-
-**Table settings**
-
-
-In this section you can change the turntable settings. The radius of the turntable is in millimeters (mm). In the default case the motor is set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps. Radius is the radius of the turntable in millimeters (mm). 
-    "process_numbers": 4,
-    "turntable": {
-        "steps": 3200,
-        "radius": 70
-    }
-    ​```
-
-
-
-**Camera settings**
-
-Preview Resolution is the resolution value for the settings window. Resolution is the resolution for the picamera python module. You can have a look to the documentation of picamera. If you set this to other values please be sure what you are doing, not all resolutions are supportedby the picam. Some might lead to slower image capturing.    
-
-    ​```
-    "camera": {
-        "resolution": {
-            "width": 1640,
-            "height": 1232
-        },
-        "preview_resolution": {
-            "width": 240,
-            "height": 320
-        },
-        "rotate": "True",
-        "hflip": "True",
-        "vflip": "False",
-        "type": "PICAM"
-    }
-    ​```
-
-
-
-**Serial**
-
-
-In this section you can set your port. By default this value is not set, because theFabScanPi Server software autodetcts the correct port. Some Arduino and compatible boards differ in the port name. The port can be set if you are not using an Arduino UNO or compatible Board. In case that your Arduino is not detected and you can see an error in the /var/log/fabscanpi/fabscan.logyou should add the "port" attribute to your config.
-
-The autoflash option is True by default, that means that the firmware is flashed automatically to the Arduino or FabScanPi HAT. If you want to use a custom board e.g. sanguinololu, you can set thisto False and flash the Firmware manually to your board. 
-​    
-
-    ​```
-    "serial": {
-        "baudrate": 115200,
-        "autoflash": "True",
-        "port": "/dev/ttyAMA0"
-    }
-    ​```
-
-
-
-**Texture illumination**
-
-
-In this section you can change the pre-set brightness level of the LED-Ring during texture scan.
-    ​```
-    "texture_illumination": 140
-    }
-    ​```
-
-
-
-# How to Edit the Config File<a name="editConfigFile"></a>
-
-**Remote access to change the configuration settings**
-
-It is most likely that you don't have a monitor nor mouse and keyboard connected to your FabScanPi all the time. But maybe you need to make some changes to the config file from time to time and you don't want to connect the peripherals everytime.
-
-This can be done via a remote PC which is connected to the same network.
-
-
-**Connecting as Windows User (Putty)**
-
-
-First of all you need to download the tiny program "PuTTY" from http://www.putty.org/.
-
-PuTTY is a SSH client program which establishes the connection to your FabScanPi. There is no no graphic user interface -only a console which allows only the exchange of text. But that's enough to make some changes in the config file or to update your FabScanPi-Software.
-
-You don't need to make an installation just put the putty.exe in a folder or your desktop. Of course you can start it directly from the download folder as well.
-
-Now you must know the IP-address which has be assigned to your FabScanPi. It is the same address you're using to get access via the webbrowser (e.g. 192.168.1.8). Usually you can check the current IP-address in the user-interface of your web-router or cable modem.
-
-Start **Putty.exe** and a window will pop up.
-
-![PuTTY_Menu](images/PuTTY_Menu.jpg)
-
-Type in your IP-address in the appropriate field and click on "OPEN".
-
-![Login](images/Login.jpg)
-
-Now the console window opens and you must type in "**pi**" as **login-name** and "**raspberry**" as **password** (without the quotes). Now you should be able to see the login prompt (similar to the picture above).
-
-
-**Connecting as Linux or OSX User (Terminal)**
-
-Linux users can open a Terminal and type "**ssh pi@fabscanpi.local**"  ("**sh pi@ip-address-of-you-pi**"). 
-Next you are asked for a password. Type in "**raspberry**" as **password** (without the quotes).
-The next steps are described with screenshots for Putty, but the workflow is the same once the connection is 
-established.
-
-![Login](images/ssh_linux.png)
-
-**Changing the config file.**
-
-The config file is in a different folder, so you must change into that folder by entering the command:
-
-cd /etc/fabscanpi/
-
-and press ENTER.
-
-To view and modify the config file (default.config.json) you must open it with an editor and using administrator rights to be able to save the changes into the same file. The editor which is already installed is called nano. So type in:
-
-**sudo nano default.config.json**
-
-![Open_Nano](images/Open_Nano.jpg)
-
-You have to enter the password "**raspberry**" (without the quotes) again, because you open the editor with administrator rights.
-
-The nano-editor now displays the config-file and maybe you have to enlarge the window to have a better view.
-
-Now you can perform the desired changes by using the keyboard. To navigate you have to use the up-, down-, left- and right-key.
-
- ![Config](images/Config.jpg)
-
-If you finished your modification press you can save the file by pressing and holding **CTRL** and **O** (german keyboard: STRG and O). Press RETURN to confirm the filename.
-
-Now you can exit the editor by pressing and holding **CTRL** and **X** (german keyboard: STRG and X).
-
-For the changes to take effect you must restart your FabScanPi by typing in the command
-
-**sudo reboot**
-
-and ENTER.
-
-![Reboot](images/Reboot.jpg)
-
-
-You can now close the PuTTY window.
-
-The FabScanPi is rebooting and after a short time you can refresh your webbrowser and start using the FabScanPi with the new config settings.
-
-
-
-### Troubleshooting
-
-Can not connect to Arduino.
-Is the Arduino connected to the USB port. Check the port in your fabscanpi-server configuration
-file. Try another port e.g. /dev/ttyUSB0. 
-More information about changing the configuration can be found in "FabScan Pi Configuration"
-section.
-
-Camera is not connected. 
-Check the cable from the Raspberry Pi to the camera module. Be careful the cable can be very
-fragil. Try another camera application for checking camera functionality e.g. [raspistill](https://www.raspberrypi.org/documentation/usage/camera/raspicam/raspistill.md).
-
-
-
-# Setting up a WIFI connection
-
-This description explains howto setup a wifi stick for raspbian. I prefer to use an EDIMAX dongle, it worked best for me. 
-First plug in your wifi dongle and log in via ssh with password "raspberry" (without quotes):
-
-```
-ssh pi@<your-fabscanpi-ip>
-```
-First you have to activate the wifi option in your networking setup. 
-
-```
-sudo nano /etc/network/interfaces
-```
-
-Uncomment the folling lines and save the changes. 
-
-``` 
-auto wlan0
-allow-hotplug wlan0
-iface wlan0 inet dhcp
-wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-iface default inet dhcp
-```
-
-Now restart your network adapters. 
-```
-sudo nano /etc/init.d/networking
-```
-
-If you type ```sudo ifconfig``` there should be a wlan0 connection in the list. 
-
-Your fasbcanpi image is ready to go. The only things you have to do is open wpa_supplicant.conf and 
-insert your wifi ssid and your wifi secret.
-
-```
-sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
-```
-
-
-Save the file and try to connect to your wifi by typing the following command.
-```
-sudo ifup wlan0
-```
-
-In some cases you have to reboot the Raspberry Pi. Check if the wifi dongle's led is bliking.
-If you want to change your Raspberry Pi to a fix wifi IP address you have to change the interfaces file
-to get a static wifi connection.
-
-```
-sudo nano /etc/network/interfaces
-```
-
-Change the files content from 
-
-```
-auto lo
-iface lo inet loopback
-
-allow-hotplug eth0
-iface eth0 inet dhcp
-
-auto wlan0
-allow-hotplug wlan0
-iface wlan0 inet dhcp
-wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-iface default inet dhcp
-```
-
-to 
-
-```
-auto lo
-iface lo inet loopback
-
-allow-hotplug eth0
-iface eth0 inet dhcp
-
-auto wlan0
-allow-hotplug wlan0
-iface wlan0 inet static
-address <ip in your network>
-netmask <your netmask>
-gateway <your gateway>
-wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-iface default inet dhcp
-```
-
-After you changed the file you can restart your network daemon.
-
-```
-sudo /etc/init.d/networking restart
-```
-
-
-
 # Software User Manual
 
 * [Getting Started](#gettingStarted)
@@ -577,16 +160,12 @@ sudo /etc/init.d/networking restart
 
 FabScan Pi is tested on: 
 
-*** PLEASE UPDATE THE VERSION NUMBERS OF THE TESTED OSX BROWSERS
 
-
-
-|                   Logo                   |      OS      |        Versions        |
+|                   Browser                   |      OS      |        Versions        |
 | :--------------------------------------: | :----------: | :--------------------: |
-| ![browser_logo](images/chrome-logo.png)  | OSX, Windows | 47.0.2526.106 (64-bit) |
-| ![browser_logo](images/firefox-logo.png) |     OSX      |         43.0.4         |
-| ![browser_logo](images/firefox-logo.png) |   Windows    |      54.0 (32bit)      |
-
+| ![browser_logo](images/chrome-logo.png)  | OSX, Windows | 47.0.2526.106 (64-bit), 58.0.3029.110 (64-bit) |
+| ![browser_logo](images/firefox-logo.png) |     OSX, Windows      |         43.0.4,  53.0.3 (64-Bit) , 54.0 (32bit)        |
+| ![browser_logo](images/safari-logo.png)  |  OSX   | Version 9.1.1 (11601.6.17) |
 
 
 **Getting Started<a name="gettingStarted"></a>**
@@ -611,19 +190,14 @@ Before you can start with your first scans you must perform an calibration. That
 The calibration will be done by scanning an calibration sheet with a specific pattern which must be placed on the turntable. The pattern must face the camera:
 
 
+![main_menu](images/calibration_start_position.jpg)
+NOTICE: The second laser in the image is not supported by the software yet. This will be a featrue available within the next release.
 
-***PICTURE OF CALIBRATION SHEET IN START POSITION
-
-
-
-Option 1: You can decide between the standard calibration sheet which must be glued onto a paperboard sheet. The standard sheet can be put up without an additional holder. You maybe have to fix the calibration sheet on the turntable by using some adhesive tape.
+Option 1: You can can build yout own calibration sheet from a cardboard sheet. Print the calibration sheet onto paper and glue it to cardboard. Build a stand of another piece of cardboard. You maybe have to fix the calibration sheet on the turntable by using some adhesive tape.
 
 Option 2: You have an 3D-printer available and can print out our calibration sheet holder. There's also a different calibration sheet for external holder use.
 
-
-
-***LINK TO THE CALIBRATION SHEET DOWNLOAD
-
+ [Download calibration mount and sheet!](https://github.com/mariolukas/FabScan-Case/tree/master/calibration)
 
 
 Note: Please check if your print of the calibration sheet has the correct scale. Each black square should have the side length of 10 mm (1 cm). If the size is not correct please correct the parameter "pattern square size" in the configuration file. 
@@ -819,9 +393,6 @@ When the mesh-file is available a notification is displayed.
 - Again open the options menu. Another index card for the mesh-file has been added.
 
 - Click on the mesh-file index card.
-  ![open_options_menu](images/Manual_CreateMash_7.jpg)
-
-
 
 - You can now click on the download-icon to download the mesh-file to your computer or click on the trashbasket icon to delete the mesh-file.
   ![open_options_menu](images/Manual_CreateMash_8.jpg)
@@ -894,3 +465,416 @@ Note: If a mesh file is available a second slide for the mesh file will be displ
 - Click on the download-icon to download the mesh-file
 - A download message (depending on the used web-browser) will be displayed
 
+
+
+
+# Config File Values
+
+
+
+A configuration file can be found in /etc/fabscanpi/default.config.json. The content of this file 
+is in JSON format and can be edited with an editor of your choice (e.g. nano). Be careful and don't
+miss brackets. JSON is really sensitive in it's format.
+
+
+
+**Folders**
+
+
+In this section you can change the scan output folder and the folder where the ui is located. If 
+you don't know what you are doing, it is a good decision to keep this section untouched.
+
+```
+   "folders": {
+        "www": "/usr/share/fabscanpi/",
+        "scans": "/var/scans/"
+    }
+```
+
+
+
+**Laser**
+
+
+This section describes the laser stepper motor values. The rotation_steps value should be used for a laser angle change (not implemented yet).Steps defines how many steps the motor can do. In the default case the motor is set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps. 
+
+```
+    "laser": {
+        "steps": 3200,
+        "numbers": 1,
+        "rotation_steps": 5
+    }
+```
+
+
+**Scanner Calibration**
+
+In this section you can change the parameters of the configuration sheet. If your printout of the calibration sheet has not the exact scale you can adjust the parameters here instead of scaling the print. 
+
+
+
+"scanner_type": "laserscanner",
+"calibration": {
+
+```
+"weight_matrix": [],
+"dist_camera_matrix": [],
+"pattern": {
+    "square_size": 10,
+    "rows": 6,
+    "columns": 9,
+    "origin_distance": 29
+}
+```
+
+
+- Square Size is the side length of one black square in millimeters.
+
+  ![PuTTY_Menu](images/calibration_sheet_info_2.png)
+
+
+
+- Rows and Columns are the connection points of the black squares. The correct number is 9 for columns and 6 for rows :
+
+![PuTTY_Menu](images/calibration_sheet_info_1.png)
+
+
+
+- Origin Distance is the distance between turntable surface and the upper edge of the black squares in the row close to the turntable.![PuTTY_Menu](images/Origin_Distance.jpg)
+
+
+
+
+**Scanner Calibration Values**
+
+
+In this section you can check the calibration parameters. Please make sure you have performed the auto-calibration before starting your first scan.
+Do not change these values manually. This values are generated by the autocalibration process. 
+
+```
+        "camera_matrix": [
+            [
+                1285.5809999999999,
+                0.0,
+                647.60199999999998
+            ],
+            [
+                0.0,
+                1289.9490000000001,
+                835.84400000000005
+            ],
+            [
+                0.0,
+                0.0,
+                1.0
+            ]
+        ],
+        "distortion_vector": [
+            0.151,
+            -0.20300000000000001,
+            -0.0050000000000000001,
+            0.0060000000000000001,
+            -0.70899999999999996
+        ],
+        "laser_planes": [
+            {
+                "deviation": 0.052318819865,
+                "distance": 137.366403938,
+                "normal": [
+                    0.56199451,
+                    -0.01896656,
+                    0.82692348
+                ]
+            }
+        ],
+        "platform_translation": [
+            4.21176054e-03,
+            4.26178340e+01,
+            1.66114592e+02
+        ],
+        "platform_rotation": [
+            [
+                0.0,
+                9.99977231e-01,
+                6.74816764e-03
+            ],
+            [
+                4.51612662e-02,
+                6.74128255e-03,
+                -9.98956964e-01
+            ],
+            [
+                -0.99903697271524872,
+                0.00030800546235732861,
+                -0.043875189806843448
+            ]
+        ]
+    }
+```
+
+
+
+**Meshlab settings**
+
+
+​In this section you can change the path for the converter which transforms the scanned pixel data into another format (e.g. .stl).    
+```
+    "meshlab": {
+        "path": "/usr/bin/"
+    }
+```
+
+
+**Table settings**
+
+
+In this section you can change the turntable settings. The radius of the turntable is in millimeters (mm). In the default case the motor is set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps. Radius is the radius of the turntable in millimeters (mm). 
+```
+    "process_numbers": 4,
+    "turntable": {
+        "steps": 3200,
+        "radius": 70
+    }
+```
+
+
+
+**Camera settings**
+
+Preview Resolution is the resolution value for the settings window. Resolution is the resolution for the picamera python module. You can have a look to the documentation of picamera. If you set this to other values please be sure what you are doing, not all resolutions are supportedby the picam. Some might lead to slower image capturing.    
+
+```
+    "camera": {
+        "resolution": {
+            "width": 1640,
+            "height": 1232
+        },
+        "preview_resolution": {
+            "width": 240,
+            "height": 320
+        },
+        "rotate": "True",
+        "hflip": "True",
+        "vflip": "False",
+        "type": "PICAM"
+    }
+```
+
+
+
+**Serial**
+
+
+In this section you can set your port. By default this value is not set, because theFabScanPi Server software autodetcts the correct port. Some Arduino and compatible boards differ in the port name. The port can be set if you are not using an Arduino UNO or compatible Board. In case that your Arduino is not detected and you can see an error in the /var/log/fabscanpi/fabscan.logyou should add the "port" attribute to your config.
+
+The autoflash option is True by default, that means that the firmware is flashed automatically to the Arduino or FabScanPi HAT. If you want to use a custom board e.g. sanguinololu, you can set thisto False and flash the Firmware manually to your board. 
+​    
+
+```
+    "serial": {
+        "baudrate": 115200,
+        "autoflash": "True",
+        "port": "/dev/ttyAMA0"
+    }
+```
+
+
+
+**Texture illumination**
+
+
+In this section you can change the pre-set brightness level of the LED-Ring during texture scan.
+```
+    "texture_illumination": 140
+    }
+```
+
+
+
+# How to Edit the Config File<a name="editConfigFile"></a>
+
+**Remote access to change the configuration settings**
+
+It is most likely that you don't have a monitor nor mouse and keyboard connected to your FabScanPi all the time. But maybe you need to make some changes to the config file from time to time and you don't want to connect the peripherals everytime.
+
+This can be done via a remote PC which is connected to the same network.
+
+
+**Connecting as Windows User (Putty)**
+
+
+First of all you need to download the tiny program "PuTTY" from http://www.putty.org/.
+
+PuTTY is a SSH client program which establishes the connection to your FabScanPi. There is no no graphic user interface -only a console which allows only the exchange of text. But that's enough to make some changes in the config file or to update your FabScanPi-Software.
+
+You don't need to make an installation just put the putty.exe in a folder or your desktop. Of course you can start it directly from the download folder as well.
+
+Now you must know the IP-address which has be assigned to your FabScanPi. It is the same address you're using to get access via the webbrowser (e.g. 192.168.1.8). Usually you can check the current IP-address in the user-interface of your web-router or cable modem.
+
+Start **Putty.exe** and a window will pop up.
+
+![PuTTY_Menu](images/PuTTY_Menu.jpg)
+
+Type in your IP-address in the appropriate field and click on "OPEN".
+
+![Login](images/Login.jpg)
+
+Now the console window opens and you must type in "**pi**" as **login-name** and "**raspberry**" as **password** (without the quotes). Now you should be able to see the login prompt (similar to the picture above).
+
+
+**Connecting as Linux or OSX User (Terminal)**
+
+Linux users can open a Terminal and type "**ssh pi@fabscanpi.local**"  ("**sh pi@ip-address-of-you-pi**"). 
+Next you are asked for a password. Type in "**raspberry**" as **password** (without the quotes).
+The next steps are described with screenshots for Putty, but the workflow is the same once the connection is 
+established.
+
+![Login](images/ssh_linux.png)
+
+**Changing the config file.**
+
+The config file is in a different folder, so you must change into that folder by entering the command:
+
+cd /etc/fabscanpi/
+
+and press ENTER.
+
+To view and modify the config file (default.config.json) you must open it with an editor and using administrator rights to be able to save the changes into the same file. The editor which is already installed is called nano. So type in:
+
+**sudo nano default.config.json**
+
+![Open_Nano](images/Open_Nano.jpg)
+
+You have to enter the password "**raspberry**" (without the quotes) again, because you open the editor with administrator rights.
+
+The nano-editor now displays the config-file and maybe you have to enlarge the window to have a better view.
+
+Now you can perform the desired changes by using the keyboard. To navigate you have to use the up-, down-, left- and right-key.
+
+ ![Config](images/Config.jpg)
+
+If you finished your modification press you can save the file by pressing and holding **CTRL** and **O** (german keyboard: STRG and O). Press RETURN to confirm the filename.
+
+Now you can exit the editor by pressing and holding **CTRL** and **X** (german keyboard: STRG and X).
+
+For the changes to take effect you must restart your FabScanPi by typing in the command
+
+**sudo reboot**
+
+and ENTER.
+
+![Reboot](images/Reboot.jpg)
+
+
+You can now close the PuTTY window.
+
+The FabScanPi is rebooting and after a short time you can refresh your webbrowser and start using the FabScanPi with the new config settings.
+
+
+
+### Troubleshooting
+
+Can not connect to Arduino.
+Is the Arduino connected to the USB port. Check the port in your fabscanpi-server configuration
+file. Try another port e.g. /dev/ttyUSB0. 
+More information about changing the configuration can be found in "FabScan Pi Configuration"
+section.
+
+Camera is not connected. 
+Check the cable from the Raspberry Pi to the camera module. Be careful the cable can be very
+fragil. Try another camera application for checking camera functionality e.g. [raspistill](https://www.raspberrypi.org/documentation/usage/camera/raspicam/raspistill.md).
+
+
+
+# Setting up a WIFI connection
+
+This description explains howto setup a wifi stick for raspbian. I prefer to use an EDIMAX dongle, it worked best for me. 
+First plug in your wifi dongle and log in via ssh with password "raspberry" (without quotes):
+
+```
+ssh pi@<your-fabscanpi-ip>
+```
+First you have to activate the wifi option in your networking setup. 
+
+```
+sudo nano /etc/network/interfaces
+```
+
+Uncomment the folling lines and save the changes. 
+
+``` 
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
+```
+
+Now restart your network adapters. 
+```
+sudo nano /etc/init.d/networking
+```
+
+If you type ```sudo ifconfig``` there should be a wlan0 connection in the list. 
+
+Your fasbcanpi image is ready to go. The only things you have to do is open wpa_supplicant.conf and 
+insert your wifi ssid and your wifi secret.
+
+```
+sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+```
+
+
+Save the file and try to connect to your wifi by typing the following command.
+```
+sudo ifup wlan0
+```
+
+In some cases you have to reboot the Raspberry Pi. Check if the wifi dongle's led is bliking.
+If you want to change your Raspberry Pi to a fix wifi IP address you have to change the interfaces file
+to get a static wifi connection.
+
+```
+sudo nano /etc/network/interfaces
+```
+
+Change the files content from 
+
+```
+auto lo
+iface lo inet loopback
+
+allow-hotplug eth0
+iface eth0 inet dhcp
+
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
+```
+
+to 
+
+```
+auto lo
+iface lo inet loopback
+
+allow-hotplug eth0
+iface eth0 inet dhcp
+
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet static
+address <ip in your network>
+netmask <your netmask>
+gateway <your gateway>
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
+```
+
+After you changed the file you can restart your network daemon.
+
+```
+sudo /etc/init.d/networking restart
+```
