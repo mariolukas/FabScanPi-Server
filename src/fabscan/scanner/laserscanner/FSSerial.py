@@ -31,7 +31,7 @@ class FSSerialCom():
         if hasattr(self.config.serial, 'flash_baudrate'):
             self.flash_baudrate = self.config.serial.flash_baudrate
         else:
-            self.flash_baudrate = 115200
+            self.flash_baudrate = 57600
 
         self._baudrate = self.config.serial.baudrate
         self._serial = None

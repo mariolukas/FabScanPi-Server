@@ -1,3 +1,10 @@
+fabscanpi-server (0.4.1) UNRELEASED; urgency=medium
+  * fixed preview stream issues
+  * fixed default config values
+  * fixed turntable pointcloud roi
+
+ -- Mario Lukas <info@fabscan.org>  Sun, 2 Jun 2017 14:12:42 +0100
+
 fabscanpi-server (0.4.0) UNRELEASED; urgency=medium
 
   * first fixes for upgrade

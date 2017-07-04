@@ -15,7 +15,7 @@
         "pattern": {
             "square_size": 11,
             "rows": 6,
-            "columns": 9,
+            "columns": 8,
             "origin_distance": 30
         },
         "camera_matrix": [
@@ -99,7 +99,7 @@
         "type": "PICAM"
     },
     "serial": {
-        "baudrate": 115200,
+        "baudrate": 57600,
         "autoflash": "True",
         "port": "/dev/ttyAMA0"
     },
