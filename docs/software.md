@@ -161,11 +161,11 @@ sudo apt-get update && apt-get dist-upgrade
 FabScan Pi is tested on: 
 
 
-|                   Browser                   |      OS      |        Versions        |
-| :--------------------------------------: | :----------: | :--------------------: |
+|                 Browser                  |      OS      |                 Versions                 |
+| :--------------------------------------: | :----------: | :--------------------------------------: |
 | ![browser_logo](images/chrome-logo.png)  | OSX, Windows | 47.0.2526.106 (64-bit), 58.0.3029.110 (64-bit) |
-| ![browser_logo](images/firefox-logo.png) |     OSX, Windows      |         43.0.4,  53.0.3 (64-Bit) , 54.0 (32bit)        |
-| ![browser_logo](images/safari-logo.png)  |  OSX   | Version 9.1.1 (11601.6.17) |
+| ![browser_logo](images/firefox-logo.png) | OSX, Windows | 43.0.4,  53.0.3 (64-Bit) , 54.0 (32bit)  |
+| ![browser_logo](images/safari-logo.png)  |     OSX      |        Version 9.1.1 (11601.6.17)        |
 
 
 **Getting Started<a name="gettingStarted"></a>**
@@ -179,13 +179,23 @@ FabScan Pi is tested on:
 
 
 
- Now your can start using your FabScanPi.
+**First start-up<a name="firststartup-"></a>**
+
+Before you proceed with the calibration and your first scan please check a few things to ensure your FabScanPi is working properly:
+
+- Click on the duck icon (New Scan) to enter the scan menu.
+- Now the turntable should turn clockwise in a constant smooth manner.
+- The laser must be on and needs to be adjusted vertically and to cross the center of the turntable. You will have to do the adjustment by hand because the servo / stepper support for the laser has not been implemented yet.
+- Check if you can see a small video preview in the lower lest corner of the scan menu. Maybe there is only a turning hour glass visible. That is a known problem of some browsers but will have not effect the scanner's function.
+- Click on the X (Cancel) to get back to the main menu.
+
+
 
 ------
 
 **Calibration<a name="calibration"></a>**
 
-Before you can start with your first scans you must perform an calibration. That is necessary because every Scanner housing is a bit different.  By calibrating your scanner the software will get the exact parameters of your FabScanPi. Only after finishing the calibration successfully you will have good scan results .
+Before you can start with your first scans you must perform a calibration. That is necessary because every Scanner housing is a bit different.  By calibrating your scanner the software will get the exact parameters of your FabScanPi. Only after finishing the calibration successfully you will have good scan results .
 
 The calibration will be done by scanning an calibration sheet with a specific pattern which must be placed on the turntable. The pattern must face the camera:
 
@@ -203,6 +213,16 @@ Option 2: You have an 3D-printer available and can print out our calibration she
 Note: Please check if your print of the calibration sheet has the correct scale. Each black square should have the side length of 10 mm (1 cm). If the size is not correct please correct the parameter "pattern square size" in the configuration file. 
 
 You can find all details in the chapter "[How to Edit the Config File](#editConfigFile)".
+
+Place the calibration sheet on the turntable facing the camera.
+
+IMPORTANT: Make sure that in the upper left corner is a black square as you can see on the picture below. If the sheet is placed wrong the calibration will generate incorrect values or may fail.
+
+![main_menu](images/calibration_sheet_position.jpg)
+
+
+
+Please close the box to avoid external light sources to impact the calibration process. Start  your browser and call http://ip-of-your-raspberry-pi:8080 which will open the user interface. 
 
 
 
