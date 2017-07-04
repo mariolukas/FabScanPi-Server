@@ -202,7 +202,7 @@ The calibration will be done by scanning an calibration sheet with a specific pa
 
 
 ![main_menu](images/calibration_start_position.jpg)
-NOTICE: The second laser in the image is not supported by the software yet. This will be a featrue available within the next release.
+NOTICE: The second laser in the image is not supported by the software yet. This will be a feature available within the next release.
 
 Option 1: You can can build yout own calibration sheet from a cardboard sheet. Print the calibration sheet onto paper and glue it to cardboard. Build a stand of another piece of cardboard. You maybe have to fix the calibration sheet on the turntable by using some adhesive tape.
 
