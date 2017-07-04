@@ -190,12 +190,13 @@ Before you proceed with the calibration and your first scan please check a few t
 - Click on the X (Cancel) to get back to the main menu.
 
 
-
 ------
 
 **Calibration<a name="calibration"></a>**
 
-Before you can start with your first scans you must perform a calibration. That is necessary because every Scanner housing is a bit different.  By calibrating your scanner the software will get the exact parameters of your FabScanPi. Only after finishing the calibration successfully you will have good scan results .
+Before you can start with your first scans you must perform a calibration. That is necessary because every Scanner housing is a bit different.  By calibrating your scanner the software will get the exact parameters of your FabScanPi. You will have to do the calibration only once, the gathered data will be stored. But we recommend to do a calibration every time when the FabScanPi has been shipped, modified or when the scan results look distorted. 
+
+NOTE: Only after finishing the calibration successfully you will have good scan results .
 
 The calibration will be done by scanning an calibration sheet with a specific pattern which must be placed on the turntable. The pattern must face the camera:
 
@@ -210,7 +211,7 @@ Option 2: You have an 3D-printer available and can print out our calibration she
  [Download calibration mount and sheet!](https://github.com/mariolukas/FabScan-Case/tree/master/calibration)
 
 
-Note: Please check if your print of the calibration sheet has the correct scale. Each black square should have the side length of 10 mm (1 cm). If the size is not correct please correct the parameter "pattern square size" in the configuration file. 
+Note: Please check if your print of the calibration sheet has the correct scale. Each black square should have the same side length as stated on the calibration sheet (e.g.11 mm (1,1 cm). If the size is not correct please correct the parameter "pattern square size" in the configuration file. 
 
 You can find all details in the chapter "[How to Edit the Config File](#editConfigFile)".
 
@@ -250,7 +251,7 @@ When the calibration was finished successfully another notification will appear 
 
 Now you can remove the calibration pattern sheet from the turntable and start your first scan.
 
-
+NOTE: If your scan results look not like they should, probably distorted or skewed please check the calibration data in the configuration file. You can find details about the different relevant parameters in the [Config File Values](#config-file-values) section of this documentation.
 
 **Scan Settings<a name="scansettings"></a>**
 
@@ -496,6 +497,8 @@ A configuration file can be found in /etc/fabscanpi/default.config.json. The con
 is in JSON format and can be edited with an editor of your choice (e.g. nano). Be careful and don't
 miss brackets. JSON is really sensitive in it's format.
 
+NOTE: The following listing snippets are only examples and may deviate from the latest settings.
+
 
 
 **Folders**
@@ -540,7 +543,7 @@ In this section you can change the parameters of the configuration sheet. If you
 "weight_matrix": [],
 "dist_camera_matrix": [],
 "pattern": {
-    "square_size": 10,
+    "square_size": 11,
     "rows": 6,
     "columns": 9,
     "origin_distance": 29
