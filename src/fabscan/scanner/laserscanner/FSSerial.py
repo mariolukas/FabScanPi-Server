@@ -41,12 +41,12 @@ class FSSerialCom():
 
 
     def avr_device_is_available(self):
-        status = FSSystem.run_command("avrdude -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port))
+        status = FSSystem.run_command("sudo avrdude -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port))
         return status == 0
 
     def avr_flash(self, fname):
         FSSystem.run_command("wc -l "+str(fname))
-        status = FSSystem.run_command("avrdude -D -V -U flash:w:"+str(fname)+":i -b "+str(self.flash_baudrate)+" -carduino -pm328p -P"+str(self._port))
+        status = FSSystem.run_command("sudo avrdude -D -V -U flash:w:"+str(fname)+":i -b "+str(self.flash_baudrate)+" -carduino -pm328p -P"+str(self._port))
         if status != 0:
             self._logger.error("Failed to flash firmware")
         return status == 0
