@@ -41,7 +41,7 @@ flashed automatically by the FabscanPi-Server application.
 
 
 * * *
- _About soldering_
+     _About soldering_
 
 _If you are soldering for the very fist time, we suggest to read the comic ["Soldering is Easy"](https://mightyohm.com/files/soldercomic/FullSolderComic_EN.pdf) by Mitch Altman (soldering wisdom), Andie Nordgren (comic adaption) and Jeff Keyzer (layout and editing)._
 * * *
@@ -97,6 +97,12 @@ The next connector is the JST connector for the RPi-RingLight. Make sure the dir
 
 
 
+The pins of the JST connector on the HAT have the following configuration:
+
+![drawing_400](images\JST-HAT-Configuration.jpg)
+
+
+
 **Connectors for the stepper motors**
 
 Here you can use the three 4-port screw terminals if your stepper cables have no connector plug. 
@@ -132,6 +138,12 @@ Now the 2x20-pin socket connector must be installed from the rear side of the PC
 ![drawing_400](images\hat_assembly_7.jpg)
 
 **ATTENTION:** The power connector in the image above image is soldered in an alternative way. The recommended way is shown in the second last image.
+
+
+
+The center pin is for +12V DC, the outer connector tongue is for GND.
+
+![drawing_400](images\Power_Connector_HAT.jpg)
 
 
 
@@ -307,6 +319,12 @@ Step 5: Put a nut on each screw an pull them hand-tight.
 ![drawing_400](images/RingLicht_6.jpg)
 
 Now the Camera-LED assembly is ready for installation.
+
+
+
+The pins of the JST connector on the LED board have the following configuration:
+
+![drawing_400](images/JST-LEDboard-Configuration.jpg)
 
 
 
