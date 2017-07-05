@@ -747,12 +747,13 @@ Example of a 'common' filter that can be shared by all views
       localDebug = $location.host() === 'localhost';
       config = null;
       host = $location.host();
+      $log.info(host);
       if (localDebug) {
         config = {
           installation: {
-            host: host,
+            host: "192.168.178.31",
             websocketurl: 'ws://fabscanpi.local:8010/',
-            httpurl: 'http://fabscanpi.local:8080/',
+            httpurl: 'http://192.168.1.121:8080/',
             newsurl: 'http://mariolukas.github.io/FabScanPi-Server/news/'
           }
         };
@@ -1407,13 +1408,14 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
 }).call(this);
 
 (function() {
-  var name;
+  var name,
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   name = "fabscan.controller.FSPreviewController";
 
   angular.module(name, []).controller(name, [
     '$log', '$scope', '$rootScope', '$http', 'ngProgress', 'common.services.Configuration', 'fabscan.services.FSEnumService', 'fabscan.services.FSScanService', function($log, $scope, $rootScope, $http, ngProgress, Configuration, FSEnum, FSScanService) {
-      var median;
+      var median, resetSate, startStream, stopStream;
 
       $scope.canvasWidth = 400;
       $scope.canvasHeight = 500;
@@ -1431,51 +1433,54 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       $scope.startTime = null;
       $scope.sampledRemainingTime = 0;
       $scope.remainingTimeString = "0 minutes 0 seconds";
+      stopStream = function() {
+        $scope.showStream = false;
+        $scope.streamUrl = "";
+        return $scope.$apply();
+      };
+      startStream = function() {
+        $scope.streamUrl = Configuration.installation.httpurl + 'stream/texture.mjpeg';
+        $scope.showStream = true;
+        return $scope.$apply();
+      };
+      resetSate = function() {
+        $scope.remainingTime = [];
+        $scope.showStream = false;
+        $scope.startTime = null;
+        $scope.progress = 0;
+        $scope.sampledRemainingTime = 0;
+        return $scope.$apply();
+      };
       if (FSScanService.getScannerState() === FSEnum.states.CALIBRATING) {
         $scope.showStream = true;
       }
       $scope.$on(FSEnum.events.ON_STATE_CHANGED, function(event, data) {
         if (data['state'] === FSEnum.states.IDLE) {
-          return $scope.showStream = false;
+          return stopStream();
         }
       });
       $rootScope.$on('clearView', function() {
         return $scope.clearView();
       });
+      $scope.start_stream_conditions = ['SCANNING_TEXTURE', 'START_CALIBRATION'];
+      $scope.stop_stream_conditions = ['STOP_CALIBRATION', 'SCANNING_OBJECT'];
+      $scope.reset_conditions = ['SCAN_CANCELED', 'SCAN_STOPED'];
       $scope.$on(FSEnum.events.ON_INFO_MESSAGE, function(event, data) {
-        if (data['message'] === 'SCANNING_TEXTURE') {
-          $scope.streamUrl = Configuration.installation.httpurl + 'stream/texture.mjpeg';
-          $scope.showStream = true;
-          $scope.$apply();
+        var _ref, _ref1, _ref2;
+
+        if (_ref = data['message'], __indexOf.call($scope.start_stream_conditions, _ref) >= 0) {
+          startStream();
         }
-        if (data['message'] === 'START_CALIBRATION') {
-          $scope.streamUrl = Configuration.installation.httpurl + 'stream/texture.mjpeg';
-          $scope.showStream = true;
+        if (_ref1 = data['message'], __indexOf.call($scope.stop_stream_conditions, _ref1) >= 0) {
+          stopStream();
         }
-        if (data['message'] === 'STOP_CALIBRATION') {
-          $scope.showStream = false;
-          $scope.streamUrl = "";
-        }
-        if (data['message'] === 'SCANNING_OBJECT') {
-          $scope.showStream = false;
-          $scope.streamUrl = "";
-          $scope.$apply();
+        if (_ref2 = data['message'], __indexOf.call($scope.reset_conditions, _ref2) >= 0) {
+          resetSate();
         }
         if (data['message'] === 'SCAN_COMPLETE') {
           FSScanService.setScanId(data['scan_id']);
           $scope.setScanIsComplete(true);
-          $scope.showStream = false;
-          $scope.remainingTime = [];
-          $scope.startTime = null;
-          $scope.sampledRemainingTime = 0;
-          $scope.progress = 0;
-        }
-        if (data['message'] === 'SCAN_CANCELED' || data['message'] === 'SCAN_STOPED') {
-          $scope.remainingTime = [];
-          $scope.showStream = false;
-          $scope.startTime = null;
-          $scope.progress = 0;
-          return $scope.sampledRemainingTime = 0;
+          return resetSate();
         }
       });
       $scope.$on(FSEnum.events.ON_NEW_PROGRESS, function(event, data) {
@@ -1498,7 +1503,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
               _time_values = $scope.remainingTime;
             }
             $scope.sampledRemainingTime = parseFloat(Math.floor(median(_time_values)));
-            if ($scope.sampledRemainingTime > 60) {
+            if ($scope.sampledRemainingTime >= 60) {
               $scope.remainingTimeString = parseInt($scope.sampledRemainingTime / 60) + " minutes";
             } else {
               $scope.remainingTimeString = $scope.sampledRemainingTime + " seconds";
@@ -1739,12 +1744,14 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         }
       };
       $scope.showCalibrationPreview = function() {
-        $scope.streamUrl = Configuration.installation.httpurl + 'stream/calibration.mjpeg';
-        return $scope.previewMode = "calibration";
+        $scope.streamUrl = Configuration.installation.httpurl + 'stream/texture.mjpeg';
+        $scope.previewMode = "calibration";
+        return $scope.$apply();
       };
       $scope.showLaserPreview = function() {
         $scope.streamUrl = Configuration.installation.httpurl + 'stream/laser.mjpeg';
-        return $scope.previewMode = "laser";
+        $scope.previewMode = "laser";
+        return $scope.$apply();
       };
       $scope.setColor = function() {
         return updateSettings();

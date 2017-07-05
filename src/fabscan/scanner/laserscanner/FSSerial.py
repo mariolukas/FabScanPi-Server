@@ -26,7 +26,7 @@ class FSSerialCom():
         if hasattr(self.config.serial, 'port'):
             self._port = self.config.serial.port
         else:
-            self._port = self._port = self.serialList()[0]
+            self._port = "/dev/ttyAMA0"
 
         if hasattr(self.config.serial, 'flash_baudrate'):
             self.flash_baudrate = self.config.serial.flash_baudrate
@@ -39,22 +39,9 @@ class FSSerialCom():
         self._firmware_version = None
         self._openSerial()
 
-    # Code modified from function serialList obtained from https://github.com/foosel/OctoPrint/blob/master/src/octoprint/util/comm.py
-    def serialList(self):
-        baselist=[]
-        baselist = baselist \
-                   + glob.glob("/dev/ttyUSB*") \
-                   + glob.glob("/dev/ttyACM*") \
-                   + glob.glob("/dev/ttyAMA*") \
-                   + glob.glob("/dev/tty.usb*") \
-                   + glob.glob("/dev/cu.*") \
-                   + glob.glob("/dev/cuaU*") \
-                   + glob.glob("/dev/rfcomm*")
-
-        return baselist
 
     def avr_device_is_available(self):
-        status = FSSystem.run_command("avrdude -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port), blocking=True)
+        status = FSSystem.run_command("avrdude -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port))
         return status == 0
 
     def avr_flash(self, fname):
@@ -134,17 +121,20 @@ class FSSerialCom():
 
     def checkVersion(self):
         if self._serial:
-            self._serial.write("\r\n\r\n")
-            time.sleep(2) # Wait for FabScan to initialize
-            self._serial.flushInput() # Flush startup text in serial input
-            self.send("M200;")
-            self._serial.readline()
-            value = self._serial.readline()
-            value = value.strip()
-            if value != "":
-                return value
-            else:
-                return "None"
+            try:
+                self._serial.write("\r\n\r\n")
+                time.sleep(2) # Wait for FabScan to initialize
+                self._serial.flushInput() # Flush startup text in serial input
+                self.send("M200;")
+                self._serial.readline()
+                value = self._serial.readline()
+                value = value.strip()
+                if value != "":
+                    return value
+                else:
+                    return "None"
+            except Exception as e:
+                self._logger.error(e)
         else:
             return "None"
 
@@ -159,10 +149,10 @@ class FSSerialCom():
                 command = self._serial.readline()
                 self._logger.debug(command.rstrip("\n"))
                 #if state.rstrip("\n") == ">":
-
                 return command
             except Exception as e:
                 self._logger.debug(e)
+                break
         time.sleep(0.1)
 
     def flush(self):
@@ -170,7 +160,11 @@ class FSSerialCom():
        self._serial.flushOutput()
 
     def send(self, message):
-        self._serial.write(message + "\n")
+        try:
+            self._serial.write(message + "\n")
+        except Exception as e:
+            self._logger.error(e)
+
 
     def is_connected(self):
         return self._connected
