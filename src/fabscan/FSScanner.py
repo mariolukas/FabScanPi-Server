@@ -161,6 +161,10 @@ class FSScanner(threading.Thread):
             self._upgrade_available, self._upgrade_version = upgrade_is_available(__version__)
             self._logger.debug("Upgrade available: "+str(self._upgrade_available)+" "+self._upgrade_version)
 
+            is_calibrated = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.CHECK_IF_IS_CALIBRATED})
+
+
+
             message = {
                 "client": event['client'],
                 "state": self.get_state(),
@@ -176,6 +180,7 @@ class FSScanner(threading.Thread):
 
             eventManager.send_client_message(FSEvents.ON_CLIENT_INIT, message)
             self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
+            self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_IF_NOT_CALIBRATED})
 
         except StandardError, e:
             self._logger.error(e)

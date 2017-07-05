@@ -37,7 +37,7 @@ class FSMeshlabTask(threading.Thread):
             basedir = os.path.dirname(os.path.dirname(__file__))
             mlx_script_path = basedir+"/mlx/"+self.filter
 
-            input =  self.config.folders.scans+str(self.scan_id)+"/scan_"+str(self.scan_id)+".ply"
+            input = self.config.folders.scans+str(self.scan_id)+"/scan_"+str(self.scan_id)+".ply"
             output = self.config.folders.scans+str(self.scan_id)+"/mesh_"+str(self.scan_id)+"_"+str(self.filter).split(".")[0]+"."+self.format
             self._logger.info(output)
 

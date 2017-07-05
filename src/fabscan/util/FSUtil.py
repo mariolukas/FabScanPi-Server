@@ -20,16 +20,16 @@ class FSSystemInterface(object):
 )
 class FSSystem(object):
     def __init__(self, config):
-        self._logger =  logging.getLogger(__name__)
+        self._logger = logging.getLogger(__name__)
         self.config = config
 
     @staticmethod
     def run_command(command, blocking=False):
             if blocking:
-                process = subprocess.Popen(shlex.split(command), stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True)
+                process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                 output, _ = process.communicate()
                 if output:
-                   logging.getLogger(__name__).debug(output.strip())
+                   logging.getLogger(__name__).debug(output.rstrip("\n"))
             else:
                 process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
                 while True:
@@ -37,7 +37,7 @@ class FSSystem(object):
                     if output == '' and process.poll() is not None:
                         break
                     if output:
-                        logging.getLogger(__name__).debug(output.strip())
+                        logging.getLogger(__name__).debug(output.rstrip("\n"))
                 rc = process.poll()
                 return rc
 

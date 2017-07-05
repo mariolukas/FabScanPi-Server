@@ -19,5 +19,6 @@ then
 fi
 
 adduser --system $FABSCAN_USER --home $SCANS_DIR --no-create-home > /dev/null 2>&1 || true
+usermod -a -G dialout $FABSCAN_USER
 
 exit 0

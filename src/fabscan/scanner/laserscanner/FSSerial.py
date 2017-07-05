@@ -54,10 +54,10 @@ class FSSerialCom():
         return baselist
 
     def avr_device_is_available(self):
-        status = FSSystem.run_command("avrdude -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port))
+        status = FSSystem.run_command("avrdude -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port), blocking=True)
         return status == 0
 
-    def avr_flash(self,fname):
+    def avr_flash(self, fname):
         FSSystem.run_command("wc -l "+str(fname))
         status = FSSystem.run_command("avrdude -D -V -U flash:w:"+str(fname)+":i -b "+str(self.flash_baudrate)+" -carduino -pm328p -P"+str(self._port))
         if status != 0:
@@ -98,7 +98,7 @@ class FSSerialCom():
                                ## check if firmware is up to date, if not flash new firmware
                                if not current_version == flash_version_number:
                                    self._close()
-                                   self._logger.info("Old firmare detected trying to flash new firmware...")
+                                   self._logger.info("Old or no firmare detected trying to flash current firmware...")
                                    if self.avr_flash(flash_file_version):
                                         time.sleep(0.5)
                                         self._connect()
@@ -117,11 +117,11 @@ class FSSerialCom():
                                         current_version = self.checkVersion()
                                         self._logger.info("Successfully flashed Firmware Version: "+current_version)
            else:
-                    self._logger.error("No Arduino compatible device found on port "+str(self._port))
+                    self._logger.error("No FabScanPi HAT or compatible device found on port "+str(self._port))
 
            # set connection states and version
            if self._serial.isOpen() and (current_version != "None"):
-                  self._logger.info("FabScanPi is connected to Arduino or FabScanPi HAT on port: "+str(self._port))
+                  self._logger.info("FabScanPi is connected to FabScanPi HAT or compatible on port: "+str(self._port))
                   current_version = self.checkVersion()
                   self._firmware_version = current_version
                   self._connected = True
@@ -130,7 +130,7 @@ class FSSerialCom():
                   self._connected = False
 
         except:
-            self._logger.error("Fatal Arduino connection error....")
+            self._logger.error("Fatal FabScanPi HAT or compatible connection error....")
 
     def checkVersion(self):
         if self._serial:
