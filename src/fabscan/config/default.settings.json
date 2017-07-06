@@ -4,14 +4,8 @@
        "green": 0,
        "blue": 0
      },
-     "line_coords_buffer": 5,
-     "percent_top_pixels": 0.1,
      "center": 0.50,
      "threshold": 30,
-     "crop": {
-       "upper": -128,
-       "lower": -810
-     },
      "camera":{
        "brightness" : 50,
        "contrast": 10,

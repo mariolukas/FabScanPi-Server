@@ -26,12 +26,12 @@ class FSSerialCom():
         if hasattr(self.config.serial, 'port'):
             self._port = self.config.serial.port
         else:
-            self._port = self._port = self.serialList()[0]
+            self._port = "/dev/ttyAMA0"
 
         if hasattr(self.config.serial, 'flash_baudrate'):
             self.flash_baudrate = self.config.serial.flash_baudrate
         else:
-            self.flash_baudrate = 115200
+            self.flash_baudrate = 57600
 
         self._baudrate = self.config.serial.baudrate
         self._serial = None
@@ -39,27 +39,14 @@ class FSSerialCom():
         self._firmware_version = None
         self._openSerial()
 
-    # Code modified from function serialList obtained from https://github.com/foosel/OctoPrint/blob/master/src/octoprint/util/comm.py
-    def serialList(self):
-        baselist=[]
-        baselist = baselist \
-                   + glob.glob("/dev/ttyUSB*") \
-                   + glob.glob("/dev/ttyACM*") \
-                   + glob.glob("/dev/ttyAMA*") \
-                   + glob.glob("/dev/tty.usb*") \
-                   + glob.glob("/dev/cu.*") \
-                   + glob.glob("/dev/cuaU*") \
-                   + glob.glob("/dev/rfcomm*")
-
-        return baselist
 
     def avr_device_is_available(self):
-        status = FSSystem.run_command("avrdude -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port))
+        status = FSSystem.run_command("sudo avrdude -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port))
         return status == 0
 
-    def avr_flash(self,fname):
+    def avr_flash(self, fname):
         FSSystem.run_command("wc -l "+str(fname))
-        status = FSSystem.run_command("avrdude -D -V -U flash:w:"+str(fname)+":i -b "+str(self.flash_baudrate)+" -carduino -pm328p -P"+str(self._port))
+        status = FSSystem.run_command("sudo avrdude -D -V -U flash:w:"+str(fname)+":i -b "+str(self.flash_baudrate)+" -carduino -pm328p -P"+str(self._port))
         if status != 0:
             self._logger.error("Failed to flash firmware")
         return status == 0
@@ -98,7 +85,7 @@ class FSSerialCom():
                                ## check if firmware is up to date, if not flash new firmware
                                if not current_version == flash_version_number:
                                    self._close()
-                                   self._logger.info("Old firmare detected trying to flash new firmware...")
+                                   self._logger.info("Old or no firmare detected trying to flash current firmware...")
                                    if self.avr_flash(flash_file_version):
                                         time.sleep(0.5)
                                         self._connect()
@@ -117,11 +104,11 @@ class FSSerialCom():
                                         current_version = self.checkVersion()
                                         self._logger.info("Successfully flashed Firmware Version: "+current_version)
            else:
-                    self._logger.error("No Arduino compatible device found on port "+str(self._port))
+                    self._logger.error("No FabScanPi HAT or compatible device found on port "+str(self._port))
 
            # set connection states and version
            if self._serial.isOpen() and (current_version != "None"):
-                  self._logger.info("FabScanPi is connected to Arduino or FabScanPi HAT on port: "+str(self._port))
+                  self._logger.info("FabScanPi is connected to FabScanPi HAT or compatible on port: "+str(self._port))
                   current_version = self.checkVersion()
                   self._firmware_version = current_version
                   self._connected = True
@@ -130,21 +117,24 @@ class FSSerialCom():
                   self._connected = False
 
         except:
-            self._logger.error("Fatal Arduino connection error....")
+            self._logger.error("Fatal FabScanPi HAT or compatible connection error....")
 
     def checkVersion(self):
         if self._serial:
-            self._serial.write("\r\n\r\n")
-            time.sleep(2) # Wait for FabScan to initialize
-            self._serial.flushInput() # Flush startup text in serial input
-            self.send("M200;")
-            self._serial.readline()
-            value = self._serial.readline()
-            value = value.strip()
-            if value != "":
-                return value
-            else:
-                return "None"
+            try:
+                self._serial.write("\r\n\r\n")
+                time.sleep(2) # Wait for FabScan to initialize
+                self._serial.flushInput() # Flush startup text in serial input
+                self.send("M200;")
+                self._serial.readline()
+                value = self._serial.readline()
+                value = value.strip()
+                if value != "":
+                    return value
+                else:
+                    return "None"
+            except Exception as e:
+                self._logger.error(e)
         else:
             return "None"
 
@@ -159,10 +149,10 @@ class FSSerialCom():
                 command = self._serial.readline()
                 self._logger.debug(command.rstrip("\n"))
                 #if state.rstrip("\n") == ">":
-
                 return command
             except Exception as e:
                 self._logger.debug(e)
+                break
         time.sleep(0.1)
 
     def flush(self):
@@ -170,7 +160,11 @@ class FSSerialCom():
        self._serial.flushOutput()
 
     def send(self, message):
-        self._serial.write(message + "\n")
+        try:
+            self._serial.write(message + "\n")
+        except Exception as e:
+            self._logger.error(e)
+
 
     def is_connected(self):
         return self._connected

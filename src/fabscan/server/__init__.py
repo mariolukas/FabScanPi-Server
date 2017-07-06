@@ -63,6 +63,7 @@ class FSServer(object):
             injector.provide(FSEventManagerInterface, FSEventManagerSingleton)
             injector.provide_instance(FSWebSocketServerInterface, FSWebSocketServer())
             injector.provide_instance(ConfigInterface, Config(self.config_file, True))
+
             injector.provide_instance(SettingsInterface, Settings(self.settings_file, True))
 
             # inject "dynamic" classes
@@ -73,7 +74,9 @@ class FSServer(object):
             websocket_server = injector.get_instance(FSWebSocketServerInterface)
             websocket_server.start()
 
-            FSWebServer().start()
+            webserver = FSWebServer()
+            webserver.start()
+
             FSScanner().start()
 
             FSEventManagerSingleton().instance.subscribe(FSEvents.COMMAND, self.on_server_command)

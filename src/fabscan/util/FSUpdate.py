@@ -17,7 +17,7 @@ _logger = logging.getLogger(__name__)
 def get_latest_version_tag():
     try:
 
-        response = urllib2.urlopen("http://archive.fabscan.org/dists/jessie/main/binary-armhf/Packages", timeout=5)
+        response = urllib2.urlopen("http://archive.fabscan.org/dists/stable/main/binary-armhf/Packages", timeout=5)
 
         latest_version = "0.0.0"
         line = 'START'

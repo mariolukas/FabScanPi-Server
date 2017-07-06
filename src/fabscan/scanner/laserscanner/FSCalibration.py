@@ -77,7 +77,7 @@ class FSCalibration(FSCalibrationInterface):
         self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
         self.settings.camera.contrast = 30
         #self.settings.camera.saturation = 20
-        self.settings.camera.brightness = 60
+        self.settings.camera.brightness = 50
         self.reset_calibration_values()
         self.settings.threshold = 25
 
@@ -87,7 +87,7 @@ class FSCalibration(FSCalibrationInterface):
         }
         self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
-        self._hardwarecontroller.camera.device.startStream(exposure_type="auto")
+        self._hardwarecontroller.camera.device.startStream()
 
         self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
         self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
@@ -131,7 +131,7 @@ class FSCalibration(FSCalibrationInterface):
 
         if not self._stop:
             self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
-            self._hardwarecontroller.camera.device.startStream(exposure_type="auto")
+            self._hardwarecontroller.camera.device.startStream()
 
         position = 0
         while abs(position) < self.quater_turn * 2:

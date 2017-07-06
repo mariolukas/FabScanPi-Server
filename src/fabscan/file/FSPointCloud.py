@@ -13,6 +13,13 @@ from fabscan.FSConfig import ConfigInterface
 from fabscan.util.FSInject import inject
 from fabscan.FSVersion import __version__
 
+
+class PoitCloudError(Exception):
+
+    def __init__(self):
+        Exception.__init__(self, "PointCloudError")
+
+
 @inject(
     config=ConfigInterface
 )
@@ -56,11 +63,15 @@ class FSPointCloud():
         basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self._dir_name = self.config.folders.scans+filename
 
-        if not os.path.exists(self._dir_name):
-             os.makedirs(self._dir_name)
+        try:
+            if not os.path.exists(self._dir_name):
+                 os.makedirs(self._dir_name)
 
-        with open(self._dir_name +'/scan_' +filename + '.ply', 'wb') as f:
-            self.save_scene_stream(f)
+            with open(self._dir_name +'/scan_' +filename + '.ply', 'wb') as f:
+                self.save_scene_stream(f)
+
+        except Exception as e:
+            self._logger.error(e)
 
         del self.points[:]
         self.points = []

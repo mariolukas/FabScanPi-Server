@@ -122,6 +122,24 @@ class FSScanProcessorSingleton(FSScanProcessorInterface):
         if event[FSEvents.COMMAND] == FSScanProcessorCommand.STOP_CALIBRATION:
             return self.stop_calibration()
 
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.NOTIFY_IF_NOT_CALIBRATED:
+            return self.notify_if_is_not_calibrated()
+
+    def notify_if_is_not_calibrated(self):
+        self._logger.debug(self.config.calibration.camera_matrix)
+        is_calibrated = not (self.config.calibration.camera_matrix == [])
+        self._logger.debug("FabScan is calibrated: "+str(is_calibrated))
+
+        if not is_calibrated:
+            message = {
+                "message": "SCANNER_NOT_CALIBRATED",
+                "level": "warn"
+            }
+
+            self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+
+
+
     def create_texture_stream(self):
         try:
             image = self.hardwareController.get_picture()

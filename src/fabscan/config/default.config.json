@@ -1,7 +1,7 @@
 {
     "folders": {
         "www": "/usr/share/fabscanpi/",
-        "scans": "/var/scans/"
+        "scans": "/home/pi/scans/"
     },
     "laser": {
         "steps": 3200,
@@ -13,68 +13,22 @@
         "weight_matrix": [],
         "dist_camera_matrix": [],
         "pattern": {
-            "square_size": 10,
+            "square_size": 11,
             "rows": 6,
-            "columns": 9,
-            "origin_distance": 40
+            "columns": 8,
+            "origin_distance": 35
         },
-        "camera_matrix": [
-            [
-                1285.5809999999999,
-                0.0,
-                647.60199999999998
-            ],
-            [
-                0.0,
-                1289.9490000000001,
-                835.84400000000005
-            ],
-            [
-                0.0,
-                0.0,
-                1.0
-            ]
-        ],
-        "distortion_vector": [
-            0.151,
-            -0.20300000000000001,
-            -0.0050000000000000001,
-            0.0060000000000000001,
-            -0.70899999999999996
-        ],
+        "camera_matrix": [],
+        "distortion_vector": [],
         "laser_planes": [
             {
-                "deviation": 0.052318819865,
-                "distance": 137.366403938,
-                "normal": [
-                    0.56199451,
-                    -0.01896656,
-                    0.82692348
-                ]
+                "deviation": 0,
+                "distance": 0,
+                "normal": []
             }
         ],
-        "platform_translation": [
-            4.21176054e-03,
-            4.26178340e+01,
-            1.66114592e+02
-        ],
-        "platform_rotation": [
-            [
-                0.0,
-                9.99977231e-01,
-                6.74816764e-03
-            ],
-            [
-                4.51612662e-02,
-                6.74128255e-03,
-                -9.98956964e-01
-            ],
-            [
-                -0.99903697271524872,
-                0.00030800546235732861,
-                -0.043875189806843448
-            ]
-        ]
+        "platform_translation": [],
+        "platform_rotation": []
     },
     "meshlab": {
         "path": "/usr/bin/"
@@ -99,7 +53,7 @@
         "type": "PICAM"
     },
     "serial": {
-        "baudrate": 115200,
+        "baudrate": 57600,
         "autoflash": "True",
         "port": "/dev/ttyAMA0"
     },
