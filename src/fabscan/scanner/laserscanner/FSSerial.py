@@ -25,6 +25,7 @@ class FSSerialCom():
 
         if hasattr(self.config.serial, 'port'):
             self._port = self.config.serial.port
+            self._logger.debug("Port in Config found")
         else:
             self._port = "/dev/ttyAMA0"
 
