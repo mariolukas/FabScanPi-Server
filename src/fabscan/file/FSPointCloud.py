@@ -14,7 +14,7 @@ from fabscan.util.FSInject import inject
 from fabscan.FSVersion import __version__
 
 
-class PoitCloudError(Exception):
+class PointCloudError(Exception):
 
     def __init__(self):
         Exception.__init__(self, "PointCloudError")
