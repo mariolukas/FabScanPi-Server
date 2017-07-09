@@ -172,9 +172,9 @@ FabScan Pi is tested on:
 
 - By default the FabScanPi server binds to all interfaces on port 8080. Pointing your browser to http://ip-of-your-raspberry-pi:8080 will open the user interface. 
 
-  If your FabScanPi has access to the internet an information window with the latest project news will pop-up. You can close it by left-clicking on the black x in the upper right corner of the grey info window.
+  If your FabScanPi has access to the internet an information window with the latest project news will pop-up. You can close it by left-clicking on the black x in the upper right corner of the grey info window. If there is a new software version available you will see a note in the upper left corner:
 
-  ![main_menu](images/Manual_0.jpg)
+  ![main_menu](images/Manual_UpdateAvailable_1.jpg)
 
 
 
@@ -217,13 +217,17 @@ You can find all details in the chapter "[How to Edit the Config File](#editConf
 
 Place the calibration sheet on the turntable facing the camera.
 
-IMPORTANT: Make sure that in the upper left corner is a black square as you can see on the picture below. If the sheet is placed wrong the calibration will generate incorrect values or may fail.
-
-![main_menu](images/calibration_sheet_position.jpg)
+![main_menu](images/calibration_start_position.jpg)
 
 
 
 Please close the box to avoid external light sources to impact the calibration process. Start  your browser and call http://ip-of-your-raspberry-pi:8080 which will open the user interface. 
+
+
+
+When you start your FabScanPi for the first time you will see an information in the upper left corner that you have to perform a calibration.
+
+![main_menu](images/Manual_NoCalibration_1.jpg)
 
 
 
@@ -534,6 +538,8 @@ This section describes the laser stepper motor values. The rotation_steps value 
 
 In this section you can change the parameters of the configuration sheet. If your printout of the calibration sheet has not the exact scale you can adjust the parameters here instead of scaling the print. 
 
+NOTE: There is a new " 8x6 Calibration Pattern". If you are still using the old 9x6 Pattern you'll need to modify the columns value:
+
 
 
 "scanner_type": "laserscanner",
@@ -545,8 +551,8 @@ In this section you can change the parameters of the configuration sheet. If you
 "pattern": {
     "square_size": 11,
     "rows": 6,
-    "columns": 9,
-    "origin_distance": 29
+    "columns": 8,
+    "origin_distance": 35
 }
 ```
 
@@ -557,7 +563,7 @@ In this section you can change the parameters of the configuration sheet. If you
 
 
 
-- Rows and Columns are the connection points of the black squares. The correct number is 9 for columns and 6 for rows :
+- Rows and Columns are the connection points of the black squares. The correct number is 8 for columns and 6 for rows :
 
 ![PuTTY_Menu](images/calibration_sheet_info_1.png)
 
