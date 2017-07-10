@@ -4,6 +4,7 @@ import urllib2
 
 import semver
 import logging
+from fabscan.FSVersion import __version__
 
 
 __author__ = 'mariolukas'
@@ -19,7 +20,7 @@ def get_latest_version_tag():
 
         response = urllib2.urlopen("http://archive.fabscan.org/dists/stable/main/binary-armhf/Packages", timeout=5)
 
-        latest_version = "0.0.0"
+        latest_version = __version__
         line = 'START'
         while line != '':
             line = response.readline()

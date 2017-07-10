@@ -1,10 +1,16 @@
+fabscanpi-server (0.4.2) UNRELEASED; urgency=medium
+  * fixed update notification bug
+  * fixed firmware issue which leaded to bricked devices.
+
+ -- Mario Lukas <info@fabscan.org>  Mon, 10 Jul 2017 23:33:00 +0100
+
 fabscanpi-server (0.4.1) UNRELEASED; urgency=medium
   * fixed preview stream issues
   * fixed default config values
   * fixed turntable pointcloud roi
   * added calibration notification message
 
- -- Mario Lukas <info@fabscan.org>  Sun, 2 Jun 2017 14:12:42 +0100
+ -- Mario Lukas <info@fabscan.org>  Sun, 2 Jul 2017 14:12:42 +0100
 
 fabscanpi-server (0.4.0) UNRELEASED; urgency=medium
 
