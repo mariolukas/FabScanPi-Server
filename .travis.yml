@@ -15,8 +15,7 @@ before_script:
 - echo $TRAVIS_TAG
 script: sudo make deb
 after_success:
-- if [ -z ${TRAVIS_TAG} ]; then curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/testing/;
-  fi
+- curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/release/
 - NOW=`date +%Y-%m-%d-%H-%M`
 - mkdocs build
 - cd ..
@@ -40,7 +39,6 @@ env:
 before_deploy:
 - export RELEASE_FILE_NAME=$(ls ../*.deb)
 after_deploy:
-- curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/stable/
 - NOW=`date +%Y-%m-%d-%H-%M`
 - cd ..
 - git clone https://github.com/mariolukas/FabScanPi-Build-Raspbian.git
