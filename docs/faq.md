@@ -124,7 +124,42 @@ NOTE: For details and specifications please consult the hardware chapter.
   There’s no advantage in using the NoIR cam. The algorithms for the laser detection are made for the normal cam. Therefore we recommend to use the normal camera modules.
 
 
+- No connection to Arduino, how can i fix that?
 
+  First you need to find out more about the problem. Have a look to the log file (see "How can i view the log file?" in F.A.Q.). 
+  Find the section where the init sequence of the server starts. Look for the folowing line ... 
+  
+  ```
+  fabscan.server - INFO - FabScanPi-Server 0.4.2
+  ```
+  
+  If the next lines look like the the debug output below, the fabscanpi-server is not able to flash the firmware 
+  to the FabScanPi-HAT (or Arduino).
+
+	fabscan.scanner.laserscanner.FSSerial - ERROR - No FabScanPi HAT or compatible device found on port /dev/ttyAMA0
+   
+	fabscan.scanner.laserscanner.FSSerial - ERROR - Fatal FabScanPi HAT or compatible connection error....
+	
+	fabscan.scanner.laserscanner.FSHardwareController - DEBUG - Reset FabScanPi HAT...
+	
+	fabscan.scanner.laserscanner.FSSerial - ERROR - 'NoneType' object has no attribute 'write'
+	
+	fabscan.scanner.laserscanner.FSSerial - DEBUG - 'NoneType' object has no attribute 'readline'
+	
+	fabscan.scanner.laserscanner.FSSerial - ERROR - 'NoneType' object has no attribute 'write'
+
+
+  If this error occurs by the first run please start reading with 1. In case this error occurs after an fabscanpi-server update 
+  and your software worked before, continue reading with 2. 
+  	
+  1. First double check the solder joints of the 40-pin Header of the FabScanPi-HAT. If you are sure that there are no 'cold' solder joints move on 
+  reading, otherwise resolder those joints. Try again and have a look to the logs. If the error still occurs continue reading.
+  
+  2.
+  
+  ![drawing_400](images/isp_arduino_hat.png)
+  
+  ![drawing_400](images/isp_pi_hat.png)
 ------
 
 #### Scanning issues<a name="scanningIssues"></a>
