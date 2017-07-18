@@ -39,6 +39,8 @@ class FSSerialCom():
         self._connected = False
         self._firmware_version = None
         self._openSerial()
+        self._logger.debug("Connection baudrate is: "+str(self._baudrate))
+        self._logger.debug("Firmware flashing baudrate is: "+str(self.flash_baudrate))
 
 
     def avr_device_is_available(self):

@@ -221,6 +221,7 @@ class PiCam(threading.Thread):
                                     self.camera_buffer.append(image)
                                 finally:
                                     self.semaphore.release()
+
                                 stream.truncate()
                                 stream.seek(0)
                        except picamera.PiCameraClosed:

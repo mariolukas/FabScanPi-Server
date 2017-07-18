@@ -44,7 +44,7 @@ class FSCalibration(FSCalibrationInterface):
         self.distortion_vector = None
         self.image_points = []
         self.object_points = []
-        self.calibration_brightness = [60, 60, 60]
+        self.calibration_brightness = [50, 50, 50]
         self.quater_turn = int(self.config.turntable.steps / 4)
         self.steps_five_degree = 5.0 / (360.0 / self.config.turntable.steps)
         self.total_positions = int(((self.quater_turn/self.steps_five_degree)*4)+2)
@@ -114,9 +114,8 @@ class FSCalibration(FSCalibrationInterface):
                 "message": "FINISHED_CALIBRATION",
                 "level": "info"
             }
+            self.config.save()
             self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-
-
 
         self.current_position = 0
 
