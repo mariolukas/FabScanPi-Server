@@ -26,10 +26,10 @@ The laser cut files can be found at [https://github.com/mariolukas/FabScan-Case]
 #The FabScanPi HAT
 **General description**
 
-The FabScan HAT is basically a combination of an Arduino and the old
-FabScan Shield for Arduino. It provides all connectors for the hardware
+The FabScan HAT is basically a combination of an [Arduino](https://www.arduino.cc/) and the old
+[FabScan Shield](https://github.com/watterott/FabScan-Shield) for [Arduino](https://www.arduino.cc/). It provides all connectors for the hardware
 parts (like motors, servos, lasers, LED's etc.) Instead of an USB 
-connection to the Raspberry Pi, the HAT is put on the Pi's pinheaders.
+connection to the Raspberry Pi, the HAT is attached on the Pi's pinheaders.
 The HAT communicates over a serial connection with the Rasperry Pi. 
 (GPIO14 and GPIO15 of the Raspberry Pi). The firmware and also updates are 
 flashed automatically by the FabscanPi-Server application.
