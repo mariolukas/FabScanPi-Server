@@ -115,6 +115,7 @@ class FSCalibration(FSCalibrationInterface):
                 "level": "info"
             }
             self.config.save()
+            
             self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
         self.current_position = 0
