@@ -18,15 +18,36 @@
   
   >Password: **raspberry**
 
+  ​
 
 
-- There is no preview video visible in the menu.
 
-  >There is no video - only a black area, maybe a turning hour glass visible. That is a known problem of some browsers but will have not effect the scanner's function. This bug will be fixed in the future.
+- Do I have to perform the calibration every time when I restart my FabScanPi?
+
+  No, the calibration data will be stored. We recommend to perform a calibration every time when the FabScanPi has been shipped, modified or the scan results show signs of deformation.
+
+  ​
+- The calibrations fails every time. What can I do?
+   The laser and the LED-light are needed for the calibration, they must be installed and be able to work. Make sure the box is closed during calibration so that no external light can cause problems. 
+
+
+- Where can I find the calibration file?
+
+  You can find it in the folder: ```/etc/fabscanpi```
+
+  The config file is named : ```default.config.json```
 
   ​
 
-- Where can I find the config file?**
+- Where can I find the initial settings of the LED-light, Camera brightness, contrast and saturation?
+
+  You can find it in the folder: ```/etc/fabscanpi```
+
+  The config file is named : ```default.settings.json```
+
+  ​
+
+- Where can I find the log file?
 
   >You can find it in the folder: ```/var/log/fabscanpi```
 
@@ -55,6 +76,8 @@
 
   To exit the nano editor press "Ctrl+X".
 
+  ​
+
 
 
 #### How can I stop / start the FabScanPi server?
@@ -67,7 +90,43 @@
 
   ```sudo /etc/init.d/fabscanpi-server stop```
 
-------
+  ​
+
+- How can I use the latest (probably unstable) software ?
+
+  You must edit the repository settings in the surces list in the console by typing:
+
+  ```sudo nano /etc/apt/sources.list```
+
+  Modify the sources.list that it looks exactly like this:
+
+  ![Reboot](images/SourcesList.jpg)
+
+  This will change the update source to the testing directory. 
+
+  NOTE: To switch back to the official release you need to remove the # from the 2nd line and place it in front of the 3rd line.
+
+  ​
+
+  To save your changes press CTRL + O, then ENTER and exit with CTRL + X
+
+  ​
+
+  Now do an update and dist-upgrade:
+
+  ```sudo apt-get update```
+
+  ```sudo apt-get dist-upgrade```
+
+  Finally you should reboot the FabScanPi:
+
+  ```sudo reboot now```
+
+  ​
+
+  NOTE: Now you will use the testing data source. Because it is not officially released there will be NO SUPPORT for this version.
+
+
 
 # Hardware<a name="hardware"></a>
 
@@ -99,18 +158,24 @@ NOTE: For details and specifications please consult the hardware chapter.
 
   It should move clockwise – if not please consult the hardware chapter of our documentation and check the connection of your stepper.
 
+  ​
+
 
 
 - Which camera will work?
 
   FabScan Pi can be built with both Raspberry Pi Camera Modules V 1.x or V 2.x.
 
+  ​
 
+- I have a Raspberry Cam Module with NoIR. Can I use it?
 
+  There’s no advantage in using the NoIR cam. The algorithms for the laser detection are made for the normal cam. Therefore we recommend to use the normal camera modules.
+
+  ​
 - Is the LED-Ring / PCB-board with LEDs mandatory?
 
   Yes, because the light is needed to perform the calibration. It is also necessary to archive good quality texture scans.
-
 
 
 - Which LED-ring is compatible?
@@ -118,11 +183,8 @@ NOTE: For details and specifications please consult the hardware chapter.
   Any ring using WS2812B LEDs (or compatible) will do. To avoid problems with the calibration we suggest using the FabScanPi LED-board.
 
 
-
-- I have a Raspberry Cam Module with NoIR. Can I use it?
-
-  There’s no advantage in using the NoIR cam. The algorithms for the laser detection are made for the normal cam. Therefore we recommend to use the normal camera modules.
-
+- My servo stepper / servo isn't working
+  There is no implementation for the servo/stepper to move the laser until now.   
 
 - No connection to Arduino, how can i fix that?
 
@@ -231,7 +293,6 @@ NOTE: For details and specifications please consult the hardware chapter.
 
     $ avrdude -c stk500v1 -P /dev/ttyACM0 -b 19200 -p m328p -e -U flash:w:bloader.hex:i -U lfuse:w:0xFF:m -U hfuse:w:0xD6:m -U efuse:w:0x05:m -U lock:w:0x0F:m
     
-------
 
 #### Scanning issues<a name="scanningIssues"></a>
 
@@ -270,10 +331,6 @@ NOTE: For details and specifications please consult the hardware chapter.
   Check the starting position of the calibration sheet and make sure your box is closed during the scan. The calibration sheet must be placed with a black square in the upper left corner.
 
 
-
-
-
-------
 
 #### Other<a name="other"></a>
 

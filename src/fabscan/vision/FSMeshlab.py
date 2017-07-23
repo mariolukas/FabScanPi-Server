@@ -31,7 +31,6 @@ class FSMeshlabTask(threading.Thread):
             with open(pointcloud_file) as myFile:
                 for num, line in enumerate(myFile, 1):
                     if lookup in line:
-                        print 'found at line:', num
                         number_of_pints = int(filter(str.isdigit, line))
                         return number_of_pints
 
@@ -39,13 +38,10 @@ class FSMeshlabTask(threading.Thread):
 
             try:
                 xmldoc = minidom.parse(file)
-                itemlist = xmldoc.getElementsByTagName('filter')
-                print "Len : ", len(itemlist)
+                #itemlist = xmldoc.getElementsByTagName('filter')
                 params = xmldoc.getElementsByTagName('Param')
-
                 for param in params:
                     if param.attributes['name'].value == "SampleNum":
-                        print param.attributes['name'].value + " :" + param.attributes['value'].value
                         param.setAttribute('value', str(int(pointcloud_size/3)))
 
             except xml.parsers.expat.ExpatError, ex:
@@ -55,7 +51,7 @@ class FSMeshlabTask(threading.Thread):
                 xmldoc.writexml(fh)
 
         def run(self):
-            self._logger.info("Meshlab Process Started...")
+            self._logger.info("Process started...")
 
             data = {
                 "message": "MESHING_STARTED",
@@ -74,13 +70,22 @@ class FSMeshlabTask(threading.Thread):
             self.prepare_down_sampling(str(mlx_script_path), pointcloud_size)
 
             return_code = FSSystem.run_command("xvfb-run meshlabserver -i "+input+" -o "+output+" -s "+str(mlx_script_path)+" -om vc vn")
+            self._logger.debug("Process return code: " + str(return_code))
 
-            self._logger.debug("MeshLab Return Code: "+str(return_code))
+            if return_code is 0:
 
-            message = {
-                "message" : "MESHING_DONE",
-                "scan_id" : self.scan_id,
-                "level": "success"
-            }
-            self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE,message)
-            self._logger.info("Meshlab Process finished.")
+                message = {
+                    "message": "MESHING_DONE",
+                    "scan_id": self.scan_id,
+                    "level": "success"
+                }
+
+            else:
+                message = {
+                    "message": "MESHING_FAILED",
+                    "scan_id": self.scan_id,
+                    "level": "error"
+                }
+
+            self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+            self._logger.info("Process finished.")

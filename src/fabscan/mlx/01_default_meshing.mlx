@@ -20,15 +20,4 @@
   <Param type="RichFloat" value="1" name="SamplesPerNode"/>
   <Param type="RichFloat" value="1" name="Offset"/>
  </filter>
- <filter name="Vertex Attribute Transfer">
-  <Param type="RichMesh" value="0" name="SourceMesh"/>
-  <Param type="RichMesh" value="2" name="TargetMesh"/>
-  <Param type="RichBool" value="true" name="GeomTransfer"/>
-  <Param type="RichBool" value="true" name="NormalTransfer"/>
-  <Param type="RichBool" value="false" name="ColorTransfer"/>
-  <Param type="RichBool" value="false" name="QualityTransfer"/>
-  <Param type="RichBool" value="false" name="SelectionTransfer"/>
-  <Param type="RichBool" value="false" name="QualityDistance"/>
-  <Param type="RichAbsPerc" value="1.84474" min="0" name="UpperBound" max="92.2372"/>
- </filter>
 </FilterScript>
