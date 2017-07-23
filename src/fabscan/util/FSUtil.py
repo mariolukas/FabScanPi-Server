@@ -41,6 +41,7 @@ class FSSystem(object):
                     if output:
                         logging.getLogger(__name__).debug(output.rstrip("\n"))
                 process.poll()
+
                 rc = process.returncode
 
             return rc
