@@ -25,11 +25,13 @@ class FSSystem(object):
 
     @staticmethod
     def run_command(command, blocking=False):
+
             if blocking:
                 process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                 output, _ = process.communicate()
                 if output:
                    logging.getLogger(__name__).debug(output.rstrip("\n"))
+                rc = process.returncode
             else:
                 process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
                 while True:
@@ -38,8 +40,10 @@ class FSSystem(object):
                         break
                     if output:
                         logging.getLogger(__name__).debug(output.rstrip("\n"))
-                rc = process.poll()
-                return rc
+                process.poll()
+                rc = process.returncode
+
+            return rc
 
     @staticmethod
     def isRaspberryPi(self):

@@ -7,6 +7,8 @@ from fabscan.FSEvents import FSEventManagerInterface, FSEvents
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.util.FSInject import inject
+from xml.dom import minidom
+import xml
 
 @inject(
     config=ConfigInterface,
@@ -25,6 +27,33 @@ class FSMeshlabTask(threading.Thread):
             self.filter = filter
             self.format = format
 
+        def get_poitcloud_value_by_line(self, pointcloud_file, lookup):
+            with open(pointcloud_file) as myFile:
+                for num, line in enumerate(myFile, 1):
+                    if lookup in line:
+                        print 'found at line:', num
+                        number_of_pints = int(filter(str.isdigit, line))
+                        return number_of_pints
+
+        def prepare_down_sampling(self, file, pointcloud_size):
+
+            try:
+                xmldoc = minidom.parse(file)
+                itemlist = xmldoc.getElementsByTagName('filter')
+                print "Len : ", len(itemlist)
+                params = xmldoc.getElementsByTagName('Param')
+
+                for param in params:
+                    if param.attributes['name'].value == "SampleNum":
+                        print param.attributes['name'].value + " :" + param.attributes['value'].value
+                        param.setAttribute('value', str(int(pointcloud_size/3)))
+
+            except xml.parsers.expat.ExpatError, ex:
+                print ex
+
+            with open(file, "wb") as fh:
+                xmldoc.writexml(fh)
+
         def run(self):
             self._logger.info("Meshlab Process Started...")
 
@@ -41,7 +70,12 @@ class FSMeshlabTask(threading.Thread):
             output = self.config.folders.scans+str(self.scan_id)+"/mesh_"+str(self.scan_id)+"_"+str(self.filter).split(".")[0]+"."+self.format
             self._logger.info(output)
 
-            FSSystem.run_command("xvfb-run meshlabserver -i "+input+" -o "+output+" -s "+str(mlx_script_path)+" -om vc vn")
+            pointcloud_size = self.get_poitcloud_value_by_line(pointcloud_file=input, lookup="element vertex")
+            self.prepare_down_sampling(str(mlx_script_path), pointcloud_size)
+
+            return_code = FSSystem.run_command("xvfb-run meshlabserver -i "+input+" -o "+output+" -s "+str(mlx_script_path)+" -om vc vn")
+
+            self._logger.debug("MeshLab Return Code: "+str(return_code))
 
             message = {
                 "message" : "MESHING_DONE",

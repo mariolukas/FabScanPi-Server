@@ -1,4 +1,4 @@
-<!DOCTYPE FilterScript>
+<?xml version="1.0" ?><!DOCTYPE FilterScript>
 <FilterScript>
  <filter name="Poisson-disk Sampling">
   <Param type="RichInt" value="50000" name="SampleNum"/>
@@ -20,26 +20,9 @@
   <Param type="RichFloat" value="1" name="SamplesPerNode"/>
   <Param type="RichFloat" value="1" name="Offset"/>
  </filter>
- <filter name="Remove Duplicated Vertex"/>
- <filter name="Subdivision Surfaces: Butterfly Subdivision">
-  <Param type="RichInt" value="5" name="Iterations"/>
-  <Param type="RichAbsPerc" value="0.5231" min="0" name="Threshold" max="104.618"/>
-  <Param type="RichBool" value="false" name="Selected"/>
- </filter>
- <filter name="Remove Faces from Non Manifold Edges"/>
- <filter name="Subdivision Surfaces: Butterfly Subdivision">
-  <Param type="RichInt" value="5" name="Iterations"/>
-  <Param type="RichAbsPerc" value="0.5231" min="0" name="Threshold" max="104.618"/>
-  <Param type="RichBool" value="false" name="Selected"/>
- </filter>
- <filter name="Subdivision Surfaces: Butterfly Subdivision">
-  <Param type="RichInt" value="3" name="Iterations"/>
-  <Param type="RichAbsPerc" value="0.2092" min="0" name="Threshold" max="104.618"/>
-  <Param type="RichBool" value="false" name="Selected"/>
- </filter>
  <filter name="Vertex Attribute Transfer">
-  <Param type="RichMesh" value="2" name="SourceMesh"/>
-  <Param type="RichMesh" value="0" name="TargetMesh"/>
+  <Param type="RichMesh" value="0" name="SourceMesh"/>
+  <Param type="RichMesh" value="2" name="TargetMesh"/>
   <Param type="RichBool" value="true" name="GeomTransfer"/>
   <Param type="RichBool" value="true" name="NormalTransfer"/>
   <Param type="RichBool" value="false" name="ColorTransfer"/>

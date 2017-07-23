@@ -8,35 +8,35 @@
 
 ------
 
-#### Software<a name="software"></a>
+# Software<a name="software"></a>
 
 - What username and password do I need for login the FabScanPi?
 
-  The username / password is the same as in the standard raspbian configuration: 
-
-  Username: **pi**
-
-  Password: **raspberry**
+  >The username / password is the same as in the standard raspbian configuration: 
+  
+  >Username: **pi**
+  
+  >Password: **raspberry**
 
 
 
 - There is no preview video visible in the menu.
 
-  There is no video - only a black area, maybe a turning hour glass visible. That is a known problem of some browsers but will have not effect the scanner's function. This bug will be fixed in the future.
+  >There is no video - only a black area, maybe a turning hour glass visible. That is a known problem of some browsers but will have not effect the scanner's function. This bug will be fixed in the future.
 
   ​
 
-- Where can I find the config file?
+- Where can I find the config file?**
 
-  You can find it in the folder: ```/var/log/fabscanpi```
+  >You can find it in the folder: ```/var/log/fabscanpi```
 
-  The config file is named : ```fabscanpi.log```
+  >The config file is named : ```fabscanpi.log```
 
   ​
 
 
 
-- How can I view the log file?
+#### How can I view the log file?
 
   You can see the log file on screen by typing:
 
@@ -45,7 +45,7 @@
   ​
 
 
--   How can I edit the log file?
+####   How can I edit the log file?
 
   You can edit the log file with the nano editor by typing:
 
@@ -57,7 +57,7 @@
 
 
 
-- How can I stop / start the FabScanPi server?
+#### How can I stop / start the FabScanPi server?
 
   You can stop the server from the console by typing:
 
@@ -69,7 +69,7 @@
 
 ------
 
-#### Hardware<a name="hardware"></a>
+# Hardware<a name="hardware"></a>
 
 -  What power source(s) do I need to get my FabScanPi working?
 

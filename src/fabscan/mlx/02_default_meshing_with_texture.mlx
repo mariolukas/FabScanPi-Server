@@ -39,13 +39,13 @@
   <Param type="RichBool" value="false" name="Selected"/>
  </filter>
  <filter name="Texture to Vertex Color (between 2 meshes)">
-  <Param type="RichMesh" value="2" name="sourceMesh"/>
+  <Param type="RichMesh" value="0" name="sourceMesh"/>
   <Param type="RichMesh" value="2" name="targetMesh"/>
   <Param type="RichAbsPerc" value="2.274" min="0" name="upperBound" max="113.702"/>
  </filter>
  <filter name="Vertex Attribute Transfer">
-  <Param type="RichMesh" value="2" name="SourceMesh"/>
-  <Param type="RichMesh" value="0" name="TargetMesh"/>
+  <Param type="RichMesh" value="0" name="SourceMesh"/>
+  <Param type="RichMesh" value="2" name="TargetMesh"/>
   <Param type="RichBool" value="true" name="GeomTransfer"/>
   <Param type="RichBool" value="true" name="NormalTransfer"/>
   <Param type="RichBool" value="true" name="ColorTransfer"/>
