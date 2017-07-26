@@ -27,7 +27,16 @@ Connect all needed hardware parts, download and flash the latest ISO image:
 
 
 You have to unzip the file to get the .img file. After flashing the image to an SD card point your browser to 
-http://[ ip-address-of-your-raspberry-pi ]
+    
+    http://[ ip-address-of-your-raspberry-pi ]
+
+It is also posible to join the web-enabled FabScanPi user interface by pointing your browser to 
+    
+    http://fabscanpi.local
+
+NOTE: fabscanpi.local requires zeroconf. This is povided by default on Apple devices. For Windows you will need
+to install the [Bonjour printer driver](https://support.apple.com/kb/DL999) to access your FabScanPi over the 
+local address. 
 
 ### Purchase a Kit
 You can purchase the FabScanPi as a kit or in parts at [Watterott Electronics](http://www.watterott.com)

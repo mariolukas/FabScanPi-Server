@@ -1,3 +1,11 @@
+fabscanpi-server (0.4.3) UNRELEASED; urgency=medium
+  * fixed calibration data saving bug
+  * reworked meshing process and added new mlx filter scripts
+  * added new meshing file formats (off, 3ds, x3d, xyz...)
+  * added new things to f.a.q. in docs
+
+ -- Mario Lukas <info@fabscan.org>  Sun, 26 Jul 2017 21:18:00 +0100
+
 fabscanpi-server (0.4.2) UNRELEASED; urgency=medium
   * fixed update notification bug
   * fixed firmware issue which leaded to bricked devices.

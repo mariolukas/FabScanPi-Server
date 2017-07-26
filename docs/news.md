@@ -1,3 +1,19 @@
+### FabScanPi 0.4.3 and updated documentation. (2017-07-26)
+First of all i would like to thank all FabScanPi builders/users/community members for 
+reporting bugs and sharing experiences. Special thanks goes to Jens Hackel for his
+awesome job on writing a lot of the FabScanPi documentation. 
+
+Some users mentioned problems with FabScanPi HAT serial connection. We added a troubleshooting 
+guide to the [F.A.Q](http://mariolukas.github.io/FabScanPi-Server/faq/#hardware) section of the 
+documentation.
+
+Changelog for this version: 
+
+ * Auto-calibration values are saved and available after a reboot. 
+ * Meshing was refactored. 
+ * Meshing filters are reduced to two basic filters to prevent confusion 
+ * Added new output formats to meshing. Available formats are ply, stl, obj, off, xyz, x3d, 3ds now.
+
 ### New FabScanPi release with auto calibration (2017-02-01)
 A new release of the FabScanPi software with some new exciting features:
 

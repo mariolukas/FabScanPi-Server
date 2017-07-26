@@ -1872,7 +1872,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       $scope.selectedTab = 'download';
       $scope.raw_scans = [];
       $scope.meshes = [];
-      $scope.file_formats = ['stl', 'ply', 'obj'];
+      $scope.file_formats = ['ply', 'stl', 'obj', 'off', 'xyz', 'x3d', '3ds'];
       $scope.selectedFormat = $scope.file_formats[0];
       $scope.getScans = function() {
         var scan_promise;
