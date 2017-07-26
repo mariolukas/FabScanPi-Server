@@ -30,7 +30,7 @@ You have to unzip the file to get the .img file. After flashing the image to an 
     
     http://[ ip-address-of-your-raspberry-pi ]
 
-It is also posible to join the web-enabled FabScanPi user interface by pointing your browser to 
+It is also possible to join the web-enabled FabScanPi user interface by pointing your browser to 
     
     http://fabscanpi.local
 

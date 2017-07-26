@@ -1,7 +1,7 @@
 ### FabScanPi 0.4.3 and updated documentation. (2017-07-26)
 First of all i would like to thank all FabScanPi builders/users/community members for 
 reporting bugs and sharing experiences. Special thanks goes to Jens Hackel for his
-awesome job on writing a lot of the FabScanPi documentation. 
+awesome job on writing most of the FabScanPi documentation. 
 
 Some users mentioned problems with FabScanPi HAT serial connection. We added a troubleshooting 
 guide to the [F.A.Q](http://mariolukas.github.io/FabScanPi-Server/faq/#hardware) section of the 
