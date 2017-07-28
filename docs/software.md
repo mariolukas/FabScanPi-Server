@@ -141,7 +141,7 @@ updates with the following command.
 
 
 ```
-sudo apt-get update && apt-get dist-upgrade
+sudo apt-get update && sudo apt-get dist-upgrade
 ```
 
 
@@ -186,7 +186,7 @@ Before you proceed with the calibration and your first scan please check a few t
 - Click on the duck icon (New Scan) to enter the scan menu.
 - Now the turntable should turn clockwise in a constant smooth manner.
 - The laser must be on and needs to be adjusted vertically and to cross the center of the turntable. You will have to do the adjustment by hand because the servo / stepper support for the laser has not been implemented yet.
-- Check if you can see a small video preview in the lower lest corner of the scan menu. Maybe there is only a turning hour glass visible. That is a known problem of some browsers but will have not effect the scanner's function.
+- Check if you can see a small video preview in the lower left corner of the scan menu. Maybe there is only a turning hour glass visible. That is a known problem of some browsers but will have not effect the scanner's function.
 - Click on the X (Cancel) to get back to the main menu.
 
 
@@ -207,6 +207,8 @@ NOTICE: The second laser in the image is not supported by the software yet. This
 Option 1: You can can build your own calibration tool from cardboard. Print the calibration sheet onto paper and glue it to cardboard. Build a stand of another piece of cardboard. Maybe you have to fix the calibration sheet on the turntable by using some adhesive tape.
 
 Option 2: You have an 3D-printer available and can print out our calibration sheet holder. There's also a different calibration sheet for external holder use.
+
+INFO: To get a perfectly flat and stable surface glue the calibration sheet on a piece of thick pcb (printed circuit board).
 
  [Download calibration mount and sheet!](https://github.com/mariolukas/FabScan-Case/tree/master/calibration)
 
@@ -377,7 +379,7 @@ When the scan is completed / file is saved a notification will be displayed.
 
 - You can now check, download or delete the scan-data.
 
-** Generate Mesh<a name="generateMesh"></a>
+**Generate Mesh**<a name="generateMesh"></a>
 
 The FabScanPi software includes a feature to convert a scan into a mesh-file. This mesh-file can be used for 3D-printing.
 Note: To generate a mesh-file a scan must have been performed. It is also possible to load a scan-file which has been saved previously. 
@@ -423,7 +425,7 @@ When the mesh-file is available a notification is displayed.
   ![open_options_menu](images/Manual_CreateMash_8.jpg)
 
 
-** File Operations<a name="fileOperations"></a>
+**File Operations**<a name="fileOperations"></a>
 
 - Load files<a name="loadFiles"></a>
 
