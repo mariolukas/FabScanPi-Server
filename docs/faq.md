@@ -13,23 +13,29 @@
 - **What username and password do I need for login the FabScanPi?**
 
   The username / password is the same as in the standard raspbian configuration: 
-  
+
   Username: **pi** <br/>
   Password: **raspberry**
+
+  ​
 
 - **Do I have to perform the calibration every time when I restart my FabScanPi?**
 
   No, the calibration data will be stored. We recommend to perform a calibration every time when the FabScanPi has been shipped, modified or the scan results show signs of deformation.
 
+  ​
+
 - **The calibrations fails every time. What can I do?**
 
   The laser and the LED-light are needed for the calibration, they must be installed and be able to work. Make sure the box is closed during calibration so that no external light can cause problems. 
+
+  ​
 
 
 - **Where can I find the calibration file?**
 
   You can find it in the folder: ```/etc/fabscanpi```
-  
+
   The config file is named : ```default.config.json```
 
 
@@ -40,11 +46,14 @@
   The config file is named : ```default.settings.json```
 
   ​
+
 - **Where can I find the log file?**
 
   You can find it in the folder: ```/var/log/fabscanpi```
 
   The config file is named : ```fabscanpi.log```
+
+  ​
 
 
 - **How can I view the log file?**
@@ -52,6 +61,8 @@
   You can see the log file on screen by typing:
 
     cat /var/log/fabscanpi/fabscanpi.log
+
+  ​
 
 
 -  **How can I edit the log file?**
@@ -64,7 +75,8 @@
 
   To exit the nano editor press "Ctrl+X".
 
-  
+  ​
+
 -  **How can I stop / start the FabScanPi server?**
 
   You can stop the server from the console by typing:
@@ -75,17 +87,37 @@
 
     sudo /etc/init.d/fabscanpi-server stop  
 
+  ​
+
 
 - **How can I use the latest (probably unstable) software?**
 
-  You must edit the repository settings in the surces list in the console by typing:
+  You must edit the repository settings in the sources list in the console by typing:
 
-     sudo nano /etc/apt/sources.list
+     ```sudo nano /etc/apt/sources.list```
 
-  Modify the sources.list that it looks exactly like this:
+  ​
+
+  Add a new line to the sources.list that it looks exactly like this:
+
+  ```deb http://archive.fabscan.org/ testing main```
+
+  ​
+
+  Add a hash sign (#) in front of the already existing 'fabscan.archive.org' line so that it looks like:
+
+  ```# deb http://archive.fabscan.org/ jessie main``` 
+
+  or
+
+  ```# deb http://archive.fabscan.org/ stable main```
+
+  INFO: The '#' disables the packet sources in the line
+
+  ​
 
   ![Reboot](images/SourcesList.jpg)
-  
+
   NOTE: In newer images the entry is called ```stable``` instead of ```jessie```
 
   This will change the update source to the testing directory. 
@@ -94,16 +126,42 @@
 
   To save your changes press CTRL + O, then ENTER and exit with CTRL + X
 
+  ​
+
   Now do an update and dist-upgrade:
 
     $ sudo apt-get update
     $ sudo apt-get dist-upgrade
 
+  ​
+
   Finally you should reboot the FabScanPi:
 
     $ sudo reboot now
 
+  ​
+
+  Alternatively you can switch off - switch on your FabScanPi
+
+  ​
+
   NOTE: Now you will use the testing data source. Because it is not officially released there will be NO SUPPORT for this version.
+
+  ​
+
+- **How can I switch back to an older version (stable) of the software?**
+
+  You must know the number of the older version you want to step back to (e.g.: 0.4.0-b373) :
+
+  Open a console (or remote ssh-console).
+
+  Type in: ```sudo apt-get install fabscanpi-server=0.4.0-b373```
+
+  Follow the questions in the installation procedure and finally restart the FabScanPi again.
+
+  NOTE: Please make sure you selected the correct packet source in the ``` /etc/apt/sources.list```
+
+  ​
 
 
 # Hardware<a name="hardware"></a>
@@ -147,32 +205,32 @@ NOTE: For details and specifications please consult the hardware chapter.
 
 
 - **My servo stepper / servo isn't working**
-   
+
    There is no implementation for the servo/stepper to move the laser until now.
 
-  
+
 - **No connection to Arduino, how can i fix that?**
 
    First you need to find out more about the problem. Have a look to the log file (see "How can i view the log file?" in F.A.Q.). 
    Find the section where the init sequence of the server starts. Look for the folowing line ... 
-  
+
   ```
   fabscan.server - INFO - FabScanPi-Server 0.4.2
   ```
-  
+
    If the next lines look like the the debug output below, the fabscanpi-server is not able to flash the firmware 
    to the FabScanPi-HAT (or Arduino).
 
 	fabscan.scanner.laserscanner.FSSerial - ERROR - No FabScanPi HAT or compatible device found on port /dev/ttyAMA0
-   
+
 	fabscan.scanner.laserscanner.FSSerial - ERROR - Fatal FabScanPi HAT or compatible connection error....
-	
+
 	fabscan.scanner.laserscanner.FSHardwareController - DEBUG - Reset FabScanPi HAT...
-	
+
 	fabscan.scanner.laserscanner.FSSerial - ERROR - 'NoneType' object has no attribute 'write'
-	
+
 	fabscan.scanner.laserscanner.FSSerial - DEBUG - 'NoneType' object has no attribute 'readline'
-	
+
 	fabscan.scanner.laserscanner.FSSerial - ERROR - 'NoneType' object has no attribute 'write'
 
 
@@ -180,16 +238,16 @@ NOTE: For details and specifications please consult the hardware chapter.
    and your software worked before, continue reading with 2. 
 
 ----
-  	
-   1. First double check the solder joints of the 40-pin Header of the FabScanPi-HAT. If you are sure that there are no 'cold' solder joints move on 
-   reading, otherwise resolder those joints. Try again and have a look to the logs. If the error still occurs continue reading with 3.
-    
-   2. Check if your fabscanpi-server version is 0.4.2 or higher. Have a look into your default.config.json and check the serial baudrate. It should be 57600 for fabscanpi-server >= 0.4.2. 
-   If you changed the baudrate and the error still occurs continue with reading 3. 
-  
-   3. Your bootloader is bricked, what means that you need to flash a new bootloader to your FabScanPi HAT. Continue with reading "How to flash the FabScanPi HAT Bootloader?"
-  
-  
+
+      1. First double check the solder joints of the 40-pin Header of the FabScanPi-HAT. If you are sure that there are no 'cold' solder joints move on 
+        reading, otherwise resolder those joints. Try again and have a look to the logs. If the error still occurs continue reading with 3.
+
+      2. Check if your fabscanpi-server version is 0.4.2 or higher. Have a look into your default.config.json and check the serial baudrate. It should be 57600 for fabscanpi-server >= 0.4.2. 
+        If you changed the baudrate and the error still occurs continue with reading 3. 
+
+      3. Your bootloader is bricked, what means that you need to flash a new bootloader to your FabScanPi HAT. Continue with reading "How to flash the FabScanPi HAT Bootloader?"
+
+
 ----
 
 - **How to flash the FabScanPi HAT Bootloader?**
@@ -209,9 +267,9 @@ GND  -> GND
 ```
 
   >![drawing_400](images/isp_pi_hat.png)
-  Download bootloader:
+  >  Download bootloader:
 
- 
+
     $ wget https://github.com/watterott/RPi-UNO-HAT/raw/master/docu/bloader.hex
  
 
@@ -247,7 +305,7 @@ GND -> GND
 ```
 
   ![drawing_400](images/isp_arduino_hat.png)
-	
+​	
   Download bootloader and ISP firmware:
 
     $ wget https://github.com/watterott/RPi-UNO-HAT/raw/master/docu/bloader.hex
@@ -260,7 +318,7 @@ GND -> GND
   Flash bootloader:
 
     $ avrdude -c stk500v1 -P /dev/ttyACM0 -b 19200 -p m328p -e -U flash:w:bloader.hex:i -U lfuse:w:0xFF:m -U hfuse:w:0xD6:m -U efuse:w:0x05:m -U lock:w:0x0F:m
-    
+​    
 
 #### Scanning issues<a name="scanningIssues"></a>
 
