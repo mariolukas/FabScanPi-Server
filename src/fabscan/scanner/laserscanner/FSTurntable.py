@@ -4,7 +4,6 @@ __license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
-STEPS_PER_ROTATION = 3200
 from fabscan.util.FSInject import inject
 from fabscan.FSConfig import ConfigInterface
 
@@ -73,6 +72,3 @@ class Turntable(object):
             command = "G07;"
             self.serial_connection.send_and_receive(command)
 
-
-def get_step_interval(rotation_intervals):
-    return STEPS_PER_ROTATION / rotation_intervals
