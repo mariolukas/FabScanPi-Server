@@ -843,7 +843,7 @@ iface default inet dhcp
 
 Now restart your network adapters. 
 ```
-sudo nano /etc/init.d/networking
+sudo /etc/init.d/networking restart
 ```
 
 If you type ```sudo ifconfig``` there should be a wlan0 connection in the list. 

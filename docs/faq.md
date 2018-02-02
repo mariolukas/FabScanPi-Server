@@ -241,12 +241,11 @@ NOTE: For details and specifications please consult the hardware chapter.
 
       1. First double check the solder joints of the 40-pin Header of the FabScanPi-HAT. If you are sure that there are no 'cold' solder joints move on 
         reading, otherwise resolder those joints. Try again and have a look to the logs. If the error still occurs continue reading with 3.
-
+    
       2. Check if your fabscanpi-server version is 0.4.2 or higher. Have a look into your default.config.json and check the serial baudrate. It should be 57600 for fabscanpi-server >= 0.4.2. 
         If you changed the baudrate and the error still occurs continue with reading 3. 
-
+    
       3. Your bootloader is bricked, what means that you need to flash a new bootloader to your FabScanPi HAT. Continue with reading "How to flash the FabScanPi HAT Bootloader?"
-
 
 ----
 
@@ -270,7 +269,7 @@ GND  -> GND
   >  Download bootloader:
 
 
-    $ wget https://github.com/watterott/RPi-UNO-HAT/raw/master/docu/bloader.hex
+    $ wget https://github.com/watterott/RPi-UNO-HAT/raw/master/docs/bloader.hex
  
 
   Edit the file ```avrdude.conf``` and add the following lines:
@@ -308,17 +307,22 @@ GND -> GND
 ​	
   Download bootloader and ISP firmware:
 
-    $ wget https://github.com/watterott/RPi-UNO-HAT/raw/master/docu/bloader.hex
-    $ wget https://github.com/watterott/RPi-UNO-HAT/raw/master/docu/isp.hex
+    $ wget https://github.com/watterott/RPi-UNO-HAT/raw/master/docs/bloader.hex
+    $ wget https://github.com/watterott/RPi-UNO-HAT/raw/master/docs/isp.hex
 
   Flash ISP firmware to Arduino Uno:
+
+	$ avrdude -c arduino -P /dev/ttyUSB0 -b 115200 -p m328p -e -U flash:w:isp.hex:i
+or
 
 	$ avrdude -c arduino -P /dev/ttyACM0 -b 115200 -p m328p -e -U flash:w:isp.hex:i
 
   Flash bootloader:
 
-    $ avrdude -c stk500v1 -P /dev/ttyACM0 -b 19200 -p m328p -e -U flash:w:bloader.hex:i -U lfuse:w:0xFF:m -U hfuse:w:0xD6:m -U efuse:w:0x05:m -U lock:w:0x0F:m
-​    
+    $ avrdude -c stk500v1 -P /dev/ttyUSB0 -b 19200 -p m328p -e -U flash:w:bloader.hex:i -U lfuse:w:0xFF:m -U hfuse:w:0xD6:m -U efuse:w:0x05:m -U lock:w:0x0F:m
+or
+
+	$ avrdude -c stk500v1 -P /dev/ttyACM0 -b 19200 -p m328p -e -U flash:w:bloader.hex:i -U lfuse:w:0xFF:m -U hfuse:w:0xD6:m -U efuse:w:0x05:m -U lock:w:0x0F:m
 
 #### Scanning issues<a name="scanningIssues"></a>
 
