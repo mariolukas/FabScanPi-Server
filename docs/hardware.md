@@ -334,7 +334,7 @@ TODO
 
 #Screws and Washers
 
-Even if you use the srew set from Watterott, as given in the *BOM*, here is the the usage reference:
+Even if you use the screw set from Watterott, as given in the *BOM*, here is the the usage reference:
 
 **Screws**
 

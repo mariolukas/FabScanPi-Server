@@ -47,6 +47,8 @@ class FSCalibration(FSCalibrationInterface):
         self.calibration_brightness = [50, 50, 50]
         self.quater_turn = int(self.config.turntable.steps / 4)
         self.steps_five_degree = 5.0 / (360.0 / self.config.turntable.steps)
+        self.calib_start = 65*self.steps_five_degree/5
+        self.calib_end = 115*self.steps_five_degree/5
         self.total_positions = int(((self.quater_turn/self.steps_five_degree)*4)+2)
         self.current_position = 0
 
@@ -182,7 +184,7 @@ class FSCalibration(FSCalibrationInterface):
         image = self._capture_pattern()
         self.shape = image[:, :, 0].shape
 
-        if (position > 577 and position < 1022):
+        if (position > self.calib_start and position < self.calib_end):
             flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
         else:
             flags = cv2.CALIB_CB_FAST_CHECK
@@ -201,7 +203,7 @@ class FSCalibration(FSCalibrationInterface):
 
         image = self._capture_pattern()
 
-        if (position > 577 and position < 1022):
+        if (position > self.calib_start and position < self.calib_end):
             flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
         else:
             flags = cv2.CALIB_CB_FAST_CHECK
@@ -219,7 +221,7 @@ class FSCalibration(FSCalibrationInterface):
             # angel/(360/3200)
             try:
                 #Laser Calibration
-                if (position > 577 and position < 1022):
+                if (position > self.calib_start and position < self.calib_end):
                     #self.settings.camera.contrast = 40
                     self.settings.camera.brightness = 70
                     self._hardwarecontroller.led.off()
