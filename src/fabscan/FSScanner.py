@@ -12,6 +12,7 @@ import multiprocessing
 from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManagerInterface, FSEvents
 from fabscan.vision.FSMeshlab import FSMeshlabTask
+from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
 from fabscan.util.FSInject import inject, singleton
@@ -29,27 +30,36 @@ class FSCommand(object):
     START = "START"
     STOP = "STOP"
     CALIBRATE = "CALIBRATE"
-    UPDATE_SETTINGS = "UPDATE_SETTINGS"
+    HARDWARE_TEST_FUNCTION = "HARDWARE_TEST_FUNCTION"
     MESHING = "MESHING"
     COMPLETE = "COMPLETE"
     SCANNER_ERROR = "SCANNER_ERROR"
     UPGRADE_SERVER = "UPGRADE_SERVER"
     RESTART_SERVER = "RESTART_SERVER"
+    REBOOT_SYSTEM = "REBOOT_SYSTEM"
+    SHUTDOWN_SYSTEM = "SHUTDOWN_SYSTEM"
     CALIBRATION_COMPLETE = "CALIBRATION_COMPLETE"
+    NETCONNECT = "NETCONNECT"
+    GET_SETTINGS = "GET_SETTINGS"
+    UPDATE_SETTINGS = "UPDATE_SETTINGS"
+    GET_CONFIG = "GET_CONFIG"
+    UPDATE_CONFIG = "UPDATE_CONFIG"
+
 
 @inject(
         settings=SettingsInterface,
+        config=ConfigInterface,
         eventmanager=FSEventManagerInterface,
         scanprocessor=FSScanProcessorInterface
 )
 class FSScanner(threading.Thread):
-    def __init__(self, settings, eventmanager, scanprocessor):
+    def __init__(self, settings, config, eventmanager, scanprocessor):
         threading.Thread.__init__(self)
 
         self._logger = logging.getLogger(__name__)
         self.settings = settings
         self.eventManager = eventmanager.instance
-        self.scanProcessor = scanprocessor.start()
+        self.scanProcessor = scanprocessor.instance
 
         self._state = FSState.IDLE
         self._exit_requested = False

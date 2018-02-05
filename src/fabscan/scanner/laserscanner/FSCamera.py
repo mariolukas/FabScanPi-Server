@@ -190,7 +190,7 @@ class PiCam(threading.Thread):
                     self._logger.error("Can not create camera device.")
 
                 self.camera.resolution = (self.config.camera.resolution.width, self.config.camera.resolution.height)
-                self.camera.framerate = 24
+                #self.camera.framerate = 24
 
                 while True:
                     if not self.is_idle:
@@ -289,7 +289,7 @@ class PiCam(threading.Thread):
                         # Now fix the values
                         #self.camera.exposure_mode = exposure_type
                         self.camera.awb_mode = exposure_type
-                        time.sleep(1)
+                        time.sleep(2.4)
                         self.flushStream()
                         self._current_mode = 'auto'
 

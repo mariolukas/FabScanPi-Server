@@ -30,6 +30,8 @@ class FSServer(object):
         self.exit = False
         self.restart = False
         self.upgrade = False
+        self.reboot = False
+        self.shutdown = False
         self._logger = logging.getLogger(__name__)
 
     def on_server_command(self, mgr, event):
@@ -59,7 +61,6 @@ class FSServer(object):
         self._logger.info("FabScanPi-Server "+str(__version__))
 
         try:
-            # inject "static" classed
             injector.provide(FSEventManagerInterface, FSEventManagerSingleton)
             injector.provide_instance(FSWebSocketServerInterface, FSWebSocketServer())
             injector.provide_instance(ConfigInterface, Config(self.config_file, True))

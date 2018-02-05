@@ -4,6 +4,7 @@ import time
 import logging
 import struct
 from fabscan.util.FSInject import singleton
+from fabscan.util.FSUtil import FSSystem
 from fabscan.file.FSImage import FSImage
 import cv2
 
@@ -75,6 +76,8 @@ class FSCalibration(FSCalibrationInterface):
         self.object_points = []
 
     def start(self):
+        tools = FSSystem()
+        tools.delete_folder(self.config.folders.scans+'calibration')
         self._hardwarecontroller.turntable.enable_motors()
         self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
         self.settings.camera.contrast = 30
@@ -230,7 +233,7 @@ class FSCalibration(FSCalibrationInterface):
                         image = self._imageprocessor.pattern_mask(image, corners)
                         self.image = image
                         fs_image = FSImage()
-                        fs_image.save_image(image, position, "laser", dir_name="calibration")
+                        fs_image.save_image(image, self.current_position, "laser", dir_name="calibration")
                         points_2d, _ = self._imageprocessor.compute_2d_points(image, roi_mask=False, refinement_method='RANSAC')
                         point_3d = self._imageprocessor.compute_camera_point_cloud(
                             points_2d, distance, normal)
@@ -282,7 +285,7 @@ class FSCalibration(FSCalibrationInterface):
         # Laser triangulation
         # Save point clouds
         for i in xrange(self.config.laser.numbers):
-            self.save_point_cloud('PC' + str(i) + '.ply', self._point_cloud[i])
+            self.save_point_cloud('CALIBRATION_' + str(i) + '.ply', self._point_cloud[i])
 
         self.distance = [None, None]
         self.normal = [None, None]
@@ -449,7 +452,7 @@ class FSCalibration(FSCalibrationInterface):
 
     def save_point_cloud(self, filename, point_cloud):
         if point_cloud is not None:
-            f = open(filename, 'wb')
+            f = open(self.config.folders.scans+'/calibration/'+filename, 'wb')
             self.save_point_cloud_stream(f, point_cloud)
             f.close()
 

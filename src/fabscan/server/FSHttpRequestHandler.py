@@ -28,15 +28,15 @@ def CreateRequestHandler(config, scanprocessor):
 
             self._logger = logging.getLogger(__name__)
 
+            self.scanprocessor = scanprocessor
             self.api = FSRest()
             self.close_mjpeg_stream = False
 
-            self.scanprocessor = scanprocessor.start()
-
             self.ROUTES = (
                 # [url_prefix ,  directory_path]
-                ['/upload/preview/',''],
-                ['/settings.mjpeg',    ''],
+                ['/upload/preview/', ''],
+                ['/settings.mjpeg', ''],
+                ['/adjustment.mjpeg', ''],
                 ['/scans',    self.config.folders.scans],
                 ['/scan',     self.config.folders.scans],
                 ['',          self.config.folders.www],  # empty string for the 'default' match
@@ -79,13 +79,17 @@ def CreateRequestHandler(config, scanprocessor):
 
                  stream_id = self.path.split('/')[-1]
                  if stream_id == 'laser.mjpeg':
-                     self.get_stream(FSScanProcessorCommand.GET_LASER_STREAM)
+                    self.get_stream(FSScanProcessorCommand.GET_LASER_STREAM)
 
                  elif stream_id == 'texture.mjpeg':
-                     self.get_stream(FSScanProcessorCommand.GET_TEXTURE_STREAM)
+                    self.get_stream(FSScanProcessorCommand.GET_TEXTURE_STREAM)
 
                  elif stream_id == 'calibration.mjpeg':
                     self.get_stream(FSScanProcessorCommand.GET_CALIBRATION_STREAM)
+
+                 elif stream_id == 'adjustment.mjpeg':
+                    self.get_stream(FSScanProcessorCommand.GET_ADJUSTMENT_STREAM)
+
                  else:
 
                     self.bad_request()

@@ -53,7 +53,8 @@ class FSSystem(object):
         else:
             return False
 
-    def delete_folder(self,folder):
+
+    def delete_folder(self, folder):
         if os.path.isdir(folder):
             shutil.rmtree(folder, ignore_errors=True)
 
