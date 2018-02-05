@@ -15,6 +15,7 @@ before_script:
 - echo $TRAVIS_TAG
 script: sudo make deb
 after_success:
+- ls -alh
 - curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/release/
 - NOW=`date +%Y-%m-%d-%H-%M`
 - mkdocs build
