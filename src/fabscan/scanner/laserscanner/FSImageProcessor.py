@@ -63,11 +63,20 @@ class ImageProcessor(ImageProcessorInterface):
         self.window_value = 0
         self.color = (255, 255, 255)
         self.refinement_method = ''
-        self.image_height = self.config.camera.resolution.width
-        self.image_width = self.config.camera.resolution.height
+        self.image_height = self.config.camera.preview_resolution.width #self.config.camera.resolution.width
+        self.image_width = self.config.camera.preview_resolution.height# self.config.camera.resolution.height
         self._weight_matrix = self._compute_weight_matrix()
         self._criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
         self.object_pattern_points = self.create_object_pattern_points()
+
+    def set_image_height(self, value):
+        self.image_height = value
+
+    def set_image_width(self, value):
+        self.image_width = value
+
+    def set_weight_matrix(self):
+        self._weight_matrix = self._compute_weight_matrix()
 
     def _compute_weight_matrix(self):
         _weight_matrix = np.array(
@@ -253,12 +262,12 @@ class ImageProcessor(ImageProcessorInterface):
         c = zip(u, v)
 
         for t in c:
-            cv2.line(image, (int(t[0]) - 4, int(t[1])), (int(t[0]) + 4, int(t[1])), (255, 0, 0), thickness=1,
+            cv2.line(image, (int(t[0]) - 1, int(t[1])), (int(t[0]) + 1, int(t[1])), (255, 0, 0), thickness=1,
                      lineType=8, shift=0)
 
-        r = 800.0 / image.shape[1]
-        dim = (800, int(image.shape[0] * r))
-        image = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
+        #r = 800.0 / image.shape[1]
+        #dim = (800, int(image.shape[0] * r))
+        #image = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
 
         return image
 

@@ -15,7 +15,7 @@ class SettingsInterface(object):
 
 class Settings(SettingsInterface):
 
-    def __init__(self,settings, first=True):
+    def __init__(self, settings, first=True):
 
 
         if first:

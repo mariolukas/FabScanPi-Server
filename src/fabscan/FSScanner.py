@@ -59,7 +59,7 @@ class FSScanner(threading.Thread):
         self._logger = logging.getLogger(__name__)
         self.settings = settings
         self.eventManager = eventmanager.instance
-        self.scanProcessor = scanprocessor.instance
+        self.scanProcessor = scanprocessor.start()
 
         self._state = FSState.IDLE
         self._exit_requested = False

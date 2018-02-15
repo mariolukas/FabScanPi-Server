@@ -12,8 +12,6 @@ class Led:
     def on(self, red, green, blue):
             command = "M05 R"+str(red)+" G"+str(green)+" B"+str(blue)+";"
             self.serial_connection.send_and_receive(command)
-            time.sleep(1)
-
 
     def off(self):
             command = "M05 R0 G0 B0;"

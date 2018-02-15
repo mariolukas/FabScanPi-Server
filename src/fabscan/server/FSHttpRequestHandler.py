@@ -28,7 +28,6 @@ def CreateRequestHandler(config, scanprocessor):
 
             self._logger = logging.getLogger(__name__)
 
-            self.scanprocessor = scanprocessor
             self.api = FSRest()
             self.close_mjpeg_stream = False
 
@@ -45,7 +44,9 @@ def CreateRequestHandler(config, scanprocessor):
             try:
                 SimpleHTTPRequestHandler.__init__(self, *args, **kwargs)
             except StandardError, e:
-                self._logger.error(e)
+                self.close_mjpeg_stream = True
+                #self.scanprocessor.stop()
+                self._logger.debug("MJPEG Stream closed by client.")
 
         def do_API_CALL(self, action, data=None):
             self.send_response(200)
@@ -77,6 +78,7 @@ def CreateRequestHandler(config, scanprocessor):
 
              elif "stream" in self.path:
 
+
                  stream_id = self.path.split('/')[-1]
                  if stream_id == 'laser.mjpeg':
                     self.get_stream(FSScanProcessorCommand.GET_LASER_STREAM)
@@ -105,6 +107,7 @@ def CreateRequestHandler(config, scanprocessor):
              return
 
         def get_stream(self, type):
+               self.scanprocessor = scanprocessor.start()
 
                self.send_response(200)
                #self.send_header('Pragma:', 'no-cache');
@@ -116,10 +119,14 @@ def CreateRequestHandler(config, scanprocessor):
                try:
                     while True:
                         if self.close_mjpeg_stream:
+                            self.scanprocessor.stop()
                             break
 
-                        future_image = self.scanprocessor.ask({FSEvents.COMMAND: type}, block=False)
-                        image = future_image.get()
+                        try:
+                            future_image = self.scanprocessor.ask({FSEvents.COMMAND: type}, block=False)
+                            image = future_image.get()
+                        except StandardError as e:
+                            self._logger.error(e)
 
                         if image is not None:
                             image = image[:, :, ::-1]
@@ -139,12 +146,15 @@ def CreateRequestHandler(config, scanprocessor):
                         else:
                             time.sleep(0.05)
 
+                    self.scanprocessor.stop()
                     self.close_mjpeg_stream = False
+
 
                     time.sleep(0.05)
 
                except IOError as e:
                     if hasattr(e, 'errno') and e.errno == 32:
+
                         self.rfile.close()
                         return
                     else:

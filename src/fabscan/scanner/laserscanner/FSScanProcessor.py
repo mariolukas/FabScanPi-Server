@@ -179,7 +179,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     def create_laser_stream(self):
         try:
             image = self.hardwareController.get_picture()
-            image = self.image_processor.get_laser_stream_frame(image)
+
             return image
         except StandardError, e:
             # images are dropped this cateched exception.. no error hanlder needed here.
@@ -243,7 +243,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._laser_positions = int(self.settings.laser_positions)
         self._is_color_scan = bool(self.settings.color)
 
-        self._number_of_pictures = 3200 / int(self.settings.resolution)
+        self._number_of_pictures = self.config.turntable.steps / int(self.settings.resolution)
         self.current_position = 0
         self._starttime = self.get_time_stamp()
 
@@ -274,7 +274,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.settings.camera.contrast = 0
         self.settings.camera.saturation = 0
         self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
-        self.hardwareController.camera.device.flushStream()
+        self.hardwareController.camera.device.flush_stream()
         #self.hardwareController.camera.device.startStream(exposure_type="flash")
 
 
@@ -282,8 +282,8 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._logger.info("Finishing texture scan.")
         self.current_position = 0
 
-        self.hardwareController.camera.device.stopStream()
-        self.hardwareController.camera.device.flushStream()
+        self.hardwareController.camera.device.stop_stream()
+        self.hardwareController.camera.device.flush_stream()
 
         self.hardwareController.led.off()
 
@@ -328,7 +328,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.hardwareController.laser.on()
 
         #self.hardwareController.camera.device.startStream()
-        self.hardwareController.camera.device.flushStream()
+        self.hardwareController.camera.device.flush_stream()
 
         if not self._worker_pool.workers_active():
             self._worker_pool.create(self.config.process_numbers)
@@ -336,7 +336,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     def finish_object_scan(self):
         self._logger.info("Finishing object scan.")
         self._worker_pool.kill()
-        self.hardwareController.camera.device.stopStream()
+        self.hardwareController.camera.device.stop_stream()
 
     def scan_next_object_position(self):
         if not self._stop_scan:
@@ -374,7 +374,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.utils.delete_scan(self._prefix)
         self.reset_scanner_state()
         self._logger.info("Scan stoped")
-        self.hardwareController.camera.device.stopStream()
+        self.hardwareController.camera.device.stop_stream()
 
         message = {
             "message": "SCAN_CANCELED",
@@ -459,7 +459,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         }
 
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-        self.hardwareController.camera.device.stopStream()
+        self.hardwareController.camera.device.stop_stream()
 
 
     def append_points(self, point_cloud_set):
@@ -478,7 +478,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def reset_scanner_state(self):
         self._logger.info("Reseting scanner states ... ")
-        self.hardwareController.camera.device.flushStream()
+        self.hardwareController.camera.device.flush_stream()
         self.hardwareController.laser.off()
         self.hardwareController.led.off()
         self.hardwareController.turntable.disable_motors()
@@ -491,13 +491,3 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def get_time_stamp(self):
         return int(datetime.now().strftime("%s%f"))/1000
-
-@singleton(
-    instance=FSScanProcessor
-)
-class FSScanProcessorSingleton(FSScanProcessor):
-    def __init__(self, instance):
-        #super(FSScanProcessor, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration)
-        self._logger = logging.getLogger(__name__)
-        self._logger.debug("Start here ")
-        self.instance = instance.start()

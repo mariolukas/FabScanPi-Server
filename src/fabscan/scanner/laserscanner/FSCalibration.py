@@ -34,6 +34,8 @@ class FSCalibration(FSCalibrationInterface):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
         # super(FSCalibrationInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
 
+        LASER_PLANE_CALIBRATION_START_POS_DEGREE = 65
+        LASER_PLANE_CALIBRATION_END_POS_DEGREE = 115
         self._imageprocessor = imageprocessor
         self._hardwarecontroller = hardwarecontroller
         self.config = config
@@ -48,8 +50,8 @@ class FSCalibration(FSCalibrationInterface):
         self.calibration_brightness = [50, 50, 50]
         self.quater_turn = int(self.config.turntable.steps / 4)
         self.steps_five_degree = 5.0 / (360.0 / self.config.turntable.steps)
-        self.calib_start = 65*self.steps_five_degree/5
-        self.calib_end = 115*self.steps_five_degree/5
+        self.calib_start = LASER_PLANE_CALIBRATION_START_POS_DEGREE*self.steps_five_degree/5
+        self.calib_end = LASER_PLANE_CALIBRATION_END_POS_DEGREE*self.steps_five_degree/5
         self.total_positions = int(((self.quater_turn/self.steps_five_degree)*4)+2)
         self.current_position = 0
 

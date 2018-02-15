@@ -44,8 +44,8 @@
             "height": 1232
         },
         "preview_resolution": {
-            "width": 240,
-            "height": 320
+            "width": 640,
+            "height": 480
         },
         "rotate": "True",
         "hflip": "True",
