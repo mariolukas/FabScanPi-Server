@@ -275,14 +275,14 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.settings.camera.saturation = 0
         self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
         self.hardwareController.camera.device.flush_stream()
-        #self.hardwareController.camera.device.startStream(exposure_type="flash")
+        self.hardwareController.start_camera_stream(mode="default")
 
 
     def finish_texture_scan(self):
         self._logger.info("Finishing texture scan.")
         self.current_position = 0
 
-        self.hardwareController.camera.device.stop_stream()
+        self.hardwareController.stop_camera_stream()
         self.hardwareController.camera.device.flush_stream()
 
         self.hardwareController.led.off()
@@ -327,7 +327,6 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
         self.hardwareController.laser.on()
 
-        #self.hardwareController.camera.device.startStream()
         self.hardwareController.camera.device.flush_stream()
 
         if not self._worker_pool.workers_active():
@@ -336,7 +335,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     def finish_object_scan(self):
         self._logger.info("Finishing object scan.")
         self._worker_pool.kill()
-        self.hardwareController.camera.device.stop_stream()
+        self.hardwareController.stop_camera_stream()
 
     def scan_next_object_position(self):
         if not self._stop_scan:
@@ -374,7 +373,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.utils.delete_scan(self._prefix)
         self.reset_scanner_state()
         self._logger.info("Scan stoped")
-        self.hardwareController.camera.device.stop_stream()
+        self.hardwareController.stop_camera_stream()
 
         message = {
             "message": "SCAN_CANCELED",
@@ -459,7 +458,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         }
 
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-        self.hardwareController.camera.device.stop_stream()
+        self.hardwareController.stop_camera_stream()
 
 
     def append_points(self, point_cloud_set):

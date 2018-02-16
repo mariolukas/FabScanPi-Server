@@ -117,10 +117,7 @@ def CreateRequestHandler(config, scanprocessor):
                BaseHTTPRequestHandler.end_headers(self)
 
                try:
-                    while True:
-                        if self.close_mjpeg_stream:
-                            self.scanprocessor.stop()
-                            break
+                    while not self.close_mjpeg_stream:
 
                         try:
                             future_image = self.scanprocessor.ask({FSEvents.COMMAND: type}, block=False)
@@ -149,16 +146,15 @@ def CreateRequestHandler(config, scanprocessor):
                     self.scanprocessor.stop()
                     self.close_mjpeg_stream = False
 
-
                     time.sleep(0.05)
 
                except IOError as e:
                     if hasattr(e, 'errno') and e.errno == 32:
-
                         self.rfile.close()
                         return
                     else:
                         pass
+                    self.scanprocessor.stop
 
 
         def end_headers (self):

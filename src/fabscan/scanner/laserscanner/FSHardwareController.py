@@ -60,7 +60,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def settings_mode_on(self):
         while not self.camera.device.is_idle():
             time.sleep(0.1)
-        self.camera.device.start_stream()
+        self.camera.device.start_stream(mode="settings")
         self._settings_mode_is_off = False
         self.camera.device.flush_stream()
         self.laser.on(laser=0)
@@ -119,8 +119,8 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def camera_is_connected(self):
        return self.camera.is_connected()
 
-    def start_camera_stream(self):
-        self.camera.device.start_stream()
+    def start_camera_stream(self, mode="default"):
+        self.camera.device.start_stream(mode)
 
     def stop_camera_stream(self):
         self.camera.device.stop_stream()

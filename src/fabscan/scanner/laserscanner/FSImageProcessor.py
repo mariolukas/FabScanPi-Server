@@ -63,19 +63,15 @@ class ImageProcessor(ImageProcessorInterface):
         self.window_value = 0
         self.color = (255, 255, 255)
         self.refinement_method = ''
-        self.image_height = self.config.camera.preview_resolution.width #self.config.camera.resolution.width
-        self.image_width = self.config.camera.preview_resolution.height# self.config.camera.resolution.height
+        self.image_height = self.config.camera.resolution.width
+        self.image_width = self.config.camera.resolution.height
         self._weight_matrix = self._compute_weight_matrix()
         self._criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
         self.object_pattern_points = self.create_object_pattern_points()
 
-    def set_image_height(self, value):
-        self.image_height = value
-
-    def set_image_width(self, value):
-        self.image_width = value
-
-    def set_weight_matrix(self):
+    def init(self, resolution):
+        self.image_height = resolution[0]
+        self.image_width = resolution[1]
         self._weight_matrix = self._compute_weight_matrix()
 
     def _compute_weight_matrix(self):
