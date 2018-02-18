@@ -753,7 +753,7 @@ Example of a 'common' filter that can be shared by all views
           installation: {
             host: "192.168.178.31",
             websocketurl: 'ws://fabscanpi.local:8010/',
-            httpurl: 'http://192.168.1.121:8080/',
+            httpurl: 'http://fabscanpi.local:8080/',
             newsurl: 'http://mariolukas.github.io/FabScanPi-Server/news/'
           }
         };
@@ -1478,6 +1478,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
           resetSate();
         }
         if (data['message'] === 'SCAN_COMPLETE') {
+          stopStream();
           FSScanService.setScanId(data['scan_id']);
           $scope.setScanIsComplete(true);
           return resetSate();
