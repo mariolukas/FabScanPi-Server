@@ -397,6 +397,7 @@ class ImageProcessor(ImageProcessorInterface):
             if self.config.calibration.pattern.rows > 2 and self.config.calibration.pattern.columns > 2:
 
                 gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+
                 if flags is None:
                     ret, corners = cv2.findChessboardCorners(gray, (self.config.calibration.pattern.columns, self.config.calibration.pattern.rows), None)
                 else:

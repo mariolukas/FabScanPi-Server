@@ -57,5 +57,5 @@
         "autoflash": "True",
         "port": "/dev/ttyAMA0"
     },
-    "texture_illumination": 140
+    "texture_illumination": 50
 }

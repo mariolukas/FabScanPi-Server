@@ -238,7 +238,8 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._stop_scan = False
 
         self.hardwareController.turntable.enable_motors()
-
+        self.hardwareController.start_camera_stream(mode="default")
+        time.sleep(1.5)
         self._resolution = int(self.settings.resolution)
         self._laser_positions = int(self.settings.laser_positions)
         self._is_color_scan = bool(self.settings.color)
@@ -270,19 +271,17 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._scan_contrast = self.settings.camera.contrast
         self._scan_saturation = self.settings.camera.saturation
 
-        self.settings.camera.brightness = 50
-        self.settings.camera.contrast = 0
-        self.settings.camera.saturation = 0
+        #self.settings.camera.brightness = 50
+        #self.settings.camera.contrast = 0
+        #self.settings.camera.saturation = 0
         self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
+
         self.hardwareController.camera.device.flush_stream()
-        self.hardwareController.start_camera_stream(mode="default")
 
 
     def finish_texture_scan(self):
         self._logger.info("Finishing texture scan.")
         self.current_position = 0
-
-        self.hardwareController.stop_camera_stream()
         self.hardwareController.camera.device.flush_stream()
 
         self.hardwareController.led.off()
@@ -335,7 +334,6 @@ class FSScanProcessor(FSScanProcessorInterface):
     def finish_object_scan(self):
         self._logger.info("Finishing object scan.")
         self._worker_pool.kill()
-        self.hardwareController.stop_camera_stream()
 
     def scan_next_object_position(self):
         if not self._stop_scan:

@@ -165,8 +165,11 @@ class ProcessCamOutput(object):
                     proc = self.pool.pop()
                 except IndexError:
                     pass # pool is empty
-            proc.terminated = True
-            proc.join()
+            try:
+                proc.terminated = True
+                proc.join()
+            except StandardError as e:
+                pass
             if self.pool.empty:
                 break
 
@@ -196,7 +199,7 @@ class PiCam(threading.Thread):
 
     def run(self):
             while True:
-                if self.camera and self.camera.recording:
+                if not self.idle and self.camera.recording:
                     self.camera.wait_recording(0.5)
                 else:
                     time.sleep(0.05)
@@ -229,7 +232,7 @@ class PiCam(threading.Thread):
         self.output = ProcessCamOutput(self.camera_buffer, self.resolution)
 
     def set_calibration_mode(self):
-        self.resolution = (self.config.camera.width, self.config.camera.resolution.height)
+        self.resolution = (self.config.camera.resolution.width, self.config.camera.resolution.height)
         self.output = ProcessCamOutput(self.camera_buffer, self.resolution)
 
     def start_stream(self, mode="default"):
@@ -244,13 +247,16 @@ class PiCam(threading.Thread):
             self._logger.error(e)
 
     def stop_stream(self):
+        time.sleep(0.5)
         try:
-            if self.camera:
+            if self.camera.recording:
                 self.camera.stop_recording()
-                self.camera.close()
-                self.camera = None
-                self.idle = True
-                self._logger.debug("Cam Stream Stopped")
+            while self.camera.recording:
+                time.sleep(0.4)
+            self.camera.close()
+            self.camera = None
+            self.idle = True
+            self._logger.debug("Cam Stream Stopped")
 
         except StandardError as e:
             self._logger.error("Not able to stop camera.")
