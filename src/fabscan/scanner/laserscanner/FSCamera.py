@@ -192,7 +192,7 @@ class PiCam(threading.Thread):
         self.resolution = (self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
 
         self.camera_buffer = cam_ring_buffer
-
+        self.camera = picamera.PiCamera(resolution=self.resolution)
         self.idle = True
         self.start()
 
@@ -236,15 +236,19 @@ class PiCam(threading.Thread):
         self.output = ProcessCamOutput(self.camera_buffer, self.resolution)
 
     def start_stream(self, mode="default"):
-        try:
-            self.set_mode(mode)
-            self.camera = picamera.PiCamera(resolution=self.resolution)
-            self.idle = False
-            self.camera.start_recording(self.output, format='mjpeg')
-            self._logger.debug("Cam Stream Started")
-        except StandardError as e:
-            self._logger.error("Not able to initialize Raspberry Pi Camera.")
-            self._logger.error(e)
+
+            try:
+                self.set_mode(mode)
+
+                if self.camera is None:
+                    self.camera = picamera.PiCamera(resolution=self.resolution)
+
+                self.idle = False
+                self.camera.start_recording(self.output, format='mjpeg')
+                self._logger.debug("Cam Stream with Resolution "+self.resolution + " started")
+            except StandardError as e:
+                self._logger.error("Not able to initialize Raspberry Pi Camera.")
+                self._logger.error(e)
 
     def stop_stream(self):
         time.sleep(0.5)
@@ -256,7 +260,7 @@ class PiCam(threading.Thread):
             self.camera.close()
             self.camera = None
             self.idle = True
-            self._logger.debug("Cam Stream Stopped")
+            self._logger.debug("Cam Stream with Resolution "+self.resolution +" stopped")
 
         except StandardError as e:
             self._logger.error("Not able to stop camera.")
