@@ -28,7 +28,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-
+.DS_Store
 src/www/version.txt
 
 # PyInstaller
