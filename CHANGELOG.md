@@ -81,150 +81,135 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.2.0] - 2016-03-12
 ### Added
+- added idle spinner to stream preview window
+- added meshlab support to frontend
+- added calibration stream option
+- added meshalabserver support by calling via xvfb
+- added new icons
+- added system call stdouts to log file
+- added version number of firmware and server visible in main window
 
 ### Fixed
+- fixed issue #5, heavy CPU load
+- fixed status bar
+- fixed mpjeg close stream bug in chrome and firefox
 
 ### Changed
-  * fixed issue #5, heavy CPU load
-  * refactored system callings, introduced new utils for system calls
-  * system call stdouts are in logs now
-  * added meshalabserver support by calling via xvfb
-  * fixed mpjeg close stream bug in chrome and firefox
-  * added idle spinner to stream preview window
-  * prepared frontend for laser stepper support
-  * replaced threejs v70 by a newer version v74
-  * refactored webgl directive, added support for switching between mesh and pointcloud (experimental)
-  * refactored laser detection algorithm, it is more stable now.
-  * refactored and extended share dialog options
-  * made version number of firmware and server visible in main window
-  * added calibration stream option
-  * refactored httpRequestHandler
-  * refactored REST api
-  * replaced angular-slick
-  * added meshlab support to frontend
-  * refactored file handling
-  * fixed status bar
-  * added new icons
+- refactored system callings, introduced new utils for system calls
+- prepared frontend for laser stepper support 
+- replaced threejs v70 by a newer version v74
+- refactored webgl directive, added support for switching between mesh and pointcloud (experimental)
+- refactored laser detection algorithm, it is more stable now.
+- refactored and extended share dialog options
+- refactored httpRequestHandler
+- refactored REST api
+- replaced angular-slick
+- refactored general file handling
 
- -- Mario Lukas  <info@mariolukas.de>  Sat, 12 Mar 2016 01:11:11 +0000
+## [0.1.15] - 2016-02-25
+### Added
+- added auto detection for arduino
+- added some additional connection messages to frontend
+- added override function for bassehttp logger to get cleaner logs
 
+### Fixed
+- fixed firmware autoflash bug, it finds the correct hex file now.
+- fixed firmware autoflash bug, it finds the correct hex file now.
 
-fabscanpi-server (0.1.15) unstable; urgency=medium
+### Changed
+- refactored and cleaned FSSerial.py
+- removed serial port from default config
 
-  * added auto detection for arduino
-  * fixed firmware autoflash bug, it finds the correct hex file now.
-  * refactored and cleaned FSSerial.py
-  * removed serial port from default config
-  * added some additional connection messages to frontend
-  * added override function for bassehttp logger to get cleaner logs
+## [0.1.14] - 2016-02-23
 
- -- Mario Lukas  <info@mariolukas.de>  Thu, 25 Feb 2016 20:54:11 +0000
+### Fixed
+- fixed firmware motor reverse issue
+- fixed serial connection error for custom arduino installations.
 
+## [0.1.13] - 2016-02-20
+### Added
+- added new frontend with saturation slider
+- added funtions to support camera saturation adjustment
+- added multilingual support (en only until now)
+- added error handler message to frontend
 
-fabscanpi-server (0.1.14) unstable; urgency=medium
+### Fixed
+- fixed issue #12 internet connection is no longer needed, added font-awsome fonts to www
+- fixed issue #3 server hangs when laser not detected
+- fixed mjepeg connection error bug, stack trace is not longer shown in log
+- fixed some bugs in FSCamera.py
 
-  * fixed firmware motor reverse issue
-  * fixed serial connection error for custom arduino installations.
+## [0.1.12] - 2016-02-10
 
- -- Mario Lukas  <info@mariolukas.de>  Thu, 23 Feb 2016 07:42:10 +0000
+### Changed
+- switched from depricated python-support to dh_python2 package builder
+- modified makefile to fit the new builder
 
-fabscanpi-server (0.1.13) unstable; urgency=medium
+## [0.1.11] - 2016-02-10
 
-  * fixed issue #3 server hangs when laser not detected
-  * fixed issue #12 internet connection is no longer needed, added font-awsome fonts to www
-  * scanner does start even if serial or camera connection fails, a message is shown in frontend now
-  * fixed mjepeg connection error bug, stack trace is not longer shown in log
-  * fixed some bugs in FSCamera.py
-  * added new frontend with saturation slider
-  * added funtions to support camera saturation adjustment
-  * prepared multilingual support (en only until now)
+### Added
+- added update instructions do documentation
 
- -- Mario Lukas  <info@mariolukas.de>  Thu, 20 Feb 2016 00:18:22 +0000
+### Changed
+- modified init script
 
-fabscanpi-server (0.1.12) unstable; urgency=medium
+## [0.1.10] - 2016-02-10
+## added
+- new frontend version
 
-  * switched from depricated python-support to dh_python2 package builder
-  * modified makefile to fit the new builder
+## [0.1.9] - 2016-02-8
 
- -- Mario Lukas  <info@mariolukas.de>  Thu, 10 Feb 2016 23:03:40 +0000
+### Changed
+- fixed debian package installer scripts
 
-fabscanpi-server (0.1.11) unstable; urgency=medium
+## [0.1.8] - 2016-02-8
 
-  * modified init script
-  * added update instructions do documentation
+### Changed
+- fixed python package path error
 
- -- Mario Lukas  <info@mariolukas.de>  Thu, 10 Feb 2016 08:24:40 +0000
+## [0.1.7] - 2016-02-8
+### Added
+- added auto versioning to setup.py
 
+### Changed
+- fixed versioning in frontend
+- fixed some camera parameters for better color scan results
+- fixed issue #3
+- fixed frontend 
 
-fabscanpi-server (0.1.10) unstable; urgency=medium
+## [0.1.6] - 2016-02-4
+### Added
+- added motor enable/disable commands before and after scans to prevent hot motors
 
-  * new firmware version
+### Changed
+- switched to firmware v.20160204 which supports custom boards and fixes some issues
 
- -- Mario Lukas  <info@mariolukas.de>  Thu, 10 Feb 2016 00:39:10 +0000
+### Fixed
+- closed issue #4 added auto flash enable/disable option to config file
 
-fabscanpi-server (0.1.9) unstable; urgency=medium
+## [0.1.5] - 2016-01-15
+### Added
+- Added new Frontend version.
 
-  * fixed debian package installer scripts
+## [0.1.4] - 2016-01-14
+### Fixed
+- Fixed frontend
 
- -- Mario Lukas  <info@mariolukas.de>  Mon, 08 Feb 2016 23:21:19 +0000
+## [0.1.3] - 2016-01-11
+### Fixed
+- Fixed Firefox mjpeg stream issue
+- Fixed pi camera exposure issue
 
-fabscanpi-server (0.1.8) unstable; urgency=medium
+## [0.1.2] - 2016-01-02
+### Added
+- New User Interface added
 
-  * fixed python package path error
+## [0.1.1] - 2016-01-02
+### Fixed
+- scan data folders
 
- -- Mario Lukas  <info@mariolukas.de>  Mon, 08 Feb 2016 23:21:19 +0000
+## [0.1.0] - 2016-01-02
+### Added
+- First Release of FabScanPi-Server.
 
-fabscanpi-server (0.1.7) unstable; urgency=medium
-
-  * fixed versioning in frontend
-  * fixed some camera parameters for better color scan results
-  * fixed issue #3
-  * added auto versioning to setup.py
-  * changed ui files
-
- -- Mario Lukas  <info@mariolukas.de>  Mon, 08 Feb 2016 00:20:13 +0000
-
-fabscanpi-server (0.1.6) unstable; urgency=medium
-
-  * switched to firmware v.20160204 which supports custom boards and fixes some issues
-  * added motor enable/disable commands before and after scans to prevent hot motors
-  * closed issue #4 added auto flash enable/disable option to config file
-
- -- Mario Lukas  <info@mariolukas.de>  Thu, 04 Feb 2016 23:55:05 +0000
-
-fabscanpi-server (0.1.5) unstable; urgency=medium
-
-  * Added new Frontend version.
-
- -- Mario Lukas  <info@mariolukas.de>  Fri, 15 Jan 2016 08:57:01 +0000
-
-fabscanpi-server (0.1.4) unstable; urgency=medium
-
-  * Fixed frontend
-
- -- Mario Lukas  <info@mariolukas.de>  Thu, 14 Jan 2016 18:20:10 +0000
-
-fabscanpi-server (0.1.3) unstable; urgency=medium
-
-  * Fixed Firefox mjpeg stream issue
-  * Fixed pi camera exposure issue
-
- -- Mario Lukas  <info@mariolukas.de>  Mon, 11 Jan 2016 17:40:30 +0000
-
-fabscanpi-server (0.1.2) unstable; urgency=medium
-
-  * New User Interface added
-
- -- Mario Lukas  <info@mariolukas.de>  Sat, 02 Jan 2016 16:40:30 +0000
-
-fabscanpi-server (0.1.1) unstable; urgency=medium
-
-  * BUGFIX: scan data folders
-
- -- Mario Lukas  <info@mariolukas.de>  Sat, 02 Jan 2016 00:01:40 +0000
-
-fabscanpi-server (0.1.0) unstable; urgency=medium
-
-  * First Release of FabScanPi-Server.
-
- -- Mario Lukas <info@mariolukas.de>  Fri, 01 Jan 2016 21:48:08 +0000
+ 
