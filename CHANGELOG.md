@@ -5,15 +5,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased] - dev
-
-- fixed pykka aktor threading bug in streams
-- replaced magic numbers by config values (tnx to jwalt)
-- fixed typo in documentation (tnx to kradrat)
+### Added
 - new documentation parts (tnx to jens hackel)
-- fixed green cam bug
-- added deleting old calibration data before new calibration
+- added stop sequence when scanner is not calibrated
+
+### Changed
+- replaced magic numbers by config values (tnx to jwalt)
 - refactored camera driver ( much faster than before )
-- added abort sequence when scanner is not calibrated
+
+### Fixed
+- fixed pykka aktor threading bug in streams
+- fixed typo in documentation (tnx to kradrat)
+- fixed green cam bug
+- deleting old calibration data before new calibration
+
 
 ## [0.4.3] - 2017-07-26
 ### Added
