@@ -3,6 +3,7 @@ from scipy import optimize
 import time
 import logging
 import struct
+from datetime import datetime
 from fabscan.util.FSInject import singleton
 from fabscan.util.FSUtil import FSSystem
 from fabscan.file.FSImage import FSImage
@@ -54,6 +55,8 @@ class FSCalibration(FSCalibrationInterface):
         self.calib_end = LASER_PLANE_CALIBRATION_END_POS_DEGREE*self.steps_five_degree/5
         self.total_positions = int(((self.quater_turn/self.steps_five_degree)*4)+2)
         self.current_position = 0
+        self._starttime = 0
+
 
         self.estimated_t = [-5, 90, 320]
 
@@ -76,6 +79,7 @@ class FSCalibration(FSCalibrationInterface):
         self.distortion_vector = None
         self.image_points = []
         self.object_points = []
+        self._starttime = 0
 
     def start(self):
         tools = FSSystem()
@@ -87,6 +91,7 @@ class FSCalibration(FSCalibrationInterface):
         #self.settings.camera.brightness = 50
         self.reset_calibration_values()
         self.settings.threshold = 25
+        self._starttime = self.get_time_stamp()
 
         message = {
             "message": "START_CALIBRATION",
@@ -129,6 +134,7 @@ class FSCalibration(FSCalibrationInterface):
             self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
         self.current_position = 0
+        self.reset_calibration_values()
 
     def stop(self):
         self._stop = True
@@ -155,7 +161,9 @@ class FSCalibration(FSCalibrationInterface):
                 self._logger.debug("Calibration Position "+str(self.current_position)+ " of "+str(self.total_positions))
                 message = {
                     "progress": self.current_position,
-                    "resolution": self.total_positions
+                    "resolution": self.total_positions,
+                    "starttime": self._starttime,
+                    "timestamp": self.get_time_stamp()
                 }
                 self._eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
                 self.current_position += 1
@@ -264,7 +272,7 @@ class FSCalibration(FSCalibrationInterface):
                     "message": "LASER_CALIBRATION_ERROR",
                     "level": "error"
                 }
-                self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+                #self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
                 t = None
 
             if t is not None:
@@ -354,11 +362,11 @@ class FSCalibration(FSCalibrationInterface):
             response = (True, (response_platform_extrinsics, response_laser_triangulation))
         else:
             self._logger.error("Calibration process was not able to estimate laser planes.")
-            #message = {
-            #    "message": "CALIBRATION_CALCULATION_ERROR",
-            #    "level": "error"
-            #}
-            #self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+            message = {
+                "message": "CALIBRATION_CALCULATION_ERROR",
+                "level": "error"
+            }
+            self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
             response = None
 
         #self._is_calibrating = False
@@ -483,6 +491,8 @@ class FSCalibration(FSCalibrationInterface):
             frame += struct.pack("<fffBBB", point[0], point[1], point[2], 255, 0, 0)
         stream.write(frame)
 
+    def get_time_stamp(self):
+        return int(datetime.now().strftime("%s%f"))/1000
 
 import numpy.linalg
 

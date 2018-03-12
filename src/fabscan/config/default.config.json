@@ -4,9 +4,7 @@
         "scans": "/home/pi/scans/"
     },
     "laser": {
-        "steps": 3200,
-        "numbers": 1,
-        "rotation_steps": 5
+        "numbers": 1
     },
     "scanner_type": "laserscanner",
     "calibration": {
@@ -44,8 +42,8 @@
             "height": 1232
         },
         "preview_resolution": {
-            "width": 640,
-            "height": 480
+            "width": 320,
+            "height": 240
         },
         "rotate": "True",
         "hflip": "True",

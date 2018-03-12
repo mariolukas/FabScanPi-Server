@@ -1266,7 +1266,6 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
           });
         }
         _settings = data['settings'];
-        FSScanService.setStartTime(_settings.startTime);
         $log.debug(_settings.startTime);
         _settings.resolution *= -1;
         angular.copy(_settings, $scope.settings);
@@ -1491,12 +1490,12 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
           $scope.resolution = data['resolution'];
           $scope.progress = data['progress'];
           percentage = $scope.progress / $scope.resolution * 100;
-          $scope.startTime = FSScanService.getStartTime();
+          $scope.startTime = data['starttime'];
           if ($scope.progress <= 1) {
             $scope.sampledRemainingTime = 0;
             _time_values = [];
           } else {
-            timeTaken = Date.now() - $scope.startTime;
+            timeTaken = data['timestamp'] - $scope.startTime;
             $scope.remainingTime.push(parseFloat(Math.floor(((timeTaken / $scope.progress) * ($scope.resolution - $scope.progress)) / 1000)));
             if ($scope.remainingTime.length > 20) {
               _time_values = $scope.remainingTime.slice(Math.max($scope.remainingTime.length - 8, 1));

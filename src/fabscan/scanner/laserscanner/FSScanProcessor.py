@@ -252,12 +252,26 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._prefix = datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
         self.point_cloud = FSPointCloud(color=self._is_color_scan)
 
-        if self._is_color_scan:
-            self._total = self._number_of_pictures * 2 * self.config.laser.numbers
-            self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
+        if not (self.config.calibration.camera_matrix == []):
+            if self._is_color_scan:
+                self._total = self._number_of_pictures * 2 * self.config.laser.numbers
+                self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
+            else:
+                self._total = self._number_of_pictures * self.config.laser.numbers
+                self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
         else:
-            self._total = self._number_of_pictures * self.config.laser.numbers
-            self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
+            self._logger.debug("FabScan is calibrated scan canceled")
+
+            message = {
+                "message": "SCANNER_NOT_CALIBRATED",
+                "level": "warn"
+            }
+
+            self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+
+            event = FSEvent()
+            event.command = 'STOP'
+            self.eventmanager.publish(FSEvents.COMMAND, event)
 
     def init_texture_scan(self):
         message = {
@@ -425,6 +439,8 @@ class FSScanProcessor(FSScanProcessorInterface):
                 time.sleep(0.1)
 
             self.scan_complete()
+
+
 
     def scan_complete(self):
 

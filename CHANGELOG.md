@@ -1,77 +1,90 @@
-fabscanpi-server (0.5.0) UNRELEASED; urgency=medium
-  * fixed pykka aktor threading bug in streams
-  * replaced magic numbers by config values (tnx to jwalt)
-  * fixed typo in documentation (tnx to kradrat)
-  * new documentation parts (tnx to jens hackel)
-  * fixed green cam bug
-  * added deleting old calibration data before new calibration
-  * refactored camera driver ( much faster than before )
-  * added abort sequence when scanner is not calibrated
+# FabScanPi - Open Source 3D Scanner Changelog
+All notable changes to this project will be documented in this file.
 
- -- Mario Lukas <info@fabscan.org>  Sun, 18 Feb 2018 21:54:00 +0100
+The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-fabscanpi-server (0.4.3) UNRELEASED; urgency=medium
-  * fixed calibration data saving bug
-  * reworked meshing process and added new mlx filter scripts
-  * added new meshing file formats (off, 3ds, x3d, xyz...)
-  * added new things to f.a.q. in docs
+## [Unreleased] - dev
 
- -- Mario Lukas <info@fabscan.org>  Sun, 26 Jul 2017 21:18:00 +0100
+- fixed pykka aktor threading bug in streams
+- replaced magic numbers by config values (tnx to jwalt)
+- fixed typo in documentation (tnx to kradrat)
+- new documentation parts (tnx to jens hackel)
+- fixed green cam bug
+- added deleting old calibration data before new calibration
+- refactored camera driver ( much faster than before )
+- added abort sequence when scanner is not calibrated
 
-fabscanpi-server (0.4.2) UNRELEASED; urgency=medium
-  * fixed update notification bug
-  * fixed firmware issue which leaded to bricked devices.
+## [0.4.3] - 2017-07-26
+### Added
+- new meshing file formats (off, 3ds, x3d, xyz...)
+- new sections to f.a.q. in docs
 
- -- Mario Lukas <info@fabscan.org>  Mon, 10 Jul 2017 23:33:00 +0100
+### Fixed
+- fixed calibration data saving bug
+- reworked meshing process and added new mlx filter scripts
 
-fabscanpi-server (0.4.1) UNRELEASED; urgency=medium
-  * fixed preview stream issues
-  * fixed default config values
-  * fixed turntable pointcloud roi
-  * added calibration notification message
+## [0.4.2] - 2017-07-10
+### Fixed
+- fixed update notification bug
+- fixed firmware issue which leaded to bricked devices.
 
- -- Mario Lukas <info@fabscan.org>  Sun, 2 Jul 2017 14:12:42 +0100
+## [0.4.1] - 2017-07-2
+### Added
+- added calibration notification message
+  
+### Fixed
+- fixed preview stream issues
+- fixed default config values
+- fixed turntable pointcloud roi
 
-fabscanpi-server (0.4.0) UNRELEASED; urgency=medium
+## [0.4.0] - 2017-07-2
+### Added
+- added news to documentation 
+- added auto calibration
+- added news screen to fabscan server start screen
 
-  * first fixes for upgrade
-  * added news to documentation 
-  * added auto calibration
-  * fixed major bug with serial connection
-  * improved laser line detection
-  * added news screen to fabscan server start screen
+### Fixed
+- first fixes for upgrade
+- fixed major bug with serial connection
 
- -- Mario Lukas <info@fabscan.org>  Wed, 31 May 2017 12:22:42 +0100
-
-fabscanpi-server (0.3.1) unstable; urgency=medium
-
-  * fixed bug which created multiple instances for websocket server
-  * fixed bug which calculated wrong version numbers in upgrade check
-
- -- Mario Lukas  <info@mariolukas.de>  Mon, 26 Sep 2016 20:34:00 +0000
-
-fabscanpi-server (0.3.0) unstable; urgency=medium
-
-  * refactored whole software for making it more flexible
-  * added splash screen to frontend
-  * added auto upgrade to frontend and backend
-  * fixed major laser detection error
-  * fixed some 3D calculation bugs
-  * simplified the laser settings dialog (threshold values etc.) better preview now
-  * added calibration option to settings dialog
-
- -- Mario Lukas  <info@mariolukas.de>  Wed, 8 Jul 2016 17:52:00 +0000
-
-fabscanpi-server (0.2.1) unstable; urgency=medium
-
-  * fixed avrdude flashing for FabScan HAT
-  * added new dependencies to control file
-
- -- Mario Lukas  <info@mariolukas.de>  Wed, 6 Jul 2016 20:57:00 +0000
+### Changed
+- improved laser line detection
 
 
-fabscanpi-server (0.2.0) unstable; urgency=medium
+## [0.3.1] - 2016-09-26
+### Fixed
+- fixed bug which created multiple instances for websocket server
+- fixed bug which calculated wrong version numbers in upgrade check
 
+## [0.3.0] - 2016-07-08
+### Added
+  
+- added splash screen to frontend
+- added auto upgrade to frontend and backend
+- added calibration option to settings dialog
+
+### Fixed
+- fixed major laser detection error
+- fixed some 3D calculation bugs
+
+### Changed
+- refactored core for making it more modular
+- simplified the laser settings dialog (threshold values etc.) better preview now
+
+## [0.2.1] - 2016-07-06
+### Added
+- added new dependencies to control file
+
+### Fixed
+- fixed avrdude flashing for FabScan HAT
+
+## [0.2.0] - 2016-03-12
+### Added
+
+### Fixed
+
+### Changed
   * fixed issue #5, heavy CPU load
   * refactored system callings, introduced new utils for system calls
   * system call stdouts are in logs now
