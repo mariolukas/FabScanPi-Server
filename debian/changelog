@@ -1,5 +1,6 @@
 fabscanpi-server (0.5.0) UNRELEASED; urgency=medium
   * fixed pykka aktor threading bug in streams
+  * fixed bug realated to 400 step motors
   * replaced magic numbers by config values (tnx to jwalt)
   * fixed typo in documentation (tnx to kradrat)
   * new documentation parts (tnx to jens hackel)

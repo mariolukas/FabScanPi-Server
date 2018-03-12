@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - fixed pykka aktor threading bug in streams
 - fixed typo in documentation (tnx to kradrat)
 - fixed green cam bug
+- fixed stepper motors step bug (variable number of steps should work now)
 - deleting old calibration data before new calibration
 
 
