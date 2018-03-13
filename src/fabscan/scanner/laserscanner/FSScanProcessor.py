@@ -341,7 +341,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.hardwareController.laser.on()
 
         self.hardwareController.camera.device.flush_stream()
-
+        time.sleep(2)
         if not self._worker_pool.workers_active():
             self._worker_pool.create(self.config.process_numbers)
 

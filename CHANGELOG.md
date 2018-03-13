@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - fixed green cam bug
 - fixed stepper motors step bug (variable number of steps should work now)
 - deleting old calibration data before new calibration
-
+- fixed update procedure, added assume yes option
+- fixed start stop init script and added better logging to it
 
 ## [0.4.3] - 2017-07-26
 ### Added

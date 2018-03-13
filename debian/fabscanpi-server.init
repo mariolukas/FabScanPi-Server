@@ -16,7 +16,7 @@ DAEMONUSER=fabscan
 DESC="FabScanPi Daemon"
 NAME="fabscanpi-server"
 DAEMON=/usr/bin/fabscanpi-server
-PIDFILE=/var/run/fabscanpi/$NAME.pid
+PIDFILE=/tmp/$NAME.pid
 PKGNAME=fabscanpi-server
 SCRIPTNAME=/etc/init.d/$PKGNAME
 LOG=/var/log/fabscanpi/fabscanpi.log
@@ -25,38 +25,51 @@ LOG=/var/log/fabscanpi/fabscanpi.log
 # Read configuration variable file if it is present
 [ -r /etc/default/$PKGNAME ] && . /etc/default/$PKGNAME
 
+# Load the VERBOSE setting and other rcS variables
+[ -f /etc/default/rcS ] && . /etc/default/rcS
 
-start() {
-    echo "Starting fabscanpi-server..."
-    avrdude -c arduino -p m328p -P /dev/ttyAMA0 -b 57600 -l /dev/null
-    /sbin/start-stop-daemon --start --quiet --user $DAEMONUSER    \
-            --make-pidfile --pidfile $PIDFILE --background       \
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
+#. /lib/lsb/init-functions
+
+is_alive()
+{
+   pid=`cat $1` > /dev/null 2>&1
+   kill -0 $pid > /dev/null 2>&1
+   return $?
+}
+
+do_start() {
+   # Return
+   #   0 if daemon has been stopped
+   #   1 if daemon was already stopped
+   #   2 if daemon could not be stopped
+   #   other if a failure occurred
+
+   is_alive $PIDFILE
+
+   RETVAL="$?"
+   if [ $RETVAL != 0 ]; then
+     avrdude -c arduino -p m328p -P /dev/ttyAMA0 -b 57600 -l /dev/null
+      /sbin/start-stop-daemon --start --quiet --user $DAEMONUSER    \
+            --make-pidfile --pidfile $PIDFILE  --background      \
             --exec /bin/bash -- -c "$DAEMON $DAEMON_ARGS"
-
-    echo "Started for user: $DAEMONUSER."
+      RETVAL="$?"
+   fi
 }
 
-stop() {
+do_stop() {
 
-    if ps ax | grep -v grep | grep -v $0 | grep $NAME > /dev/null
-    then
-            if [ -f $INIT_SCRIPT ];then
-                if [ -f $PIDFILE ];then
-                    PID=`cat $PIDFILE`
-                    if ps -p $PID > /dev/null
-                    then
-                        echo "$NAME is running shutting down..."
-                        kill -9 $PID
-                        rm $PIDFILE
-                    fi
-                fi
-            fi
-    fi
+   /sbin/start-stop-daemon --stop  --remove-pidfile  --pidfile $PIDFILE --user $USER
 
+   RETVAL="$?"
+   [ "$RETVAL" = "2" ] && return 2
+
+   [ "$RETVAL" = "0"  ] && return 0 || return 1
 
 }
 
-status() {
+do_status() {
     if [ -z `cat $PIDFILE` ];
     then
         echo "fabscanpi-server: not running."
@@ -65,28 +78,53 @@ status() {
     fi
 }
 
-
 case "$1" in
   start)
-    start
+    #[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+    echo "Starting $NAME..."
+    do_start
+    case "$?" in
+       0|1) echo "... $NAME started.";;
+       2) echo "... $NAME could not be started";;
+    esac
     ;;
 
   stop)
-    stop
-    ;;
+#    [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+    do_stop
+    case "$?" in
+      0|1) echo "$NAME stopped.";;
+      2) echo "$NAME could not be stopped.";;
+    esac
+  ;;
 
-  restart|reload|force-reload)
-    stop
-    sleep 2
-    start
-    ;;
+  restart)
+   #log_daemon_msg "Restarting $DESC" "$NAME"
+   echo "Restarting $NAME..."
+   do_stop
+   case "$?" in
+     0|1)
+      do_start
+      case "$?" in
+          0) echo "... $NAME restarted.";;
+          1) echo "... $NAME is still running";; # Old process is still running
+         *) echo "... $NAME failed to start" ;; # Failed to start
+      esac
+      ;;
+     *)
+        # Failed to stop
+        # log_end_msg 1
+        echo "$NAME failed to stop"
+     ;;
+   esac
+   ;;
 
   status)
-    status
+    do_status
     ;;
 
   *)
-    echo "Usage: /etc/init.d/fabscanpi-server {start|stop|reload|force-reload|restart|status}"
+    echo "Usage: /etc/init.d/fabscanpi-server {start|stop|restart|status}"
     exit 1
 
 esac

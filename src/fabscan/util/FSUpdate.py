@@ -51,4 +51,4 @@ def upgrade_is_available(current_version):
 
 
 def do_upgrade():
-    os.system('nohup bash -c "sudo apt-get update && sudo apt-get dist-upgrade" > /var/log/fabscanpi/upgrade.log')
+    os.system('nohup bash -c "sudo apt-get update -y && sudo apt-get dist-upgrade -y" > /var/log/fabscanpi/upgrade.log')
