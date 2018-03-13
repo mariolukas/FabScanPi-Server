@@ -16,7 +16,7 @@ before_script:
 script: sudo make deb
 after_success:
 - ls -alh ../*.deb
-- curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/release/
+- travis_wait curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/release/
 - NOW=`date +%Y-%m-%d-%H-%M`
 - mkdocs build
 - cd ..
