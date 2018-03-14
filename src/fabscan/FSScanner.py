@@ -62,7 +62,7 @@ class FSScanner(threading.Thread):
         self.scanProcessor = scanprocessor.start()
 
         self._state = FSState.IDLE
-        self._exit_requested = False
+        self.exit = False
         self.meshingTaskRunning = False
 
         self._upgrade_available = False
@@ -76,13 +76,16 @@ class FSScanner(threading.Thread):
 
 
     def run(self):
-        while not self._exit_requested:
+        while not self.exit:
             self.eventManager.handle_event_q()
-
             time.sleep(0.05)
 
-    def request_exit(self):
-        self._exit_requested = True
+        self.scanProcessor.stop()
+
+
+    def kill(self):
+        self.exit = True
+
 
     def on_command(self, mgr, event):
 
@@ -109,7 +112,6 @@ class FSScanner(threading.Thread):
 
         ## Stop Scan Process or Stop Settings Mode
         elif command == FSCommand.STOP:
-
             if self._state is FSState.SCANNING:
                 self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.STOP})
 

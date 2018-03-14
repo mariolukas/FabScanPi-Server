@@ -73,30 +73,29 @@ def CreateRequestHandler(config, scanprocessor):
 
         def do_GET(self):
 
+
              if "api" in self.path:
                  self.do_API_CALL("GET")
 
              elif "stream" in self.path:
 
+                     stream_id = self.path.split('/')[-1]
+                     if stream_id == 'laser.mjpeg':
+                        self.get_stream(FSScanProcessorCommand.GET_LASER_STREAM)
 
-                 stream_id = self.path.split('/')[-1]
-                 if stream_id == 'laser.mjpeg':
-                    self.get_stream(FSScanProcessorCommand.GET_LASER_STREAM)
+                     elif stream_id == 'texture.mjpeg':
+                        self.get_stream(FSScanProcessorCommand.GET_TEXTURE_STREAM)
 
-                 elif stream_id == 'texture.mjpeg':
-                    self.get_stream(FSScanProcessorCommand.GET_TEXTURE_STREAM)
+                     elif stream_id == 'calibration.mjpeg':
+                        self.get_stream(FSScanProcessorCommand.GET_CALIBRATION_STREAM)
 
-                 elif stream_id == 'calibration.mjpeg':
-                    self.get_stream(FSScanProcessorCommand.GET_CALIBRATION_STREAM)
+                     elif stream_id == 'adjustment.mjpeg':
+                        self.get_stream(FSScanProcessorCommand.GET_ADJUSTMENT_STREAM)
 
-                 elif stream_id == 'adjustment.mjpeg':
-                    self.get_stream(FSScanProcessorCommand.GET_ADJUSTMENT_STREAM)
+                     else:
 
-                 else:
-
-                    self.bad_request()
-                    self.end_headers()
-
+                        self.bad_request()
+                        self.end_headers()
              else:
                 """Serve a GET request."""
                 f = self.send_head()
@@ -105,6 +104,7 @@ def CreateRequestHandler(config, scanprocessor):
                     f.close()
 
              return
+
 
         def get_stream(self, type):
                self.scanprocessor = scanprocessor.start()
@@ -120,8 +120,9 @@ def CreateRequestHandler(config, scanprocessor):
                     while not self.close_mjpeg_stream:
 
                         try:
-                            future_image = self.scanprocessor.ask({FSEvents.COMMAND: type}, block=False)
-                            image = future_image.get()
+                            if self.scanprocessor.is_alive():
+                                future_image = self.scanprocessor.ask({FSEvents.COMMAND: type}, block=False)
+                                image = future_image.get()
                         except StandardError as e:
                             self._logger.error(e)
 

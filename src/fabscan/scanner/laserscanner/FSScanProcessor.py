@@ -252,7 +252,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._prefix = datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
         self.point_cloud = FSPointCloud(color=self._is_color_scan)
 
-        if not (self.config.calibration.camera_matrix == []):
+        if not (self.config.calibration.camera_matrix == []) and self.actor_ref.is_alive():
             if self._is_color_scan:
                 self._total = self._number_of_pictures * 2 * self.config.laser.numbers
                 self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
@@ -306,7 +306,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def scan_next_texture_position(self):
         if not self._stop_scan:
-            if self.current_position <= self._number_of_pictures:
+            if self.current_position <= self._number_of_pictures and self.actor_ref.is_alive():
                 if self.current_position == 0:
                     self.init_texture_scan()
 
@@ -351,7 +351,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def scan_next_object_position(self):
         if not self._stop_scan:
-            if self.current_position <= self._number_of_pictures:
+            if self.current_position <= self._number_of_pictures and self.actor_ref.is_alive():
                 if self.current_position == 0:
                     self.init_object_scan()
 
@@ -377,6 +377,14 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
         self.settings_mode_on()
+
+    # on stop pykka actor
+    def on_stop(self):
+        self.hardwareController.stop_camera_stream()
+        self.hardwareController.turntable.stop_turning()
+        self.hardwareController.led.off()
+        self.hardwareController.laser.off(0)
+        self.hardwareController.laser.off(1)
 
     def stop_scan(self):
         self._stop_scan = True

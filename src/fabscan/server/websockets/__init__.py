@@ -21,6 +21,7 @@ class FSWebSocketServer(FSWebSocketServerInterface):
         super(FSWebSocketServerInterface, self).__init__(group=None)
         self.port = 8010
         self._logger = logging.getLogger(__name__)
+        self.exit_request = threading.Event()
 
     def run(self):
             self._logger.info("Websocket Server started on port %s" % self.port)
@@ -29,3 +30,6 @@ class FSWebSocketServer(FSWebSocketServerInterface):
                 self.wsd.serveforever()
             except:
                 self._logger.error("Websocket not started")
+
+    def exit(self):
+        self.exit_request.set()

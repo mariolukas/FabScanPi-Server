@@ -6,10 +6,24 @@ import subprocess
 import shlex
 import logging
 import glob
+import signal
 
 from collections import namedtuple
 from fabscan.FSConfig import ConfigInterface
 from fabscan.util.FSInject import inject
+
+
+class FSSystemExit(object):
+
+    def __init__(self):
+        self.kill = False
+        self._logger = logging.getLogger(__name__)
+        signal.signal(signal.SIGINT, self.exit_gracefully)
+        signal.signal(signal.SIGTERM, self.exit_gracefully)
+
+    def exit_gracefully(self, signum, frame):
+        self._logger.debug("System Exit initiated...")
+        self.kill = True
 
 class FSSystemInterface(object):
     def __init__(self, config):

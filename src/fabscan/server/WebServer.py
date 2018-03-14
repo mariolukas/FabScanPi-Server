@@ -18,10 +18,20 @@ class ThreadedHTTPServer(ThreadingMixIn, TCPServer):
     def __init__(self, config, scanprocessor):
         pass
 
-class WebServer(ThreadingMixIn, HTTPServer):
+#class WebServer(ThreadingMixIn, HTTPServer):
+class WebServer(HTTPServer):
+
     def __init__(self, config, scanprocessor):
         handler = FSHttpRequestHandler.CreateRequestHandler(config, scanprocessor)
         HTTPServer.__init__(self, ('', 8080), handler)
+        self.exit = False
+
+    def serve_forever(self):
+        while not self.exit:
+            self.handle_request()
+
+    def kill(self):
+        self.exit = True
 
 @inject(
     config=ConfigInterface,
@@ -32,8 +42,12 @@ class FSWebServer(threading.Thread):
     def __init__(self, config, scanprocessor):
         threading.Thread.__init__(self)
         self.config = config
+        self.exit = False
         self.scanprocessor = scanprocessor
 
     def run(self):
         self.webserver = WebServer(self.config, self.scanprocessor)
         self.webserver.serve_forever()
+
+    def kill(self):
+        self.webserver.kill()
