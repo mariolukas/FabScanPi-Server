@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - new documentation parts (tnx to jens hackel)
 - added stop sequence when scanner is not calibrated
+- added new handlers for gracefull application shutdown
 
 ### Changed
 - replaced magic numbers by config values (tnx to jwalt)

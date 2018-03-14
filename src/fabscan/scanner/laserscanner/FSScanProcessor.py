@@ -315,14 +315,16 @@ class FSScanProcessor(FSScanProcessorInterface):
                 self.image_task_q.put(task, True)
                 #self._logger.debug("Color Progress %i of %i : " % (self.current_position, self._number_of_pictures))
                 self.current_position += 1
-                self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
+                if self.actor_ref.is_alive():
+                    self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
             else:
                 while not self.image_task_q.empty():
                     # wait until texture scan stream is ready.
                     time.sleep(0.1)
 
                 self.finish_texture_scan()
-                self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
+                if self.actor_ref.is_alive():
+                    self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
 
     def init_object_scan(self):
         self._logger.info("Started object scan initialisation")
@@ -362,7 +364,8 @@ class FSScanProcessor(FSScanProcessorInterface):
                    self.current_position, self._number_of_pictures, self._current_laser_position
                 ))
                 self.current_position += 1
-                self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
+                if self.actor_ref.is_alive():
+                    self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
 
             else:
                 self.finish_object_scan()
@@ -380,11 +383,15 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     # on stop pykka actor
     def on_stop(self):
+        self._worker_pool.clear_task_queue()
+        self._worker_pool.kill()
         self.hardwareController.stop_camera_stream()
         self.hardwareController.turntable.stop_turning()
         self.hardwareController.led.off()
         self.hardwareController.laser.off(0)
         self.hardwareController.laser.off(1)
+
+
 
     def stop_scan(self):
         self._stop_scan = True
