@@ -51,7 +51,7 @@ do_start() {
    RETVAL="$?"
    if [ $RETVAL != 0 ]; then
      avrdude -c arduino -p m328p -P /dev/ttyAMA0 -b 57600 -l /dev/null
-      /sbin/start-stop-daemon --start --quiet --user $DAEMONUSER    \
+      /sbin/start-stop-daemon --start --user $DAEMONUSER    \
             --make-pidfile --pidfile $PIDFILE  --background      \
             --exec /bin/bash -- -c "$DAEMON $DAEMON_ARGS"
       RETVAL="$?"
@@ -60,7 +60,7 @@ do_start() {
 
 do_stop() {
 
-   /sbin/start-stop-daemon --stop  --remove-pidfile  --pidfile $PIDFILE --user $USER
+   /sbin/start-stop-daemon --stop --retry 5  --remove-pidfile  --pidfile $PIDFILE --user $USER
 
    RETVAL="$?"
    [ "$RETVAL" = "2" ] && return 2
@@ -81,16 +81,15 @@ do_status() {
 case "$1" in
   start)
     #[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
-    echo "Starting $NAME..."
     do_start
     case "$?" in
-       0|1) echo "... $NAME started.";;
-       2) echo "... $NAME could not be started";;
+       0|1) echo "$NAME started.";;
+       2) echo "$NAME could not be started";;
     esac
     ;;
 
   stop)
-#    [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+    #[ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
     do_stop
     case "$?" in
       0|1) echo "$NAME stopped.";;
@@ -106,9 +105,9 @@ case "$1" in
      0|1)
       do_start
       case "$?" in
-          0) echo "... $NAME restarted.";;
-          1) echo "... $NAME is still running";; # Old process is still running
-         *) echo "... $NAME failed to start" ;; # Failed to start
+          0) echo "$NAME restarted.";;
+          1) echo "$NAME is still running";; # Old process is still running
+         *) echo "$NAME failed to start" ;; # Failed to start
       esac
       ;;
      *)
