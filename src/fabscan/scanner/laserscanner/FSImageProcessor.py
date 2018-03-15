@@ -235,14 +235,8 @@ class ImageProcessor(ImageProcessorInterface):
         return cam_image
 
     def get_adjustment_stream_frame(self, cam_image):
-        preview_image = None
-        #r = self.config.camera.preview_resolution.height / cam_image.shape[0]
-        #dim = (self.config.camera.preview_resolution.height, int(cam_image.shape[1] * r))
-        #cam_image = cv2.resize(cam_image, dim, interpolation=cv2.INTER_AREA)
         cv2.resize(cam_image, (self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height))
-        #cv2.line(preview_image, (0,int(self.config.scanner.origin.y*cam_image.shape[0])), (cam_image.shape[1],int(self.config.scanner.origin.y*cam_image.shape[0])), (0,255,0), thickness=1, lineType=8, shift=0)
         cv2.line(cam_image, (int(0.5*cam_image.shape[1]),0), (int(0.5*cam_image.shape[1]), cam_image.shape[0]), (0,255,0), thickness=3, lineType=8, shift=0)
-        #cv2.line(preview_image, (0,int(preview_image.shape[0]*self.config.laser.detection_limit)), (int(cam_image.shape[1]), int(cam_image.shape[0]*self.config.laser.detection_limit)), (0,0,255), thickness=1, lineType=8, shift=0)
         return cam_image
 
     def drawCorners(self, image):
@@ -260,10 +254,6 @@ class ImageProcessor(ImageProcessorInterface):
         for t in c:
             cv2.line(image, (int(t[0]) - 1, int(t[1])), (int(t[0]) + 1, int(t[1])), (255, 0, 0), thickness=1,
                      lineType=8, shift=0)
-
-        #r = 800.0 / image.shape[1]
-        #dim = (800, int(image.shape[0] * r))
-        #image = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
 
         return image
 

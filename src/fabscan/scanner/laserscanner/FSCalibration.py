@@ -8,7 +8,8 @@ from fabscan.util.FSInject import singleton
 from fabscan.util.FSUtil import FSSystem
 from fabscan.file.FSImage import FSImage
 import cv2
-
+import traceback
+import sys
 
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
@@ -81,6 +82,7 @@ class FSCalibration(FSCalibrationInterface):
         self.object_points = []
         self._starttime = 0
 
+
     def start(self):
         tools = FSSystem()
         tools.delete_folder(self.config.folders.scans+'calibration')
@@ -126,14 +128,13 @@ class FSCalibration(FSCalibrationInterface):
 
             # send information to client that calibration is finished
             message = {
-                "message": "FINISHED_CALIBRATION",
-                "level": "info"
+                    "message": "FINISHED_CALIBRATION",
+                    "level": "info"
             }
             self.config.save()
 
             self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
-        self.current_position = 0
         self.reset_calibration_values()
 
     def stop(self):
@@ -172,8 +173,6 @@ class FSCalibration(FSCalibrationInterface):
 
         if not self._stop:
             self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
-            #self._hardwarecontroller.stop_camera_stream()
-
             _calibrate()
 
 
@@ -238,6 +237,7 @@ class FSCalibration(FSCalibrationInterface):
             # Laser triangulation ( Between 60 and 115 degree )
             # angel/(360/3200)
             try:
+                exc_info = sys.exc_info()
                 #Laser Calibration
                 if (position > self.laser_calib_start and position < self.laser_calib_end):
                     #self.settings.camera.contrast = 40
@@ -249,14 +249,16 @@ class FSCalibration(FSCalibrationInterface):
                         self.image = image
                         fs_image = FSImage()
                         fs_image.save_image(image, self.current_position, "laser", dir_name="calibration")
+
                         points_2d, _ = self._imageprocessor.compute_2d_points(image, roi_mask=False, refinement_method='RANSAC')
-                        point_3d = self._imageprocessor.compute_camera_point_cloud(
-                            points_2d, distance, normal)
+                        point_3d = self._imageprocessor.compute_camera_point_cloud(points_2d, distance, normal)
+
                         if self._point_cloud[i] is None:
                             self._point_cloud[i] = point_3d.T
                         else:
                             self._point_cloud[i] = np.concatenate(
                                 (self._point_cloud[i], point_3d.T))
+
                     #self.settings.camera.contrast = 40
                     #self.settings.camera.brightness = 50
 
@@ -267,13 +269,15 @@ class FSCalibration(FSCalibrationInterface):
                     origin, distance, normal)
 
             except StandardError, e:
+                self._logger.exception(e)
                 self._logger.error("Laser Capture Error: "+str(e))
                 message = {
                     "message": "LASER_CALIBRATION_ERROR",
                     "level": "error"
                 }
-                #self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+            #    #self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
                 t = None
+
 
             if t is not None:
                 self.x += [t[0][0]]
@@ -362,10 +366,12 @@ class FSCalibration(FSCalibrationInterface):
             response = (True, (response_platform_extrinsics, response_laser_triangulation))
         else:
             self._logger.error("Calibration process was not able to estimate laser planes.")
+
             message = {
-                "message": "CALIBRATION_CALCULATION_ERROR",
-                "level": "error"
+                    "message": "SCANNER_CALIBRATION_FAILED",
+                    "level": "warn"
             }
+
             self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
             response = None
 

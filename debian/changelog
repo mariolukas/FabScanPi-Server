@@ -8,8 +8,10 @@ fabscanpi-server (0.5.0) UNRELEASED; urgency=medium
   * added deleting old calibration data before new calibration
   * refactored camera driver ( much faster than before )
   * added abort sequence when scanner is not calibrated
+  * added new handlers for gracefull application shutdown
+  * fixed start stop init script and added better logging to it
 
- -- Mario Lukas <info@fabscan.org>  Sun, 18 Feb 2018 21:54:00 +0100
+ -- Mario Lukas <info@fabscan.org>  Sun, 15 Mar 2018 21:54:00 +0100
 
 fabscanpi-server (0.4.3) UNRELEASED; urgency=medium
   * fixed calibration data saving bug

@@ -139,7 +139,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def notify_if_is_not_calibrated(self):
         self._logger.debug(self.config.calibration.camera_matrix)
-        is_calibrated = not (self.config.calibration.camera_matrix == [])
+        is_calibrated = not (self.config.calibration.laser_planes[0]['normal'] == [])
         self._logger.debug("FabScan is calibrated: "+str(is_calibrated))
 
         if not is_calibrated:

@@ -24,4 +24,5 @@ window.i18n["main"]["UPGRADE_IN_PROGRESS"] = function(d){return "Upgrading softw
 window.i18n["main"]["SCANNER_IN_CALIBRATION_MODE"] = function(d){return "Calibrating, please stand by..."}
 window.i18n["main"]["STOPPED_CALIBRATION"] = function(d){return "Calibration stopped"}
 window.i18n["main"]["SCANNER_NOT_CALIBRATED"] = function(d){return "Scanner is not calibrated. For instructions visit: <a href='http://mariolukas.github.io/FabScanPi-Server/software/'>fabscan.org</a>"}
+window.i18n["main"]["SCANNER_CALIBRATION_FAILED"] = function(d){return "Scanner calibration failed. Please try again."}
 })();

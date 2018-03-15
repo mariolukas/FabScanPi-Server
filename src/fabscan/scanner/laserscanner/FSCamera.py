@@ -189,10 +189,10 @@ class PiCam(threading.Thread):
 
         self.camera = None
         self.output = None
-        self.resolution = (self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
+        #self.resolution = (self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
 
         self.camera_buffer = cam_ring_buffer
-        self.camera = picamera.PiCamera(resolution=self.resolution)
+        #self.camera = picamera.PiCamera(resolution=self.resolution)
         self.idle = True
         self.start()
 

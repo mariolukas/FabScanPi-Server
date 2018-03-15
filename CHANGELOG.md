@@ -9,10 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - new documentation parts (tnx to jens hackel)
 - added stop sequence when scanner is not calibrated
 - added new handlers for gracefull application shutdown
+- added toast message at the end of calibration if calibration failed
 
 ### Changed
 - replaced magic numbers by config values (tnx to jwalt)
 - refactored camera driver ( much faster than before )
+- removed dead code
 
 ### Fixed
 - fixed pykka aktor threading bug in streams

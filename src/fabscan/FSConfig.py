@@ -26,39 +26,47 @@ class Config(ConfigInterface):
     def __init__(self, config, first=True):
 
         if first:
-            self.file = config
-            with open(config) as file:
-                config = file.read()
-            config = json.loads(config)
+            object_dict = self.load(config)
 
-            if not hasattr(config, 'scanner_type'):
-                config['scanner_type'] = "laserscanner"
-                #config.scanner_type = "laserscanner"
+            #if not hasattr(config, 'scanner_type'):
+             #   config['scanner_type'] = "laserscanner"
+             #   #config.scanner_type = "laserscanner"
 
-            if not hasattr(config, 'texture_illumination'):
-                config['texture_illumination'] = 40
+            #if not hasattr(config, 'texture_illumination'):
+            #    config['texture_illumination'] = 40
                 #config.texture_illumination = 40
 
             #if not hasattr(config, 'weight_matirx'):
             #    config['weight_matrix'] = self._compute_weight_matrix(config)
 
+
+
+        self.__dict__.update(object_dict)
+
+
+    def reload(self, file):
+        self.__init__(file)
+
+    def load(self, config):
+        self.file = config
+        with open(config) as file:
+            config = file.read()
+        config = json.loads(config)
+
         def _traverse(key, element):
             if isinstance(element, dict):
-
-
                 return key, Config(element, first=False)
             else:
                 return key, element
 
         object_dict = dict(_traverse(k, v) for k, v in config.iteritems())
 
-        self.__dict__.update(object_dict)
-
-
-
+        return object_dict
 
     def save(self):
+
         current_config = self.todict(self.__dict__)
+        filename = current_config['file']
         try:
             del current_config['file']
         except KeyError:
@@ -66,7 +74,8 @@ class Config(ConfigInterface):
 
         with open(self.file, 'w+') as outfile:
             json.dump(current_config, outfile, indent=4, ensure_ascii=False)
-            #outfile.write(to_unicode(str_))
+
+        return filename
 
     def saveAsFile(self, filename):
         current_config = self.todict(self.__dict__)
