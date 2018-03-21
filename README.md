@@ -41,6 +41,6 @@ The FabScan documentation can be found at [http://www.fabscan.org](http://www.fa
 ![Watterott Electronic](http://learn.watterott.com/images/banner.png)
 
 
-<a href="www.jetbrains.com"><img src="https://github.com/mariolukas/FabScanPi-Server/blob/master/docs/images/jetbrains.png" alt="Drawing" style="width: 100px;"/></a>
+<a href="www.jetbrains.com"><img src="https://github.com/mariolukas/FabScanPi-Server/blob/master/docs/images/jetbrains.png" alt="Drawing" width="200"/></a>
 
 
