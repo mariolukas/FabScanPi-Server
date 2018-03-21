@@ -38,9 +38,6 @@ The FabScan documentation can be found at [http://www.fabscan.org](http://www.fa
 * Francis Engelmann (original FabScan)
 
 ## This project is supported by
-![Watterott Electronic](http://learn.watterott.com/images/banner.png)
-
-
-<a href="www.jetbrains.com"><img src="https://github.com/mariolukas/FabScanPi-Server/blob/master/docs/images/jetbrains.png" alt="Drawing" width="200"/></a>
+![Watterott Electronic](http://learn.watterott.com/images/banner.png) <a href="www.jetbrains.com"><img src="https://github.com/mariolukas/FabScanPi-Server/blob/master/docs/images/jetbrains.png" alt="Drawing" width="150"/></a>
 
 
