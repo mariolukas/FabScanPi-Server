@@ -12,7 +12,7 @@ import os
 import time
 import sys, re, threading, collections
 import traceback
-
+import PIL
 
 from fabscan.util.FSInject import inject, singleton
 from fabscan.FSConfig import ConfigInterface
@@ -35,8 +35,11 @@ class FSCamera():
         self.camera_buffer = FSRingBuffer(10)
         config = config
 
-        if config.camera.type  == 'PICAM':
+        if config.camera.type == 'PICAM':
             self.device = PiCam(self.camera_buffer)
+
+        if config.camera.type == 'USBCAM':
+            self.device = USBCam(self.camera_buffer)
 
         if config.camera.type == 'dummy':
             self.device = DummyCam()
@@ -132,9 +135,14 @@ class ProcessCamOutput(object):
         self.pool = [CamProcessor(self, fs_ring_buffer, resolution, mode) for i in range(4)]
         self.processor = None
         self._logger = logging.getLogger(__name__)
+        self.format_is_mjpeg = True
+
+    def set_no_mjepeg(self):
+        self.format_is_mjpeg = False
 
     def write(self, buf):
-        if buf.startswith(b'\xff\xd8'):
+
+        if ((buf[0][0] == 255) and (buf[1][0] == 216)) or buf.startswith(b'\xff\xd8'):
             # New frame; set the current processor going and grab
             # a spare one
             if self.processor:
@@ -272,6 +280,112 @@ class PiCam(threading.Thread):
     def flush_stream(self):
         self.camera_buffer.flush()
 
+
+@inject(
+    config=ConfigInterface,
+    settings=SettingsInterface
+)
+class USBCam(threading.Thread):
+    camera = None
+    def __init__(self, cam_ring_buffer, config, settings):
+        threading.Thread.__init__(self)
+        self._logger = logging.getLogger(__name__)
+
+        self.config = config
+        self.settings = settings
+        self.timestamp = int(round(time.time() * 1000))
+
+        self.camera = None
+        self.output = None
+        self.camera_buffer = cam_ring_buffer
+        self.idle = True
+        self.start()
+
+
+    def run(self):
+            while True:
+
+                if not self.idle and self.camera.isOpened():
+                    try:
+                        ret, image = self.camera.read()
+                        ret, jpg = cv2.imencode('.jpg', image)
+                        self.output.write(jpg)
+                    except StandardError, e:
+                        pass
+                else:
+                    time.sleep(0.05)
+
+    def get_frame(self):
+        image = None
+        while image is None:
+           image = self.camera_buffer.get()
+        return image
+
+    def set_mode(self, mode):
+        camera_mode = {
+            "calibration": self.set_calibration_mode,
+            "settings": self.set_settings_preview,
+            "default": self.set_default_mode,
+            "alignment": self.set_alignement_preview
+        }
+        camera_mode[mode]()
+
+    def set_alignement_preview(self):
+        self.resolution = (self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
+        self.output = ProcessCamOutput(self.camera_buffer, self.resolution, mode="alignment")
+
+    def set_settings_preview(self):
+        self.resolution = (self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
+        self.output = ProcessCamOutput(self.camera_buffer, self.resolution, mode="settings")
+
+    def set_default_mode(self):
+        self.resolution = (self.config.camera.resolution.width, self.config.camera.resolution.height)
+        self.output = ProcessCamOutput(self.camera_buffer, self.resolution)
+
+    def set_calibration_mode(self):
+        self.resolution = (self.config.camera.resolution.width, self.config.camera.resolution.height)
+        self.output = ProcessCamOutput(self.camera_buffer, self.resolution)
+
+    def start_stream(self, mode="default"):
+            self._logger.debug("WebCam Started")
+            try:
+                self.set_mode(mode)
+
+                if self.camera is None:
+                    self.camera = cv2.VideoCapture(0)
+                    self.output.format_is_mjpeg = False
+
+                    #HIGHT
+                    self.camera.set(3, self.resolution[1])
+                    #WIDTH
+                    self.camera.set(4, self.resolution[0])
+
+                self.idle = False
+
+                self._logger.debug("Cam Stream with Resolution " + str(self.resolution) + " started")
+            except StandardError as e:
+                self._logger.error("Not able to initialize USB Camera.")
+                self._logger.error(e)
+
+    def stop_stream(self):
+        time.sleep(0.5)
+        try:
+            if self.camera.isOpened():
+                self.camera.release()
+
+            self.camera = None
+            self.idle = True
+            self._logger.debug("Cam Stream with Resolution "+str(self.resolution)+" stopped")
+
+        except StandardError as e:
+            self._logger.error("Not able to stop camera.")
+            self._logger.error(e)
+
+    def is_idle(self):
+        return self.idle
+
+    def flush_stream(self):
+        self.camera_buffer.flush()
 
 
 class DummyCam:
