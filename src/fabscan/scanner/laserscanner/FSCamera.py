@@ -308,8 +308,9 @@ class USBCam(threading.Thread):
                 if not self.idle and self.camera.isOpened():
                     try:
                         ret, image = self.camera.read()
-                        ret, jpg = cv2.imencode('.jpg', image)
-                        self.output.write(jpg)
+                        if image is not None:
+                            ret, jpg = cv2.imencode('.jpg', image)
+                            self.output.write(jpg)
                     except StandardError, e:
                         pass
                 else:

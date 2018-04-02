@@ -17,6 +17,7 @@ from fabscan.file.FSImage import FSImage
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 
 
+
 @inject(
         config=ConfigInterface,
         settings=SettingsInterface,
@@ -32,7 +33,7 @@ class FSImageWorkerPool():
         self._logger = logging.getLogger(__name__)
 
         self.workers = []
-        self._number_of_workers = multiprocessing.cpu_count()
+        self._number_of_workers = 4 #multiprocessing.cpu_count()
         self._workers_active = False
 
 
@@ -85,7 +86,7 @@ class FSImageWorkerPool():
 
 
 class FSImageWorkerProcess(multiprocessing.Process):
-    def __init__(self,image_task_q, event_q, config, settings, imageprocessor):
+    def __init__(self, image_task_q, event_q, config, settings, imageprocessor):
         super(FSImageWorkerProcess, self).__init__(group=None)
         self.image_task_q = image_task_q
         self.settings = settings
@@ -100,19 +101,19 @@ class FSImageWorkerProcess(multiprocessing.Process):
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
 
+
     def run(self):
         '''
             Image Process runner
         '''
 
-        #print "process "+str(self.pid)+" started"
+        self._logger.debug("process "+str(self.pid)+" started")
 
         #import pydevd
         #pydevd.settrace('192.168.98.104', port=12011, stdoutToServer=True, stderrToServer=True)
 
         while not self.exit:
             if not self.image_task_q.empty():
-                #print "process "+str(self.pid)+" handle image"
 
                 data = dict()
                 try:
@@ -140,14 +141,18 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             self.event_q.put(event)
 
                         if (image_task.task_type == "PROCESS_DEPTH_IMAGE"):
+                            #self._logger.debug("process " + str(self.pid) + " handle image")
 
-                            angle = float(image_task.progress * 360) / float(image_task.resolution)
-                            #self._logger.debug("Progress "+str(image_task.progress)+" Resolution "+str(image_task.resolution)+" angle "+str(angle))
-                            self.image.save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)
-                            color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
+                            try:
+                                angle = float(image_task.progress * 360) / float(image_task.resolution)
+                                #self._logger.debug("Progress "+str(image_task.progress)+" Resolution "+str(image_task.resolution)+" angle "+str(angle))
+                                self.image.save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)
+                                color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
 
-                            point_cloud, texture = self.image_processor.process_image(angle, image_task.image, color_image)
-                            # FIXME: Only send event if points is non-empty
+                                point_cloud, texture = self.image_processor.process_image(angle, image_task.image, color_image)
+                                # FIXME: Only send event if points is non-empty
+                            except StandardError as e:
+                                self._logger.debug(e)
                             data['point_cloud'] = point_cloud
                             data['texture'] = texture
                             data['image_type'] = 'depth'

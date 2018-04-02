@@ -44,6 +44,8 @@ class Config(ConfigInterface):
 
         def _traverse(key, element):
             if isinstance(element, dict):
+
+
                 return key, Config(element, first=False)
             else:
                 return key, element

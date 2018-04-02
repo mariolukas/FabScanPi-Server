@@ -10,6 +10,7 @@ from fabscan.file.FSImage import FSImage
 import cv2
 import traceback
 import sys
+import copy
 
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
@@ -101,41 +102,49 @@ class FSCalibration(FSCalibrationInterface):
         }
         self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
-        self._hardwarecontroller.start_camera_stream(mode="calibration")
+        try:
 
-        self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
-        self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
-        self._hardwarecontroller.led.off()
-        self._hardwarecontroller.turntable.disable_motors()
+            self._hardwarecontroller.start_camera_stream(mode="calibration")
 
-        if self._stop:
-            self._logger.debug("Calibration canceled...")
-            self._hardwarecontroller.stop_camera_stream()
+            self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
+            self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
 
-            # send information to client that calibration is finished
-            message = {
-                "message": "STOPPED_CALIBRATION",
-                "level": "info"
-            }
-            self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+            self._hardwarecontroller.led.off()
+            self._hardwarecontroller.turntable.disable_motors()
 
-            self._stop = False
-        else:
-            self._hardwarecontroller.stop_camera_stream()
-            event = FSEvent()
-            event.command = 'CALIBRATION_COMPLETE'
-            self._eventmanager.publish(FSEvents.COMMAND, event)
+            if self._stop:
+                self._logger.debug("Calibration canceled...")
 
-            # send information to client that calibration is finished
-            message = {
-                    "message": "FINISHED_CALIBRATION",
+
+                # send information to client that calibration is finished
+                message = {
+                    "message": "STOPPED_CALIBRATION",
                     "level": "info"
-            }
-            self.config.save()
+                }
+                self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+                self._hardwarecontroller.stop_camera_stream()
 
-            self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+                self._stop = False
+            else:
 
-        self.reset_calibration_values()
+                event = FSEvent()
+                event.command = 'CALIBRATION_COMPLETE'
+                self._eventmanager.publish(FSEvents.COMMAND, event)
+
+                # send information to client that calibration is finished
+                message = {
+                        "message": "FINISHED_CALIBRATION",
+                        "level": "info"
+                }
+                self.config.save()
+
+                self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+                self._hardwarecontroller.stop_camera_stream()
+
+            self.reset_calibration_values()
+            return
+        except StandardError as e:
+            self._logger.error(e)
 
     def stop(self):
         self._stop = True
@@ -145,42 +154,45 @@ class FSCalibration(FSCalibrationInterface):
 
         # 90 degree turn
         # number of steps for 5 degree turn
+        try:
+            if not self._stop:
+                self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
+    #            self._hardwarecontroller.start_camera_stream(mode="calibration")
 
-        if not self._stop:
-            self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
-#            self._hardwarecontroller.start_camera_stream(mode="calibration")
 
-        position = 0
-        while abs(position) < self.quater_turn * 2:
+            position = 0
+            while abs(position) < self.quater_turn * 2:
+
+                if not self._stop:
+
+                    _capture(position)
+                    self._hardwarecontroller.turntable.step_interval(-self.steps_five_degree, speed=900)
+                    position += self.steps_five_degree
+
+                    self._logger.debug("Calibration Position "+str(self.current_position)+ " of "+str(self.total_positions))
+                    message = {
+                        "progress": self.current_position,
+                        "resolution": self.total_positions,
+                        "starttime": self._starttime,
+                        "timestamp": self.get_time_stamp()
+                    }
+                    self._eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
+                    self.current_position += 1
+                else:
+                    break
 
             if not self._stop:
-
-                _capture(position)
-                self._hardwarecontroller.turntable.step_interval(-self.steps_five_degree, speed=900)
-                position += self.steps_five_degree
-
-                self._logger.debug("Calibration Position "+str(self.current_position)+ " of "+str(self.total_positions))
-                message = {
-                    "progress": self.current_position,
-                    "resolution": self.total_positions,
-                    "starttime": self._starttime,
-                    "timestamp": self.get_time_stamp()
-                }
-                self._eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
-                self.current_position += 1
-            else:
-                break
-
-        if not self._stop:
-            self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
-            _calibrate()
-
+                self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
+                _calibrate()
+        except StandardError as e:
+            self._logger.debug("Calibration Error")
+            self._logger.error(e)
 
 
     def _calculate_camera_calibration(self):
         error = 0
         ret, cmat, dvec, rvecs, tvecs = cv2.calibrateCamera(
-            self.object_points, self.image_points, self.shape)
+            self.object_points, self.image_points, self.shape, None, None)
 
         if ret:
             # Compute calibration error
@@ -190,8 +202,8 @@ class FSCalibration(FSCalibrationInterface):
                 error += cv2.norm(self.image_points[i], imgpoints2, cv2.NORM_L2) / len(imgpoints2)
             error /= len(self.object_points)
 
-        self.config.calibration.camera_matrix = np.round(cmat, 3)
-        self.config.calibration.distortion_vector = np.round(dvec.ravel(), 3)
+        self.config.calibration.camera_matrix = copy.deepcopy(np.round(cmat, 3))
+        self.config.calibration.distortion_vector = copy.deepcopy(np.round(dvec.ravel(), 3))
 
         return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
 
@@ -360,9 +372,9 @@ class FSCalibration(FSCalibrationInterface):
             result = False
 
         if result:
-            self.config.calibration.platform_translation = self.t
-            self.config.calibration.platform_rotation = self.R
-            self.config.calibration.laser_planes = response_laser_triangulation
+            self.config.calibration.platform_translation = copy.deepcopy(self.t)
+            self.config.calibration.platform_rotation = copy.deepcopy(self.R)
+            self.config.calibration.laser_planes = copy.deepcopy(response_laser_triangulation)
             response = (True, (response_platform_extrinsics, response_laser_triangulation))
         else:
             self._logger.error("Calibration process was not able to estimate laser planes.")

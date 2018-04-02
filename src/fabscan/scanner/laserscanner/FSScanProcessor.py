@@ -55,7 +55,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._progress = 0
         self._is_color_scan = True
         self.point_cloud = None
-        self.image_task_q = multiprocessing.Queue(self.config.process_numbers + 1)
+        self.image_task_q = multiprocessing.Queue(self.config.process_numbers*2)
         self.current_position = 0
         self._stop_scan = False
         self._current_laser_position = 1
@@ -66,7 +66,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.semaphore = multiprocessing.BoundedSemaphore()
         self.event_q = self.eventmanager.get_event_q()
 
-        self._worker_pool = FSImageWorkerPool(self.image_task_q, self.event_q)
+        self._worker_pool = None
 
         self._scan_brightness = self.settings.camera.brightness
         self._scan_contrast = self.settings.camera.contrast
@@ -237,6 +237,9 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._logger.info("Scan started")
         self._stop_scan = False
 
+        if self._worker_pool is None:
+            self._worker_pool = FSImageWorkerPool(self.image_task_q, self.event_q)
+
         self.hardwareController.turntable.enable_motors()
         self.hardwareController.start_camera_stream(mode="default")
         time.sleep(1.5)
@@ -260,7 +263,7 @@ class FSScanProcessor(FSScanProcessorInterface):
                 self._total = self._number_of_pictures * self.config.laser.numbers
                 self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
         else:
-            self._logger.debug("FabScan is calibrated scan canceled")
+            self._logger.debug("FabScan is not calibrated scan canceled")
 
             message = {
                 "message": "SCANNER_NOT_CALIBRATED",
@@ -364,6 +367,7 @@ class FSScanProcessor(FSScanProcessorInterface):
                    self.current_position, self._number_of_pictures, self._current_laser_position
                 ))
                 self.current_position += 1
+
                 if self.actor_ref.is_alive():
                     self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
 
@@ -390,7 +394,6 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.hardwareController.led.off()
         self.hardwareController.laser.off(0)
         self.hardwareController.laser.off(1)
-
 
 
     def stop_scan(self):
