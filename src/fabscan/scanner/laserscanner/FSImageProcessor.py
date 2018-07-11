@@ -160,14 +160,12 @@ class ImageProcessor(ImageProcessorInterface):
 
     def _obtain_red_channel(self, image):
         ret = None
-        # if self.red_channel == 'R (RGB)':
-        ret = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        # ret = cv2.split(image)[0]
-
-        # elif self.red_channel == 'Cr (YCrCb)':
-        # ret = cv2.split(cv2.cvtColor(image, cv2.COLOR_RGB2YCR_CB))[1]
-        # elif self.red_channel == 'U (YUV)':
-        # ret = cv2.split(cv2.cvtColor(image, cv2.COLOR_RGB2YUV))[1]
+        if self.red_channel == 'R (RGB)':
+            ret = cv2.split(image)[0]
+        elif self.red_channel == 'Cr (YCrCb)':
+            ret = cv2.split(cv2.cvtColor(image, cv2.COLOR_RGB2YCR_CB))[1]
+        elif self.red_channel == 'U (YUV)':
+            ret = cv2.split(cv2.cvtColor(image, cv2.COLOR_RGB2YUV))[1]
         return ret
 
     def compute_line_segmentation(self, image, roi_mask=False):

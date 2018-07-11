@@ -71,6 +71,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.led.off()
         self.laser.off(laser=0)
         self.camera.device.stop_stream()
+        self.camera.device.flush_stream()
         self._settings_mode_is_off = True
 
     def get_picture(self):

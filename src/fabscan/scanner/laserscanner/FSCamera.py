@@ -32,7 +32,7 @@ class FSCamera():
 
     def __init__(self, config):
 
-        self.camera_buffer = FSRingBuffer(10)
+        self.camera_buffer = FSRingBuffer(20)
         config = config
 
         if config.camera.type == 'PICAM':

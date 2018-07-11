@@ -33,7 +33,7 @@ class FSImageWorkerPool():
         self._logger = logging.getLogger(__name__)
 
         self.workers = []
-        self._number_of_workers = 4 #multiprocessing.cpu_count()
+        self._number_of_workers = 8
         self._workers_active = False
 
 
