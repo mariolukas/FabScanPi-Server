@@ -415,7 +415,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         points = []
 
         scan_state = 'texture_scan'
-        if event['image_type'] == 'depth':
+        if event['image_type'] == 'depth' and event['point_cloud'] is not None:
 
             scan_state = 'object_scan'
             point_cloud = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2],

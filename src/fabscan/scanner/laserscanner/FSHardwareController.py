@@ -6,6 +6,7 @@ __email__ = "info@mariolukas.de"
 
 import logging
 import time
+import cv2
 
 from FSLaser import Laser
 from FSLed import Led
@@ -92,7 +93,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.laser.off(laser=index)
         return laser_image
 
-    def scan_at_position(self, steps=180, color=False):
+    def scan_at_position(self, steps=180, color=False, index=0):
         '''
         Take a step and return an image.
         Step size calculated to correspond to num_steps_per_rotation
@@ -105,6 +106,11 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
         self.turntable.step_interval(steps, speed)
         img = self.get_picture()
+
+        if bool(self.config.laser.interleaved):
+            background = self.get_laser_image(index)
+            img = cv2.subtract(img, background)
+
         return img
 
 

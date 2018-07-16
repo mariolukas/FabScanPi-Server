@@ -50,7 +50,7 @@ class FSCalibration(FSCalibrationInterface):
         self.distortion_vector = None
         self.image_points = []
         self.object_points = []
-        self.calibration_brightness = [20, 20, 20]
+        self.calibration_brightness = [110, 110, 110]
         self.quater_turn = int(self.config.turntable.steps / 4)
         self.steps_five_degree = 5.0 / (360.0 / self.config.turntable.steps)
         self.laser_calib_start = LASER_PLANE_CALIBRATION_START_POS_DEGREE * self.steps_five_degree / 5
@@ -228,7 +228,7 @@ class FSCalibration(FSCalibrationInterface):
 
     def _capture_scanner_calibration(self, position):
 
-        image = self._capture_pattern()
+        pattern_image = self._capture_pattern()
 
         if (position > self.laser_calib_start and position < self.laser_calib_end):
             flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH #| cv2.CALIB_CB_NORMALIZE_IMAGE
@@ -236,7 +236,7 @@ class FSCalibration(FSCalibrationInterface):
             flags = cv2.CALIB_CB_FAST_CHECK
 
         try:
-            pose = self._imageprocessor.detect_pose(image, flags)
+            pose = self._imageprocessor.detect_pose(pattern_image, flags)
             plane = self._imageprocessor.detect_pattern_plane(pose)
         except StandardError as e:
             plane = None
@@ -257,6 +257,10 @@ class FSCalibration(FSCalibrationInterface):
                     self._hardwarecontroller.led.off()
                     for i in xrange(self.config.laser.numbers):
                         image = self._capture_laser(i)
+
+                        if bool(self.config.laser.interleaved):
+                            image = cv2.subtract(image, pattern_image)
+
                         image = self._imageprocessor.pattern_mask(image, corners)
                         self.image = image
                         fs_image = FSImage()
@@ -303,13 +307,11 @@ class FSCalibration(FSCalibrationInterface):
 
     def _capture_pattern(self):
         #pattern_image = self._hardwarecontroller.get_pattern_image()
-        time.sleep(0.5)
         pattern_image = self._hardwarecontroller.get_picture()
         return pattern_image
 
     def _capture_laser(self, index):
         self._logger.debug("Starting laser capture...")
-        time.sleep(1)
         laser_image = self._hardwarecontroller.get_laser_image(index)
         return laser_image
 

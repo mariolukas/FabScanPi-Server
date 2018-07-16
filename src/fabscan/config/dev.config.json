@@ -4,6 +4,7 @@
         "scans": "/home/pi/scans/"
     },
     "laser": {
+        "interleaved": "True",
         "numbers": 1
     },
     "scanner_type": "laserscanner",
@@ -31,9 +32,9 @@
     "meshlab": {
         "path": "/usr/bin/"
     },
-    "process_numbers": 8,
+    "process_numbers": 4,
     "turntable": {
-        "steps": 6400,
+        "steps": 3200,
         "radius": 70
     },
     "camera": {
