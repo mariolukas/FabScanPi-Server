@@ -80,6 +80,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
     def get_pattern_image(self):
         self.led.on(110, 110, 110)
+        #self.camera.device.contrast = 40
         pattern_image = self.get_picture()
         self.led.off()
         return pattern_image
@@ -87,6 +88,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def get_laser_image(self, index):
         #self._hardwarecontroller.led.on(30, 30, 30)
         self.laser.on(laser=index)
+        time.sleep(3)
         self.camera.device.flush_stream()
         laser_image = self.get_picture()
         self.laser.off(laser=index)
@@ -104,7 +106,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
             speed = 50
 
         self.turntable.step_interval(steps, speed)
-        img = self.get_picture()
+        img = self.camera.device.get_frame()
         return img
 
 

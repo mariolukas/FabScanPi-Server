@@ -462,6 +462,10 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def scan_complete(self):
 
+        end_time = self.get_time_stamp()
+        duration = int(end_time - self._starttime)/1000
+        self._logger.debug("Time Total: %i sec." % (duration,))
+
         self._starttime = 0
         self._logger.info("Scan complete writing pointcloud files with %i points." % (self.point_cloud.get_size(),))
         self.point_cloud.saveAsFile(self._prefix)
