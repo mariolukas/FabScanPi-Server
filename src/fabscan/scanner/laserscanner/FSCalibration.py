@@ -259,7 +259,7 @@ class FSCalibration(FSCalibrationInterface):
                         image = self._capture_laser(i)
 
                         if bool(self.config.laser.interleaved):
-                            image = cv2.subtract(image, pattern_image)
+                            image = cv2.subtract(pattern_image, image)
 
                         image = self._imageprocessor.pattern_mask(image, corners)
                         self.image = image

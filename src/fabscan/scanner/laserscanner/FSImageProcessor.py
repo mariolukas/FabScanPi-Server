@@ -57,12 +57,12 @@ class ImageProcessor(ImageProcessorInterface):
         self.red_channel = 'R (RGB)'
         self.threshold_enable = False
         self.threshold_value = 0
-        self.blur_enable = False
+        self.blur_enable = True
         self.blur_value = 0
         self.window_enable = False
         self.window_value = 0
         self.color = (255, 255, 255)
-        self.refinement_method = 'SGF'
+        self.refinement_method = 'SGF' #possible  RANSAC, SGF
         self.image_height = self.config.camera.resolution.width
         self.image_width = self.config.camera.resolution.height
         self._weight_matrix = self._compute_weight_matrix()

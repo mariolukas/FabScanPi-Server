@@ -15,6 +15,7 @@ from fabscan.FSSettings import SettingsInterface
 from fabscan.util.FSInject import singleton
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
+from fabscan.file.FSImage import FSImage
 
 from fabscan.scanner.laserscanner.FSTurntable import Turntable
 from fabscan.scanner.laserscanner.FSCamera import FSCamera
@@ -35,6 +36,8 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
         self.config = config
         self.settings = settings
+        # debug
+        self.image = FSImage()
 
         self._logger = logging.getLogger(__name__)
         self._settings_mode_is_off = True
@@ -81,6 +84,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
     def get_pattern_image(self):
         self.led.on(110, 110, 110)
+        #self.camera.device.contrast = 40
         pattern_image = self.get_picture()
         self.led.off()
         return pattern_image
@@ -88,12 +92,13 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def get_laser_image(self, index):
         #self._hardwarecontroller.led.on(30, 30, 30)
         self.laser.on(laser=index)
+        #time.sleep(3)
         self.camera.device.flush_stream()
         laser_image = self.get_picture()
         self.laser.off(laser=index)
         return laser_image
 
-    def scan_at_position(self, steps=180, color=False, index=0):
+    def scan_at_position(self, steps=180, color=False, index=0, position=0, prefix='', ):
         '''
         Take a step and return an image.
         Step size calculated to correspond to num_steps_per_rotation
@@ -105,11 +110,20 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
             speed = 50
 
         self.turntable.step_interval(steps, speed)
+
         img = self.get_picture()
+        #self.image.save_image(img, position, prefix,
+        #                              dir_name='/tmp/background_' + prefix)
 
         if bool(self.config.laser.interleaved):
             background = self.get_laser_image(index)
-            img = cv2.subtract(img, background)
+            #self.image.save_image(background, position, prefix,
+            #                      dir_name='/tmp/laser_' + prefix)
+            img = cv2.subtract(background, img )
+
+
+        #self.image.save_image(img, position, prefix,
+        #                              dir_name='/tmp/combined_' + prefix)
 
         return img
 

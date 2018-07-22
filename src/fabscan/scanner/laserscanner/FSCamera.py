@@ -250,7 +250,9 @@ class PiCam(threading.Thread):
 
     def start_stream(self, mode="default"):
 
+
             try:
+                self.flush_stream()
                 self.set_mode(mode)
 
                 if self.camera is None:

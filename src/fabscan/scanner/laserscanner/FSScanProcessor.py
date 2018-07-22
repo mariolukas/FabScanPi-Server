@@ -19,6 +19,7 @@ from fabscan.vision.FSImageTask import ImageTask
 from fabscan.vision.FSImageWorker import FSImageWorkerPool
 from fabscan.util.FSInject import inject, singleton
 
+
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
@@ -240,9 +241,9 @@ class FSScanProcessor(FSScanProcessorInterface):
         if self._worker_pool is None:
             self._worker_pool = FSImageWorkerPool(self.image_task_q, self.event_q)
 
+
         self.hardwareController.turntable.enable_motors()
         self.hardwareController.start_camera_stream(mode="default")
-        time.sleep(1.5)
         self._resolution = int(self.settings.resolution)
         self._laser_positions = int(self.settings.laser_positions)
         self._is_color_scan = bool(self.settings.color)
@@ -360,8 +361,10 @@ class FSScanProcessor(FSScanProcessorInterface):
                 if self.current_position == 0:
                     self.init_object_scan()
 
-                laser_image = self.hardwareController.scan_at_position(self._resolution)
+                laser_image = self.hardwareController.scan_at_position(self._resolution,position=self.current_position, prefix=self._prefix)
+
                 task = ImageTask(laser_image, self._prefix, self.current_position, self._number_of_pictures)
+
                 self.image_task_q.put(task)
                 self._logger.debug("Laser Progress: %i of %i at laser position %i" % (
                    self.current_position, self._number_of_pictures, self._current_laser_position
@@ -461,6 +464,10 @@ class FSScanProcessor(FSScanProcessorInterface):
 
 
     def scan_complete(self):
+
+        end_time = self.get_time_stamp()
+        duration = int(end_time - self._starttime)/1000
+        self._logger.debug("Time Total: %i sec." % (duration,))
 
         self._starttime = 0
         self._logger.info("Scan complete writing pointcloud files with %i points." % (self.point_cloud.get_size(),))
