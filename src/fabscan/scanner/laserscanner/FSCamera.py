@@ -32,7 +32,7 @@ class FSCamera():
 
     def __init__(self, config):
 
-        self.camera_buffer = FSRingBuffer(20)
+        self.camera_buffer = FSRingBuffer(10)
         config = config
 
         if config.camera.type == 'PICAM':
@@ -54,6 +54,7 @@ class FSRingBuffer(threading.Thread):
     def __init__(self, size_max):
         self.max = size_max
         self.data = collections.deque(maxlen=size_max)
+        self.flushEvent = threading.Event()
 
     # Append an element to the ring buffer.
     def append(self, x):
@@ -70,7 +71,9 @@ class FSRingBuffer(threading.Thread):
         return image
 
     def flush(self):
+        self.flushEvent.clear()
         self.data.clear()
+        self.flushEvent.set()
 
 @inject(
     config=ConfigInterface,
@@ -100,6 +103,7 @@ class CamProcessor(threading.Thread):
             # Wait for an image to be written to the stream
             if self.event.wait(1):
                 try:
+
                     self.stream.seek(0)
                     data = np.fromstring(self.stream.getvalue(), dtype=np.uint8)
                     image = cv2.imdecode(data, 1)
@@ -114,7 +118,8 @@ class CamProcessor(threading.Thread):
                     if self.mode == "settings":
                         image = self.imageprocessor.get_laser_stream_frame(image)
 
-                    self.fs_ring_buffer.append(image)
+                    if self.fs_ring_buffer.flushEvent.wait(1):
+                        self.fs_ring_buffer.append(image)
 
                 finally:
                     # Reset the stream and event
