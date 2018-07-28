@@ -92,7 +92,6 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def get_laser_image(self, index):
         #self._hardwarecontroller.led.on(30, 30, 30)
         self.laser.on(laser=index)
-        #time.sleep(3)
         self.camera.device.flush_stream()
         laser_image = self.get_picture()
         self.laser.off(laser=index)
@@ -112,18 +111,10 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.turntable.step_interval(steps, speed)
 
         img = self.get_picture()
-        #self.image.save_image(img, position, prefix,
-        #                              dir_name='/tmp/background_' + prefix)
 
         if bool(self.config.laser.interleaved):
             background = self.get_laser_image(index)
-            #self.image.save_image(background, position, prefix,
-            #                      dir_name='/tmp/laser_' + prefix)
-            img = cv2.subtract(background, img )
-
-
-        #self.image.save_image(img, position, prefix,
-        #                              dir_name='/tmp/combined_' + prefix)
+            img = cv2.subtract(background, img)
 
         return img
 

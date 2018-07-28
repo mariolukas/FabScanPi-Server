@@ -88,10 +88,10 @@ class FSCalibration(FSCalibrationInterface):
         tools = FSSystem()
         tools.delete_folder(self.config.folders.scans+'calibration')
         self._hardwarecontroller.turntable.enable_motors()
-        self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
-        #self.settings.camera.contrast = 30
-        #self.settings.camera.saturation = 20
-        #self.settings.camera.brightness = 50
+
+        if not bool(self.config.laser.interleaved):
+            self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
+
         self.reset_calibration_values()
         self.settings.threshold = 25
         self._starttime = self.get_time_stamp()
@@ -109,7 +109,9 @@ class FSCalibration(FSCalibrationInterface):
             self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
             self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
 
-            self._hardwarecontroller.led.off()
+            if not bool(self.config.laser.interleaved):
+                self._hardwarecontroller.led.off()
+
             self._hardwarecontroller.turntable.disable_motors()
 
             if self._stop:
@@ -303,7 +305,8 @@ class FSCalibration(FSCalibrationInterface):
             else:
                 self.image = image
 
-        self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
+        if not bool(self.config.laser.interleaved):
+            self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
     def _capture_pattern(self):
         #pattern_image = self._hardwarecontroller.get_pattern_image()

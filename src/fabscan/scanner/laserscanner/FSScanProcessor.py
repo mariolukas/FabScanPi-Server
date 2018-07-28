@@ -289,9 +289,6 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._scan_contrast = self.settings.camera.contrast
         self._scan_saturation = self.settings.camera.saturation
 
-        #self.settings.camera.brightness = 50
-        #self.settings.camera.contrast = 0
-        #self.settings.camera.saturation = 0
         self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
 
         self.hardwareController.camera.device.flush_stream()
@@ -343,8 +340,9 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._laser_positions = self.settings.laser_positions
         # wait for ending of texture stream
 
-        self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
-        self.hardwareController.laser.on()
+        if bool(self.config.laser.interleaved):
+            self.hardwareController.laser.on()
+            self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
 
         self.hardwareController.camera.device.flush_stream()
         time.sleep(2)
@@ -361,11 +359,11 @@ class FSScanProcessor(FSScanProcessorInterface):
                 if self.current_position == 0:
                     self.init_object_scan()
 
-                laser_image = self.hardwareController.scan_at_position(self._resolution,position=self.current_position, prefix=self._prefix)
+                for laser_index in range(self.config.laser.numbers):
+                    laser_image = self.hardwareController.scan_at_position(self._resolution, position=self.current_position, index=laser_index, prefix=self._prefix)
+                    task = ImageTask(laser_image, self._prefix, self.current_position, self._number_of_pictures)
+                    self.image_task_q.put(task)
 
-                task = ImageTask(laser_image, self._prefix, self.current_position, self._number_of_pictures)
-
-                self.image_task_q.put(task)
                 self._logger.debug("Laser Progress: %i of %i at laser position %i" % (
                    self.current_position, self._number_of_pictures, self._current_laser_position
                 ))
@@ -395,9 +393,8 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.hardwareController.stop_camera_stream()
         self.hardwareController.turntable.stop_turning()
         self.hardwareController.led.off()
-        self.hardwareController.laser.off(0)
-        self.hardwareController.laser.off(1)
-
+        for laser_index in range(self.config.laser.numbers):
+            self.hardwareController.laser.off(laser_index)
 
     def stop_scan(self):
         self._stop_scan = True
@@ -517,7 +514,10 @@ class FSScanProcessor(FSScanProcessorInterface):
     def reset_scanner_state(self):
         self._logger.info("Reseting scanner states ... ")
         self.hardwareController.camera.device.flush_stream()
-        self.hardwareController.laser.off()
+
+        for i in range(self.config.laser.numbers):
+            self.hardwareController.laser.off()
+
         self.hardwareController.led.off()
         self.hardwareController.turntable.disable_motors()
         self._progress = 0
