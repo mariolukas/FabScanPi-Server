@@ -1,0 +1,83 @@
+{
+    "folders": {
+        "www": "/usr/share/fabscanpi/",
+        "scans": "/home/pi/scans/"
+    },
+    "laser": {
+        "numbers": 2,
+        "interleaved": "True"
+    },
+    "scanner_type": "laserscanner",
+    "calibration": {
+        "weight_matrix": [],
+        "dist_camera_matrix": [],
+        "pattern": {
+            "square_size": 11,
+            "rows": 6,
+            "columns": 8,
+            "origin_distance": 48
+        },
+        "camera_matrix": [
+            [
+                831.773,
+                0.0,
+                349.63
+            ],
+            [
+                0.0,
+                822.693,
+                397.35
+            ],
+            [
+                0.0,
+                0.0,
+                1.0
+            ]
+        ],
+        "distortion_vector": [
+            0.317,
+            -7.192,
+            -0.003,
+            0.001,
+            41.457
+        ],
+        "laser_planes": [
+            {
+                "deviation": 0,
+                "distance": 0,
+                "normal": []
+            }
+        ],
+        "platform_translation": [],
+        "platform_rotation": []
+    },
+    "meshlab": {
+        "path": "/usr/bin/"
+    },
+    "process_numbers": 4,
+    "turntable": {
+        "steps": 3200,
+        "radius": 70
+    },
+    "camera": {
+        "rotate": "True",
+        "type": "USBCAM",
+        "vflip": "False",
+        "preview_resolution": {
+            "width": 320,
+            "height": 240
+        },
+        "hflip": "True",
+        "resolution": {
+            "width": 1280,
+            "height": 720
+        }
+    },
+    "serial": {
+        "baudrate": 115200,
+        "autoflash": "False",
+        "flash_baudrate": 115200,
+        "port": "/dev/ttyUSB0"
+    },
+    "texture_illumination": 40
+}

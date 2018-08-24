@@ -149,7 +149,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                                 self.image.save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)
                                 color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
 
-                                point_cloud, texture = self.image_processor.process_image(angle, image_task.image, color_image)
+                                point_cloud, texture = self.image_processor.process_image(angle, image_task.image, color_image, index=image_task.index)
                                 # FIXME: Only send event if points is non-empty
                             except StandardError as e:
                                 self._logger.debug(e)

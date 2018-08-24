@@ -137,6 +137,7 @@ class ImageProcessor(ImageProcessorInterface):
             peak = image.argmax(axis=1)
             _min = peak - window_value
             _max = peak + window_value + 1
+
             mask = np.zeros_like(image)
             for i in xrange(self.image_height):
                 mask[i, _min[i]:_max[i]] = 255
@@ -168,10 +169,10 @@ class ImageProcessor(ImageProcessorInterface):
             ret = cv2.split(cv2.cvtColor(image, cv2.COLOR_RGB2YUV))[1]
         return ret
 
-    def compute_line_segmentation(self, image, roi_mask=False):
+    def compute_line_segmentation(self, image, index=0, roi_mask=False):
         if image is not None:
             if roi_mask is True:
-                image = self.mask_image(image)
+                image = self.mask_image(image, index)
             image = self._obtain_red_channel(image)
             if image is not None:
                 # Threshold image
@@ -207,10 +208,10 @@ class ImageProcessor(ImageProcessorInterface):
             u = (dr - v * math.sin(thetar)) / math.cos(thetar)
         return u, v
 
-    def compute_2d_points(self, image, roi_mask=True, refinement_method='SGF'):
+    def compute_2d_points(self, image, index=0, roi_mask=True, refinement_method='SGF'):
         if image is not None:
 
-            image = self.compute_line_segmentation(image, roi_mask=roi_mask)
+            image = self.compute_line_segmentation(image, index, roi_mask=roi_mask)
 
             # Peak detection: center of mass
             s = image.sum(axis=1)
@@ -256,19 +257,22 @@ class ImageProcessor(ImageProcessorInterface):
         return image
 
     #FIXME: rename color_image into texture_image
-    def process_image(self, angle, laser_image, color_image=None):
+    def process_image(self, angle, laser_image, color_image=None, index=0):
         ''' Takes picture and angle (in degrees).  Adds to point cloud '''
 
         try:
             _theta = np.deg2rad(-angle)
-            points_2d, image = self.compute_2d_points(laser_image)
+            points_2d, image = self.compute_2d_points(laser_image, index)
             # FIXME; points_2d could contain empty arrays, resulting point_cloud to be None
-            point_cloud = self.compute_point_cloud(_theta, points_2d, index=0)
+            point_cloud = self.compute_point_cloud(_theta, points_2d, index=index)
             point_cloud = self.mask_point_cloud(point_cloud)
 
             if color_image is None:
-
-                r, g, b = self.color
+                self._logger.debug(index)
+                if index == 1:
+                    r, g, b = (255, 0, 0)
+                else:
+                    r, g, b = self.color
 
                 color_image = np.zeros((self.image_height, self.image_width, 3), np.uint8)
                 color_image[:, :, 0] = r
@@ -284,9 +288,14 @@ class ImageProcessor(ImageProcessorInterface):
             self._logger.error("Process Error:"+str(e))
             return [], []
 
-    def mask_image(self, image):
-            mask = np.zeros(image.shape, np.uint8)
-            mask[0:self.image_height, (self.image_width/2):self.image_width] = image[0:self.image_height, (self.image_width/2):self.image_width]
+    def mask_image(self, image, index):
+            if index == 0:
+                mask = np.zeros(image.shape, np.uint8)
+                mask[0:self.image_height, (self.image_width/2):self.image_width] = image[0:self.image_height, (self.image_width/2):self.image_width]
+            else:
+                mask = np.zeros(image.shape, np.uint8)
+                mask[0:self.image_height, 0:(self.image_width/2)] = image[0:self.image_height, 0:(self.image_width/2)]
+
             return mask
 
     def mask_point_cloud(self, point_cloud):

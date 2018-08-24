@@ -134,6 +134,22 @@ class FSScanProcessor(FSScanProcessorInterface):
             device = event['DEVICE_TEST']
             self.hardwareController.call_test_function(device)
 
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.CONFIG_MODE_ON:
+            self.config_mode_on()
+
+        if event[FSEvents.COMMAND] == FSScanProcessorCommand.CONFIG_MODE_OFF:
+            self.config_mode_off()
+
+
+    def config_mode_on(self):
+        self.hardwareController.start_camera_stream('alignment')
+
+    def config_mode_off(self):
+        self.hardwareController.stop_camera_stream()
+        self.hardwareController.laser.off(0)
+        self.hardwareController.laser.off(1)
+        self.hardwareController.led.off()
+        self.hardwareController.turntable.stop_turning()
 
     def call_hardware_test_function(self, function):
         self.hardwareController.call_test_function(function)
@@ -275,7 +291,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
             event = FSEvent()
             event.command = 'STOP'
-            self.eventmanager.publish(FSEvents.COMMAND, event)
+            self.eventmanager.publish(FSEvents.COMMAND, event, None)
 
     def init_texture_scan(self):
         message = {
@@ -311,7 +327,9 @@ class FSScanProcessor(FSScanProcessorInterface):
                 if self.current_position == 0:
                     self.init_texture_scan()
 
-                color_image = self.hardwareController.scan_at_position(self._resolution, color=True)
+                color_image = self.hardwareController.get_image_at_position()
+                self.hardwareController.move_to_next_position(steps=self._resolution, color=True )
+
                 task = ImageTask(color_image, self._prefix, self.current_position, self._number_of_pictures, task_type="PROCESS_COLOR_IMAGE")
                 self.image_task_q.put(task, True)
                 #self._logger.debug("Color Progress %i of %i : " % (self.current_position, self._number_of_pictures))
@@ -340,12 +358,12 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._laser_positions = self.settings.laser_positions
         # wait for ending of texture stream
 
-        if bool(self.config.laser.interleaved):
+        if self.config.laser.interleaved == 'False':
             self.hardwareController.laser.on()
             self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
 
         self.hardwareController.camera.device.flush_stream()
-        time.sleep(2)
+
         if not self._worker_pool.workers_active():
             self._worker_pool.create(self.config.process_numbers)
 
@@ -360,14 +378,20 @@ class FSScanProcessor(FSScanProcessorInterface):
                     self.init_object_scan()
 
                 for laser_index in range(self.config.laser.numbers):
-                    laser_image = self.hardwareController.scan_at_position(self._resolution, position=self.current_position, index=laser_index, prefix=self._prefix)
-                    task = ImageTask(laser_image, self._prefix, self.current_position, self._number_of_pictures)
+                    laser_image = self.hardwareController.get_image_at_position(index=laser_index)
+                    task = ImageTask(laser_image, self._prefix, self.current_position, self._number_of_pictures, index=laser_index)
                     self.image_task_q.put(task)
 
-                self._logger.debug("Laser Progress: %i of %i at laser position %i" % (
-                   self.current_position, self._number_of_pictures, self._current_laser_position
-                ))
+
+
+                    self._logger.debug("Laser Progress: %i of %i at laser position %i" % (
+                       self.current_position, self._number_of_pictures, self._current_laser_position
+                    ))
+
                 self.current_position += 1
+                #self.hardwareController.turntable.step_blocking(self._resolution, speed=900)
+                self.hardwareController.move_to_next_position(self._resolution)
+
 
                 if self.actor_ref.is_alive():
                     self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
@@ -485,7 +509,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         event = FSEvent()
         event.command = 'COMPLETE'
-        self.eventmanager.publish(FSEvents.COMMAND, event)
+        self.eventmanager.publish(FSEvents.COMMAND, event, None)
 
         message = {
             "message": "SCAN_COMPLETE",

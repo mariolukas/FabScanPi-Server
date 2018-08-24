@@ -13,6 +13,8 @@ import time
 import sys, re, threading, collections
 import traceback
 import PIL
+from cStringIO import StringIO
+
 
 from fabscan.util.FSInject import inject, singleton
 from fabscan.FSConfig import ConfigInterface
@@ -54,26 +56,33 @@ class FSRingBuffer(threading.Thread):
     def __init__(self, size_max):
         self.max = size_max
         self.data = collections.deque(maxlen=size_max)
-        self.flushEvent = threading.Event()
+        self.sync = threading.Event()
+        self._lock = threading.RLock()
 
     # Append an element to the ring buffer.
     def append(self, x):
-        if len(self.data) == self.max:
-            self.data.pop()
-        self.data.append(x)
+        with self._lock:
+            if len(self.data) == self.max:
+                self.data.pop()
+            self.data.append(x)
 
     # Retrieve the newest element in the buffer.
     def get(self):
-        if len(self.data) >= 1:
-            image = self.data[-1]
-        else:
-            image = None
-        return image
+        with self._lock:
+            if len(self.data) >= 1:
+                image = self.data[-1]
+            else:
+                image = None
+            return image
+
+    def isSync(self):
+        return self._sync
 
     def flush(self):
-        self.flushEvent.clear()
+        #with self._lock:
+        self.sync.set()
         self.data.clear()
-        self.flushEvent.set()
+        self.sync.clear()
 
 @inject(
     config=ConfigInterface,
@@ -118,8 +127,11 @@ class CamProcessor(threading.Thread):
                     if self.mode == "settings":
                         image = self.imageprocessor.get_laser_stream_frame(image)
 
-                    if self.fs_ring_buffer.flushEvent.wait(1):
-                        self.fs_ring_buffer.append(image)
+                    while not self.fs_ring_buffer.sync.wait(1):
+                       self.fs_ring_buffer.append(image)
+
+                except:
+                    pass
 
                 finally:
                     # Reset the stream and event
@@ -147,21 +159,24 @@ class ProcessCamOutput(object):
 
     def write(self, buf):
 
-        if ((buf[0][0] == 255) and (buf[1][0] == 216)) or buf.startswith(b'\xff\xd8'):
-            # New frame; set the current processor going and grab
-            # a spare one
+        try:
+            if ((buf[0][0] == 255) and (buf[1][0] == 216)) or buf.startswith(b'\xff\xd8'):
+                # New frame; set the current processor going and grab
+                # a spare one
+                if self.processor:
+                    self.processor.event.set()
+                with self.lock:
+                    if self.pool:
+                        self.processor = self.pool.pop()
+                    else:
+                        # No processor's available, we'll have to skip
+                        # this frame; you may want to print a warning
+                        # here to see whether you hit this case
+                        self.processor = None
             if self.processor:
-                self.processor.event.set()
-            with self.lock:
-                if self.pool:
-                    self.processor = self.pool.pop()
-                else:
-                    # No processor's available, we'll have to skip
-                    # this frame; you may want to print a warning
-                    # here to see whether you hit this case
-                    self.processor = None
-        if self.processor:
-            self.processor.stream.write(buf)
+                self.processor.stream.write(buf)
+        except:
+            pass
 
     def flush(self):
         # When told to flush (this indicates end of recording), shut
@@ -250,7 +265,6 @@ class PiCam(threading.Thread):
 
     def start_stream(self, mode="default"):
 
-
             try:
                 self.flush_stream()
                 self.set_mode(mode)
@@ -287,6 +301,30 @@ class PiCam(threading.Thread):
     def flush_stream(self):
         self.camera_buffer.flush()
 
+###
+# This class is used to catch openCV errors which are not catchable by python
+# see https://stackoverflow.com/questions/9131992/how-can-i-catch-corrupt-jpegs-when-loading-an-image-with-imread-in-opencv/45055195
+##
+# FIXME: Causes too many open files....
+class CaptureLibOpenCVStderr:
+
+    def __init__(self, what):
+        self.what = what
+    def __enter__(self):
+        self.r, w = os.pipe()
+        self.original = os.dup(self.what.fileno())  # save old file descriptor
+        self.what.flush()               # flush cache before replacing
+        os.dup2(w, self.what.fileno())  # overwrite with pipe
+        os.write(w, ' ') # so that subsequent read does not block
+        os.close(w)
+        return self
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.what.flush() # flush again before reading and restoring
+        self.data = os.read(self.r, 1000).strip()
+        os.dup2(self.original, self.what.fileno())  # restore original
+        os.close(self.r)
+    def __str__(self):
+        return self.data
 
 @inject(
     config=ConfigInterface,
@@ -302,6 +340,7 @@ class USBCam(threading.Thread):
         self.settings = settings
         self.timestamp = int(round(time.time() * 1000))
 
+        #self.sync = threading.Event()
         self.camera = None
         self.output = None
         self.camera_buffer = cam_ring_buffer
@@ -312,13 +351,18 @@ class USBCam(threading.Thread):
     def run(self):
             while True:
 
-                if not self.idle and self.camera.isOpened():
+                if self.camera and not self.idle and self.camera.isOpened():
                     try:
-                        ret, image = self.camera.read()
+                        # catch opencv warnings, to make the log more quiet
+                        with CaptureLibOpenCVStderr(sys.stderr) as output:
+                            ret, image = self.camera.read()
+                        #self._logger.debug(output)
                         if image is not None:
+                            encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
                             ret, jpg = cv2.imencode('.jpg', image)
                             self.output.write(jpg)
-                    except StandardError, e:
+
+                    except:
                         pass
                 else:
                     time.sleep(0.05)
@@ -326,7 +370,8 @@ class USBCam(threading.Thread):
     def get_frame(self):
         image = None
         while image is None:
-           image = self.camera_buffer.get()
+           with self.camera_buffer._lock:
+                image = self.camera_buffer.get()
         return image
 
     def set_mode(self, mode):
@@ -363,10 +408,10 @@ class USBCam(threading.Thread):
                     self.camera = cv2.VideoCapture(0)
                     self.output.format_is_mjpeg = False
 
-                    #HIGHT
-                    self.camera.set(3, self.resolution[1])
+                    #HEIGHT
+                    self.camera.set(4, self.resolution[1])
                     #WIDTH
-                    self.camera.set(4, self.resolution[0])
+                    self.camera.set(3, self.resolution[0])
 
                 self.idle = False
 
@@ -378,7 +423,7 @@ class USBCam(threading.Thread):
     def stop_stream(self):
         time.sleep(0.5)
         try:
-            if self.camera.isOpened():
+            if self.camera and self.camera.isOpened():
                 self.camera.release()
 
             self.camera = None

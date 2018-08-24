@@ -77,6 +77,7 @@ class Config(ConfigInterface):
             json.dump(current_config, outfile,  indent=4, ensure_ascii=False)
             #outfile.write(to_unicode(str_))
 
+
     def todict(self, obj, classkey=None):
             if isinstance(obj, dict):
                 data = {}

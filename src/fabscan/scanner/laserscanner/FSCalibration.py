@@ -86,14 +86,16 @@ class FSCalibration(FSCalibrationInterface):
 
     def start(self):
         tools = FSSystem()
+        self._hardwarecontroller.stop_camera_stream()
         tools.delete_folder(self.config.folders.scans+'calibration')
         self._hardwarecontroller.turntable.enable_motors()
 
-        if not bool(self.config.laser.interleaved):
+        if self.config.laser.interleaved == 'False':
+            self._logger.debug("Turning Leds on in interleaved mode.")
             self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
         self.reset_calibration_values()
-        self.settings.threshold = 25
+        self.settings.threshold = 30
         self._starttime = self.get_time_stamp()
 
         message = {
@@ -109,7 +111,7 @@ class FSCalibration(FSCalibrationInterface):
             self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
             self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
 
-            if not bool(self.config.laser.interleaved):
+            if self.config.laser.interleaved == 'False':
                 self._hardwarecontroller.led.off()
 
             self._hardwarecontroller.turntable.disable_motors()
@@ -131,7 +133,7 @@ class FSCalibration(FSCalibrationInterface):
 
                 event = FSEvent()
                 event.command = 'CALIBRATION_COMPLETE'
-                self._eventmanager.publish(FSEvents.COMMAND, event)
+                self._eventmanager.publish(FSEvents.COMMAND, event, None)
 
                 # send information to client that calibration is finished
                 message = {
@@ -147,6 +149,12 @@ class FSCalibration(FSCalibrationInterface):
             return
         except StandardError as e:
             self._logger.error(e)
+            message = {
+                    "message": "SCANNER_CALIBRATION_FAILED",
+                    "level": "warn"
+            }
+
+            self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
     def stop(self):
         self._stop = True
@@ -166,7 +174,7 @@ class FSCalibration(FSCalibrationInterface):
             while abs(position) < self.quater_turn * 2:
 
                 if not self._stop:
-
+                    self._logger.debug("Capturing started...")
                     _capture(position)
                     self._hardwarecontroller.turntable.step_interval(-self.steps_five_degree, speed=900)
                     position += self.steps_five_degree
@@ -186,32 +194,42 @@ class FSCalibration(FSCalibrationInterface):
             if not self._stop:
                 self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
                 _calibrate()
+
         except StandardError as e:
-            self._logger.debug("Calibration Error")
-            self._logger.error(e)
+            self._logger.error("Calibration Error "+str(e))
+
 
 
     def _calculate_camera_calibration(self):
         error = 0
-        ret, cmat, dvec, rvecs, tvecs = cv2.calibrateCamera(
-            self.object_points, self.image_points, self.shape, None, None)
+        try:
+            if len(self.object_points) == 0 or len(self.image_points) == 0:
+                raise StandardError('Calibration Failed')
+            ret, cmat, dvec, rvecs, tvecs = cv2.calibrateCamera(
+                self.object_points, self.image_points, self.shape, None, None)
 
-        if ret:
-            # Compute calibration error
-            for i in xrange(len(self.object_points)):
-                imgpoints2, _ = cv2.projectPoints(
-                    self.object_points[i], rvecs[i], tvecs[i], cmat, dvec)
-                error += cv2.norm(self.image_points[i], imgpoints2, cv2.NORM_L2) / len(imgpoints2)
-            error /= len(self.object_points)
+            if ret:
+                # Compute calibration error
+                for i in xrange(len(self.object_points)):
+                    imgpoints2, _ = cv2.projectPoints(
+                        self.object_points[i], rvecs[i], tvecs[i], cmat, dvec)
+                    error += cv2.norm(self.image_points[i], imgpoints2, cv2.NORM_L2) / len(imgpoints2)
+                error /= len(self.object_points)
 
-        self.config.calibration.camera_matrix = copy.deepcopy(np.round(cmat, 3))
-        self.config.calibration.distortion_vector = copy.deepcopy(np.round(dvec.ravel(), 3))
+            self.config.calibration.camera_matrix = copy.deepcopy(np.round(cmat, 3))
+            self.config.calibration.distortion_vector = copy.deepcopy(np.round(dvec.ravel(), 3))
 
-        return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
+            return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
+        except StandardError as e:
+            self._logger.debug(e)
+
+
+
 
     def _capture_camera_calibration(self, position):
         image = self._capture_pattern()
         self.shape = image[:, :, 0].shape
+
 
         #if (position > self.calib_start and position < self.calib_end):
         #    flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
@@ -260,7 +278,7 @@ class FSCalibration(FSCalibrationInterface):
                     for i in xrange(self.config.laser.numbers):
                         image = self._capture_laser(i)
 
-                        if bool(self.config.laser.interleaved):
+                        if self.config.laser.interleaved == 'True':
                             image = cv2.subtract(pattern_image, image)
 
                         image = self._imageprocessor.pattern_mask(image, corners)
@@ -305,7 +323,7 @@ class FSCalibration(FSCalibrationInterface):
             else:
                 self.image = image
 
-        if not bool(self.config.laser.interleaved):
+        if self.config.laser.interleaved == 'False':
             self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
     def _capture_pattern(self):

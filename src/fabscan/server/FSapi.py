@@ -14,15 +14,18 @@ from PIL import Image
 
 from fabscan.util.FSUtil import json2obj
 from fabscan.FSConfig import ConfigInterface
+from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.util.FSInject import inject
 
 @inject(
-    config=ConfigInterface
+    config=ConfigInterface,
+    hardwarecontroller=FSHardwareControllerInterface
 )
 class FSRest():
-    def __init__(self, config):
+    def __init__(self, config, hardwarecontroller):
 
         self.config = config
+        self.hardwarecontroller = hardwarecontroller
         self._logger = logging.getLogger(__name__)
 
     def call(self,action, path, headers, data=None):
@@ -42,6 +45,9 @@ class FSRest():
             # /api/<version>/filters
             elif "filters" == root_property:
                 output = self.get_list_of_meshlab_filters()
+
+            elif "devices" == root_property:
+                output = self.hardwarecontroller.get_devices_as_json()
 
         elif path_length == 5:
             root_property = path_elements[-2]

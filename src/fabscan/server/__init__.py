@@ -37,7 +37,7 @@ class FSServer(object):
         self.webserver = None
         self._logger = logging.getLogger(__name__)
 
-    def on_server_command(self, mgr, event):
+    def on_server_command(self, mgr, event, client):
         command = event.command
 
         if command == FSCommand.UPGRADE_SERVER:
@@ -49,6 +49,30 @@ class FSServer(object):
             self.restart = True
             self.system_exit.kill()
 
+
+        if command == FSCommand.REBOOT_SYSTEM:
+            self.exit = True
+            self.reboot = True
+
+        if command == FSCommand.SHUTDOWN_SYSTEM:
+            self.exit = True
+            self.shutdown = True
+
+        if command == FSCommand.NETCONNECT:
+            self._logger.debug(event)
+            self.netconnect.call_netconnectd_command(event, data=None, client=client)
+
+    def reboot_system(self):
+        try:
+            FSSystem.run_command("reboot", blocking=True)
+        except StandardError, e:
+            self._logger.error(e)
+
+    def shutdown_system(self):
+        try:
+            FSSystem.run_command("shutdown -h now", blocking=True)
+        except StandardError, e:
+            self._logger.error(e)
 
     def restart_server(self):
         try:
@@ -106,6 +130,16 @@ class FSServer(object):
             self.scanner.kill()
             self._logger.debug("Waiting for Scanner exit...")
             self.scanner.join()
+
+            if self.reboot:
+                self._logger.info("Rebooting System")
+                self.reboot_system()
+                self.exit = True
+
+            if self.shutdown:
+                self._logger.info("Shutting down System")
+                self.shutdown_system()
+                self.exit = True
 
             self._logger.info("FabScan Server Exit. Bye!")
             os._exit(1)

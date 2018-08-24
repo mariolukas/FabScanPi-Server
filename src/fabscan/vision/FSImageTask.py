@@ -19,7 +19,7 @@ class ImageTask(object):
     resolution = 100
     state = None
 
-    def __init__(self, image, prefix, prorgess, resolution=100, task_type="PROCESS_DEPTH_IMAGE", settings=None, raw_dir="raw"):
+    def __init__(self, image, prefix, prorgess, resolution=100, task_type="PROCESS_DEPTH_IMAGE", settings=None, raw_dir="raw", index=None):
             self.image = image
             self.progress = prorgess
             self.raw_dir = raw_dir
@@ -27,3 +27,4 @@ class ImageTask(object):
             self.task_type = task_type
             self.prefix = prefix
             self.settings = settings
+            self.index = index

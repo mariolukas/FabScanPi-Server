@@ -59,7 +59,7 @@ class FSWebSocket(WebSocket):
 
         try:
          #self._logger.debug("Websocket Message received %s" % message.event)
-         self.eventManager.publish(message.event, message.data)
+         self.eventManager.publish(message.event, message.data, self.client)
 
 
         except (RuntimeError, TypeError, NameError):
@@ -75,7 +75,7 @@ class FSWebSocket(WebSocket):
         message['client'] = self.client
 
         self._logger.debug("New client connected")
-        self.eventManager.publish(FSEvents.ON_CLIENT_CONNECTED, message)
+        self.eventManager.publish(FSEvents.ON_CLIENT_CONNECTED, message, self.client)
 
 
     def handleClose(self):
