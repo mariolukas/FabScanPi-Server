@@ -1,0 +1,5 @@
+__author__ = "Mario Lukas"
+__copyright__ = "Copyright 2018"
+__license__ = "GPL v2"
+__maintainer__ = "Mario Lukas"
+__email__ = "info@mariolukas.de"

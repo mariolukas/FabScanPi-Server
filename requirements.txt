@@ -3,4 +3,5 @@ pillow ==2.7
 Pykka >=1.2
 numpy >=1.9
 semver >=2.0
+tornado
 mock
