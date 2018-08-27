@@ -520,7 +520,8 @@ class USBCam(threading.Thread):
         def get_frame(self):
             image = None
             while image is None:
-                image = self.camera_buffer.get()
+                with self.camera_buffer._lock:
+                    image = self.camera_buffer.get()
             return image
 
         def set_mode(self, mode):
@@ -612,6 +613,7 @@ class USBCam(threading.Thread):
             self.data = os.read(self.r, 1000).strip()
             os.dup2(self.original, self.what.fileno())  # restore original
             os.close(self.r)
+            self.original.close()
 
         def __str__(self):
             return self.data

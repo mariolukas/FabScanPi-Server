@@ -8,7 +8,7 @@ import time
 import logging
 import sys
 import os
-import signal
+
 
 from FSWebServer import FSWebServer
 from fabscan.FSVersion import __version__
@@ -70,7 +70,6 @@ class FSScanServer(object):
             injector.provide(FSEventManagerInterface, FSEventManagerSingleton)
             injector.provide_instance(FSWebSocketServerInterface, FSWebSocketServer())
             injector.provide_instance(ConfigInterface, Config(self.config_file, True))
-
             injector.provide_instance(SettingsInterface, Settings(self.settings_file, True))
 
             # inject "dynamic" classes

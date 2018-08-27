@@ -1,11 +1,14 @@
 import os
 import json
-import tornado.web
+from fabscan.server.services.api.FSBaseHandler import FSBaseHandler
 
-
-class FSFilterHandler(tornado.web.RequestHandler):
+class FSFilterHandler(FSBaseHandler):
 
     def get(self):
+       filters = self.get_list_of_meshlab_filters()
+       self.write(json.dumps(filters))
+
+    def get_list_of_meshlab_filters(self):
         basedir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
         filters = dict()
@@ -21,4 +24,4 @@ class FSFilterHandler(tornado.web.RequestHandler):
 
                     filters['filters'].append(filter)
 
-        self.write(json.dumps(filters))
+        return filters

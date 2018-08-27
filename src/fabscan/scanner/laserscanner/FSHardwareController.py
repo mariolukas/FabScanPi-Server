@@ -7,17 +7,19 @@ __email__ = "info@mariolukas.de"
 import logging
 import time
 
-from FSLaser import Laser
-from FSLed import Led
+
+
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.util.FSInject import singleton
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 
-from fabscan.scanner.laserscanner.FSTurntable import Turntable
-from fabscan.scanner.laserscanner.FSCamera import FSCamera
-from fabscan.scanner.laserscanner.FSSerial import FSSerialCom
+from fabscan.scanner.laserscanner.driver.FSTurntable import Turntable
+from fabscan.scanner.laserscanner.driver.FSCamera import FSCamera
+from fabscan.scanner.laserscanner.driver.FSSerial import FSSerialCom
+from fabscan.scanner.laserscanner.driver.FSLaser import Laser
+from fabscan.scanner.laserscanner.driver.FSLed import Led
 
 @singleton(
     config=ConfigInterface,

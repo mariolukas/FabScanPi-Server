@@ -10,8 +10,10 @@ import tornado.ioloop
 import tornado.web
 import os
 
-from fabscan.server.handler.api.FSFilterHandler import FSFilterHandler
-from fabscan.server.handler.api.FSScansHandler import FSScansHandler
+from fabscan.server.services.websocket.FSWebSocketHandler import FSWebSocketHandler
+from fabscan.server.services.api.FSFilterHandler import FSFilterHandler
+from fabscan.server.services.api.FSScanHandler import FSScanHandler
+#from fabscan.server.services.api.FSLaserStreamHandler import FSLaserStreamHandler
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
 from fabscan.FSConfig import ConfigSingleton, ConfigInterface
 from fabscan.util.FSInject import inject
@@ -31,12 +33,12 @@ class FSWebServer(threading.Thread):
 
     def routes(self):
         return tornado.web.Application([
-            (r"/api/v1/filters", FSFilterHandler),
-            (r"/api/v1/scans", FSScansHandler, dict(config=self.config)),
+            (r"/api/v1/filters/", FSFilterHandler),
+#            (r"/api/v1/stream/laser.mjpeg", FSLaserStreamHandler),
+            (r"/api/v1/scans/", FSScanHandler, dict(config=self.config)),
+            (r"/api/v1/scans/([0 - 9]+)", FSScanHandler, dict(config=self.config)),
+            (r'/ws', FSWebSocketHandler),
             (r"/(.*)", tornado.web.StaticFileHandler, {"path": self.www_folder, "default_filename": "index.html"})
-
-     #       (r"/api/v1/scans/", FSFilterHandler),
-     #       (r"/api/v1/scans/([0 - 9]+)", FSFilterHandler),
         ])
 
     def run(self):
