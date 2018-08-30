@@ -14,7 +14,6 @@ from FSWebServer import FSWebServer
 from fabscan.FSVersion import __version__
 from fabscan.util.FSInject import injector
 from fabscan.util.FSUtil import FSSystem, FSSystemExit
-from fabscan.server.websockets import FSWebSocketServer, FSWebSocketServerInterface
 from fabscan.FSScanner import FSScanner, FSCommand
 from fabscan.FSEvents import FSEventManagerSingleton, FSEventManagerInterface, FSEvents
 from fabscan.FSConfig import ConfigInterface, ConfigSingleton, Config
@@ -68,7 +67,7 @@ class FSScanServer(object):
 
         try:
             injector.provide(FSEventManagerInterface, FSEventManagerSingleton)
-            injector.provide_instance(FSWebSocketServerInterface, FSWebSocketServer())
+            #injector.provide_instance(FSWebSocketServerInterface, FSWebSocketServer())
             injector.provide_instance(ConfigInterface, Config(self.config_file, True))
             injector.provide_instance(SettingsInterface, Settings(self.settings_file, True))
 
@@ -77,8 +76,8 @@ class FSScanServer(object):
             FSScannerFactory.injectScannerType(self.config.scanner_type)
 
             # start server services
-            websocket_server = injector.get_instance(FSWebSocketServerInterface)
-            websocket_server.start()
+            #websocket_server = injector.get_instance(FSWebSocketServerInterface)
+            #websocket_server.start()
 
             self.webserver = FSWebServer()
             self.webserver.start()
