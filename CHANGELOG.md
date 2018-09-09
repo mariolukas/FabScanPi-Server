@@ -4,7 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - dev
+## [0.6.0] - unreleased
+### Changed
+- added Tornado Framework
+- Refactored mjpeg streams
+- Refactored Websocket interface
+- Refactored REST API
+- Refactored scan libs
+
+### Fixed
+- fixed camera driver (pi and usb)
+- fixed random artifacts at the beginning of object scan
+
+## [0.5.0] - 2018-04-04
 ### Added
 - new documentation parts (tnx to jens hackel)
 - added stop sequence when scanner is not calibrated
