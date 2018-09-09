@@ -12,14 +12,14 @@ import os
 
 from FSWebServer import FSWebServer
 from fabscan.FSVersion import __version__
-from fabscan.util.FSInject import injector
-from fabscan.util.FSUtil import FSSystem, FSSystemExit
+from fabscan.lib.util.FSInject import injector
+from fabscan.lib.util.FSUtil import FSSystem, FSSystemExit
 from fabscan.FSScanner import FSScanner, FSCommand
 from fabscan.FSEvents import FSEventManagerSingleton, FSEventManagerInterface, FSEvents
 from fabscan.FSConfig import ConfigInterface, ConfigSingleton, Config
 from fabscan.FSSettings import SettingsInterface, SettingsSingleton, Settings
 from fabscan.scanner.interfaces import FSScannerFactory
-from fabscan.util.FSUpdate import do_upgrade
+from fabscan.lib.util.FSUpdate import do_upgrade
 
 
 class FSScanServer(object):

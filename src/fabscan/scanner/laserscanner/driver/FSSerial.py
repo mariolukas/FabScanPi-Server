@@ -9,8 +9,8 @@ import glob
 import serial
 import time
 import logging
-from fabscan.util.FSUtil import FSSystem
-from fabscan.util.FSInject import inject
+from fabscan.lib.util.FSUtil import FSSystem
+from fabscan.lib.util.FSInject import inject
 from fabscan.FSConfig import ConfigInterface
 
 @inject(

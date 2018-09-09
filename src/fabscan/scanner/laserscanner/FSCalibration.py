@@ -4,9 +4,9 @@ import time
 import logging
 import struct
 from datetime import datetime
-from fabscan.util.FSInject import singleton
-from fabscan.util.FSUtil import FSSystem
-from fabscan.file.FSImage import FSImage
+from fabscan.lib.util.FSInject import singleton
+from fabscan.lib.util.FSUtil import FSSystem
+from fabscan.lib.file.FSImage import FSImage
 import cv2
 import traceback
 import sys

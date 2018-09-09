@@ -6,7 +6,7 @@ __email__ = "info@mariolukas.de"
 
 import multiprocessing
 from Queue import Empty
-from fabscan.util.FSInject import singleton
+from fabscan.lib.util.FSInject import singleton
 import logging
 
 class FSEvent():

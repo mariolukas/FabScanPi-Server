@@ -6,7 +6,7 @@ import logging
 import cv2
 import StringIO
 from PIL import Image
-from fabscan.server.services.api.FSBaseHandler import FSBaseHandler
+from fabscan.server.services.api.FSBaseHandler import BaseHandler
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand
 from fabscan.FSEvents import FSEvents
 

@@ -14,7 +14,7 @@ import sys, re, threading, collections
 import traceback
 import PIL
 
-from fabscan.util.FSInject import inject, singleton
+from fabscan.lib.util.FSInject import inject, singleton
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
@@ -303,7 +303,7 @@ class USBCam(threading.Thread):
     import PIL
     from cStringIO import StringIO
 
-    from fabscan.util.FSInject import inject, singleton
+    from fabscan.lib.util.FSInject import inject, singleton
     from fabscan.FSConfig import ConfigInterface
     from fabscan.FSSettings import SettingsInterface
     from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface

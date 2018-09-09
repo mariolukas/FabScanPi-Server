@@ -12,12 +12,12 @@ from datetime import datetime
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 
-from fabscan.util.FSUtil import FSSystem
-from fabscan.file.FSPointCloud import FSPointCloud
+from fabscan.lib.util.FSUtil import FSSystem
+from fabscan.lib.file.FSPointCloud import FSPointCloud
 from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
-from fabscan.vision.FSImageTask import ImageTask
-from fabscan.vision.FSImageWorker import FSImageWorkerPool
-from fabscan.util.FSInject import inject, singleton
+from fabscan.worker.FSImageTask import ImageTask
+from fabscan.worker.FSImageWorker import FSImageWorkerPool
+from fabscan.lib.util.FSInject import inject, singleton
 
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface

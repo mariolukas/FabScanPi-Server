@@ -2,7 +2,7 @@ import json
 from PIL import Image
 import base64
 from fabscan.server.services.api.FSBaseHandler import FSBaseHandler
-from fabscan.util.FSUtil import json2obj
+from fabscan.lib.util.FSUtil import json2obj
 
 class FSPreviewHandler(FSBaseHandler):
 

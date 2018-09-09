@@ -6,7 +6,7 @@ __email__ = "info@mariolukas.de"
 
 import os
 import json
-from fabscan.util.FSInject import singleton
+from fabscan.lib.util.FSInject import singleton
 import io
 import numpy as np
 

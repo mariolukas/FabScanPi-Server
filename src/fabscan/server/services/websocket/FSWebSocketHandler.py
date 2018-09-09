@@ -4,7 +4,7 @@ import sys
 import logging
 import traceback
 from fabscan.FSEvents import FSEvents
-from fabscan.util.FSUtil import json2obj
+from fabscan.lib.util.FSUtil import json2obj
 
 class FSWebSocketHandler(tornado.websocket.WebSocketHandler):
 
