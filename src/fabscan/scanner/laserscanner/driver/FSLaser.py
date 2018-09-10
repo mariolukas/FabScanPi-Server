@@ -26,7 +26,3 @@ class Laser:
                 command = "M20;"
 
             self.serial_connection.send_and_receive(command)
-
-    def turn(self, steps):
-        command = "G04 L"+str(steps)+" F200;"
-        self.serial_connection.send_and_receive(command)

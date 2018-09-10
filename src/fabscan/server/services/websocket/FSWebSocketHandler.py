@@ -27,8 +27,6 @@ class FSWebSocketHandler(tornado.websocket.WebSocketHandler):
         message = dict()
         message['client'] = self.request
 
-        self._logger.debug(self.request)
-
         self._logger.debug("New client connected")
         self.eventManager.publish(FSEvents.ON_CLIENT_CONNECTED, message)
 

@@ -7,8 +7,6 @@ __email__ = "info@mariolukas.de"
 import logging
 import time
 
-
-
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.lib.util.FSInject import singleton
