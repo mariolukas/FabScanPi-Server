@@ -2,11 +2,11 @@ import threading
 import logging
 import os
 
-from fabscan.util.FSUtil import FSSystem
+from fabscan.lib.util.FSUtil import FSSystem
 from fabscan.FSEvents import FSEventManagerInterface, FSEvents
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
-from fabscan.util.FSInject import inject
+from fabscan.lib.util.FSInject import inject
 from xml.dom import minidom
 import xml
 

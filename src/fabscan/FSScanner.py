@@ -11,13 +11,13 @@ import multiprocessing
 
 from fabscan.FSVersion import __version__
 from fabscan.FSEvents import FSEventManagerInterface, FSEvents
-from fabscan.vision.FSMeshlab import FSMeshlabTask
+from fabscan.worker.FSMeshlab import FSMeshlabTask
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.FSConfig import ConfigInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
-from fabscan.util.FSInject import inject, singleton
-from fabscan.util.FSUpdate import upgrade_is_available, do_upgrade
+from fabscan.lib.util.FSInject import inject, singleton
+from fabscan.lib.util.FSUpdate import upgrade_is_available, do_upgrade
 
 class FSState(object):
     IDLE = "IDLE"

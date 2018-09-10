@@ -9,11 +9,11 @@ import multiprocessing
 import logging
 import time
 
-from fabscan.vision.FSImageTask import ImageTask, FSTaskType
+from fabscan.worker.FSImageTask import ImageTask, FSTaskType
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
-from fabscan.util.FSInject import inject
-from fabscan.file.FSImage import FSImage
+from fabscan.lib.util.FSInject import inject
+from fabscan.lib.file.FSImage import FSImage
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 
 

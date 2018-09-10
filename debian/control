@@ -10,6 +10,6 @@ Package: fabscanpi-server
 Architecture: all
 Homepage: http://fabscan.org
 X-Python-Version: ${python:Versions}
-Depends: ${misc:Depends}, ${python:Depends},  python-opencv, libtbb2, python-pil, python-serial, python-pykka, python-picamera, python-rpi.gpio, python-semver, xvfb, meshlab, strace, avrdude, python-scipy
+Depends: ${misc:Depends}, ${python:Depends},  python-opencv, python-tornado, libtbb2, python-pil, python-serial, python-pykka, python-picamera, python-rpi.gpio, python-semver, xvfb, meshlab, strace, avrdude, python-scipy
 Description:
  FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.

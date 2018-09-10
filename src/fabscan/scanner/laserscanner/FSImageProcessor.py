@@ -11,7 +11,7 @@ import scipy.ndimage
 import cv2
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
-from fabscan.util.FSInject import inject
+from fabscan.lib.util.FSInject import inject
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 
 

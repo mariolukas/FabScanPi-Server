@@ -4,7 +4,7 @@ __license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
-from fabscan.server import FSServer
+from fabscan.server import FSScanServer
 from fabscan.daemon import Daemon
 from fabscan.FSVersion import __version__
 import logging
@@ -28,10 +28,10 @@ class Main(Daemon):
 
 
 	def run(self):
-        #server = FSServer(config_file)
-        #fabscan = FSServer(self._configfile, self._basedir, self._host, self._port, self._debug, self._allowRoot)
+        #server = FSScanServer(config_file)
+        #fabscan = FSScanServer(self._configfile, self._basedir, self._host, self._port, self._debug, self._allowRoot)
 
-		fabscan = FSServer(self._configfile)
+		fabscan = FSScanServer(self._configfile)
 		fabscan.run()
 
 def main():
@@ -130,7 +130,7 @@ def main():
             elif "restart" == args.daemon:
                 daemon.restart()
         else:
-            fabscan = FSServer(args.config, args.settings)
+            fabscan = FSScanServer(args.config, args.settings)
             fabscan.run()
     except Exception, e:
         logger.fatal("Fatal error: %s", e)
