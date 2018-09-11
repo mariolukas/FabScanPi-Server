@@ -91,7 +91,7 @@ class FSScanner(threading.Thread):
         self.exit = True
 
 
-    def on_command(self, mgr, event, client):
+    def on_command(self, mgr, event):
 
         command = event.command
 
@@ -199,7 +199,7 @@ class FSScanner(threading.Thread):
 
         elif command == FSCommand.GET_CONFIG:
             message = {
-                "client": client,
+                "client": event['client'],
                 "config": self.config.todict(self.config)
             }
             self.eventManager.send_client_message(FSEvents.ON_GET_CONFIG, message)
@@ -207,7 +207,7 @@ class FSScanner(threading.Thread):
 
         elif command == FSCommand.GET_SETTINGS:
             message = {
-                "client": client,
+                "client": event['client'],
                 "settings": self.settings.todict(self.settings)
             }
             self.eventManager.send_client_message(FSEvents.ON_GET_SETTINGS, message)
