@@ -21,11 +21,6 @@ from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
 from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
 
 
-# focal_pixel = (focal_mm / sensor_width_mm) * image_width_in_pixels
-# And if you know the horizontal field of view, say in degrees,
-# focal_pixel = (image_width_in_pixels * 0.5) / tan(FOV * 0.5 * PI/180)
-
-
 @singleton(
     config=ConfigInterface,
     settings=SettingsInterface,
@@ -126,8 +121,6 @@ class FSCalibration(FSCalibrationInterface):
                     "level": "info"
                 }
                 self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-                self._hardwarecontroller.stop_camera_stream()
-
                 self._stop = False
             else:
 
@@ -143,7 +136,11 @@ class FSCalibration(FSCalibrationInterface):
                 self.config.save()
 
                 self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-                self._hardwarecontroller.stop_camera_stream()
+
+            self._hardwarecontroller.stop_camera_stream()
+
+            self._hardwarecontroller.led.off()
+            self._hardwarecontroller.turntable.disable_motors()
 
             self.reset_calibration_values()
             return

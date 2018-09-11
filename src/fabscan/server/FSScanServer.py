@@ -75,10 +75,6 @@ class FSScanServer(object):
             self.config = injector.get_instance(ConfigInterface)
             FSScannerFactory.injectScannerType(self.config.scanner_type)
 
-            # start server services
-            #websocket_server = injector.get_instance(FSWebSocketServerInterface)
-            #websocket_server.start()
-
             self.webserver = FSWebServer()
             self.webserver.start()
 

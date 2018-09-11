@@ -10,13 +10,19 @@ from fabscan.server.services.api.FSBaseHandler import BaseHandler
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand
 from fabscan.FSEvents import FSEvents
 
-class FSSettingsStreamHandler(tornado.web.RequestHandler):
+class FSStreamHandler(tornado.web.RequestHandler):
 
     def initialize(self, scanprocessor):
         self._logger = logging.getLogger(__name__)
         self.scanprocessor = scanprocessor.start()
+        self.types = {
+            'laser':       FSScanProcessorCommand.GET_LASER_STREAM,
+            'adjustment':  FSScanProcessorCommand.GET_ADJUSTMENT_STREAM,
+            'texture':     FSScanProcessorCommand.GET_TEXTURE_STREAM,
+            'calibration': FSScanProcessorCommand.GET_CALIBRATION_STREAM
+        }
 
-    def getFrame(self):
+    def getFrame(self, stream_type):
         try:
             if self.scanprocessor.is_alive():
                 future_image = self.scanprocessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_LASER_STREAM},
@@ -37,6 +43,7 @@ class FSSettingsStreamHandler(tornado.web.RequestHandler):
         input: None
         :return: yields mjpeg stream with http header
         """
+        stream_type = self.get_argument('type', True)
         # Set http header fields
         self.set_header('Cache-Control',
                          'no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0')
@@ -45,7 +52,7 @@ class FSSettingsStreamHandler(tornado.web.RequestHandler):
 
         while True:
             # Generating images for mjpeg stream and wraps them into http resp
-            img = self.getFrame()
+            img = self.getFrame(stream_type)
             self.write("--boundarydonotcross\n")
             self.write("Content-type: image/jpeg\r\n")
             self.write("Content-length: %s\r\n\r\n" % len(img))

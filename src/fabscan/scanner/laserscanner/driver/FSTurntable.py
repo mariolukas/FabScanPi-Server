@@ -32,7 +32,7 @@ class Turntable(object):
         Accepts number of steps to take
         '''
         if self.serial_connection != None:
-            command = "G02 T"+str(steps)+" F"+str(speed)+";"
+            command = "G04 T"+str(steps)+" F"+str(speed)+";"
             self.serial_connection.send_and_receive(command)
 
     def step_blocking(self, steps, speed):

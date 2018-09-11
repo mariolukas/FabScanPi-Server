@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased] - dev
+### Added 
+- introduced Tornado Web Framework
+
+### Changed
+- refactored Websocket Server
+- refactored Web Server
+- refactored Streaming Handler
+- refactored project structure
+
+### Fixed
+- Turntable Blocking mode
+- Image Ring Buffer Flushing
+- removed random artifacts at the beginning of object scan
+
+## [0.5.0] - 2018-04-04
 ### Added
 - new documentation parts (tnx to jens hackel)
 - added stop sequence when scanner is not calibrated
