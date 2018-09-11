@@ -10,11 +10,11 @@ import tornado.ioloop
 import tornado.web
 import os
 import logging
-from fabscan.server.services.websocket.FSWebSocketHandler import FSWebSocketHandler
-from fabscan.server.services.api.FSFilterHandler import FSFilterHandler
-from fabscan.server.services.api.FSScanHandler import FSScanHandler
-from fabscan.server.services.api.FSStreamHandler import FSStreamHandler
-from fabscan.server.services.api.FSStaticFileHandler import FSStaticFileHandler
+from fabscan.server.services.websockethandler.FSWebSocketHandler import FSWebSocketHandler
+from fabscan.server.services.httphandler.FSFilterHandler import FSFilterHandler
+from fabscan.server.services.httphandler.FSScanHandler import FSScanHandler
+from fabscan.server.services.httphandler.FSStreamHandler import FSStreamHandler
+from fabscan.server.services.httphandler.FSStaticFileHandler import FSStaticFileHandler
 from fabscan.FSEvents import FSEvents, FSEventManagerSingleton
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
 from fabscan.FSConfig import ConfigSingleton, ConfigInterface

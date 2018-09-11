@@ -27,12 +27,9 @@ class Main(Daemon):
             self._logConf = logConf
 
 
-	def run(self):
-        #server = FSScanServer(config_file)
-        #fabscan = FSScanServer(self._configfile, self._basedir, self._host, self._port, self._debug, self._allowRoot)
-
-		fabscan = FSScanServer(self._configfile)
-		fabscan.run()
+        def run(self):
+            fabscan = FSScanServer(self._configfile)
+            fabscan.run()
 
 def main():
 

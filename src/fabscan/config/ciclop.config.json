@@ -17,30 +17,8 @@
             "columns": 8,
             "origin_distance": 48
         },
-        "camera_matrix": [
-            [
-                831.773,
-                0.0,
-                349.63
-            ],
-            [
-                0.0,
-                822.693,
-                397.35
-            ],
-            [
-                0.0,
-                0.0,
-                1.0
-            ]
-        ],
-        "distortion_vector": [
-            0.317,
-            -7.192,
-            -0.003,
-            0.001,
-            41.457
-        ],
+        "camera_matrix": [],
+        "distortion_vector": [],
         "laser_planes": [
             {
                 "deviation": 0,

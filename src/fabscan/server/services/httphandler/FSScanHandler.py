@@ -5,7 +5,7 @@ import shutil
 import logging
 import tornado.web
 from fabscan.lib.file.FSScans import FSScans
-from fabscan.server.services.api.FSBaseHandler import BaseHandler
+from fabscan.server.services.httphandler.FSBaseHandler import BaseHandler
 
 class FSScanHandler(BaseHandler):
 

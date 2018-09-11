@@ -15,7 +15,7 @@ from fabscan.FSSettings import SettingsInterface
 from fabscan.lib.util.FSInject import singleton
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
-from fabscan.file.FSImage import FSImage
+from fabscan.lib.file.FSImage import FSImage
 
 from fabscan.scanner.laserscanner.driver.FSTurntable import Turntable
 from fabscan.scanner.laserscanner.driver.FSCamera import FSCamera
