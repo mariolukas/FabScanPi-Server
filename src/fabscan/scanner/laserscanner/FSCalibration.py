@@ -90,7 +90,7 @@ class FSCalibration(FSCalibrationInterface):
             self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
         self.reset_calibration_values()
-        self.settings.threshold = 30
+        self.settings.threshold = 20
         self._starttime = self.get_time_stamp()
 
         message = {
@@ -126,7 +126,7 @@ class FSCalibration(FSCalibrationInterface):
 
                 event = FSEvent()
                 event.command = 'CALIBRATION_COMPLETE'
-                self._eventmanager.publish(FSEvents.COMMAND, event, None)
+                self._eventmanager.publish(FSEvents.COMMAND, event)
 
                 # send information to client that calibration is finished
                 message = {
@@ -173,7 +173,7 @@ class FSCalibration(FSCalibrationInterface):
                 if not self._stop:
                     self._logger.debug("Capturing started...")
                     _capture(position)
-                    self._hardwarecontroller.turntable.step_interval(-self.steps_five_degree, speed=900)
+                    self._hardwarecontroller.turntable.step_blocking(-self.steps_five_degree, speed=900)
                     position += self.steps_five_degree
 
                     self._logger.debug("Calibration Position "+str(self.current_position)+ " of "+str(self.total_positions))

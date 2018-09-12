@@ -184,7 +184,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
             else:
                 speed = 500
 
-            self.turntable.step_blocking(steps, speed)
+            self.turntable.step(steps, speed)
 
     def arduino_is_connected(self):
         return self.serial_connection.is_connected()

@@ -40,16 +40,6 @@ class Turntable(object):
             command = "G2 T"+str(steps)+" F"+str(speed)+";"
             self.serial_connection.send_and_receive(command)
 
-    def step_interval(self, steps, speed):
-        '''
-        Takes number of steps for one interval based on number of intervals in
-            a rotation.
-        36 would mean there are 36 turns in a rotation.
-        '''
-        if self.serial_connection != None:
-            self.step(steps, speed)
-
-
     def enable_motors(self):
         if self.serial_connection != None:
             command = "M17;"
