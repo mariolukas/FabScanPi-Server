@@ -15,6 +15,7 @@ from fabscan.server.services.api.FSFilterHandler import FSFilterHandler
 from fabscan.server.services.api.FSScanHandler import FSScanHandler
 from fabscan.server.services.api.FSStreamHandler import FSStreamHandler
 from fabscan.server.services.api.FSStaticFileHandler import FSStaticFileHandler
+from fabscan.server.services.api.FSDownloadHandler import FSDownloadHandler
 from fabscan.FSEvents import FSEvents, FSEventManagerSingleton
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
 from fabscan.FSConfig import ConfigSingleton, ConfigInterface
@@ -45,6 +46,7 @@ class FSWebServer(threading.Thread):
             (r"/api/v1/scans/", FSScanHandler, dict(config=self.config)),
             (r"/api/v1/scans/(?P<scan_id>\d{8}[-]\d{6}$)", FSScanHandler, dict(config=self.config)),
             (r"/api/v1/scans/(?P<scan_id>\d{8}[-]\d{6})/(?P<files>files)$", FSScanHandler, dict(config=self.config)),
+            (r"/api/v1/scans/(?P<scan_id>\d{8}[-]\d{6})/(?P<files>downloads)/(?P<file_name>.*)$", FSDownloadHandler, dict(config=self.config)),
             (r"/api/v1/scans/(?P<scan_id>\d{8}[-]\d{6})/(?P<previews>previews)$", FSScanHandler, dict(config=self.config)),
             (r'/websocket', FSWebSocketHandler, dict(eventmanager=self.eventmanager)),
             (r"/scans/(.*)", FSStaticFileHandler, {"path": self.scan_folder}),

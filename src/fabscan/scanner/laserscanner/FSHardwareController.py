@@ -103,9 +103,10 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         if color:
             speed = 800
         else:
-            speed = 50
+            speed = 200
 
         self.turntable.step_interval(steps, speed)
+        time.sleep(0.4)
         img = self.camera.device.get_frame()
         return img
 

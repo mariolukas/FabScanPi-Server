@@ -163,7 +163,7 @@ class FSCalibration(FSCalibrationInterface):
                 if not self._stop:
 
                     _capture(position)
-                    self._hardwarecontroller.turntable.step_interval(-self.steps_five_degree, speed=900)
+                    self._hardwarecontroller.turntable.step_blocking(-self.steps_five_degree, speed=900)
                     position += self.steps_five_degree
 
                     self._logger.debug("Calibration Position "+str(self.current_position)+ " of "+str(self.total_positions))
