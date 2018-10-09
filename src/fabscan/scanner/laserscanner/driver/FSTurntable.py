@@ -18,15 +18,6 @@ class Turntable(object):
         # DEFAULT Value for FS Shield is 1/16 Step
         self.steps_for_full_rotation = self.config.turntable.steps
 
-
-    def async_step(self, steps=1):
-        '''
-        Accepts number of steps to take. Does not wait for it to finish turning
-        '''
-        if self.serial_connection != None:
-            command = "G04 T"+str(steps)+" F100;"
-            self.serial_connection.send_and_receive(command)
-
     def step(self, steps, speed):
         '''
         Accepts number of steps to take
@@ -39,16 +30,6 @@ class Turntable(object):
         if self.serial_connection != None:
             command = "G02 T"+str(steps)+" F"+str(speed)+";"
             self.serial_connection.send_and_receive(command)
-
-    def step_interval(self, steps, speed):
-        '''
-        Takes number of steps for one interval based on number of intervals in
-            a rotation.
-        36 would mean there are 36 turns in a rotation.
-        '''
-        if self.serial_connection != None:
-            self.step(steps, speed)
-
 
     def enable_motors(self):
         if self.serial_connection != None:
