@@ -6,6 +6,7 @@ __email__ = "info@mariolukas.de"
 
 import logging
 import time
+import threading
 
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
@@ -52,6 +53,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.led.off()
         self.turntable.stop_turning()
         self._logger.debug("Hardware controller initialized...")
+        self.lock = threading.Lock()
 
     def flush(self):
         self.camera.camera_buffer.flush()
@@ -100,14 +102,11 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         Step size calculated to correspond to num_steps_per_rotation
         Returns resulting image
             '''
-        if color:
-            speed = 800
-        else:
-            speed = 200
 
-        self.turntable.step_interval(steps, speed)
-        time.sleep(0.4)
+        self.turntable.step(steps, speed=900)
+        time.sleep(0.7)
         img = self.camera.device.get_frame()
+
         return img
 
 

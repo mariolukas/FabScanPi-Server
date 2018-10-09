@@ -225,10 +225,13 @@ class PiCam(threading.Thread):
     def run(self):
         while True:
             if not self.idle and self.camera.recording:
-                self.camera.wait_recording(0.5)
-                self.camera.contrast = self.settings.camera.contrast
-                self.camera.brightness = self.settings.camera.brightness
-                self.camera.saturation = self.settings.camera.saturation
+                try:
+                    self.camera.wait_recording(0.5)
+                    self.camera.contrast = self.settings.camera.contrast
+                    self.camera.brightness = self.settings.camera.brightness
+                    self.camera.saturation = self.settings.camera.saturation
+                except:
+                    pass
             else:
                 time.sleep(0.05)
 

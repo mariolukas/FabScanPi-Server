@@ -58,7 +58,7 @@ class FSSerialCom():
         self._logger.debug("Trying to connect Arduino on port: "+str(self._port))
         # open serial port
         try:
-            self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=1)
+            self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=0.3)
             time.sleep(1)
         except:
             self._logger.error("Could not open serial port")
@@ -129,7 +129,8 @@ class FSSerialCom():
                 time.sleep(2) # Wait for FabScan to initialize
                 self._serial.flushInput() # Flush startup text in serial input
                 self.send("M200;")
-                self._serial.readline()
+                self._serial.readline();
+                # receive version number
                 value = self._serial.readline()
                 value = value.strip()
                 if value != "":
@@ -143,20 +144,17 @@ class FSSerialCom():
 
     def send_and_receive(self, message):
         self.send(message)
-        time.sleep(0.1)
+        time.sleep(0.2)
+        response = ""
         while True:
-            try:
-                time.sleep(0.2)
-                command = self._serial.readline()
-                time.sleep(0.2)
-                command = self._serial.readline()
-                self._logger.debug(command.rstrip("\n"))
-                #if state.rstrip("\n") == ">":
-                return command
-            except Exception as e:
-                self._logger.debug(e)
+            response += self._serial.read()
+            if ">" in response:
+                response = response.rstrip(">")
+                response = response.translate(None, '\n\t\r')
+                if response:
+                    self._logger.debug("Command successfully sent: " + response)
                 break
-        time.sleep(0.1)
+
 
     def flush(self):
        self._serial.flushInput()
