@@ -1,8 +1,8 @@
 dist: trusty
 group: edge
 language: python
-virtualenv:
-  system_site_packages: true
+#virtualenv:
+#  system_site_packages: true
 python:
   - "2.7.13"
 before_install:
