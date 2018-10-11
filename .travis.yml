@@ -10,10 +10,10 @@ before_install:
 - sudo apt-get install -y build-essential python-setuptools debhelper cdbs dh-python fakeroot
   python-pip rsync
 before_script:
--
+- CURRENT_DATE=$(date +%Y%m%d%H%M)
 - pip install mkdocs
 - VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}')
-- if [ -z ${TRAVIS_TAG} ]; then sed -i -e 's/'"$VERSION"'/'"$VERSION"'-b'"$TRAVIS_BUILD_NUMBER"'/g'
+- if [ -z ${TRAVIS_TAG} ]; then sed -i -e 's/'"$VERSION"'/'"$VERSION"'+'"$CURRENT_DATE"'/g'
   debian/changelog; fi
 - echo $TRAVIS_TAG
 script: sudo make deb
