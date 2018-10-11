@@ -31,9 +31,9 @@
     "meshlab": {
         "path": "/usr/bin/"
     },
-    "process_numbers": 8,
+    "process_numbers": 4,
     "turntable": {
-        "steps": 3200,
+        "steps": 6400,
         "radius": 70
     },
     "camera": {
@@ -55,5 +55,6 @@
         "autoflash": "True",
         "port": "/dev/ttyAMA0"
     },
-    "texture_illumination": 140
+    "texture_illumination": 140,
+    "keep_raw_images": "True"
 }
