@@ -480,8 +480,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
-        if not bool(self.config.keep_raw_images):
-            self.utils.delete_image_folders(self._prefix)
+        self.utils.delete_image_folders(self._prefix)
 
         self.reset_scanner_state()
 

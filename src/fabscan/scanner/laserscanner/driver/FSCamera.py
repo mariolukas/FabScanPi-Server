@@ -124,6 +124,17 @@ class CamProcessor(threading.Thread):
                     if self.mode == "settings":
                         image = self.imageprocessor.get_laser_stream_frame(image)
 
+                    #if self.use_distortion:
+                    # if image is not None and \
+                    #         self.config.calibration.camera_matrix is not [] and \
+                    #         self.config.calibration.distortion_vector is not [] and \
+                    #         self.config.calibration.dist_camera_matrix is not []:
+                    #     image = cv2.undistort(image,
+                    #                           self.config.camera_matrix,
+                    #                           self.config.distortion_vector,
+                    #                           None,
+                    #                           self.config.dist_camera_matrix)
+
                     #while not self.fs_ring_buffer.sync.wait(1):
                     self.fs_ring_buffer.append(image)
 

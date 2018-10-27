@@ -33,7 +33,7 @@
     },
     "process_numbers": 4,
     "turntable": {
-        "steps": 6400,
+        "steps": 3200,
         "radius": 70
     },
     "camera": {
@@ -51,7 +51,7 @@
         "type": "PICAM"
     },
     "serial": {
-        "baudrate": 115200,
+        "baudrate": 57600,
         "autoflash": "True",
         "port": "/dev/ttyAMA0"
     },
