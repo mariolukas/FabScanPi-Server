@@ -338,37 +338,40 @@ class ImageProcessor(ImageProcessorInterface):
     def compute_camera_point_cloud(self, points_2d, d, n):
         # Load calibration values
 
-        #fx = self.config.calibration.camera_matrix[0][0]
-        #fy = self.config.calibration.camera_matrix[1][1]
-        #cx = self.config.calibration.camera_matrix[0][2]
-        #cy = self.config.calibration.camera_matrix[1][2]
-        if points_2d[0].size == 0 or points_2d[1].size == 0:
-             return np.array([]).reshape(3, 0)
+        fx = self.config.calibration.camera_matrix[0][0]
+        fy = self.config.calibration.camera_matrix[1][1]
+        cx = self.config.calibration.camera_matrix[0][2]
+        cy = self.config.calibration.camera_matrix[1][2]
+
+        ## if points_2d[0].size == 0 or points_2d[1].size == 0:
+        ##     return np.array([]).reshape(3, 0)
 
         # Compute projection point
         u, v = points_2d
-        #x = np.concatenate(((u - cx) / fx, (v - cy) / fy, np.ones(len(u)))).reshape(3, len(u))
-        # Compute laser intersection
-        #return d / np.dot(n, x) * x
-        points_for_undistort = np.array([np.concatenate((u, v)).reshape(2, len(u)).T])
+        x = np.concatenate(((u - cx) / fx, (v - cy) / fy, np.ones(len(u)))).reshape(3, len(u))
+
+
+        ## points_for_undistort = np.array([np.concatenate((u, v)).reshape(2, len(u)).T])
 
         #print points_for_undistort.shape
         # use opencv's undistortPoints, which incorporates the distortion coefficients
-        points_undistorted = cv2.undistortPoints(points_for_undistort, np.asanyarray(self.config.calibration.camera_matrix),
-                                                 np.asanyarray(self.config.calibration.distortion_vector))
+        ## points_undistorted = cv2.undistortPoints(points_for_undistort, np.asanyarray(self.config.calibration.camera_matrix),
+        ##                                         np.asanyarray(self.config.calibration.distortion_vector))
 
-        u, v = np.hsplit(points_undistorted[0], points_undistorted[0].shape[1])
+        ##u, v = np.hsplit(points_undistorted[0], points_undistorted[0].shape[1])
 
-        # make homogenous coordinates
-        x = np.concatenate((u.T[0], v.T[0], np.ones(len(u)))).reshape(3, len(u))
-        # normalize to get unit direction vectors
-        cam_point_direction = x / np.linalg.norm(x, axis=0)
+        ## make homogenous coordinates
+        ## x = np.concatenate((u.T[0], v.T[0], np.ones(len(u)))).reshape(3, len(u))
+        ## normalize to get unit direction vectors
+        ## cam_point_direction = x / np.linalg.norm(x, axis=0)
 
-        # Compute laser intersection:
-        # dlc = dot(laser_normal, cam_point_direction) = projection of camera ray on laser-plane normal
-        # d / dlc = distance from cam center to 3D point
-        # cam_point_direction * d / dlc = 3D point
-        return d / np.dot(n, cam_point_direction) * cam_point_direction
+        ### Compute laser intersection:
+        ### dlc = dot(laser_normal, cam_point_direction) = projection of camera ray on laser-plane normal
+        ### d / dlc = distance from cam center to 3D point
+        ### cam_point_direction * d / dlc = 3D point
+
+        #return d / np.dot(n, cam_point_direction) * cam_point_direction
+        return d / np.dot(n, x) * x
 
     def detect_corners(self, image, flags=None):
         corners = self._detect_chessboard(image, flags)
