@@ -153,6 +153,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                                 # FIXME: Only send event if points is non-empty
                             except StandardError as e:
                                 self._logger.debug(e)
+
                             data['point_cloud'] = point_cloud
                             data['texture'] = texture
                             data['image_type'] = 'depth'

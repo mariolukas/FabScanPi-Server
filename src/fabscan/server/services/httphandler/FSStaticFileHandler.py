@@ -1,9 +1,10 @@
-import os
+import urlparse, os
 import datetime
 import time
 import email
 import mimetypes
 import stat
+import logging
 from tornado.web import HTTPError
 from fabscan.server.services.httphandler.FSBaseHandler import BaseHandler
 
@@ -28,6 +29,7 @@ class FSStaticFileHandler(BaseHandler):
     def initialize(self, path, default_filename=None):
         self.root = os.path.abspath(path) + os.path.sep
         self.default_filename = default_filename
+        self._logger = logging.getLogger(__name__)
 
     def head(self, path):
         self.get(path, include_body=False)
@@ -83,6 +85,7 @@ class FSStaticFileHandler(BaseHandler):
             return
         file = open(abspath, "rb")
         try:
+
             self.write(file.read())
         finally:
             file.close()
@@ -90,3 +93,4 @@ class FSStaticFileHandler(BaseHandler):
     def set_extra_headers(self, path):
         """For subclass to add extra headers to the response"""
         pass
+

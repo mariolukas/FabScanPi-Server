@@ -1,3 +1,15 @@
+fabscanpi-server (0.6.0) UNRELEASED; urgency=medium
+  * refactored webserver backend code
+  * introduced Tornado web framework
+  * fixed calibration non blocking bug.
+  * fixed flushing camera buffer
+  * fixed camera settings
+  * better camera stream performance (nearby live now)
+  * fixed gap at the beginning/end of a scan
+  * added swapping support for high res scans
+
+ -- Mario Lukas <info@fabscan.org>  Wed, 28 Mar 2018 22:10:00 +0100
+
 fabscanpi-server (0.5.0) UNRELEASED; urgency=medium
   * fixed pykka aktor threading bug in streams
   * fixed bug realated to 400 step motors

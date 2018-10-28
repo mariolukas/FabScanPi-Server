@@ -207,7 +207,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         try:
             self.settings.update(settings)
             #FIXME: Only change Color Settings when values changed.
-            #self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
+            self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
         except StandardError, e:
             # images are dropped this cateched exception.. no error hanlder needed here.
             pass
@@ -383,7 +383,6 @@ class FSScanProcessor(FSScanProcessorInterface):
                     self.image_task_q.put(task)
 
 
-
                     self._logger.debug("Laser Progress: %i of %i at laser position %i" % (
                        self.current_position, self._number_of_pictures, self._current_laser_position
                     ))
@@ -505,11 +504,12 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
         self.utils.delete_image_folders(self._prefix)
+
         self.reset_scanner_state()
 
         event = FSEvent()
         event.command = 'COMPLETE'
-        self.eventmanager.publish(FSEvents.COMMAND, event, None)
+        self.eventmanager.publish(FSEvents.COMMAND, event)
 
         message = {
             "message": "SCAN_COMPLETE",
