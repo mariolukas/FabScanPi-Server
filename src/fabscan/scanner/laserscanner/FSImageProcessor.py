@@ -354,8 +354,8 @@ class ImageProcessor(ImageProcessorInterface):
 
         #print points_for_undistort.shape
         # use opencv's undistortPoints, which incorporates the distortion coefficients
-        points_undistorted = cv2.undistortPoints(points_for_undistort, self.config.calibration.camera_matrix,
-                                                 self.config.calibration.distortion_vector)
+        points_undistorted = cv2.undistortPoints(points_for_undistort, np.asanyarray(self.config.calibration.camera_matrix),
+                                                 np.asanyarray(self.config.calibration.distortion_vector))
 
         u, v = np.hsplit(points_undistorted[0], points_undistorted[0].shape[1])
 
