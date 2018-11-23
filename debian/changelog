@@ -7,6 +7,9 @@ fabscanpi-server (0.6.0) UNRELEASED; urgency=medium
   * better camera stream performance (nearby live now)
   * fixed gap at the beginning/end of a scan
   * added swapping support for high res scans
+  * fixed avrdude bug
+  * fixed stepper missing steps bug (aka stepper wobble)
+  * added new version of frontend with some fixes
 
  -- Mario Lukas <info@fabscan.org>  Wed, 28 Mar 2018 22:10:00 +0100
 

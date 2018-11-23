@@ -5,9 +5,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased] - dev
+### Added
+
+### Changed
+
+### Fixed
+
+## [0.6.0] - 2018-11-23
 ### Added 
 - introduced Tornado Web Framework
-
+- added new version of frontend with some fixes
+- added swapping support for high res scans
+- added new refactored firmware v.20181123
+ 
 ### Changed
 - refactored Websocket Server
 - refactored Web Server
@@ -18,6 +28,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Turntable Blocking mode
 - Image Ring Buffer Flushing
 - removed random artifacts at the beginning of object scan
+- stepper missing steps bug (aka stepper wobble)
+- avrdude bug
+- gap at the beginning/end of a scan
 
 ## [0.5.0] - 2018-04-04
 ### Added

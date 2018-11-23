@@ -249,6 +249,10 @@ NOTE: For details and specifications please consult the hardware chapter.
 
 ----
 
+    When your FabScanPi-Server version is 0.5.0 and your avrdude version is Version 6.3-20171130 ( check for version with avrdude -v )
+    then edit the file `/usr/bin/avrdude-autoreset` and replace all `avrdude-original` with `avrdude`. Upgrade to the newest FabScanpi-Server
+    version >= 0.6.0 and you are done. After a restart it should work like usual.  
+
 - **How to flash the FabScanPi HAT Bootloader?**
 
 

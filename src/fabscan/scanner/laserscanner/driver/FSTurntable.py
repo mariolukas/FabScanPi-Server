@@ -17,16 +17,22 @@ class Turntable(object):
         # Number of steps for the turntable to do a full rotation
         # DEFAULT Value for FS Shield is 1/16 Step
         self.steps_for_full_rotation = self.config.turntable.steps
+        # scaler for silent step sticks was in firmware before.
+        self.scaler = 4
 
     def step(self, steps, speed):
         '''
         Accepts number of steps to take
         '''
+        steps *= self.scaler
+
         if self.serial_connection != None:
             command = "G04 T"+str(steps)+" F"+str(speed)+";"
             self.serial_connection.send_and_receive(command)
 
     def step_blocking(self, steps, speed):
+        steps *= self.scaler
+
         if self.serial_connection != None:
             command = "G02 T"+str(steps)+" F"+str(speed)+";"
             self.serial_connection.send_and_receive(command)
