@@ -11,7 +11,7 @@ fabscanpi-server (0.6.0) UNRELEASED; urgency=medium
   * fixed stepper missing steps bug (aka stepper wobble)
   * added new version of frontend with some fixes
 
- -- Mario Lukas <info@fabscan.org>  Wed, 28 Mar 2018 22:10:00 +0100
+ -- Mario Lukas <info@fabscan.org>  Sat, 24 Nov 2018 15:47:00 +0100
 
 fabscanpi-server (0.5.0) UNRELEASED; urgency=medium
   * fixed pykka aktor threading bug in streams
