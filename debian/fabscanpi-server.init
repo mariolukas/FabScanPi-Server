@@ -50,7 +50,7 @@ do_start() {
 
    RETVAL="$?"
    if [ $RETVAL != 0 ]; then
-     avrdude -c arduino -p m328p -P /dev/ttyAMA0 -b 57600 -l /dev/null
+     avrdude-reset -c arduino -p m328p -P /dev/ttyAMA0 -b 57600 -l /dev/null
       /sbin/start-stop-daemon --start --user $DAEMONUSER    \
             --make-pidfile --pidfile $PIDFILE  --background      \
             --exec /bin/bash -- -c "$DAEMON $DAEMON_ARGS"
