@@ -6,7 +6,7 @@ __email__ = "info@mariolukas.de"
 
 import os
 import json
-from fabscan.util.FSInject import inject, singleton
+from fabscan.lib.util.FSInject import inject, singleton
 
 class SettingsInterface(object):
       def __init__(self, settings, first=True):

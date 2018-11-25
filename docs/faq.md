@@ -211,6 +211,11 @@ NOTE: For details and specifications please consult the hardware chapter.
 
 - **No connection to Arduino, how can i fix that?**
 
+   When your FabScanPi-Server version is 0.5.0 and your avrdude version is Version 6.3-20171130 ( check for version with avrdude -v )
+   then edit the file `/usr/bin/avrdude-autoreset` and replace all `avrdude-original` with `avrdude`. Upgrade to the newest FabScanpi-Server
+   version >= 0.6.0 and you are done. After a restart it should work like usual. 
+   Keep in mind that it is more recommended to use the newest version of the image which will include a working fix. 
+
    First you need to find out more about the problem. Have a look to the log file (see "How can i view the log file?" in F.A.Q.). 
    Find the section where the init sequence of the server starts. Look for the folowing line ... 
 
@@ -248,6 +253,7 @@ NOTE: For details and specifications please consult the hardware chapter.
       3. Your bootloader is bricked, what means that you need to flash a new bootloader to your FabScanPi HAT. Continue with reading "How to flash the FabScanPi HAT Bootloader?"
 
 ----
+
 
 - **How to flash the FabScanPi HAT Bootloader?**
 
@@ -325,6 +331,55 @@ or
 	$ avrdude -c stk500v1 -P /dev/ttyACM0 -b 19200 -p m328p -e -U flash:w:bloader.hex:i -U lfuse:w:0xFF:m -U hfuse:w:0xD6:m -U efuse:w:0x05:m -U lock:w:0x0F:m
 
 #### Scanning issues<a name="scanningIssues"></a>
+
+- **My scan looks like a cylinder**
+
+|![drawing_400](images/problem_2.png)   | ![drawing_400](images/problem_2b.png)  |   
+|---|---|
+|   This is the object.     |  This is the scan.    |  
+
+The problem occurs when the laser is not aligned vertically. The following pictures show
+the disalignment (blue) and how it should be aligned (red).
+
+
+ |![drawing_400](images/problem_2c.png)   | ![drawing_400](images/problem_2d.png)  |   
+|---|---|
+|   Disaligned Laser line     |  Aligned Laser line.   |  
+
+The solution for this problem is turning the laser module as long as the line hits
+the back wall of the scanner vertically. Be sure that the laser also passes the center 
+of the turntable ( this can be reached by turning the laser mount)
+
+
+- **My scan looks doubled**
+  
+|![drawing_400](images/problem_1.png)   | ![drawing_400](images/problem_1b.png)  |   
+|---|---|
+|   This is the object.     |  This is the scan. The scan looks double.   |  
+
+ 
+ In this case check the label on your motor. Since the end of 2017 the stepper motor has 400
+ steps per full turn. The default config is set to 16x 400 = 6400 steps. If the scan looks like
+ on the picture, change the motor steps in the default config to 3200. 
+ 
+       "turntable": {
+        "steps": 3200,
+        "radius": 70
+       }
+       
+| ![drawing_200](images/motor_1.png)    | ![drawing_200](images/motor_2.png)  |   
+|---|---|
+|  Motor with 400 steps.     |  Motor with 200 steps.  |  
+
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+ 
 
 - **The turntable is jerking during the scan process what can I do?**
 

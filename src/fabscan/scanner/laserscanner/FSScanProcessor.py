@@ -12,12 +12,12 @@ from datetime import datetime
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 
-from fabscan.util.FSUtil import FSSystem
-from fabscan.file.FSPointCloud import FSPointCloud
+from fabscan.lib.util.FSUtil import FSSystem
+from fabscan.lib.file.FSPointCloud import FSPointCloud
 from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
-from fabscan.vision.FSImageTask import ImageTask
-from fabscan.vision.FSImageWorker import FSImageWorkerPool
-from fabscan.util.FSInject import inject, singleton
+from fabscan.worker.FSImageTask import ImageTask
+from fabscan.worker.FSImageWorker import FSImageWorkerPool
+from fabscan.lib.util.FSInject import inject, singleton
 
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
@@ -190,7 +190,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         try:
             self.settings.update(settings)
             #FIXME: Only change Color Settings when values changed.
-            #self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
+            self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
         except StandardError, e:
             # images are dropped this cateched exception.. no error hanlder needed here.
             pass
@@ -481,6 +481,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
         self.utils.delete_image_folders(self._prefix)
+
         self.reset_scanner_state()
 
         event = FSEvent()

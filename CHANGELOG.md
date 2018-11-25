@@ -18,6 +18,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.5.0] - 2018-04-04
 ### Added
+
+### Changed
+
+### Fixed
+
+## [0.6.0] - 2018-11-23
+### Added 
+- introduced Tornado Web Framework
+- added new version of frontend with some fixes
+- added swapping support for high res scans
+- added new refactored firmware v.20181123
+ 
+### Changed
+- refactored Websocket Server
+- refactored Web Server
+- refactored Streaming Handler
+- refactored project structure
+
+### Fixed
+- Turntable Blocking mode
+- Image Ring Buffer Flushing
+- removed random artifacts at the beginning of object scan
+- stepper missing steps bug (aka stepper wobble)
+- avrdude bug
+- gap at the beginning/end of a scan
+
+## [0.5.0] - 2018-04-04
+### Added
 - new documentation parts (tnx to jens hackel)
 - added stop sequence when scanner is not calibrated
 - added new handlers for gracefull application shutdown

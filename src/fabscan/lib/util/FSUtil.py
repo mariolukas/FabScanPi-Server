@@ -10,7 +10,7 @@ import signal
 
 from collections import namedtuple
 from fabscan.FSConfig import ConfigInterface
-from fabscan.util.FSInject import inject
+from fabscan.lib.util.FSInject import inject
 
 
 class FSSystemExit(object):

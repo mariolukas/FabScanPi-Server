@@ -212,6 +212,7 @@ INFO: To get a perfectly flat and stable surface glue the calibration sheet on a
 
  [Download calibration mount and sheet!](https://github.com/mariolukas/FabScan-Case/tree/master/calibration)
 
+Version V1 and V2 have the same size. Both will fit. But V2 is more printer friendly.
 
 Note: Please check if your print of the calibration sheet has the correct scale. Each black square should have the same side length as stated on the calibration sheet (e.g.11 mm (1,1 cm). If the size is not correct please correct the parameter "pattern square size" in the configuration file. 
 

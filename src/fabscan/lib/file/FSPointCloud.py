@@ -10,7 +10,7 @@ import logging
 import struct
 import numpy as np
 from fabscan.FSConfig import ConfigInterface
-from fabscan.util.FSInject import inject
+from fabscan.lib.util.FSInject import inject
 from fabscan.FSVersion import __version__
 
 

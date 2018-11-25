@@ -4,13 +4,14 @@ import time
 import logging
 import struct
 from datetime import datetime
-from fabscan.util.FSInject import singleton
-from fabscan.util.FSUtil import FSSystem
-from fabscan.file.FSImage import FSImage
+from fabscan.lib.util.FSInject import singleton
+from fabscan.lib.util.FSUtil import FSSystem
+from fabscan.lib.file.FSImage import FSImage
 import cv2
 import traceback
 import sys
 import copy
+import math
 
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
@@ -19,11 +20,6 @@ from fabscan.scanner.interfaces.FSHardwareController import FSHardwareController
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
 from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
-
-
-# focal_pixel = (focal_mm / sensor_width_mm) * image_width_in_pixels
-# And if you know the horizontal field of view, say in degrees,
-# focal_pixel = (image_width_in_pixels * 0.5) / tan(FOV * 0.5 * PI/180)
 
 
 @singleton(
@@ -37,8 +33,8 @@ class FSCalibration(FSCalibrationInterface):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
         # super(FSCalibrationInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
 
-        LASER_PLANE_CALIBRATION_START_POS_DEGREE = 65
-        LASER_PLANE_CALIBRATION_END_POS_DEGREE = 115
+        #LASER_PLANE_CALIBRATION_START_POS_DEGREE = 45 #65
+        #LASER_PLANE_CALIBRATION_END_POS_DEGREE = 135 #115
         self._imageprocessor = imageprocessor
         self._hardwarecontroller = hardwarecontroller
         self.config = config
@@ -52,10 +48,10 @@ class FSCalibration(FSCalibrationInterface):
         self.object_points = []
         self.calibration_brightness = [20, 20, 20]
         self.quater_turn = int(self.config.turntable.steps / 4)
-        self.steps_five_degree = 5.0 / (360.0 / self.config.turntable.steps)
-        self.laser_calib_start = LASER_PLANE_CALIBRATION_START_POS_DEGREE * self.steps_five_degree / 5
-        self.laser_calib_end = LASER_PLANE_CALIBRATION_END_POS_DEGREE * self.steps_five_degree / 5
-        self.total_positions = int(((self.quater_turn/self.steps_five_degree)*4)+2)
+
+        self.motor_move_degree = 3.6 # 1.8,  2.7 , 3.6, 5.0
+        self.motorsteps_per_calibration_step = self.motor_move_degree / (360.0 / self.config.turntable.steps)
+        self.total_positions = int(((self.quater_turn / self.motorsteps_per_calibration_step) * 4) + 2)
         self.current_position = 0
         self._starttime = 0
 
@@ -69,6 +65,7 @@ class FSCalibration(FSCalibrationInterface):
         self._stop = False
 
         self._logger = logging.getLogger(__name__)
+
 
     def reset_calibration_values(self):
         self._point_cloud = [None, None]
@@ -93,7 +90,7 @@ class FSCalibration(FSCalibrationInterface):
         #self.settings.camera.saturation = 20
         #self.settings.camera.brightness = 50
         self.reset_calibration_values()
-        self.settings.threshold = 25
+        self.settings.threshold = 30
         self._starttime = self.get_time_stamp()
 
         message = {
@@ -122,8 +119,6 @@ class FSCalibration(FSCalibrationInterface):
                     "level": "info"
                 }
                 self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-                self._hardwarecontroller.stop_camera_stream()
-
                 self._stop = False
             else:
 
@@ -139,7 +134,11 @@ class FSCalibration(FSCalibrationInterface):
                 self.config.save()
 
                 self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-                self._hardwarecontroller.stop_camera_stream()
+
+            self._hardwarecontroller.stop_camera_stream()
+
+            self._hardwarecontroller.led.off()
+            self._hardwarecontroller.turntable.disable_motors()
 
             self.reset_calibration_values()
             return
@@ -153,9 +152,9 @@ class FSCalibration(FSCalibrationInterface):
     def _do_calibration(self, _capture, _calibrate):
 
         # 90 degree turn
-        # number of steps for 5 degree turn
         try:
             if not self._stop:
+                self._logger.debug(self.quater_turn)
                 self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
     #            self._hardwarecontroller.start_camera_stream(mode="calibration")
 
@@ -166,8 +165,8 @@ class FSCalibration(FSCalibrationInterface):
                 if not self._stop:
 
                     _capture(position)
-                    self._hardwarecontroller.turntable.step_interval(-self.steps_five_degree, speed=900)
-                    position += self.steps_five_degree
+                    self._hardwarecontroller.turntable.step_blocking(-self.motorsteps_per_calibration_step, speed=900)
+                    position += self.motorsteps_per_calibration_step
 
                     self._logger.debug("Calibration Position "+str(self.current_position)+ " of "+str(self.total_positions))
                     message = {
@@ -194,6 +193,7 @@ class FSCalibration(FSCalibrationInterface):
         ret, cmat, dvec, rvecs, tvecs = cv2.calibrateCamera(
             self.object_points, self.image_points, self.shape, None, None)
 
+
         if ret:
             # Compute calibration error
             for i in xrange(len(self.object_points)):
@@ -205,16 +205,23 @@ class FSCalibration(FSCalibrationInterface):
         self.config.calibration.camera_matrix = copy.deepcopy(np.round(cmat, 3))
         self.config.calibration.distortion_vector = copy.deepcopy(np.round(dvec.ravel(), 3))
 
+        #nmtx, roi = cv2.getOptimalNewCameraMatrix(self.config.calibration.camera_matrix, self.config.calibration.distortion_vector,
+        #                                        (self.config.camera.resolution.witdth, self.config.camera.resolution.height), 1,
+        #                                       (self.config.camera.resolution.witdth, self.config.camera.resolution.height))
+
+        #self.config.calibration.dist_camera_matrix = copy.deepcopy(np.round(nmtx, 3))
+
         return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
 
     def _capture_camera_calibration(self, position):
         image = self._capture_pattern()
         self.shape = image[:, :, 0].shape
 
-        #if (position > self.calib_start and position < self.calib_end):
-        #    flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
+        #TODO: find out if it is better and try this...again.
+        #if (position > self.laser_calib_start and position < self.laser_calib_end):
+        flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
         #else:
-        flags = cv2.CALIB_CB_FAST_CHECK
+        #    flags = cv2.CALIB_CB_FAST_CHECK
 
         corners = self._imageprocessor.detect_corners(image, flags)
 
@@ -230,10 +237,10 @@ class FSCalibration(FSCalibrationInterface):
 
         image = self._capture_pattern()
 
-        if (position > self.laser_calib_start and position < self.laser_calib_end):
-            flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH #| cv2.CALIB_CB_NORMALIZE_IMAGE
-        else:
-            flags = cv2.CALIB_CB_FAST_CHECK
+        #if (position > self.laser_calib_start and position < self.laser_calib_end):
+        flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH #| cv2.CALIB_CB_NORMALIZE_IMAGE
+        #else:
+        #    flags = cv2.CALIB_CB_FAST_CHECK
 
         try:
             pose = self._imageprocessor.detect_pose(image, flags)
@@ -251,7 +258,10 @@ class FSCalibration(FSCalibrationInterface):
             try:
                 exc_info = sys.exc_info()
                 #Laser Calibration
-                if (position > self.laser_calib_start and position < self.laser_calib_end):
+                #if (position > self.laser_calib_start and position < self.laser_calib_end):
+                alpha = np.rad2deg(math.acos(normal[2] / np.linalg.norm((normal[0], normal[2])))) * math.copysign(1,normal[0])
+                self._logger.debug("Current Angle is:" + str(alpha))
+                if abs(alpha) < 35:
                     #self.settings.camera.contrast = 40
                     #self.settings.camera.brightness = 70
                     self._hardwarecontroller.led.off()
@@ -262,7 +272,7 @@ class FSCalibration(FSCalibrationInterface):
                         fs_image = FSImage()
                         fs_image.save_image(image, self.current_position, "laser", dir_name="calibration")
 
-                        points_2d, _ = self._imageprocessor.compute_2d_points(image, roi_mask=False, refinement_method='RANSAC')
+                        points_2d, _ = self._imageprocessor.compute_2d_points(image, roi_mask=False, refinement_method='SGF')
                         point_3d = self._imageprocessor.compute_camera_point_cloud(points_2d, distance, normal)
 
                         if self._point_cloud[i] is None:
@@ -303,13 +313,13 @@ class FSCalibration(FSCalibrationInterface):
 
     def _capture_pattern(self):
         #pattern_image = self._hardwarecontroller.get_pattern_image()
-        time.sleep(0.5)
+        time.sleep(1.5)
         pattern_image = self._hardwarecontroller.get_picture()
         return pattern_image
 
     def _capture_laser(self, index):
         self._logger.debug("Starting laser capture...")
-        time.sleep(1)
+        time.sleep(1.5)
         laser_image = self._hardwarecontroller.get_laser_image(index)
         return laser_image
 
@@ -515,15 +525,15 @@ class FSCalibration(FSCalibrationInterface):
 import numpy.linalg
 
 
-# from scipy.sparse import linalg
+from scipy.sparse import linalg
 
 
 class PlaneDetection(object):
     def fit(self, X):
         M, Xm = self._compute_m(X)
-        # U = linalg.svds(M, k=2)[0]
-        # normal = np.cross(U.T[0], U.T[1])
-        normal = numpy.linalg.svd(M)[0][:, 2]
+        U = linalg.svds(M, k=2)[0]
+        normal = np.cross(U.T[0], U.T[1])
+        #normal = numpy.linalg.svd(M)[0][:, 2]
         if normal[2] < 0:
             normal *= -1
         dist = np.dot(normal, Xm)

@@ -8,7 +8,7 @@ __email__ = "info@mariolukas.de"
 import os
 import cv2
 from fabscan.FSConfig import ConfigInterface
-from fabscan.util.FSInject import inject
+from fabscan.lib.util.FSInject import inject
 
 @inject(
     config=ConfigInterface

@@ -14,7 +14,7 @@
             "square_size": 11,
             "rows": 6,
             "columns": 8,
-            "origin_distance": 35
+            "origin_distance": 37.2
         },
         "camera_matrix": [],
         "distortion_vector": [],
@@ -31,9 +31,9 @@
     "meshlab": {
         "path": "/usr/bin/"
     },
-    "process_numbers": 8,
+    "process_numbers": 4,
     "turntable": {
-        "steps": 6400,
+        "steps": 3200,
         "radius": 70
     },
     "camera": {
@@ -51,9 +51,10 @@
         "type": "PICAM"
     },
     "serial": {
-        "baudrate": 57600,
+        "baudrate": 115200,
         "autoflash": "True",
         "port": "/dev/ttyAMA0"
     },
-    "texture_illumination": 140
+    "texture_illumination": 140,
+    "keep_raw_images": "True"
 }

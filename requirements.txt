@@ -3,4 +3,5 @@ pillow
 Pykka
 numpy
 semver
+tornado
 mock
