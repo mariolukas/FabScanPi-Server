@@ -51,8 +51,6 @@ class FSCalibration(FSCalibrationInterface):
 
         self.motor_move_degree = 3.6 # 1.8,  2.7 , 3.6, 5.0
         self.motorsteps_per_calibration_step = self.motor_move_degree / (360.0 / self.config.turntable.steps)
-        #self.laser_calib_start = LASER_PLANE_CALIBRATION_START_POS_DEGREE * self.motorsteps_per_calibration_step / self.motor_move_degree
-        #self.laser_calib_end = LASER_PLANE_CALIBRATION_END_POS_DEGREE * self.motorsteps_per_calibration_step / self.motor_move_degree
         self.total_positions = int(((self.quater_turn / self.motorsteps_per_calibration_step) * 4) + 2)
         self.current_position = 0
         self._starttime = 0
@@ -263,7 +261,7 @@ class FSCalibration(FSCalibrationInterface):
                 #if (position > self.laser_calib_start and position < self.laser_calib_end):
                 alpha = np.rad2deg(math.acos(normal[2] / np.linalg.norm((normal[0], normal[2])))) * math.copysign(1,normal[0])
                 self._logger.debug("Current Angle is:" + str(alpha))
-                if abs(alpha) < 45:
+                if abs(alpha) < 35:
                     #self.settings.camera.contrast = 40
                     #self.settings.camera.brightness = 70
                     self._hardwarecontroller.led.off()
