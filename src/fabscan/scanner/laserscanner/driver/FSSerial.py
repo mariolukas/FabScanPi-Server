@@ -9,9 +9,11 @@ import glob
 import serial
 import time
 import logging
+import threading
 from fabscan.lib.util.FSUtil import FSSystem
 from fabscan.lib.util.FSInject import inject
 from fabscan.FSConfig import ConfigInterface
+
 
 @inject(
     config=ConfigInterface
@@ -41,7 +43,7 @@ class FSSerialCom():
         self._openSerial()
         self._logger.debug("Connection baudrate is: "+str(self._baudrate))
         self._logger.debug("Firmware flashing baudrate is: "+str(self.flash_baudrate))
-
+        self.lock = threading.RLock()
 
     def avr_device_is_available(self):
         status = FSSystem.run_command("sudo avrdude-autoreset -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port))
@@ -146,14 +148,15 @@ class FSSerialCom():
         self.send(message)
         time.sleep(0.2)
         response = ""
-        while True:
-            response += self._serial.read()
-            if ">" in response:
-                response = response.rstrip(">")
-                response = response.translate(None, '\n\t\r')
-                if response:
-                    self._logger.debug("Command successfully sent: " + response)
-                break
+        with self.lock:
+            while True:
+                response += self._serial.read()
+                if ">" in response:
+                    response = response.rstrip(">")
+                    response = response.translate(None, '\n\t\r')
+                    if response:
+                        self._logger.debug("Command successfully sent: " + response)
+                    break
 
 
     def flush(self):

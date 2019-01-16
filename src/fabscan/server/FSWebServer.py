@@ -16,6 +16,7 @@ from fabscan.server.services.api.FSScanHandler import FSScanHandler
 from fabscan.server.services.api.FSStreamHandler import FSStreamHandler
 from fabscan.server.services.api.FSStaticFileHandler import FSStaticFileHandler
 from fabscan.server.services.api.FSDownloadHandler import FSDownloadHandler
+from fabscan.server.services.api.FSLogHandler import FSLogHandler
 from fabscan.FSEvents import FSEvents, FSEventManagerSingleton
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
 from fabscan.FSConfig import ConfigSingleton, ConfigInterface
@@ -43,6 +44,8 @@ class FSWebServer(threading.Thread):
         return tornado.web.Application([
             (r"/api/v1/filters/", FSFilterHandler),
             (r"/api/v1/streams/", FSStreamHandler, dict(scanprocessor=self.scanprocessor)),
+            (r"/api/v1/log/show", FSLogHandler, dict(config=self.config)),
+            (r"/api/v1/log/download", FSLogHandler, dict(config=self.config)),
             (r"/api/v1/scans/", FSScanHandler, dict(config=self.config)),
             (r"/api/v1/scans/(?P<scan_id>\d{8}[-]\d{6}$)", FSScanHandler, dict(config=self.config)),
             (r"/api/v1/scans/(?P<scan_id>\d{8}[-]\d{6})/(?P<files>files)$", FSScanHandler, dict(config=self.config)),

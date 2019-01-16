@@ -219,9 +219,9 @@ class FSCalibration(FSCalibrationInterface):
 
         #TODO: find out if it is better and try this...again.
         #if (position > self.laser_calib_start and position < self.laser_calib_end):
-        flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
+        #flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
         #else:
-        #    flags = cv2.CALIB_CB_FAST_CHECK
+        flags = cv2.CALIB_CB_FAST_CHECK
 
         corners = self._imageprocessor.detect_corners(image, flags)
 
