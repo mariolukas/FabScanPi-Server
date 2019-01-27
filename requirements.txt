@@ -5,3 +5,4 @@ numpy
 semver
 tornado
 mock
+requests

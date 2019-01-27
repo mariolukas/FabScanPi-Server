@@ -24,7 +24,12 @@ def get_latest_version_tag():
         _logger.debug("Scanner is Online...")
         try:
 
-            response = urllib2.urlopen("http://archive.fabscan.org/dists/stable/main/binary-armhf/Packages", timeout=0.4)
+            stage = "stable"
+
+            if "+" in __version__:
+                stage = "testing"
+
+            response = urllib2.urlopen("http://archive.fabscan.org/dists/" + str(stage) + "/main/binary-armhf/Packages", timeout=0.4)
             latest_version = __version__
             line = 'START'
             while line != '':
@@ -71,4 +76,4 @@ def upgrade_is_available(current_version):
 
 
 def do_upgrade():
-    os.system('nohup bash -c "sudo apt-get update -y && sudo apt-get dist-upgrade -y" > /var/log/fabscanpi/upgrade.log')
+    os.system('nohup bash -c "sudo apt-get update -y && sudo apt-get dist-upgrade -y" >> /var/log/fabscanpi/upgrade.log')

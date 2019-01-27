@@ -10,6 +10,7 @@ import logging
 import multiprocessing
 
 from fabscan.FSVersion import __version__
+
 from fabscan.FSEvents import FSEventManagerInterface, FSEvents
 from fabscan.worker.FSMeshlab import FSMeshlabTask
 from fabscan.FSConfig import ConfigInterface
@@ -17,6 +18,7 @@ from fabscan.FSSettings import SettingsInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
 from fabscan.lib.util.FSInject import inject, singleton
 from fabscan.lib.util.FSUpdate import upgrade_is_available, do_upgrade
+from fabscan.lib.util.FSDiscovery import register_to_discovery
 
 class FSState(object):
     IDLE = "IDLE"
@@ -73,7 +75,10 @@ class FSScanner(threading.Thread):
 
         self._logger.info("Scanner initialized...")
         self._logger.info("Number of cpu cores: " + str(multiprocessing.cpu_count()))
+        self.config = config
 
+        if self.config.register_as_discoverable == 'True':
+           self.run_discovery_service()
 
     def run(self):
         while not self.exit:
@@ -178,6 +183,7 @@ class FSScanner(threading.Thread):
                 }
             }
 
+
             eventManager.send_client_message(FSEvents.ON_CLIENT_INIT, message)
             self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
             #self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_IF_NOT_CALIBRATED})
@@ -191,3 +197,12 @@ class FSScanner(threading.Thread):
 
     def get_state(self):
         return self._state
+
+    def run_discovery_service(self):
+
+        try:
+            hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
+        except:
+            hardware_info = "undefined"
+
+        register_to_discovery(str(__version__), str(hardware_info))

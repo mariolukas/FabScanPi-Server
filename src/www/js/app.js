@@ -323,7 +323,7 @@
             var screenshot;
 
             screenshot = renderer.domElement.toDataURL('image/png');
-            return $http.post(Configuration.installation.httpurl + "api/v1/scans/" + id + "/previews", {
+            return $http.post(Configuration.installation.apiurl + "api/v1/scans/" + id + "/previews", {
               image: screenshot
             }).success(function(response) {
               $log.info(response);
@@ -741,28 +741,36 @@ Example of a 'common' filter that can be shared by all views
 
   angular.module(name, []).factory(name, [
     '$log', '$location', function($log, $location) {
-      var config, host, localDebug;
+      var config, host, http, localDebug, ws;
 
       localDebug = $location.host() === 'localhost';
       config = null;
       host = $location.host();
-      $log.info(host);
+      http = 'http';
+      ws = 'ws';
+      console.log($location.protocol());
+      if ($location.protocol() === 'https') {
+        http = 'https';
+        ws = 'wss';
+      }
       if (localDebug) {
         config = {
           installation: {
             host: "fabscanpi.local",
-            websocketurl: 'ws://fabscanpi.local/websocket',
-            httpurl: 'http://fabscanpi.local:8080/',
-            newsurl: 'http://mariolukas.github.io/FabScanPi-Server/news/'
+            websocketurl: ws + '://fabscanpi.local/websocket',
+            httpurl: http + '://fabscanpi.local/',
+            newsurl: http + '://mariolukas.github.io/FabScanPi-Server/news/',
+            apiurl: http + '://fabscanpi.local/'
           }
         };
       } else {
         config = {
           installation: {
             host: host,
-            websocketurl: 'ws://' + host + '/websocket',
-            httpurl: 'http://' + host + ':8080/',
-            newsurl: 'http://mariolukas.github.io/FabScanPi-Server/news/'
+            websocketurl: ws + '://' + host + '/websocket',
+            httpurl: http + '://' + host + ':8080/',
+            newsurl: http + '://mariolukas.github.io/FabScanPi-Server/news/',
+            apiurl: http + '://' + host + '/'
           }
         };
       }
@@ -1332,7 +1340,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
   name = "fabscan.controller.FSLoadingController";
 
   angular.module(name, []).controller(name, [
-    '$log', '$scope', '$rootScope', 'fabscan.services.FSScanService', 'fabscan.services.FSEnumService', function($log, $scope, $rootScope, FSScanService, FSEnum) {
+    '$log', '$scope', '$rootScope', 'fabscan.services.FSScanService', 'fabscan.services.FSEnumService', 'common.services.Configuration', function($log, $scope, $rootScope, FSScanService, FSEnum, Configuration) {
       $scope.loadPointCloud = function(pointcloud, id) {
         $scope.setScanIsLoading(true);
         $scope.setScanIsComplete(false);
@@ -1417,7 +1425,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         return $scope.$apply();
       };
       startStream = function() {
-        $scope.streamUrl = Configuration.installation.httpurl + 'api/v1/streams/?type=textures';
+        $scope.streamUrl = Configuration.installation.apiurl + 'api/v1/streams/?type=textures';
         $scope.showStream = true;
         return $scope.$apply();
       };
@@ -1569,7 +1577,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       $scope.loadFilters = function() {
         var filter_promise;
 
-        filter_promise = $http.get(Configuration.installation.httpurl + 'api/v1/filters/');
+        filter_promise = $http.get(Configuration.installation.apiurl + 'api/v1/filters/');
         return filter_promise.then(function(payload) {
           $log.info(payload);
           $scope.m_filters = payload.data.filters;
@@ -1631,7 +1639,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
 
         $scope.displayNews(false);
         if (!$scope.loadDialog) {
-          promise = $http.get(Configuration.installation.httpurl + 'api/v1/scans/');
+          promise = $http.get(Configuration.installation.apiurl + 'api/v1/scans/');
           return promise.then(function(payload) {
             $scope.scans = payload.data.scans;
             $scope.scanListLoaded = true;
@@ -1687,7 +1695,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
     '$log', '$scope', '$timeout', '$swipe', 'common.services.Configuration', 'fabscan.services.FSEnumService', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSScanService', function($log, $scope, $timeout, $swipe, Configuration, FSEnumService, FSMessageHandlerService, FSScanService) {
       var updateSettings;
 
-      $scope.streamUrl = Configuration.installation.httpurl + 'api/v1/streams/?type=laser';
+      $scope.streamUrl = Configuration.installation.apiurl + 'api/v1/streams/?type=laser';
       $scope.previewMode = "laser";
       $scope.selectedTab = 'general';
       $scope.timeout = null;
@@ -1723,12 +1731,12 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         }
       };
       $scope.showCalibrationPreview = function() {
-        $scope.streamUrl = Configuration.installation.httpurl + 'api/v1/streams/?type=texture';
+        $scope.streamUrl = Configuration.installation.apiurl + 'api/v1/streams/?type=texture';
         $scope.previewMode = "calibration";
         return $scope.$apply();
       };
       $scope.showLaserPreview = function() {
-        $scope.streamUrl = Configuration.installation.httpurl + 'api/v1/streams/?type=laser';
+        $scope.streamUrl = Configuration.installation.apiurl + 'api/v1/streams/?type=laser';
         $scope.previewMode = "laser";
         return $scope.$apply();
       };
@@ -1856,7 +1864,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       $scope.getScans = function() {
         var scan_promise;
 
-        scan_promise = $http.get(Configuration.installation.httpurl + 'api/v1/scans/' + FSScanService.getScanId());
+        scan_promise = $http.get(Configuration.installation.apiurl + 'api/v1/scans/' + FSScanService.getScanId());
         return scan_promise.then(function(payload) {
           $log.debug(payload);
           $scope.raw_scans = payload.data.raw_scans;
@@ -1916,7 +1924,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         var promise;
 
         $scope.toggleShareDialog();
-        promise = $http["delete"](Configuration.installation.httpurl + 'api/v1/scans/' + FSScanService.getScanId() + '/files?filename=' + filename);
+        promise = $http["delete"](Configuration.installation.apiurl + 'api/v1/scans/' + FSScanService.getScanId() + '/files?filename=' + filename);
         return promise.then(function(payload) {
           $log.info(payload.data);
           $scope.getScans();
@@ -1935,7 +1943,7 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         var promise;
 
         $scope.toggleShareDialog();
-        promise = $http["delete"](Configuration.installation.httpurl + 'api/v1/scans/' + FSScanService.getScanId());
+        promise = $http["delete"](Configuration.installation.apiurl + 'api/v1/scans/' + FSScanService.getScanId());
         return promise.then(function(payload) {
           $log.info(payload.data);
           toaster.info('Scan ' + FSScanService.getScanId() + ' deleted');

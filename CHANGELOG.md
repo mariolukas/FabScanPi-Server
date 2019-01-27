@@ -8,11 +8,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - api route for live log stream
 - api route for debug log zip download
+- new firmware version
+- made fabscan discoverable in find.fabscan.org
 
 ### Changed
+- replaced old image build script by a new one, based on  official raspbian build scripts
 
 ### Fixed
 
+### TODO
+- add discover my fabscanpi 
+- add hardware control functions
+    - new tab to current settings dialog
+- move calibration to settings dialog
+- turn table off by default in settings
 
 ### Fixed
 - fixed camera driver (pi and usb)
