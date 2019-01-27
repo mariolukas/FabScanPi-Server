@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - replaced old image build script by a new one, based on  official raspbian build scripts
+- FSUpdate is working for different stages now
 
 ### Fixed
 
