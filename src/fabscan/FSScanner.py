@@ -8,6 +8,7 @@ import time
 import threading
 import logging
 import multiprocessing
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from fabscan.FSVersion import __version__
 
@@ -73,12 +74,18 @@ class FSScanner(threading.Thread):
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self.on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self.on_command)
 
+        self.scheduler = BackgroundScheduler()
+        self.scheduler.start()
+        self._logger.info("Job scheduler started.")
+
         self._logger.info("Scanner initialized...")
         self._logger.info("Number of cpu cores: " + str(multiprocessing.cpu_count()))
         self.config = config
 
         if self.config.register_as_discoverable == 'True':
            self.run_discovery_service()
+           self.scheduler.add_job(self.run_discovery_service, 'interval', minutes=30, id='register_discovery_service')
+           self._logger.info("Added discovery scheduling job.")
 
     def run(self):
         while not self.exit:

@@ -6,3 +6,5 @@ semver
 tornado
 mock
 requests
+apscheduler
+funcsigs

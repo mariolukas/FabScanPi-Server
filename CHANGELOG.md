@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - api route for debug log zip download
 - new firmware version
 - made fabscan discoverable in find.fabscan.org
+- apscheduler library for registery servcie and future scheduling tasks
+- added meshmixer to package dependencies
+- added avrdude config to package dependencies
 
 ### Changed
 - replaced old image build script by a new one, based on  official raspbian build scripts

@@ -1,0 +1,2 @@
+scripts/autoreset /usr/bin
+scripts/avrdude-autoreset /usr/bin
