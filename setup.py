@@ -113,6 +113,7 @@ def params():
         ('/usr/share/fabscanpi/js/',['src/www/js/app.js', 'src/www/js/lib.js']),
         ('/usr/share/fabscanpi/js/locales/en/',['src/www/js/locales/en/i18n.js']),
         ('/usr/share/fabscanpi/locales/de/',['src/www/js/locales/de/i18n.js']),
+        ('/usr/bin/', ['avrdude/autoreset, avrdude/avrdude-autoreset']),
         ('/usr/share/fabscanpi/icons/', ['src/www/icons/icon_mesh.svg','src/www/icons/icon_scan.svg','src/www/icons/icon_pointcloud.svg','src/www/icons/favicon.png', 'src/www/icons/spinner.gif', 'src/www/icons/logo.png']),
         ('/usr/share/fabscanpi/fonts/', ['src/www/fonts/fontawesome-webfont.woff2', 'src/www/fonts/fontawesome-webfont.woff', 'src/www/fonts/fontawesome-webfont.ttf']),
         ('/usr/share/fabscanpi/style/fonts/', ['src/www/style/fonts/slick.woff', 'src/www/style/fonts/slick.ttf'])
