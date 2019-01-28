@@ -16,15 +16,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - FSUpdate is working for different stages now
 
 ### Fixed
-
-### TODO
-- add discover my fabscanpi 
-- add hardware control functions
-    - new tab to current settings dialog
-- move calibration to settings dialog
-- turn table off by default in settings
-
-### Fixed
 - fixed camera driver (pi and usb)
 - fixed random artifacts at the beginning of object scan
 
