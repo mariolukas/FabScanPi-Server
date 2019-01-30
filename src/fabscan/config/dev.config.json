@@ -51,7 +51,7 @@
         "type": "PICAM"
     },
     "serial": {
-        "baudrate": 115200,
+        "baudrate": 57600,
         "autoflash": "True",
         "port": "/dev/ttyAMA0"
     },

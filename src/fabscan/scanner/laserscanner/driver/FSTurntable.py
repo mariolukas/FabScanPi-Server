@@ -4,6 +4,7 @@ __license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
+import time
 from fabscan.lib.util.FSInject import inject
 from fabscan.FSConfig import ConfigInterface
 
@@ -34,8 +35,9 @@ class Turntable(object):
         steps *= self.scaler
 
         if self.serial_connection != None:
-            command = "G02 T"+str(steps)+" F"+str(speed)+";"
+            command = "G04 T"+str(steps)+" F"+str(speed)+";"
             self.serial_connection.send_and_receive(command)
+            time.sleep(1)
 
     def enable_motors(self):
         if self.serial_connection != None:

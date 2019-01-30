@@ -44,6 +44,7 @@ class FSSerialCom():
         self._logger.debug("Connection baudrate is: "+str(self._baudrate))
         self._logger.debug("Firmware flashing baudrate is: "+str(self.flash_baudrate))
         self.lock = threading.RLock()
+        self._stop = False
 
     def avr_device_is_available(self):
         status = FSSystem.run_command("sudo avrdude-autoreset -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port))
@@ -60,7 +61,7 @@ class FSSerialCom():
         self._logger.debug("Trying to connect Arduino on port: "+str(self._port))
         # open serial port
         try:
-            self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=0.3)
+            self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=5)
             time.sleep(1)
         except:
             self._logger.error("Could not open serial port")
@@ -146,18 +147,19 @@ class FSSerialCom():
 
     def send_and_receive(self, message):
         self.send(message)
-        time.sleep(0.2)
+       # time.sleep(0.2)
         response = ""
+        self._stop = False
         with self.lock:
-            while True:
+            while not self._stop:
                 response += self._serial.read()
                 if ">" in response:
                     response = response.rstrip(">")
                     response = response.translate(None, '\n\t\r')
                     if response:
                         self._logger.debug("Command successfully sent: " + response)
+                        self._stop = True
                     break
-
 
     def flush(self):
        self._serial.flushInput()

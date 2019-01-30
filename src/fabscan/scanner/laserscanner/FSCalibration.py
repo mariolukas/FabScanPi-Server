@@ -106,8 +106,6 @@ class FSCalibration(FSCalibrationInterface):
             self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
             self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
 
-            self._hardwarecontroller.led.off()
-            self._hardwarecontroller.turntable.disable_motors()
 
             if self._stop:
                 self._logger.debug("Calibration canceled...")
@@ -154,10 +152,7 @@ class FSCalibration(FSCalibrationInterface):
         # 90 degree turn
         try:
             if not self._stop:
-                self._logger.debug(self.quater_turn)
                 self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
-    #            self._hardwarecontroller.start_camera_stream(mode="calibration")
-
 
             position = 0
             while abs(position) < self.quater_turn * 2:

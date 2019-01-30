@@ -75,6 +75,8 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.camera.device.stop_stream()
         self.camera.device.flush_stream()
         self._settings_mode_is_off = True
+        time.sleep(0.3)
+
 
     def get_picture(self):
         img = self.camera.device.get_frame()
