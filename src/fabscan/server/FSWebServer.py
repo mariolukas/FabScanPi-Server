@@ -17,24 +17,28 @@ from fabscan.server.services.api.FSStreamHandler import FSStreamHandler
 from fabscan.server.services.api.FSStaticFileHandler import FSStaticFileHandler
 from fabscan.server.services.api.FSDownloadHandler import FSDownloadHandler
 from fabscan.server.services.api.FSLogHandler import FSLogHandler
+from fabscan.server.services.api.FSDeviceHandler import FSDeviceHandler
 from fabscan.FSEvents import FSEvents, FSEventManagerSingleton
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
+from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.FSConfig import ConfigSingleton, ConfigInterface
 from fabscan.lib.util.FSInject import inject
 
 @inject(
     config=ConfigInterface,
     scanprocessor=FSScanProcessorInterface,
-    eventmanager=FSEventManagerSingleton
+    eventmanager=FSEventManagerSingleton,
+    hardwarecontroller=FSHardwareControllerInterface
 )
 class FSWebServer(threading.Thread):
 
-    def __init__(self, config, scanprocessor, eventmanager):
+    def __init__(self, config, scanprocessor, eventmanager, hardwarecontroller):
         threading.Thread.__init__(self)
         self.config = config
         self.exit = False
         self.scanprocessor = scanprocessor
         self.eventmanager = eventmanager
+        self.hardwarecontroller = hardwarecontroller
         self.www_folder = os.path.join(os.path.dirname(__file__), self.config.folders.www)
         self.scan_folder = os.path.join(os.path.dirname(__file__), self.config.folders.scans)
         self._logger = logging.getLogger(__name__)
@@ -47,6 +51,7 @@ class FSWebServer(threading.Thread):
             (r"/api/v1/log/show", FSLogHandler, dict(config=self.config)),
             (r"/api/v1/log/download", FSLogHandler, dict(config=self.config)),
             (r"/api/v1/scans/", FSScanHandler, dict(config=self.config)),
+            (r"/api/v1/devices/", FSDeviceHandler, dict(config=self.config, hardwarecontroller=self.hardwarecontroller)),
             (r"/api/v1/scans/(?P<scan_id>\d{8}[-]\d{6}$)", FSScanHandler, dict(config=self.config)),
             (r"/api/v1/scans/(?P<scan_id>\d{8}[-]\d{6})/(?P<files>files)$", FSScanHandler, dict(config=self.config)),
             (r"/api/v1/scans/(?P<scan_id>\d{8}[-]\d{6})/(?P<files>downloads)/(?P<file_name>.*)$", FSDownloadHandler, dict(config=self.config)),

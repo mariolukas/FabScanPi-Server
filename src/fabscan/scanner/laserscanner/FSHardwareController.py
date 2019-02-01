@@ -7,7 +7,7 @@ __email__ = "info@mariolukas.de"
 import logging
 import time
 import threading
-
+import copy
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.lib.util.FSInject import singleton
@@ -55,9 +55,6 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self._logger.debug("Hardware controller initialized...")
         self.lock = threading.Lock()
 
-    def flush(self):
-        self.camera.camera_buffer.flush()
-        #self.serial_connection.flush()
 
         self.hardware_test_functions = {
             "TURNTABLE": {
@@ -89,6 +86,10 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
                 "LABEL": "Led Ring"
             }
         }
+
+    def flush(self):
+        self.camera.camera_buffer.flush()
+        #self.serial_connection.flush()
 
 
     def get_devices_as_json(self):
