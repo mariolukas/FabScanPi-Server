@@ -59,6 +59,52 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.camera.camera_buffer.flush()
         #self.serial_connection.flush()
 
+        self.hardware_test_functions = {
+            "TURNTABLE": {
+                "FUNCTIONS": {
+                    "START": self.turntable.start_turning,
+                    "STOP": self.turntable.stop_turning
+                },
+                "LABEL": "Turntable"
+            },
+            "LEFT_LASER": {
+                "FUNCTIONS": {
+                    "ON": lambda: self.laser.on(0),
+                    "OFF": lambda: self.laser.off(0)
+                },
+                "LABEL": "First Laser"
+            },
+            "RIGHT_LASER": {
+                "FUNCTIONS": {
+                    "ON": lambda: self.laser.on(1),
+                    "OFF": lambda: self.laser.off(1)
+                },
+                "LABEL": "Second Laser"
+            },
+            "LED_RING": {
+                "FUNCTIONS": {
+                    "ON": lambda: self.led.on(255, 255, 255),
+                    "OFF": lambda: self.led.off()
+                },
+                "LABEL": "Led Ring"
+            }
+        }
+
+
+    def get_devices_as_json(self):
+        devices = copy.deepcopy(self.hardware_test_functions)
+        for fnct in self.hardware_test_functions:
+            devices[fnct]['FUNCTIONS'] = self.hardware_test_functions[fnct]['FUNCTIONS'].keys()
+        return devices
+
+
+    def call_test_function(self, device):
+        device_name = str(device.name)
+        device_value = str(device.function)
+        #self._logger.debug(device)
+        call_function = self.hardware_test_functions.get(device_name).get("FUNCTIONS").get(device_value)
+        call_function()
+
     def settings_mode_on(self):
         while not self.camera.device.is_idle():
             time.sleep(0.1)
