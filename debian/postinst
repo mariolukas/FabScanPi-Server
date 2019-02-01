@@ -11,6 +11,9 @@ LOG_DIR=/var/log/fabscanpi
 SCANS_DIR=/var/scans
 PID_DIR=/var/run/fabscanpi
 
+chmod 777 /usr/bin/autoreset
+chmod 777 /usr/bin/avrdude-autoreset
+
 # Allow $FABSCAN_USER to change the config and setting files
 chown -R $FABSCAN_USER:nogroup $CONF_DIR
 

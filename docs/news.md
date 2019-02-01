@@ -1,8 +1,22 @@
-### FabScanPi 0.6.0 release. (dev)
-In this release the Tornado Framework is introduced. This brings more 
-stability to the webserver part. The whole webserver code was refactored. 
+### FabScanPi 0.6.0 release. (2018-11-25)
+This release mainly fixes a lot of bugs and the Tornado Framework is introduced. This brings more 
+stability to the webserver part. The whole webserver code was refactored. Since AVRDude was upgraded
+in Raspbian stretch, version 0.5.0 does not work anymore. The AVRDude bug was responsible for serial 
+connection and firmware flashing problems (it is not a bootloader problem as described in the F.A.Q).
 
 Changelog for this version: 
+
+  * refactored webserver backend code
+  * introduced Tornado web framework
+  * fixed calibration non blocking bug.
+  * fixed flushing camera buffer
+  * fixed camera settings
+  * better camera stream performance (nearby live now)
+  * fixed gap at the beginning/end of a scan
+  * added swapping support for high res scans
+  * fixed avrdude bug
+  * fixed stepper missing steps bug (aka stepper wobble)
+  * added new version of frontend with some fixes
 
 
 ### FabScanPi 0.5.0 release. (2018-04-04)

@@ -8,8 +8,10 @@ import time
 import threading
 import logging
 import multiprocessing
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from fabscan.FSVersion import __version__
+
 from fabscan.FSEvents import FSEventManagerInterface, FSEvents
 from fabscan.worker.FSMeshlab import FSMeshlabTask
 from fabscan.FSConfig import ConfigInterface
@@ -18,6 +20,7 @@ from fabscan.FSConfig import ConfigInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
 from fabscan.lib.util.FSInject import inject, singleton
 from fabscan.lib.util.FSUpdate import upgrade_is_available, do_upgrade
+from fabscan.lib.util.FSDiscovery import register_to_discovery
 
 class FSState(object):
     IDLE = "IDLE"
@@ -75,9 +78,18 @@ class FSScanner(threading.Thread):
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self.on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self.on_command)
 
+        self.scheduler = BackgroundScheduler()
+        self.scheduler.start()
+        self._logger.info("Job scheduler started.")
+
         self._logger.info("Scanner initialized...")
         self._logger.info("Number of cpu cores: " + str(multiprocessing.cpu_count()))
+        self.config = config
 
+        if self.config.register_as_discoverable == 'True':
+           self.run_discovery_service()
+           self.scheduler.add_job(self.run_discovery_service, 'interval', minutes=30, id='register_discovery_service')
+           self._logger.info("Added discovery scheduling job.")
 
     def run(self):
         while not self.exit:
@@ -237,6 +249,7 @@ class FSScanner(threading.Thread):
                 }
             }
 
+
             eventManager.send_client_message(FSEvents.ON_CLIENT_INIT, message)
             self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
             #self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_IF_NOT_CALIBRATED})
@@ -251,3 +264,12 @@ class FSScanner(threading.Thread):
 
     def get_state(self):
         return self._state
+
+    def run_discovery_service(self):
+
+        try:
+            hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
+        except:
+            hardware_info = "undefined"
+
+        register_to_discovery(str(__version__), str(hardware_info))

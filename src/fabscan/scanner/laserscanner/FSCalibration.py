@@ -51,8 +51,6 @@ class FSCalibration(FSCalibrationInterface):
 
         self.motor_move_degree = 3.6 # 1.8,  2.7 , 3.6, 5.0
         self.motorsteps_per_calibration_step = self.motor_move_degree / (360.0 / self.config.turntable.steps)
-        #self.laser_calib_start = LASER_PLANE_CALIBRATION_START_POS_DEGREE * self.motorsteps_per_calibration_step / self.motor_move_degree
-        #self.laser_calib_end = LASER_PLANE_CALIBRATION_END_POS_DEGREE * self.motorsteps_per_calibration_step / self.motor_move_degree
         self.total_positions = int(((self.quater_turn / self.motorsteps_per_calibration_step) * 4) + 2)
         self.current_position = 0
         self._starttime = 0
@@ -67,6 +65,7 @@ class FSCalibration(FSCalibrationInterface):
         self._stop = False
 
         self._logger = logging.getLogger(__name__)
+
 
     def reset_calibration_values(self):
         self._point_cloud = [None, None]
@@ -163,9 +162,9 @@ class FSCalibration(FSCalibrationInterface):
     def _do_calibration(self, _capture, _calibrate):
 
         # 90 degree turn
-        # number of steps for 5 degree turn
         try:
             if not self._stop:
+                self._logger.debug(self.quater_turn)
                 self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
     #            self._hardwarecontroller.start_camera_stream(mode="calibration")
 
@@ -238,9 +237,9 @@ class FSCalibration(FSCalibrationInterface):
 
         #TODO: find out if it is better and try this...again.
         #if (position > self.laser_calib_start and position < self.laser_calib_end):
-        flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
+        #flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
         #else:
-        #    flags = cv2.CALIB_CB_FAST_CHECK
+        flags = cv2.CALIB_CB_FAST_CHECK
 
         corners = self._imageprocessor.detect_corners(image, flags)
 
@@ -280,7 +279,7 @@ class FSCalibration(FSCalibrationInterface):
                 #if (position > self.laser_calib_start and position < self.laser_calib_end):
                 alpha = np.rad2deg(math.acos(normal[2] / np.linalg.norm((normal[0], normal[2])))) * math.copysign(1,normal[0])
                 self._logger.debug("Current Angle is:" + str(alpha))
-                if abs(alpha) < 30:
+                if abs(alpha) < 35:
                     #self.settings.camera.contrast = 40
                     #self.settings.camera.brightness = 70
                     self._hardwarecontroller.led.off()

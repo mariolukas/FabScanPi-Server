@@ -15,7 +15,7 @@
             "square_size": 11,
             "rows": 6,
             "columns": 8,
-            "origin_distance": 35
+            "origin_distance": 37.2
         },
         "camera_matrix": [],
         "distortion_vector": [],
@@ -57,5 +57,6 @@
         "port": "/dev/ttyAMA0"
     },
     "texture_illumination": 140,
-    "keep_raw_images": "True"
+    "keep_raw_images": "True",
+    "register_as_discoverable": "True"
 }

@@ -137,7 +137,6 @@ class ImageProcessor(ImageProcessorInterface):
             peak = image.argmax(axis=1)
             _min = peak - window_value
             _max = peak + window_value + 1
-
             mask = np.zeros_like(image)
             for i in xrange(self.image_height):
                 mask[i, _min[i]:_max[i]] = 255

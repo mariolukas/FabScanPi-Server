@@ -1,0 +1,41 @@
+#!/usr/bin/python
+
+# from https://github.com/mharizanov/avrdude-rpi
+
+import RPi.GPIO as GPIO
+import sys, os, re, time, fcntl
+
+fd = sys.stdin.fileno()
+fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setwarnings(False)
+dtr = re.compile('.+TIOCM_DTR.+')
+start = time.time()
+pin = 7 # 7 = GPIO4
+
+def reset():
+  GPIO.setup(pin, GPIO.OUT)
+  GPIO.output(pin, GPIO.HIGH)
+  time.sleep(0.12)
+  GPIO.output(pin, GPIO.LOW)
+
+def process():
+  while True:
+    try:
+      duration = time.time() - start
+      input = sys.stdin.readline().strip()
+      if dtr.match(input):
+        reset()
+        return
+      elif duration > 2.0:
+        return
+    except:
+      continue
+
+print "avrdude-original: Using autoreset DTR on GPIO Pin " +str(pin)
+reset()
+process()
+GPIO.cleanup()
+exit

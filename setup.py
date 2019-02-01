@@ -22,14 +22,14 @@ EXTRA_REQUIRES = dict()
 def version_number():
     with open('debian/changelog', 'r') as changelog_file:
         first_line = changelog_file.readline(100)
-        result = re.match("fabscanpi-server \(([0-9\.a-z\-]+)\) ([a-zA-Z]+); urgency=([a-z]+)", first_line)
+        result = re.match("fabscanpi-server \(([0-9\.a-z\+]+)\) ([a-zA-Z]+); urgency=([a-z]+)", first_line)
         if result is None:
             return '0.0.0'
         return result.group(1)
 
 
 def create_version_file():
-    with open("src/fabscan/FSVersion.py","w+") as version_file:
+    with open("src/fabscan/FSVersion.py", "w+") as version_file:
         version_file.write('__version__ = "%s"\n ' % str(version_number()))
 
 create_version_file()
@@ -113,6 +113,7 @@ def params():
         ('/usr/share/fabscanpi/js/',['src/www/js/app.js', 'src/www/js/lib.js']),
         ('/usr/share/fabscanpi/js/locales/en/',['src/www/js/locales/en/i18n.js']),
         ('/usr/share/fabscanpi/locales/de/',['src/www/js/locales/de/i18n.js']),
+        ('/usr/bin/', ['src/avrdude/autoreset','src/avrdude/avrdude-autoreset']),
         ('/usr/share/fabscanpi/icons/', ['src/www/icons/icon_mesh.svg','src/www/icons/icon_scan.svg','src/www/icons/icon_pointcloud.svg','src/www/icons/favicon.png', 'src/www/icons/spinner.gif', 'src/www/icons/logo.png']),
         ('/usr/share/fabscanpi/fonts/', ['src/www/fonts/fontawesome-webfont.woff2', 'src/www/fonts/fontawesome-webfont.woff', 'src/www/fonts/fontawesome-webfont.ttf']),
         ('/usr/share/fabscanpi/style/fonts/', ['src/www/style/fonts/slick.woff', 'src/www/style/fonts/slick.ttf'])

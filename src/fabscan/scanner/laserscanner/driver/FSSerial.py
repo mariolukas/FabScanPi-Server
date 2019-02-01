@@ -9,9 +9,11 @@ import glob
 import serial
 import time
 import logging
+import threading
 from fabscan.lib.util.FSUtil import FSSystem
 from fabscan.lib.util.FSInject import inject
 from fabscan.FSConfig import ConfigInterface
+
 
 @inject(
     config=ConfigInterface
@@ -41,15 +43,16 @@ class FSSerialCom():
         self._openSerial()
         self._logger.debug("Connection baudrate is: "+str(self._baudrate))
         self._logger.debug("Firmware flashing baudrate is: "+str(self.flash_baudrate))
-
+        self.lock = threading.RLock()
+        self._stop = False
 
     def avr_device_is_available(self):
-        status = FSSystem.run_command("sudo avrdude -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port))
+        status = FSSystem.run_command("sudo avrdude-autoreset -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port))
         return status == 0
 
     def avr_flash(self, fname):
         FSSystem.run_command("wc -l "+str(fname))
-        status = FSSystem.run_command("sudo avrdude -D -V -U flash:w:"+str(fname)+":i -b "+str(self.flash_baudrate)+" -carduino -pm328p -P"+str(self._port))
+        status = FSSystem.run_command("sudo avrdude-autoreset -D -V -U flash:w:"+str(fname)+":i -b "+str(self.flash_baudrate)+" -carduino -pm328p -P"+str(self._port))
         if status != 0:
             self._logger.error("Failed to flash firmware")
         return status == 0
@@ -58,7 +61,7 @@ class FSSerialCom():
         self._logger.debug("Trying to connect Arduino on port: "+str(self._port))
         # open serial port
         try:
-            self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=0.3)
+            self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=5)
             time.sleep(1)
         except:
             self._logger.error("Could not open serial port")
@@ -144,17 +147,19 @@ class FSSerialCom():
 
     def send_and_receive(self, message):
         self.send(message)
-        time.sleep(0.2)
+       # time.sleep(0.2)
         response = ""
-        while True:
-            response += self._serial.read()
-            if ">" in response:
-                response = response.rstrip(">")
-                response = response.translate(None, '\n\t\r')
-                if response:
-                    self._logger.debug("Command successfully sent: " + response)
-                break
-
+        self._stop = False
+        with self.lock:
+            while not self._stop:
+                response += self._serial.read()
+                if ">" in response:
+                    response = response.rstrip(">")
+                    response = response.translate(None, '\n\t\r')
+                    if response:
+                        self._logger.debug("Command successfully sent: " + response)
+                        self._stop = True
+                    break
 
     def flush(self):
        self._serial.flushInput()
