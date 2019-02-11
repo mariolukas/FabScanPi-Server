@@ -82,6 +82,7 @@ class FSCalibration(FSCalibrationInterface):
 
 
     def start(self):
+        #self._hardwarecontroller.stop_camera_stream()
         tools = FSSystem()
         tools.delete_folder(self.config.folders.scans+'calibration')
         self._hardwarecontroller.turntable.enable_motors()

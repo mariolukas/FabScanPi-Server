@@ -245,13 +245,19 @@ class ImageProcessor(ImageProcessorInterface):
 
     def get_laser_stream_frame(self, image, type='CAMERA'):
 
-        points, ret_img = self.compute_2d_points(image, roi_mask=False)
-        u, v = points
-        c = zip(u, v)
+        if bool(self.settings.show_laser_overlay):
+            points, ret_img = self.compute_2d_points(image, roi_mask=False)
+            u, v = points
+            c = zip(u, v)
 
-        for t in c:
-            cv2.line(image, (int(t[0]) - 1, int(t[1])), (int(t[0]) + 1, int(t[1])), (255, 0, 0), thickness=1,
-                     lineType=8, shift=0)
+            for t in c:
+                cv2.line(image, (int(t[0]) - 1, int(t[1])), (int(t[0]) + 1, int(t[1])), (255, 0, 0), thickness=1,
+                         lineType=8, shift=0)
+
+        if bool(self.settings.show_calibration_pattern):
+            cv2.line(image, (int(0.5*image.shape[1]), 0), (int(0.5*image.shape[1]), image.shape[0]), (0, 255, 0), thickness=1, lineType=8, shift=0)
+            cv2.line(image, (0,int(0.5*image.shape[0])), (image.shape[1], int(0.5*image.shape[0])), (0, 255, 0), thickness=1, lineType=8, shift=0)
+
 
         return image
 

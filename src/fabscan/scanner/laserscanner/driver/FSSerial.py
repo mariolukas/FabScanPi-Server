@@ -71,8 +71,10 @@ class FSSerialCom():
 
     def _openSerial(self):
         basedir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-        flash_file_version = max(sorted(glob.iglob(basedir+'/firmware/*.hex'), key=os.path.getctime,reverse=True))
-        flash_version_number = os.path.basename(os.path.normpath(os.path.splitext(flash_file_version)[0]))
+        flash_file_version = max(sorted(glob.iglob(basedir+'/firmware/'+str(self.config.serial.plattform_type)+'_*.hex'), key=os.path.getctime, reverse=True))
+
+        flash_version_number = os.path.basename(os.path.normpath(os.path.splitext(flash_file_version.split('_', 1)[-1])[0]))
+
         self._logger.debug("Latest available firmware version is: "+flash_version_number)
 
         try:

@@ -124,6 +124,7 @@ class CamProcessor(threading.Thread):
                     if self.mode == "settings":
                         image = self.imageprocessor.get_laser_stream_frame(image)
 
+
                     #if self.use_distortion:
                     # if image is not None and \
                     #         self.config.calibration.camera_matrix is not [] and \
@@ -318,6 +319,7 @@ class PiCam(threading.Thread):
     def flush_stream(self):
         self.camera_buffer.flush()
 
+
 ###
 # This class is used to catch openCV errors which are not catchable by python
 # see https://stackoverflow.com/questions/9131992/how-can-i-catch-corrupt-jpegs-when-loading-an-image-with-imread-in-opencv/45055195
@@ -413,7 +415,7 @@ class USBCam(threading.Thread):
 
     def set_settings_preview(self):
         self.resolution = (
-        self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
+        self.config.camera.resolution.width, self.config.camera.resolution.height)
         self.output = ProcessCamOutput(self.camera_buffer, self.resolution, mode="settings")
 
     def set_default_mode(self):

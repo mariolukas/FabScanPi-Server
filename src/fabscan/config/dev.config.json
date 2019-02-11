@@ -23,6 +23,11 @@
                 "deviation": 0,
                 "distance": 0,
                 "normal": []
+            },
+            {
+                "deviation": 0,
+                "distance": 0,
+                "normal": []
             }
         ],
         "platform_translation": [],
@@ -42,8 +47,8 @@
             "height": 1232
         },
         "preview_resolution": {
-            "width": 320,
-            "height": 240
+            "width": 800,
+            "height": 600
         },
         "rotate": "True",
         "hflip": "True",
@@ -51,11 +56,12 @@
         "type": "PICAM"
     },
     "serial": {
+        "plattform_type": "fabscanpi",
         "baudrate": 57600,
         "autoflash": "True",
         "port": "/dev/ttyAMA0"
     },
     "texture_illumination": 140,
     "keep_raw_images": "True",
-    "register_as_discoverable": "True"
+    "discoverable": "True"
 }
