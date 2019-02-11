@@ -239,7 +239,8 @@ for 1 turntable stepper motor, 1 PiCam and 1 laser.
 | (white square) | Ground (GND)                             |
 | 5V             | 5V output from regulator to FabScanPi HAT |
 
-For the DC/DC converter option you can find further instructions and pictures on the [Watterott electronic website](https://github.com/watterott/RPi-FabScan-HAT/blob/master/hardware/RPi-FabScan-HAT_Assembly.pdf).
+For the DC/DC converter option you can find further instructions and pictures on the [Watterott electronic website](https://learn.watterott.com/fabscan/hat_assembly.pdf).
+
 
 NOTE: For the final stage of constuction a more powerful power supply is needed. At the moment there are no technical specifications available.
 
