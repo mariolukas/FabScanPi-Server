@@ -84,113 +84,148 @@
 							</div>
 
 								<!-- Settings View -->
-                <div class="settingsWindow" ng-class="{'open':('SETTINGS' | currentState)}">
-                    <div ng-if="('SETTINGS' | currentState)" ng-controller="fabscan.controller.FSSettingsController" >
+
+               <div id="settingsWindow" class="settingsWindow" ng-class="{'open':('SETTINGS' | currentState)}">
+                   <div ng-if="('SETTINGS' | currentState)" ng-controller="fabscan.controller.FSSettingsController" >
 
 
-                     <!--   <div style="background-color: black; height:240px; position:absolute; left:0px;"></div>-->
-                    <div>
-                        <mjpeg mode="'preview'" url="streamUrl"></mjpeg>
-                    </div>
-                        <div class="settings-content">
-                        <div style="height: 40px;">
-                            <div ng-click="selectTab('general')" class="tab icon settings" ng-class="{'active':(selectedTab == 'general')}">
-                                <i class="fa fa-cogs fa-2x"></i>
-                            </div>
-                            <div ng-click="selectTab('camera')" class="tab icon settings" ng-class="{'active':(selectedTab == 'camera')}">
-                                <i class="fa fa-adjust fa-2x"></i>
-                            </div>
-                            <div ng-click="selectTab('light')" class="tab icon settings" ng-class="{'active':(selectedTab == 'light')}">
-                                <i class="fa fa-sun-o fa-2x"></i>
-                            </div>
-                            <!--
-                            <div ng-click="setCalibrationTab()" class="tab icon settings" ng-class="{'active':(selectedTab == 'calibration')}">
-                                <i class="fa fa-crosshairs fa-2x"></i>
-                            </div>
-                            -->
-                            <div class="tab" sytle="width:100%">
-                            </div>
-                        </div>
+                       <div style="z-index:100;" class="settings-preview" id="settings-preview">
+                           <div style="text-align:center; position:absolute; background-color:black; color: white; height:800px; width:300px; z-index:-1000">
+                               <div style="margin-top:70%;">
+                                <img style="position:absolute;  margin-top:50%;  width:50px; height:50px;" src="icons/spinner.gif" />
+                                   Preview is loading...
+                               </div>
+                           </div>
+                           <mjpeg style="z-index:2000" url="streamUrl"></mjpeg>
+                       </div>
+                           <div class="settings-content">
 
-                        <div class="tab-content" ng-show="(selectedTab == 'general')">
-                            <div>
-                                <div ng-class="{'fadeOut':!showThresholdValue}" class="slider-value-label">{{settings.threshold}}</div>
-                                <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Threshold</div>
-                                <slider style="width:70%; margin-left:1em;" floor="0" ceiling="60" step="1" precision="1" ng-model="settings.threshold"></slider>
-                            </div>
-                            <div>
-                                <div ng-class="{'longFadeOut':!showResolutionValue}" class="slider-value-label" >{{settings.resolution | toResolutionValue }}</div>
-                                <div  style="display:inline-block; width:5em; color:white; padding-left:1em;">Resolution</div>
-                            <slider class="resolution" style="width:70%; margin-left:1em;"  show-steps="true" floor="-16" ceiling="-1" step="4" precision="1" ng-model="settings.resolution"></slider>
-                            </div>
-                            <!--
-                            <div>
-                                <div ng-class="{'longFadeOut':!showResolutionValue}" class="slider-value-label" >{{settings.laser_positions}}</div>
-                                <div  style="display:inline-block; width:5em; color:white; padding-left:1em;">Positions</div>
-                                <slider class="resolution" style="width:70%; margin-left:1em;"  floor="1" ceiling="4" step="1" precision="1" ng-model="settings.laser_positions"></slider>
-                            </div>
-                            -->
-                            <div>
-                                <div style="display:inline-block; width:5em; color:white; padding-left:1em;" >Color Scan</div><input  style="width:1em; height:1em; margin-left:1.5em; margin-top:0.5em;" type="checkbox"  ng-change="setColor()" ng-checked="colorIsSelected()" ng-model="settings.color">
+                               <div style="height: 40px;">
+                                   <div ng-click="selectTab('general')" class="tab icon settings" ng-class="{'active':(selectedTab == 'general')}">
+                                       <i class="fa fa-cogs fa-2x"></i>
+                                   </div>
+                                   <div ng-click="selectTab('camera')" class="tab icon settings" ng-class="{'active':(selectedTab == 'camera')}">
+                                       <i class="fa fa-adjust fa-2x"></i>
+                                   </div>
+                                   <div ng-click="selectTab('light')" class="tab icon settings" ng-class="{'active':(selectedTab == 'light')}">
+                                       <i class="fa fa-sun-o fa-2x"></i>
+                                   </div>
+                                   <div ng-click="selectTab('hardware')" class="tab icon settings" ng-class="{'active':(selectedTab == 'hardware')}">
+                                       <i class="fa fa-sliders fa-2x"></i>
+                                   </div>
 
-                                <a class="hvr-grow" style="margin-right: 13%; margin-top:0.2em; text-decoration:none; float:right; color:white; font-size:1.5em;" ng-click="startScan()" href="#">Start Scan</a>
-                            </div>
-                        </div>
-                        <div class="tab-content" ng-show="(selectedTab == 'camera')">
-                            <div>
-                                <div ng-class="{'fadeOut':!showSaturationValue}" class="slider-value-label" >{{settings.camera.saturation}}</div>
-                                <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Saturation</div>
-                                <slider style="width:70%; margin-left:1em;" floor="-100" ceiling="100" step="1" precision="1" ng-model="settings.camera.saturation"></slider>
-                            </div>
-                            <div>
-                                <div ng-class="{'fadeOut':!showBrightnessValue}" class="slider-value-label" >{{settings.camera.brightness}}</div>
-                                <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Brightness</div>
-                                <slider style="width:70%; margin-left:1em;" floor="0" ceiling="100" step="1" precision="1" ng-model="settings.camera.brightness"></slider>
-                            </div>
-                            <div>
-                                <div ng-class="{'fadeOut':!showContrastValue}" class="slider-value-label" >{{settings.camera.contrast}}</div>
-                               <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Contrast</div>
-                               <slider style="width:70%; margin-left:1em;" floor="-100" ceiling="100" step="1" precision="1" ng-model="settings.camera.contrast"></slider>
-                            </div>
+                                   <div ng-click="setCalibrationTab()" class="tab icon settings" ng-class="{'active':(selectedTab == 'calibration')}">
+                                       <i class="fa fa-crosshairs fa-2x"></i>
+                                   </div>
 
-                        </div>
-                        <div class="tab-content" ng-show="(selectedTab == 'light')">
-                            <div>
-                                <div ng-class="{'fadeOut':!showLedRedValue}" class="slider-value-label" >{{settings.led.red}}</div>
-                                <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Red</div>
-                              <slider style="width:70%; margin-left:1em;" floor="0" ceiling="255" step="1" precision="1" ng-model="settings.led.red"></slider>
-                            </div>
-                            <div>
-                                <div ng-class="{'fadeOut':!showLedGreenValue}" class="slider-value-label" >{{settings.led.green}}</div>
-                                <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Green</div>
-                               <slider style="width:70%; margin-left:1em;" floor="0" ceiling="255" step="1" precision="1" ng-model="settings.led.green"></slider>
-                            </div>
-                            <div>
-                                <div ng-class="{'fadeOut':!showLedBlueValue}" class="slider-value-label" >{{settings.led.blue}}</div>
-                                <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Blue</div>
-                               <slider style="width:70%; margin-left:1em;" floor="0" ceiling="255" step="1" precision="1" ng-model="settings.led.blue"></slider>
-                            </div>
-                        </div>
-                        <!--
-                        <div class="tab-content" ng-if="(selectedTab == 'calibration')">
-                            <div style="display:inline-block; width:100%; margin-top:1em; color:white; padding-left:1em;">
-                                Calibration<br>
-                                <br>
-                                Before calibration remove objects!
-                                <a class="hvr-grow" style="margin-right: 13%; margin-top:0.2em; bottom: 0px; text-decoration:none; float:right; color:white; font-size:1.5em;" ng-click="startCalibration()" href="#">Start Calibration</a>
-                            </div>
-                        </div>-->
-                        </div>
-                    </div>
 
-                </div>
+                                   <div class="tab" sytle="width:100%">
+                                   </div>
+                               </div>
 
+                               <div class="tab-content" ng-show="(selectedTab == 'general')">
+                                   <div style="margin-right:20em;">
+                                       <div ng-class="{'fadeOut':!showThresholdValue}" class="slider-value-label">{{settings.threshold}}</div>
+                                       <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Threshold</div>
+                                       <slider style="width:70%; margin-left:1em;" floor="0" ceiling="60" step="1" precision="1" ng-model="settings.threshold"></slider>
+                                   </div>
+                                   <div style="margin-right:20em;">
+                                       <div ng-class="{'longFadeOut':!showResolutionValue}" class="slider-value-label" >{{settings.resolution | toResolutionValue }}</div>
+                                       <div  style="display:inline-block; width:5em; color:white; padding-left:1em;">Resolution</div>
+                                       <slider class="resolution" style="width:70%; margin-left:1em;"  show-steps="true" floor="-16" ceiling="-1" step="4" precision="1" ng-model="settings.resolution"></slider>
+                                   </div>
+                                   <!--
+                                   <div>
+                                       <div ng-class="{'longFadeOut':!showResolutionValue}" class="slider-value-label" >{{settings.laser_positions}}</div>
+                                       <div  style="display:inline-block; width:5em; color:white; padding-left:1em;">Positions</div>
+                                       <slider class="resolution" style="width:70%; margin-left:1em;"  floor="1" ceiling="4" step="1" precision="1" ng-model="settings.laser_positions"></slider>
+                                   </div>
+                                   -->
+                                   <div style="margin-right:20em;">
+                                       <div style="width:100%; margin-bottom:1em; margin-top:1em;">
+                                            <div style="display:inline-block; width:15em; color:white; padding-left:1em;" >Scan with Color</div><input  style="width:1em; height:1em; margin-left:1.5em; margin-top:0.5em;" type="checkbox"  ng-change="setColor()" ng-checked="colorIsSelected()" ng-model="settings.color">
+                                       </div>
+                                       <div style="width:100%; margin-bottom:1em;">
+                                           <div style="display:inline-block; width:15em; color:white; padding-left:1em;" >Show Laser Overlay</div><input  style="width:1em; height:1em; margin-left:1.5em; margin-top:0.5em;" type="checkbox"  ng-change="setLaserOverlay()" ng-checked="laserOverlaySelected()" ng-model="settings.show_laser_overlay">
+                                       </div>
+                                       <div style="width:100%; margin-bottom:1em;">
+                                           <div style="display:inline-block; width:15em; color:white; padding-left:1em;" >Show Calibration Pattern</div><input  style="width:1em; height:1em; margin-left:1.5em; margin-top:0.5em;" type="checkbox"  ng-change="setCalibrationPattern()" ng-checked="calibrationPatternSelected()" ng-model="settings.show_calibration_pattern">
+                                       </div>
+                                   </div>
+
+                                   <div style="margin-right:20em;">
+                                       <div >
+                                           <button class="fsButton" style="margin-top:2em; margin-left:1em; text-decoration:none; color:white;" ng-click="startScan()" href="#">Start Scan</button>
+                                       </div>
+                                   </div>
+                               </div>
+                               <div class="tab-content" ng-show="(selectedTab == 'camera')">
+                                   <div style="margin-right:20em;">
+                                       <div ng-class="{'fadeOut':!showSaturationValue}" class="slider-value-label" >{{settings.camera.saturation}}</div>
+                                       <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Saturation</div>
+                                       <slider style="width:70%; margin-left:1em;" floor="-100" ceiling="100" step="1" precision="1" ng-model="settings.camera.saturation"></slider>
+                                   </div>
+                                   <div style="margin-right:20em;">
+                                       <div ng-class="{'fadeOut':!showBrightnessValue}" class="slider-value-label" >{{settings.camera.brightness}}</div>
+                                       <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Brightness</div>
+                                       <slider style="width:70%; margin-left:1em;" floor="0" ceiling="100" step="1" precision="1" ng-model="settings.camera.brightness"></slider>
+                                   </div>
+                                   <div style="margin-right:20em;">
+                                       <div ng-class="{'fadeOut':!showContrastValue}" class="slider-value-label" >{{settings.camera.contrast}}</div>
+                                       <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Contrast</div>
+                                       <slider style="width:70%; margin-left:1em;" floor="-100" ceiling="100" step="1" precision="1" ng-model="settings.camera.contrast"></slider>
+                                   </div>
+
+                               </div>
+                               <div class="tab-content" ng-show="(selectedTab == 'light')">
+                                   <div style="margin-right:20em;">
+                                       <div ng-class="{'fadeOut':!showLedRedValue}" class="slider-value-label" >{{settings.led.red}}</div>
+                                       <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Red</div>
+                                       <slider style="width:70%; margin-left:1em;" floor="0" ceiling="255" step="1" precision="1" ng-model="settings.led.red"></slider>
+                                   </div>
+                                   <div style="margin-right:20em;">
+                                       <div ng-class="{'fadeOut':!showLedGreenValue}" class="slider-value-label" >{{settings.led.green}}</div>
+                                       <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Green</div>
+                                       <slider style="width:70%; margin-left:1em;" floor="0" ceiling="255" step="1" precision="1" ng-model="settings.led.green"></slider>
+                                   </div>
+                                   <div style="margin-right:20em;">
+                                       <div ng-class="{'fadeOut':!showLedBlueValue}" class="slider-value-label" >{{settings.led.blue}}</div>
+                                       <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Blue</div>
+                                       <slider style="width:70%; margin-left:1em;" floor="0" ceiling="255" step="1" precision="1" ng-model="settings.led.blue"></slider>
+                                   </div>
+                               </div>
+                               <div class="tab-content" ng-show="(selectedTab == 'hardware')">
+
+                                   <div  ng-repeat="(key,values) in devices">
+                                      <div style="padding:1em;">
+                                           <span style="display:inline-block; width:8em; color:white; padding-left:1em;">{{devices[key]['LABEL']}}</span>
+                                           <button style="margin-right:1em;" class="fsButton" ng-repeat="function in devices[key]['FUNCTIONS']" ng-click="sendDeviceCommand(key, function)">{{function}}</button>
+                                      </div>
+                                   </div>
+
+                               </div>
+
+
+                               <div class="tab-content" ng-if="(selectedTab == 'calibration')">
+                                   <div style="display:inline-block; width:100%; margin-top:1em; color:white; padding-left:1em;">
+                                       <div style="margin-top:2em;">
+                                       <button class="fsButton" ng-click="startCalibration()">Start Calibration</button>
+                                       </div>
+                                   </div>
+                               </div>
+
+
+                           </div>
+                   </div>
+
+               </div>
                <!-- Scan View -->
                  <div  ng-controller="fabscan.controller.FSPreviewController"  style="margin: 0 auto; z-index:-100;">
 
-                     <div ng-if="showStream" class="texture-preview">
-                         <mjpeg mode="'texture'" url="streamUrl"></mjpeg>
+                     <div style="z-index:100;" ng-if="showStream" class="texture-preview">
+                         <mjpeg url="streamUrl"></mjpeg>
                      </div>
+
 
                      <div ng-click="manviewhandler()">
                          <div
@@ -208,6 +243,7 @@
                                  <span>Server: {{server_version}} <br> Firmware: {{firmware_version}}</span>
                              </div>
 
+                             <!--
                             <div style="position:absolute; left:10px; top:2px; color:white">
                                 <a class="icon" style="" ng-click="startCalibration()" ng-show="(!scanIsLoading() && ('IDLE' | currentState) && !('CALIBRATING' | currentState))">
                                      <span class="hvr-grow">
@@ -215,6 +251,7 @@
                                      </span>
                                 </a>
                              </div>
+                             -->
 
                          <!--<div style="position:absolute;">
                              <a href="#" ng-click="renderObjectAsType('MESH')">Show Mesh</a>
@@ -374,6 +411,7 @@
                                          </ul>
                                      </div>
                                  </div>
+
                              </div>
 
                          </div>
@@ -382,7 +420,7 @@
 
                  </div>
 
-        <div id="controlpanel" class="footer row" style="background-color: grey">
+        <div id="controlpanel" class="footer row" style="z-index:1000; background-color: grey">
 
            <!--<div ng-show="isConnected">-->
             <div ng-if="appIsInitialized">

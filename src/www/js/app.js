@@ -9,7 +9,7 @@
 (function() {
   var m, mods;
 
-  mods = ['common.services.envProvider', 'common.filters.currentStateFilter', 'common.filters.toLabelFilter', 'common.filters.toResolutionValue', 'fabscan.directives.FSWebglDirective', 'fabscan.directives.FSMJPEGStream', 'fabscan.directives.FSModalDialog', 'fabscan.directives.text', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSEnumService', 'fabscan.services.FSWebsocketConnectionFactory', 'fabscan.services.FSScanService', 'fabscan.services.FSi18nService', 'common.filters.scanDataAvailableFilter', 'common.services.Configuration', 'common.services.toastrWrapperSvc', 'fabscan.controller.FSPreviewController', 'fabscan.controller.FSAppController', 'fabscan.controller.FSNewsController', 'fabscan.controller.FSSettingsController', 'fabscan.controller.FSScanController', 'fabscan.controller.FSLoadingController', 'fabscan.controller.FSShareController', 'ngSanitize', 'ngTouch', 'ngCookies', '720kb.tooltips', 'ngProgress', 'vr.directives.slider', 'slickCarousel'];
+  mods = ['common.services.envProvider', 'common.filters.currentStateFilter', 'common.filters.toLabelFilter', 'common.filters.toResolutionValue', 'fabscan.directives.FSWebglDirective', 'fabscan.directives.FSMJPEGStream', 'fabscan.directives.FSModalDialog', 'fabscan.directives.text', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSEnumService', 'fabscan.services.FSWebsocketConnectionFactory', 'fabscan.services.FSScanService', 'fabscan.services.FSi18nService', 'common.filters.scanDataAvailableFilter', 'fabscan.directives.onSizeChanged', 'common.services.Configuration', 'common.services.toastrWrapperSvc', 'fabscan.controller.FSPreviewController', 'fabscan.controller.FSAppController', 'fabscan.controller.FSNewsController', 'fabscan.controller.FSSettingsController', 'fabscan.controller.FSScanController', 'fabscan.controller.FSLoadingController', 'fabscan.controller.FSShareController', 'ngSanitize', 'ngTouch', 'ngCookies', '720kb.tooltips', 'ngProgress', 'vr.directives.slider', 'slickCarousel'];
 
   /*
   */
@@ -62,38 +62,25 @@
 
   name = 'fabscan.directives.FSMJPEGStream';
 
-  angular.module(name, []).directive('mjpeg', [
-    '$log', function($log) {
-      return {
-        restrict: 'E',
-        replace: true,
-        template: '<span></span>',
-        scope: {
-          'url': '=',
-          'mode': '='
-        },
-        link: function(scope, element, attrs) {
-          scope.createFrame = function(newVal) {
-            var doc, iframe, iframeHtml;
+  angular.module(name, []).directive('mjpeg', function() {
+    return {
+      restrict: 'E',
+      replace: true,
+      template: '<span></span>',
+      scope: {
+        'url': '='
+      },
+      link: function(scope, element, attrs) {
+        scope.$watch('url', (function(newVal, oldVal) {
+          var doc, iframe, iframeHtml;
 
+          if (newVal) {
             iframe = document.createElement('iframe');
+            iframe.setAttribute('width', '100%');
             iframe.setAttribute('frameborder', '0');
             iframe.setAttribute('scrolling', 'no');
-            iframe.setAttribute('style', "height:100%;  position:absolute;");
-            if (element.childElementCount > 0) {
-              element.childNodes[0].destroy();
-              element.append(iframe);
-            } else {
-              element.append(iframe);
-            }
-            if (scope.mode === "texture") {
-              iframe.setAttribute('width', '100%');
-              iframeHtml = '<html><head><base target="_parent" /><style type="text/css">html, body { margin: 0; padding: 0; height: 320px; }</style><script> function resizeParent() { var ifs = window.top.document.getElementsByTagName("iframe"); for (var i = 0, len = ifs.length; i < len; i++) { var f = ifs[i]; var fDoc = f.contentDocument || f.contentWindow.document; if (fDoc === document) { f.height = 0; f.height = document.body.scrollHeight; } } }</script></head><body style="" onresize="resizeParent()"><div><img src="' + newVal + '" style="z-index:1000; display: block; margin-left: auto; margin-right: auto; width: 30em; margin-top:1em; -webkit-mask-image: radial-gradient(ellipse 106% 148% at 50% 50%, black 35%, transparent 48%); mask-image: radial-gradient(ellipse 106% 148% at 50% 50%, black 35%, transparent 48%);"  onload="resizeParent()" /></div></body></html>';
-            }
-            if (scope.mode === "preview") {
-              iframe.setAttribute('height', '240px');
-              iframeHtml = '<html><head><base target="_parent" /><style type="text/css">html, body { margin: 0; padding: 0; height: 240px; }</style><script> function resizeParent() { var ifs = window.top.document.getElementsByTagName("iframe"); for (var i = 0, len = ifs.length; i < len; i++) { var f = ifs[i]; var fDoc = f.contentDocument || f.contentWindow.document; if (fDoc === document) { f.width = 0; f.width = document.body.scrollWidth; } } }</script></head><body onresize="resizeParent()"><img src="' + newVal + '" style="z-index:1000; opacity: 1.0; height:240px; position:absolute;" onload="resizeParent()" /><div style="position:absolute;  text-align:center; background-color:black; width:180px;  height:240px; float:left; z-index:-1000;"><img style="margin-top:100px; margin-left:70px width:50px; height:50px;" src="icons/spinner.gif" /></div></body></html>';
-            }
+            element.replaceWith(iframe);
+            iframeHtml = '<html><head><base target="_parent" /><style type="text/css">html, body { margin: 0; padding: 0; height: 100%; width: 100%; }</style><script> function resizeParent() { var ifs = window.top.document.getElementsByTagName("iframe"); for (var i = 0, len = ifs.length; i < len; i++) { var f = ifs[i]; var fDoc = f.contentDocument || f.contentWindow.document; if (fDoc === document) { f.height = 0; f.height = document.body.scrollHeight; } } }</script></head><body onresize="resizeParent()"><img src=\"' + newVal + '\" style="width: 100%; height: auto" onload="resizeParent()" /></body></html>';
             doc = iframe.document;
             if (iframe.contentDocument) {
               doc = iframe.contentDocument;
@@ -102,15 +89,14 @@
             }
             doc.open();
             doc.writeln(iframeHtml);
-            return doc.close();
-          };
-          scope.$watch('url', (function(newVal, oldVal) {
-            return scope.createFrame(newVal);
-          }), true);
-        }
-      };
-    }
-  ]);
+            doc.close();
+          } else {
+            element.html('<span></span>');
+          }
+        }), true);
+      }
+    };
+  });
 
 }).call(this);
 
@@ -610,6 +596,44 @@
 
 }).call(this);
 
+(function() {
+  var name;
+
+  name = 'fabscan.directives.onSizeChanged';
+
+  angular.module(name, []).directive('onSizeChanged', [
+    '$window', function($window) {
+      return {
+        restrict: 'A',
+        scope: {
+          onSizeChanged: '&'
+        },
+        link: function(scope, $element, attr) {
+          var cacheElementSize, element, onWindowResize;
+
+          element = $element[0];
+          cacheElementSize = function(scope, element) {
+            scope.cachedElementWidth = element.offsetWidth;
+            scope.cachedElementHeight = element.offsetHeight;
+          };
+          onWindowResize = function() {
+            var expression, isSizeChanged;
+
+            isSizeChanged = scope.cachedElementWidth !== element.offsetWidth || scope.cachedElementHeight !== element.offsetHeight;
+            if (isSizeChanged) {
+              expression = scope.onSizeChanged();
+              expression();
+            }
+          };
+          cacheElementSize(scope, element);
+          $window.addEventListener('resize', onWindowResize);
+        }
+      };
+    }
+  ]);
+
+}).call(this);
+
 /*
 Takes a string and makes it lowercase
 Example of a 'common' filter that can be shared by all views
@@ -759,7 +783,7 @@ Example of a 'common' filter that can be shared by all views
             host: "fabscanpi.local",
             websocketurl: ws + '://fabscanpi.local/websocket',
             httpurl: http + '://fabscanpi.local/',
-            newsurl: http + '://mariolukas.github.io/FabScanPi-Server/news/',
+            newsurl: http + '://fabscanpi-server.readthedocs.io/en/latest/news/',
             apiurl: http + '://fabscanpi.local/'
           }
         };
@@ -769,7 +793,7 @@ Example of a 'common' filter that can be shared by all views
             host: host,
             websocketurl: ws + '://' + host + '/websocket',
             httpurl: http + '://' + host + ':8080/',
-            newsurl: http + '://mariolukas.github.io/FabScanPi-Server/news/',
+            newsurl: http + '://fabscanpi-server.readthedocs.io/en/latest/news/',
             apiurl: http + '://' + host + '/'
           }
         };
@@ -812,7 +836,8 @@ Example of a 'common' filter that can be shared by all views
       UPDATE_SETTINGS: 'UPDATE_SETTINGS',
       MESHING: 'MESHING',
       UPGRADE_SERVER: 'UPGRADE_SERVER',
-      RESTART_SERVER: 'RESTART_SERVER'
+      RESTART_SERVER: 'RESTART_SERVER',
+      HARDWARE_TEST_FUNCTION: 'HARDWARE_TEST_FUNCTION'
     };
     return FSEnumService;
   });
@@ -1387,7 +1412,17 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
         $scope.displayNews(false);
       }), 30);
       deferred = $q.defer();
-      return $scope.news = "No news available.";
+      $scope.news = "No news available.";
+      return $http({
+        method: 'GET',
+        url: configuration.installation.newsurl,
+        timeout: deferred.promise
+      }).success(function(data, status, headers, config) {
+        $scope.news = data;
+        return $timeout.cancel(timeoutPromise);
+      }).error(function(data, status, headers, config) {
+        return $scope.news = "Error retrieving news.";
+      });
     }
   ]);
 
@@ -1692,12 +1727,33 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
   name = "fabscan.controller.FSSettingsController";
 
   angular.module(name, []).controller(name, [
-    '$log', '$scope', '$timeout', '$swipe', 'common.services.Configuration', 'fabscan.services.FSEnumService', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSScanService', function($log, $scope, $timeout, $swipe, Configuration, FSEnumService, FSMessageHandlerService, FSScanService) {
-      var updateSettings;
+    '$log', '$scope', '$timeout', '$swipe', '$http', 'common.services.Configuration', 'fabscan.services.FSEnumService', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSScanService', function($log, $scope, $timeout, $swipe, $http, Configuration, FSEnumService, FSMessageHandlerService, FSScanService) {
+      var devices_promise, updateSettings;
 
       $scope.streamUrl = Configuration.installation.apiurl + 'api/v1/streams/?type=laser';
       $scope.previewMode = "laser";
       $scope.selectedTab = 'general';
+      devices_promise = $http.get(Configuration.installation.httpurl + 'api/v1/devices/');
+      devices_promise.then(function(payload) {
+        $log.info(payload);
+        return $scope.devices = payload.data;
+      });
+      $scope.sendDeviceCommand = function(device, f_name) {
+        var message;
+
+        message = {};
+        message = {
+          event: FSEnumService.events.COMMAND,
+          data: {
+            command: FSEnumService.commands.HARDWARE_TEST_FUNCTION,
+            device: {
+              name: device,
+              "function": f_name
+            }
+          }
+        };
+        return FSMessageHandlerService.sendData(message);
+      };
       $scope.timeout = null;
       updateSettings = function() {
         var _settings;
@@ -1732,13 +1788,31 @@ Example of how to wrap a 3rd party library, allowing it to be injectable instead
       };
       $scope.showCalibrationPreview = function() {
         $scope.streamUrl = Configuration.installation.apiurl + 'api/v1/streams/?type=texture';
-        $scope.previewMode = "calibration";
-        return $scope.$apply();
+        return $scope.previewMode = "calibration";
       };
       $scope.showLaserPreview = function() {
         $scope.streamUrl = Configuration.installation.apiurl + 'api/v1/streams/?type=laser';
-        $scope.previewMode = "laser";
-        return $scope.$apply();
+        return $scope.previewMode = "laser";
+      };
+      $scope.calibrationPatternSelected = function() {
+        if ($scope.settings.show_calibration_pattern) {
+          return true;
+        } else {
+          return false;
+        }
+      };
+      $scope.laserOverlaySelected = function() {
+        if ($scope.settings.show_laser_overlay) {
+          return true;
+        } else {
+          return false;
+        }
+      };
+      $scope.setCalibrationPattern = function() {
+        return updateSettings();
+      };
+      $scope.setLaserOverlay = function() {
+        return updateSettings();
       };
       $scope.setColor = function() {
         return updateSettings();

@@ -7,10 +7,133 @@ body, html {
     font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
     position: fixed !important;
     overflow: hidden
+    height: 100%;
+
 }
 
 * {
     margin: 0
+}
+
+button:focus {outline:0;}
+
+
+.control {
+    font-family: arial;
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 5px;
+    padding-top: 3px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.control input {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+}
+.control_indicator {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background: #e6e6e6;
+    border: 0px solid #000000;
+}
+.control-radio .control_indicator {
+    border-radius: undefined%;
+}
+
+.control:hover input ~ .control_indicator,
+.control input:focus ~ .control_indicator {
+    background: #cccccc;
+}
+
+.control input:checked ~ .control_indicator {
+    background: #838383;
+}
+.control:hover input:not([disabled]):checked ~ .control_indicator,
+.control input:checked:focus ~ .control_indicator {
+    background: #0e6647d;
+}
+.control input:disabled ~ .control_indicator {
+    background: #e6e6e6;
+    opacity: 0.6;
+    pointer-events: none;
+}
+.control_indicator:after {
+    box-sizing: unset;
+    content: '';
+    position: absolute;
+    display: none;
+}
+.control input:checked ~ .control_indicator:after {
+    display: block;
+}
+.control-checkbox .control_indicator:after {
+    left: 8px;
+    top: 2px;
+    width: 3px;
+    height: 11px;
+    border: solid #ffffff;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+.control-checkbox input:disabled ~ .control_indicator:after {
+    border-color: #7b7b7b;
+}
+
+
+.video-container {
+   /* width: 50%;*/
+    width:33.3em;
+    float: left;
+    bottom: 100px;
+}
+
+.video {
+    position: relative;
+    /*padding-bottom: 56.25%;*/
+    min-width: 30em;
+    min-height: 800px;
+    bottom:60px;
+    height: inherit !important;
+    overflow: hidden;
+}
+
+.video iframe{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.side-div{
+    float: left;
+    width: 50%;
+}
+
+
+.wrapper {
+    width:100%;
+    display:flex;
+    background-color:#CCC;
+}
+
+.wrapper-top {
+    width:100%;
+    height:60px;
+    background-color:#000;
+}
+
+.wrapper-bottom {
+    width:100%;
+    height:40px;
+    background-color:#000;
+    clear: both
 }
 
 .slick-slider {
@@ -268,6 +391,7 @@ a:active .icon {
     bottom: 60px;
     position: fixed;
     left: 0px;
+    z-index:1000;
     /*background-color:grey;*/
     background-color: rgba(53, 53, 53, 0.5);
     transition: height 0.3s;
@@ -315,7 +439,10 @@ a:active .icon {
 
 .settings-content {
     height: 100%;
-    margin-left: 180px;
+    position: absolute;
+    left: 300px;
+    width: 100%;
+    /*margin-left: 180px;*/
 }
 
 .config-content {
@@ -328,7 +455,7 @@ a:active .icon {
 }
 
 .settingsWindow.open {
-    height: 240px;
+    height: 400px;
     bottom: 60px;
     transition: height 0.3s;
     border-top: 2px solid rgb(73, 73, 73);
@@ -342,11 +469,35 @@ a:active .icon {
     opacity: 0.75;
 }
 
+.fsButton {
+    background-color:transparent;
+    -moz-border-radius:31px;
+    -webkit-border-radius:31px;
+    border-radius:31px;
+    border:3px solid #dcdcdc;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:Arial;
+    font-size:15px;
+    font-weight:bold;
+    padding:6px 24px;
+    text-decoration:none;
+}
+.fsButton:hover {
+    background-color:rgba(53, 53, 53, 0.4);
+}
+.fsButton:active {
+    position:relative;
+    top:1px;
+}
+
 .hide {
     height: 150px;
 }
 
 .footer {
+    z-index:1000;
     position: fixed;
     bottom: 0;
     width: 100%;
@@ -403,6 +554,7 @@ html, body {
     position: fixed;
     bottom: 0;
     width: 100%;
+    z-index:1000;
     text-align: center;
     margin-bottom: 1em;
     border-top: 2px solid rgb(73, 73, 73);
@@ -416,13 +568,58 @@ html, body {
     overflow-y: auto;
 }
 
+
+.settings-preview {
+    /* position: absolute;
+     top: 100px;
+     z-index: 2;
+     margin-left:-160px;
+     left:50%;*/
+
+
+    position:absolute;
+    margin-left: auto;
+    margin-right: auto;
+
+
+}
+
+
+
+.settings-preview img {
+    height: 70%;
+    width: 70%;
+    opacity: 0.6;
+    border-radius: 70px;
+    /* -webkit-mask-box-image: -webkit-linear-gradient(left,transparent, transparent 15%, white 50%, white 50%, transparent 85%);*/
+    -webkit-mask-box-image: -webkit-radial-gradient(white, transparent 69%);
+    display: block;
+    margin: 0 auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    margin-top: 12%;
+}
+
 .texture-preview {
     /* position: absolute;
      top: 100px;
      z-index: 2;
      margin-left:-160px;
      left:50%;*/
+    width: 50%;
+    position:absolute;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    bottom:59px;
+
 }
+
+
 
 .texture-preview img {
     height: 70%;
@@ -483,7 +680,8 @@ html, body {
 
 .tab-content {
     background-color: rgba(53, 53, 53, 0.4);
-    height: 200px;
+    height: 100%;
+    /*height:100%;*/
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
@@ -629,7 +827,7 @@ and (max-device-width: 450px) {
         margin-left: 0px;
         width: 100%;
         float: left;
-        height: 100%;
+        height: 200px;
     }
 
     .preview-image {
@@ -717,7 +915,7 @@ and (max-device-width: 480px) {
     }
     */
     .settingsWindow.open {
-        height: 100%;
+      /*  height: 100%;*/
     }
 
     .optionsWindow.open {
