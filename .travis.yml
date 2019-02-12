@@ -20,21 +20,6 @@ script: sudo make deb
 after_success:
 - ls -alh ../*.deb
 - travis_wait curl -T ../*.deb -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/release/
-- NOW=`date +%Y-%m-%d-%H-%M`
-- mkdocs build
-- cd ..
-- mkdir tmp
-- cd tmp
-- git clone -b gh-pages https://github.com/mariolukas/FabScanPi-Server.git
-- cd FabScanPi-Server
-- git config --global user.email "dev@fabscan.org"
-- git config --global user.name "Travis CI"
-- git config credential.helper "store --file=.git/credentials"
-- echo "https://${GITHUB_TOKEN}:@github.com" > .git/credentials
-- rsync -a -v ../../FabScanPi-Server/site/ .
-- git commit -am "travis doc update ${NOW}"
-- git push
-- cd ../../FabScanPi-Server/
 env:
   global:
   - secure: m+zIuupfcmWS8Sby7CB6gAG9cdPLS6DzS+ZjA+9JispYr1rQRYJMPPgP54/XE1UNp8wCU9cPLDHTcllkzKh2PBUXcDy0BOqA+2n1pz3sXloQKM+4uIpBywru4VLCIymw3f2AhfV//50X95w8p/9lH7/K0kUWHNpAkFeMfiVpYN9Fcj5V2NhJ1EYjU5fgwdJ9GACMyiwkxt/GQiiLSLcffHBvN+HOSU19xGBEQx7LEKMJzVs48DT9ZCsjOH4O+rYFyZUW2qzRqJFidSg8SbJAzxiXSiJpgexBji6PkheGAu3DzPLXQAjacW7V0gwqeyuEl9ETcnAt3ZN0UrsYh6zCSLJUBDdJjsypcxgAtz+RddgUCTLIM/TaLSDw6YaOhUsT5CtdDRIflK7LdHhK0oGzVrG8rA2VfKGEKlSC10ZyhenazM6MLTjErGqAcdg6QtN5JXVkubTSytJbs1vEqRTdwo9DI8p2RFa5o4wUobHleFN9GFWwdeKDob86bYna886q5fq6mCLNoOf/KCCMCAcy/hEaOyFb3JYRxhrTCa4lQQ1JNe3YveuiY2P5d+DF7liRpXXpMqBK6RfwmLVn3JfYS6Y33b6h9pYRtu6Cjcm+nc6UhTaM1qxqyJkd2X/yPByJYyt4JjKJkkyVzrN5jzxn3CTPXnNHyYF6uIs4Eoq7m+Q=
