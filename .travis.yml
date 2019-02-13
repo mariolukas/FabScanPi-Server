@@ -1,12 +1,12 @@
-dist: trusty
+dist: xenial
 group: edge
 language: python
 sudo: false
 python:
-- 2.7
+- 2.7.15
 before_install:
 - sudo apt-get -qq update
-- sudo apt-get install -y build-essential python-setuptools debhelper cdbs dh-python fakeroot
+- sudo apt-get install -y libcurl3 build-essential python-setuptools debhelper cdbs dh-python fakeroot
   python-pip rsync
 before_script:
 - CURRENT_DATE=$(date +%Y%m%d%H%M)
