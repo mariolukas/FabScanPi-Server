@@ -4,6 +4,8 @@ language: python
 python:
 - 2.7.13
 before_install:
+- openssl aes-256-cbc -K $encrypted_ee45e5c35c00_key -iv $encrypted_ee45e5c35c00_iv
+  -in fabscanpi.key.enc -out ~\/fabscanpi.key -d
 - sudo apt-get -qq update
 - sudo apt-get install -y build-essential python-setuptools debhelper cdbs dh-python
   fakeroot python-pip rsync
@@ -16,14 +18,12 @@ before_script:
 - echo $TRAVIS_TAG
 script: sudo make deb
 after_success:
-- ls -alh ../*.deb
-- sftp
-- travis_wait curl -v -T ../*.deb -u $FTPUSER:$FTPPASSWORD sftp://mariolukas.de:2222/release --insecure
+- FILE_NAME=$(ls -a ../*.deb)
+- sftp -oBatchMode=no -oPort=2222 -oIdentityFile=fabscanpi.key ../ -b  - fabscanpi@mariolukas.de
+  << ! cd /release put $FILE_NAME bye !
 env:
   global:
   - secure: k0Ms4zQL6KTWInxaS2G578OxmG2aJSicezcGESsDHg3RLI7zgyx4jn+3IdoGfZucXmMxjwPFpBvoVBYfJ4GY5ZrgV8ftvnReO7xn8obADtOmSupTy5eUX5S/K+b8VdjD/QQRO9Bn9lz7ekTauMqtv2usw93X3RTDFtEAtLwtBEuGMU4dhU1lHC/1HDxa0BGfhuEOsp9eedA641dwq3kVpw/6WRlpdyNLEL6l7HJ2ednOH+DXb5hTwSF+Wbg/Oe/pobn8xpFvYc8ZmlRVpiE0kL3lA4HZ5gdBCHAs9HuNsK8e3pKn9l71zqEFdZdbUylp/fFeN5uLYMnZSMKBOg03lRhtsICm6IN7d91Hazcd+vox5Jh0EBgKsEgrAoDSMjiMRj1ROnZXWgs/DYZh8nV+y23hY3BlvyD2AjwyxCHRLG4sIkGmhxe3EoaW1vBwZ4/QUp7AL6x9povUsJM4kU6sBu0+QaoKk1NKs+2xW4mpktS5i2WHuR/sJcmf8AWDkuTejSKBzmKJoSb2dluRYKHa7EpobA7hiCz+6Und13sGJDvF46QprCkuVmDeQc1wImpVj2Evn0KLRRq4z33mEtoMMbROJ1Pg7pXdaTvl9AxDHn60NIbfr7lWjcYIvaOpPSax5vCD6w2lDToDbwj/4K5mh80/bhOyWVCrfcJxQOYqxxQ=
-  - secure: hLn07UW0w3ik40Kgc+86TASaqv6auexNkgl7Cm6YIuDoCXXzAbLYR0IQvH0SiFeBQ66J7Bbf9Azh+Y/nSKgDzuTED4s8hLmrlt4IXypJSkoMqCWXVj9F9OB0tMOckcD4SgLZvCjrJvGjzSv/q+D5XTbAQlgYO1+Sd1pnkIal5b/PJ0D7hRIgPFGuGBh851nPa5pRK4mvNjNMz2DmeV6njnhzdgjxhNiNzVJ3LcsXecvmnYSNtj7ADxVAQxeDT6zM1jMhedvVMatLpCMaXcBdUNgGvDSkSl36rU3d8MmW2hmJ0iEKIx6Ajh1yxlOm18yb45dRdoWerxj6g7DspP9/gCZdwilVqPPt1XalxqxyMPiBF2IBYUvcc4Mh9KMCKK1BdW5Smzy8E2X1dJcHjBE+HrLkR4AgZhyK6fu5eHCYu2iPEQLj/u5gAm5j3hlJCgEKrj4pKdUxaDn7Kim3h3+cdHgb0BhfhactfCAM29mY+IJT8BMKzax8gtBwI1pp3rNM0hIcUOQXVKhDVqVjK8xR5vFDIs5aF37PgAM/UgytRCHCbr0FSjUeSeJQpkIaFdcr/0AWIRNMV7+OkM8/SJjiFJFhTQ5qARKmfOWMn98HcH3ULnDSVkfwhtOR6fqFMc+slJvkO0Busi3WyySXr901PnCogcWIPEh911CFv+ILsN4=
-  - secure: NXv//tKbkNVOTAZ0AGzNuGwBQ8OezJMkY/8tnX5Ad2JaOBTQBVuzPPFgxgG7gPTuWmYxm0jgAdKr8gx7mkCaZ8KQTY01MYdbpg9lUelGcnXDFYytK454XutL/RUWSDGiTk1Gh7G0xhihs6kGZqcDqBhPaus0mTR5hgv4qlzOw9F/qTLrfGxsGpR2M7KQ7Td9+Vw7z3jLczHXJmDxTlpsHbcRFiNiJvrLP/AbUZ/VXWYTtdRClcUJFbzqGCXq409f55vVaA/D5XCH6lUATt9xTvyZJpuvNwf+jA/XyhHXq6ydhGn2NvSSnhA/ti02MX8EINfdFX14ydEmMjfGvp9ayXv4u8Y6k6of5HjMwgjvhH2E+q7LqLY6Un9KHMJiFdlxDZJPjDOWwbJbKi9VGsB7GrQOuuN/9xz4trN17YMkpbcRbyWzuHVCRSMK8VUEEYdfM9sgQ/Zsz2uK2qbsJ61rbpAVpJViu5Yk2caiogkFD0RZCl9Fg81MwNlW8USSW90jwijbE3e/7eB2uyc+OY0yMfmGLK07pIRgBmAotX7tjCp/aiX3PnoR2rDLOS+zpocjKXs55UkJSG6ntZD+vpTU3H5zQRgRu1i1TqkF8Ntj4QFi8Kma3oOqyblEVtkVBCd8EwsqIc6QHkNXWaqcpX4A9gCrgASWG5+IEXnOPU/raX8=
 before_deploy:
 - export RELEASE_FILE_NAME=$(ls ../*.deb)
 after_deploy:
