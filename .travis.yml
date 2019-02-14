@@ -19,6 +19,7 @@ script: sudo make deb
 after_success:
 - FILE_NAME=$(ls -a ../*.deb)
 #- travis_wait curl -T $FILE_NAME -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/release/
+- chmod 600 fabscan.key
 - scp -o  StrictHostKeyChecking=no -i fabscan.key $FILE_NAME $DEPLOY_USER@mariolukas.de:/var/deploy/release/.
 env:
   global:
