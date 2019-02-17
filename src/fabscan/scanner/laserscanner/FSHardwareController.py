@@ -71,13 +71,13 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
                 },
                 "LABEL": "First Laser"
             },
-            "RIGHT_LASER": {
-                "FUNCTIONS": {
-                    "ON": lambda: self.laser.on(1),
-                    "OFF": lambda: self.laser.off(1)
-                },
-                "LABEL": "Second Laser"
-            },
+            #"RIGHT_LASER": {
+            #    "FUNCTIONS": {
+            #        "ON": lambda: self.laser.on(1),
+            #        "OFF": lambda: self.laser.off(1)
+            #    },
+            #    "LABEL": "Second Laser"
+            #},
             "LED_RING": {
                 "FUNCTIONS": {
                     "ON": lambda: self.led.on(255, 255, 255),
