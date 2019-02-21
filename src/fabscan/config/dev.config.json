@@ -53,7 +53,8 @@
         "rotate": "True",
         "hflip": "True",
         "vflip": "False",
-        "type": "PICAM"
+        "type": "PICAM",
+        "undistort": "False"
     },
     "serial": {
         "plattform_type": "fabscanpi",
