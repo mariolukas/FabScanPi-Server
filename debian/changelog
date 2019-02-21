@@ -11,7 +11,7 @@ fabscanpi-server (0.7.0) UNRELEASED; urgency=medium
   * fixed camera driver (pi and usb)
   * fixed random artifacts at the beginning of object scan
 
- -- Mario Lukas <info@fabscan.org>  Mon, 28 Jan 2018 22:47:00 +0100
+ -- Mario Lukas <info@fabscan.org>  Thu, 21 Feb 2019 22:47:00 +0100
 
 fabscanpi-server (0.6.0) UNRELEASED; urgency=medium
   * refactored webserver backend code
