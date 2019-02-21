@@ -1,15 +1,19 @@
-var _paq = _paq || [];
-_paq.push(["setCookieDomain", "*.fabscan.org"]);
-_paq.push(['trackPageView']);
-_paq.push(['enableLinkTracking']);
-(function() {
-    var u="http://analytics.mariolukas.de/";
-    _paq.push(['setTrackerUrl', u+'piwik.php']);
-    _paq.push(['setSiteId', 3]);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-})();
 
+  var _paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
+  _paq.push(["setCookieDomain", "*.fabscan.org"]);
+  _paq.push(["setDomains", ["*.fabscan.org","*.www.fabscan.org"]]);
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//analytics.mariolukas.de/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '3']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+    
 $.get('https://api.github.com/repos/mariolukas/FabScanPi-Build-Raspbian/releases/latest', function (data) {
    var asset = data.assets[0];
      var downloadCount = 0;
