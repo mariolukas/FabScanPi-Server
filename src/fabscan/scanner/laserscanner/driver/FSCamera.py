@@ -124,6 +124,18 @@ class CamProcessor(threading.Thread):
                     if self.mode == "settings":
                         image = self.imageprocessor.get_laser_stream_frame(image)
 
+
+                    #if self.use_distortion:
+                    # if image is not None and \
+                    #         self.config.calibration.camera_matrix is not [] and \
+                    #         self.config.calibration.distortion_vector is not [] and \
+                    #         self.config.calibration.dist_camera_matrix is not []:
+                    #     image = cv2.undistort(image,
+                    #                           self.config.camera_matrix,
+                    #                           self.config.distortion_vector,
+                    #                           None,
+                    #                           self.config.dist_camera_matrix)
+
                     #while not self.fs_ring_buffer.sync.wait(1):
                     self.fs_ring_buffer.append(image)
 
@@ -218,22 +230,48 @@ class PiCam(threading.Thread):
         # self.resolution = (self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
 
         self.camera_buffer = cam_ring_buffer
-        # self.camera = picamera.PiCamera(resolution=self.resolution)
+
+        self.newcameramtx = None
+        self.roi = None
+        self.mapx = None
+        self.mapy = None
+
         self.idle = True
+        self.resolution = (self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
+        self.camera = picamera.PiCamera(resolution=self.resolution)
         self.start()
 
     def run(self):
         while True:
             if not self.idle and self.camera.recording:
-                self.camera.wait_recording(0.5)
+                try:
+                    self.camera.wait_recording(0.5)
+                    self.camera.contrast = self.settings.camera.contrast
+                    self.camera.brightness = self.settings.camera.brightness
+                    self.camera.saturation = self.settings.camera.saturation
+                except:
+                    pass
             else:
                 time.sleep(0.05)
 
-    def get_frame(self):
+    def get_frame(self, undistort=False):
         image = None
         while image is None:
             #with self.camera_buffer._lock:
                 image = self.camera_buffer.get()
+
+
+        #if undistort:
+        #    self._logger.debug(self.config.calibration.camera_matrix)
+        #    self.newcameramtx, self.roi = cv2.getOptimalNewCameraMatrix(np.asarray(self.config.calibration.camera_matrix), np.asarray(self.config.calibration.distortion_vector), self.resolution, 1, self.resolution )
+
+            #image = cv2.remap(image, self.mapx, self.mapy, cv2.INTER_LINEAR)
+        #    image = cv2.undistort(image,
+        #                          np.asarray(self.config.calibration.camera_matrix),
+        #                          np.asarray(self.config.calibration.distortion_vector),
+        #                          None,
+        #                          self.newcameramtx)
+
         return image
 
     def set_mode(self, mode):
@@ -269,8 +307,25 @@ class PiCam(threading.Thread):
             #self.flush_stream()
             self.set_mode(mode)
 
-            if self.camera is None:
-                self.camera = picamera.PiCamera(resolution=self.resolution)
+
+            #if len(self.config.calibration.camera_matrix) > 0:
+            #    self.newcameramtx, self.roi = cv2.getOptimalNewCameraMatrix(self.config.calibration.camera_matrix,
+            #                                                                self.config.calibration.distortion_vector,
+            #                                                                self.resolution,
+            #                                                                1,
+            #                                                                self.resolution)
+
+            #    self.mapx, self.mapy = cv2.initUndistortRectifyMap(self.config.calibration.camera_matrix,
+            #                                                       self.config.calibration.distortion_vector,
+            #                                                       None,
+            #                                                       self.newcameramtx,
+            #                                                       self.resolution,
+            #                                                       5)
+
+            #if self.camera is None:
+            #    self.camera = picamera.PiCamera(resolution=self.resolution)
+            if self.camera:
+                self.camera.resolution = self.resolution
 
             self.idle = False
             self.camera.start_recording(self.output, format='mjpeg')
@@ -286,8 +341,8 @@ class PiCam(threading.Thread):
                 self.camera.stop_recording()
             while self.camera.recording:
                 time.sleep(0.4)
-            self.camera.close()
-            self.camera = None
+            #self.camera.close()
+            #self.camera = None
             self.idle = True
             self._logger.debug("Cam Stream with Resolution " + str(self.resolution) + " stopped")
 

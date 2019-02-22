@@ -82,12 +82,13 @@ class FSCalibration(FSCalibrationInterface):
 
 
     def start(self):
+        #self._hardwarecontroller.stop_camera_stream()
         tools = FSSystem()
         self._hardwarecontroller.stop_camera_stream()
         tools.delete_folder(self.config.folders.scans+'calibration')
         self._hardwarecontroller.turntable.enable_motors()
 
-        if self.config.laser.interleaved == 'False':
+        if not bool(self.config.laser.interleaved):
             self._logger.debug("Turning Leds on in interleaved mode.")
             self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
@@ -108,7 +109,7 @@ class FSCalibration(FSCalibrationInterface):
             self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
             self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
 
-            if self.config.laser.interleaved == 'False':
+            if not bool(self.config.laser.interleaved):
                 self._hardwarecontroller.led.off()
 
             self._hardwarecontroller.turntable.disable_motors()
@@ -286,7 +287,7 @@ class FSCalibration(FSCalibrationInterface):
                     for i in xrange(self.config.laser.numbers):
                         image = self._capture_laser(i)
 
-                        if self.config.laser.interleaved == 'True':
+                        if bool(self.config.laser.interleaved):
                             image = cv2.subtract(pattern_image, image)
 
                         image = self._imageprocessor.pattern_mask(image, corners)
@@ -331,7 +332,7 @@ class FSCalibration(FSCalibrationInterface):
             else:
                 self.image = image
 
-        if self.config.laser.interleaved == 'False':
+        if not bool(self.config.laser.interleaved):
             self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
     def _capture_pattern(self):

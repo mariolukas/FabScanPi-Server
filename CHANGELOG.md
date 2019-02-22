@@ -4,8 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [0.7.0] - unreleased
+## [0.8.0] -  unreleased
 ### Added
+
+### Changed
+
+### Fixed
+
+## [0.7.0] -  2019-02-21
+### Added
+- new settings dialog options for hardware contolling
+- moved calibration button to settings dialog
+- added new configuraitons in general settings tab
+- prepared platform independet firmware setup (aka cyclop compatible mode)
 - api route for live log stream
 - api route for debug log zip download
 - new firmware version

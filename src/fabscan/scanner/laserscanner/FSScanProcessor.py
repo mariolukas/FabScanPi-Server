@@ -219,6 +219,8 @@ class FSScanProcessor(FSScanProcessorInterface):
             pass
 
     def start_calibration(self):
+        self.hardwareController.settings_mode_off()
+        time.sleep(0.5)
         self.calibration.start()
 
     def stop_calibration(self):
@@ -244,9 +246,19 @@ class FSScanProcessor(FSScanProcessorInterface):
             self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
     def settings_mode_on(self):
+        #message = {
+        #    "message": "SETTINGS_MODE_ON",
+        #    "level": "info"
+        #}
+        #self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
         self.hardwareController.settings_mode_on()
 
     def settings_mode_off(self):
+        #message = {
+        #    "message": "SETTINGS_MODE_OFF",
+        #    "level": "info"
+        #}
+        #self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
         self.hardwareController.settings_mode_off()
 
     def start_scan(self):
@@ -272,7 +284,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._prefix = datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
         self.point_cloud = FSPointCloud(color=self._is_color_scan)
 
-        if not (self.config.calibration.camera_matrix == []) and self.actor_ref.is_alive():
+        if not (self.config.calibration.laser_planes[0]['normal'] == []) and self.actor_ref.is_alive():
             if self._is_color_scan:
                 self._total = self._number_of_pictures * 2 * self.config.laser.numbers
                 self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
@@ -358,7 +370,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._laser_positions = self.settings.laser_positions
         # wait for ending of texture stream
 
-        if self.config.laser.interleaved == 'False':
+        if not bool(self.config.laser.interleaved):
             self.hardwareController.laser.on()
             self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
 

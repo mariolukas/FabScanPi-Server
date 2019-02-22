@@ -62,6 +62,8 @@ class Settings(SettingsInterface):
         self.led.blue = settings.led.blue
         self.led.green = settings.led.green
         self.led.red = settings.led.red
+        self.show_laser_overlay = settings.show_laser_overlay
+        self.show_calibration_pattern = settings.show_calibration_pattern
 
 
     def todict(self, obj, classkey=None):

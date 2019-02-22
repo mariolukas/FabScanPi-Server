@@ -52,6 +52,7 @@ class FSCommand(object):
     UPDATE_CONFIG = "UPDATE_CONFIG"
 
 
+
 @inject(
         settings=SettingsInterface,
         config=ConfigInterface,
@@ -86,7 +87,7 @@ class FSScanner(threading.Thread):
         self._logger.info("Number of cpu cores: " + str(multiprocessing.cpu_count()))
         self.config = config
 
-        if self.config.register_as_discoverable == 'True':
+        if bool(self.config.discoverable):
            self.run_discovery_service()
            self.scheduler.add_job(self.run_discovery_service, 'interval', minutes=30, id='register_discovery_service')
            self._logger.info("Added discovery scheduling job.")
@@ -200,6 +201,11 @@ class FSScanner(threading.Thread):
         elif command == FSCommand.MESHING:
             meshlab_task = FSMeshlabTask(event.scan_id, event.filter, event.format)
             meshlab_task.start()
+            return
+
+        elif command == FSCommand.HARDWARE_TEST_FUNCTION:
+            self._logger.debug("Hardware Device Function called...")
+            self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.CALL_HARDWARE_TEST_FUNCTION, 'DEVICE_TEST': event.device})
             return
 
         # Upgrade server
