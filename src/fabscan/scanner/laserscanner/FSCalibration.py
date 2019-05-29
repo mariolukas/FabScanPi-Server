@@ -88,8 +88,8 @@ class FSCalibration(FSCalibrationInterface):
         tools.delete_folder(self.config.folders.scans+'calibration')
         self._hardwarecontroller.turntable.enable_motors()
 
-        if not bool(self.config.laser.interleaved):
-            self._logger.debug("Turning Leds on in interleaved mode.")
+        if self.config.laser.interleaved == "False":
+            self._logger.debug("Turning Leds on in non interleaved mode.")
             self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
         self.reset_calibration_values()
@@ -109,7 +109,7 @@ class FSCalibration(FSCalibrationInterface):
             self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
             self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
 
-            if not bool(self.config.laser.interleaved):
+            if self.config.laser.interleaved == "False":
                 self._hardwarecontroller.led.off()
 
             self._hardwarecontroller.turntable.disable_motors()
@@ -287,8 +287,8 @@ class FSCalibration(FSCalibrationInterface):
                     for i in xrange(self.config.laser.numbers):
                         image = self._capture_laser(i)
 
-                        if bool(self.config.laser.interleaved):
-                            image = cv2.subtract(pattern_image, image)
+                        if self.config.laser.interleaved == "True":
+                            image = cv2.subtract(image, pattern_image)
 
                         image = self._imageprocessor.pattern_mask(image, corners)
                         self.image = image
@@ -332,7 +332,7 @@ class FSCalibration(FSCalibrationInterface):
             else:
                 self.image = image
 
-        if not bool(self.config.laser.interleaved):
+        if self.config.laser.interleaved == "False":
             self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
     def _capture_pattern(self):
@@ -343,7 +343,6 @@ class FSCalibration(FSCalibrationInterface):
 
     def _capture_laser(self, index):
         self._logger.debug("Starting laser capture...")
-        time.sleep(1.5)
         laser_image = self._hardwarecontroller.get_laser_image(index)
         return laser_image
 

@@ -310,6 +310,8 @@ class FSScanProcessor(FSScanProcessorInterface):
             "message": "SCANNING_TEXTURE",
             "level": "info"
         }
+
+
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
         self._worker_pool.create(self.config.process_numbers)
 
@@ -339,7 +341,7 @@ class FSScanProcessor(FSScanProcessorInterface):
                 if self.current_position == 0:
                     self.init_texture_scan()
 
-                color_image = self.hardwareController.get_image_at_position()
+                color_image = self.hardwareController.get_picture()
                 self.hardwareController.move_to_next_position(steps=self._resolution, color=True )
 
                 task = ImageTask(color_image, self._prefix, self.current_position, self._number_of_pictures, task_type="PROCESS_COLOR_IMAGE")
@@ -370,11 +372,12 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._laser_positions = self.settings.laser_positions
         # wait for ending of texture stream
 
-        if not bool(self.config.laser.interleaved):
+        if self.config.laser.interleaved == "False":
             self.hardwareController.laser.on()
             self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
 
         self.hardwareController.camera.device.flush_stream()
+        self.hardwareController.camera.device.camera.awb_mode = 'auto'
 
         if not self._worker_pool.workers_active():
             self._worker_pool.create(self.config.process_numbers)

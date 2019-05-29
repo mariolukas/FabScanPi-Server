@@ -6,7 +6,7 @@ import mimetypes
 import stat
 import logging
 from tornado.web import HTTPError
-from fabscan.server.services.httphandler.FSBaseHandler import BaseHandler
+from fabscan.server.services.api.FSBaseHandler import BaseHandler
 
 class FSStaticFileHandler(BaseHandler):
     """A simple handler that can serve static content from a directory.

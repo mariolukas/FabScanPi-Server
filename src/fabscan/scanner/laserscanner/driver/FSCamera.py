@@ -307,21 +307,6 @@ class PiCam(threading.Thread):
             #self.flush_stream()
             self.set_mode(mode)
 
-
-            #if len(self.config.calibration.camera_matrix) > 0:
-            #    self.newcameramtx, self.roi = cv2.getOptimalNewCameraMatrix(self.config.calibration.camera_matrix,
-            #                                                                self.config.calibration.distortion_vector,
-            #                                                                self.resolution,
-            #                                                                1,
-            #                                                                self.resolution)
-
-            #    self.mapx, self.mapy = cv2.initUndistortRectifyMap(self.config.calibration.camera_matrix,
-            #                                                       self.config.calibration.distortion_vector,
-            #                                                       None,
-            #                                                       self.newcameramtx,
-            #                                                       self.resolution,
-            #                                                       5)
-
             #if self.camera is None:
             #    self.camera = picamera.PiCamera(resolution=self.resolution)
             if self.camera:

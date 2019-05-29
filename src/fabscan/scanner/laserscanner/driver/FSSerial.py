@@ -152,16 +152,16 @@ class FSSerialCom():
        # time.sleep(0.2)
         response = ""
         self._stop = False
-        with self.lock:
-            while not self._stop:
-                response += self._serial.read()
-                if ">" in response:
-                    response = response.rstrip(">")
-                    response = response.translate(None, '\n\t\r')
-                    if response:
-                        self._logger.debug("Command successfully sent: " + response)
-                        self._stop = True
-                    break
+        #with self.lock:
+        while not self._stop:
+            response += self._serial.read()
+            if ">" in response:
+                response = response.rstrip(">")
+                response = response.translate(None, '\n\t\r')
+                if response:
+                    self._logger.debug("Command successfully sent: " + response)
+                    self._stop = True
+                break
 
     def flush(self):
        self._serial.flushInput()

@@ -4,7 +4,7 @@
         "scans": "/home/pi/scans/"
     },
     "laser": {
-        "interleaved": "False",
+        "interleaved": "True",
         "numbers": 2
     },
     "scanner_type": "laserscanner",

@@ -161,7 +161,7 @@ class ImageProcessor(ImageProcessorInterface):
     def _obtain_red_channel(self, image):
         ret = None
         if self.red_channel == 'R (RGB)':
-            ret = cv2.split(image)[0]
+            ret = cv2.split(image)[2]
         elif self.red_channel == 'Cr (YCrCb)':
             ret = cv2.split(cv2.cvtColor(image, cv2.COLOR_RGB2YCR_CB))[1]
         elif self.red_channel == 'U (YUV)':

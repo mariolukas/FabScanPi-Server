@@ -63,12 +63,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self._logger.debug("Hardware controller initialized...")
         self.lock = threading.Lock()
 
-        def reset_devices(self):
-            for laser_index in range(self.config.laser.numbers):
-                self.laser.off(laser_index)
-            self.led.off()
-            self.turntable.stop_turning()
-            self.camera.device.stop_stream()
+
 
         self.hardware_test_functions = {
             "TURNTABLE": {
@@ -85,13 +80,13 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
                 },
                 "LABEL": "First Laser"
             },
-            #"RIGHT_LASER": {
-            #    "FUNCTIONS": {
-            #        "ON": lambda: self.laser.on(1),
-            #        "OFF": lambda: self.laser.off(1)
-            #    },
-            #    "LABEL": "Second Laser"
-            #},
+            "RIGHT_LASER": {
+                "FUNCTIONS": {
+                    "ON": lambda: self.laser.on(1),
+                    "OFF": lambda: self.laser.off(1)
+                },
+                "LABEL": "Second Laser"
+            },
             "LED_RING": {
                 "FUNCTIONS": {
                     "ON": lambda: self.led.on(255, 255, 255),
@@ -100,6 +95,13 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
                 "LABEL": "Led Ring"
             }
         }
+
+    def reset_devices(self):
+        for laser_index in range(self.config.laser.numbers):
+            self.laser.off(laser_index)
+        self.led.off()
+        self.turntable.stop_turning()
+        self.camera.device.stop_stream()
 
     def flush(self):
         self.camera.camera_buffer.flush()
@@ -133,6 +135,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.turntable.stop_turning()
         self.led.off()
         self.laser.off(laser=0)
+        self.laser.off(laser=1)
         self.camera.device.stop_stream()
         #self.camera.device.flush_stream()
         self._settings_mode_is_off = True
@@ -140,6 +143,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def get_picture(self, flush=False):
         if flush:
             self.camera.device.flush_stream()
+            time.sleep(0.3)
         img = self.camera.device.get_frame()
         return img
 
@@ -152,7 +156,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
             return pattern_image
 
     def reset_hardware(self):
-        with self._lock:
+        #with self._lock:
             self.led.off()
             self.laser.off(0)
             self.laser.off(1)
@@ -162,8 +166,11 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         with self._lock:
             #self._hardwarecontroller.led.on(30, 30, 30)
             self.laser.on(laser=index)
+            time.sleep(1)
+            #self.camera.device.flush_stream()
             laser_image = self.get_picture(flush=True)
             self.laser.off(laser=index)
+            time.sleep(0.5)
             return laser_image
 
     def get_image_at_position(self, index=0):
@@ -174,16 +181,17 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         '''
 
         with self._lock:
+
             laser_image = self.get_laser_image(index)
 
-            if bool(self.config.laser.interleaved):
+            if self.config.laser.interleaved == "True":
                 backrgound_image = self.get_picture(flush=True)
                 laser_image = cv2.subtract(laser_image, backrgound_image)
 
             return laser_image
 
     def move_to_next_position(self, steps=180, color=False):
-        with self._lock:
+        #with self._lock:
             if color:
                 speed = 800
             else:

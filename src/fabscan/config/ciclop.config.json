@@ -4,8 +4,8 @@
         "scans": "/home/pi/scans/"
     },
     "laser": {
-        "numbers": 2,
-        "interleaved": "True"
+        "interleaved": "True",
+        "numbers": 1
     },
     "scanner_type": "laserscanner",
     "calibration": {
@@ -15,11 +15,16 @@
             "square_size": 11,
             "rows": 6,
             "columns": 8,
-            "origin_distance": 48
+            "origin_distance": 37.2
         },
         "camera_matrix": [],
         "distortion_vector": [],
         "laser_planes": [
+            {
+                "deviation": 0,
+                "distance": 0,
+                "normal": []
+            },
             {
                 "deviation": 0,
                 "distance": 0,
@@ -38,24 +43,28 @@
         "radius": 70
     },
     "camera": {
-        "rotate": "True",
-        "type": "USBCAM",
-        "vflip": "False",
-        "preview_resolution": {
-            "width": 320,
-            "height": 240
-        },
-        "hflip": "True",
         "resolution": {
-            "width": 1280,
-            "height": 720
-        }
+            "width": 1640,
+            "height": 1232
+        },
+        "preview_resolution": {
+            "width": 800,
+            "height": 600
+        },
+        "rotate": "True",
+        "hflip": "True",
+        "vflip": "False",
+        "type": "PICAM",
+        "undistort": "False"
     },
     "serial": {
-        "baudrate": 115200,
-        "autoflash": "False",
-        "flash_baudrate": 115200,
-        "port": "/dev/ttyUSB0"
+        "plattform_type": "cyclop",
+        "baudrate": 57600,
+        "autoflash": "True",
+        "port": "/dev/ttyUSB0",
+        "flash_baudrate": 115200
     },
-    "texture_illumination": 40
+    "texture_illumination": 140,
+    "keep_raw_images": "True",
+    "discoverable": "True"
 }
