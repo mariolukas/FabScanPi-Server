@@ -5,7 +5,7 @@
     },
     "laser": {
         "interleaved": "True",
-        "numbers": 1
+        "numbers": 2
     },
     "scanner_type": "laserscanner",
     "calibration": {
