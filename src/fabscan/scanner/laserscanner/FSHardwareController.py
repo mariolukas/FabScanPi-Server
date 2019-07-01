@@ -166,7 +166,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         with self._lock:
             #self._hardwarecontroller.led.on(30, 30, 30)
             self.laser.on(laser=index)
-            time.sleep(1)
+            time.sleep(0.8)
             #self.camera.device.flush_stream()
             laser_image = self.get_picture(flush=True)
             self.laser.off(laser=index)
@@ -197,7 +197,8 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
             else:
                 speed = 500
 
-            self.turntable.step(steps, speed)
+            self.turntable.step_blocking(steps, speed)
+
 
     def arduino_is_connected(self):
         return self.serial_connection.is_connected()

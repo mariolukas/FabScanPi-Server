@@ -286,7 +286,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         if not (self.config.calibration.laser_planes[0]['normal'] == []) and self.actor_ref.is_alive():
             if self._is_color_scan:
-                self._total = self._number_of_pictures * 2 * self.config.laser.numbers
+                self._total = (self._number_of_pictures * self.config.laser.numbers) + self._number_of_pictures
                 self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
             else:
                 self._total = self._number_of_pictures * self.config.laser.numbers
@@ -346,7 +346,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
                 task = ImageTask(color_image, self._prefix, self.current_position, self._number_of_pictures, task_type="PROCESS_COLOR_IMAGE")
                 self.image_task_q.put(task, True)
-                #self._logger.debug("Color Progress %i of %i : " % (self.current_position, self._number_of_pictures))
+                self._logger.debug("Color Progress %i of %i : " % (self.current_position, self._number_of_pictures))
                 self.current_position += 1
                 if self.actor_ref.is_alive():
                     self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
@@ -473,9 +473,9 @@ class FSScanProcessor(FSScanProcessorInterface):
 
                 points.append(new_point)
 
-        self.semaphore.acquire()
+        #self.semaphore.acquire()
         self._progress += 1
-        self.semaphore.release()
+        #self.semaphore.release()
 
         message = {
             "points": points,
@@ -486,10 +486,11 @@ class FSScanProcessor(FSScanProcessorInterface):
             "state": scan_state
         }
 
+        self._logger.debug(str(self._progress) + " von " + str(self._total))
         self.eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
 
 
-        if self._progress == self._total:
+        if self._progress >= self._total:
             while not self.image_task_q.empty():
                 #wait until the last image is processed and send to the client.
                 time.sleep(0.1)

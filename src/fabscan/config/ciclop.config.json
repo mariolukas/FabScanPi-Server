@@ -12,10 +12,10 @@
         "weight_matrix": [],
         "dist_camera_matrix": [],
         "pattern": {
-            "square_size": 11,
+            "square_size": 8,
             "rows": 6,
-            "columns": 8,
-            "origin_distance": 37.2
+            "columns": 10,
+            "origin_distance": 35
         },
         "camera_matrix": [],
         "distortion_vector": [],
@@ -40,7 +40,7 @@
     "process_numbers": 4,
     "turntable": {
         "steps": 3200,
-        "radius": 70
+        "radius": 100
     },
     "camera": {
         "resolution": {

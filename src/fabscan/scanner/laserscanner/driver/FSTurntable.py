@@ -30,14 +30,15 @@ class Turntable(object):
         if self.serial_connection != None:
             command = "G04 T"+str(steps)+" F"+str(speed)+";"
             self.serial_connection.send_and_receive(command)
+            time.sleep(0.8)
 
     def step_blocking(self, steps, speed):
         steps *= self.scaler
 
         if self.serial_connection != None:
-            command = "G04 T"+str(steps)+" F"+str(speed)+";"
+            command = "G02 T"+str(steps)+" F"+str(speed)+";"
             self.serial_connection.send_and_receive(command)
-            time.sleep(1)
+
 
     def enable_motors(self):
         if self.serial_connection != None:

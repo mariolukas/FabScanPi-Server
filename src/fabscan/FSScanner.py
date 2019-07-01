@@ -7,6 +7,7 @@ __email__ = "info@mariolukas.de"
 import time
 import threading
 import logging
+import os
 import multiprocessing
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -21,6 +22,7 @@ from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, F
 from fabscan.lib.util.FSInject import inject, singleton
 from fabscan.lib.util.FSUpdate import upgrade_is_available, do_upgrade
 from fabscan.lib.util.FSDiscovery import register_to_discovery
+from fabscan.lib.util.FSSystemWatch import get_cpu_temperature
 
 class FSState(object):
     IDLE = "IDLE"
@@ -92,9 +94,12 @@ class FSScanner(threading.Thread):
            self.scheduler.add_job(self.run_discovery_service, 'interval', minutes=30, id='register_discovery_service')
            self._logger.info("Added discovery scheduling job.")
 
+        self.scheduler.add_job(self.run_temperature_watch_service, 'interval', minutes=1, id='cpu_temperature_service')
+
     def run(self):
         while not self.exit:
             self.eventManager.handle_event_q()
+
             time.sleep(0.05)
 
         self.scanProcessor.stop()
@@ -270,6 +275,23 @@ class FSScanner(threading.Thread):
 
     def get_state(self):
         return self._state
+
+
+    ## Scheduled functions see init function!!
+
+    def run_temperature_watch_service(self):
+        cpu_temp = get_cpu_temperature()
+        if ( cpu_temp > 70):
+            self._logger.warning('High CPU Temperature: '+ str(cpu_temp) + " C")
+            message = {
+                "message": "HIGH CPU Temp:  " + str(cpu_temp) + " C!",
+                "level": "warn"
+            }
+
+            self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+        else:
+            self._logger.debug("CPU Temperature: "  + str(cpu_temp) + " C")
+
 
     def run_discovery_service(self):
 

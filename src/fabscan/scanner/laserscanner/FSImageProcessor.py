@@ -309,7 +309,7 @@ class ImageProcessor(ImageProcessorInterface):
             z = point_cloud[2, :]
             turntable_radius = int(self.config.turntable.radius)
             additional_offset = 0.5
-            idx = np.where((z > abs(self.config.calibration.platform_translation[0])+additional_offset) &
+            idx = np.where(z >= 0 &
                            (rho >= -turntable_radius) &
                            (rho <= turntable_radius))[0]
 
@@ -364,27 +364,6 @@ class ImageProcessor(ImageProcessorInterface):
         u, v = points_2d
         x = np.concatenate(((u - cx) / fx, (v - cy) / fy, np.ones(len(u)))).reshape(3, len(u))
 
-
-        ## points_for_undistort = np.array([np.concatenate((u, v)).reshape(2, len(u)).T])
-
-        #print points_for_undistort.shape
-        # use opencv's undistortPoints, which incorporates the distortion coefficients
-        ## points_undistorted = cv2.undistortPoints(points_for_undistort, np.asanyarray(self.config.calibration.camera_matrix),
-        ##                                         np.asanyarray(self.config.calibration.distortion_vector))
-
-        ##u, v = np.hsplit(points_undistorted[0], points_undistorted[0].shape[1])
-
-        ## make homogenous coordinates
-        ## x = np.concatenate((u.T[0], v.T[0], np.ones(len(u)))).reshape(3, len(u))
-        ## normalize to get unit direction vectors
-        ## cam_point_direction = x / np.linalg.norm(x, axis=0)
-
-        ### Compute laser intersection:
-        ### dlc = dot(laser_normal, cam_point_direction) = projection of camera ray on laser-plane normal
-        ### d / dlc = distance from cam center to 3D point
-        ### cam_point_direction * d / dlc = 3D point
-
-        #return d / np.dot(n, cam_point_direction) * cam_point_direction
         return d / np.dot(n, x) * x
 
 
