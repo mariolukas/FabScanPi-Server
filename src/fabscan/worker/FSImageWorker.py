@@ -142,7 +142,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
                         if (image_task.task_type == "PROCESS_DEPTH_IMAGE"):
                             #self._logger.debug("process " + str(self.pid) + " handle image")
-
+                            point_cloud = []
                             try:
                                 angle = float(image_task.progress * 360) / float(image_task.resolution)
                                 #self._logger.debug("Progress "+str(image_task.progress)+" Resolution "+str(image_task.resolution)+" angle "+str(angle))

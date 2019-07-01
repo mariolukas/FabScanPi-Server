@@ -306,13 +306,13 @@ class ImageProcessor(ImageProcessorInterface):
     def mask_point_cloud(self, point_cloud):
         if point_cloud is not None and len(point_cloud) > 0:
             rho = np.sqrt(np.square(point_cloud[0, :]) + np.square(point_cloud[1, :]))
+
             z = point_cloud[2, :]
             turntable_radius = int(self.config.turntable.radius)
             additional_offset = 0.5
             idx = np.where(z >= 0 &
                            (rho >= -turntable_radius) &
                            (rho <= turntable_radius))[0]
-
             return point_cloud[:, idx]
         else:
             return point_cloud

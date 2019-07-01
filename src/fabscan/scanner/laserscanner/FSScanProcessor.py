@@ -454,7 +454,6 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         scan_state = 'texture_scan'
         if event['image_type'] == 'depth' and event['point_cloud'] is not None:
-
             scan_state = 'object_scan'
             point_cloud = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2],
                               event['texture'][0], event['texture'][1], event['texture'][2])
@@ -506,7 +505,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._logger.debug("Time Total: %i sec." % (duration,))
 
         self._starttime = 0
-        self._logger.info("Scan complete writing pointcloud files with %i points." % (self.point_cloud.get_size(),))
+        self._logger.info("Scan complete writing pointcloud.")
         self.point_cloud.saveAsFile(self._prefix)
         settings_filename = self.config.folders.scans+self._prefix+"/"+self._prefix+".fab"
         self.settings.saveAsFile(settings_filename)
