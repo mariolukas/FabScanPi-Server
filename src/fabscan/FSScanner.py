@@ -281,7 +281,7 @@ class FSScanner(threading.Thread):
 
     def run_temperature_watch_service(self):
         cpu_temp = get_cpu_temperature()
-        if ( cpu_temp > 70):
+        if ( cpu_temp > 78):
             self._logger.warning('High CPU Temperature: '+ str(cpu_temp) + " C")
             message = {
                 "message": "HIGH CPU Temp:  " + str(cpu_temp) + " C!",

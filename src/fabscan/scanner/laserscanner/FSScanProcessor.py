@@ -55,7 +55,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._laser_positions = 1
         self._progress = 0
         self._is_color_scan = True
-        self.point_cloud = None
+        self.point_clouds = []
         self.image_task_q = multiprocessing.Queue(self.config.process_numbers*2)
         self.current_position = 0
         self._stop_scan = False
@@ -282,7 +282,9 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         # TODO: rename prefix to scan_id
         self._prefix = datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
-        self.point_cloud = FSPointCloud(color=self._is_color_scan)
+
+        for i in xrange(self.config.laser.numbers):
+            self.point_clouds[i] = FSPointCloud(color=self._is_color_scan)
 
         if not (self.config.calibration.laser_planes[0]['normal'] == []) and self.actor_ref.is_alive():
             if self._is_color_scan:
@@ -455,12 +457,12 @@ class FSScanProcessor(FSScanProcessorInterface):
         scan_state = 'texture_scan'
         if event['image_type'] == 'depth' and event['point_cloud'] is not None:
             scan_state = 'object_scan'
-            point_cloud = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2],
+            points = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2],
                               event['texture'][0], event['texture'][1], event['texture'][2])
 
-            self.append_points(point_cloud)
+            self.append_points(points, event['laser_index'])
 
-            for index, point in enumerate(point_cloud):
+            for index, point in enumerate(points):
                 new_point = dict()
                 new_point['x'] = str(point[0])
                 new_point['y'] = str(point[2])
@@ -477,6 +479,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         #self.semaphore.release()
 
         message = {
+            "laser_index": event['laser_index'],
             "points": points,
             "progress": self._progress,
             "resolution": self._total,
@@ -506,7 +509,15 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         self._starttime = 0
         self._logger.info("Scan complete writing pointcloud.")
-        self.point_cloud.saveAsFile(self._prefix)
+
+        both_cloud = FSPointCloud(color=self._is_color_scan)
+
+        for laser_index in xrange(self.config.laser.numbers):
+            both_cloud.append_points(self.point_cloud[laser_index].get_points())
+            self.point_clouds[laser_index].saveAsFile(self._prefix+'_' + str(laser_index))
+
+        both_cloud.saveAsFile(self._prefix)
+
         settings_filename = self.config.folders.scans+self._prefix+"/"+self._prefix+".fab"
         self.settings.saveAsFile(settings_filename)
 
@@ -536,9 +547,9 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.hardwareController.stop_camera_stream()
 
 
-    def append_points(self, point_cloud_set):
-        if self.point_cloud:
-            self.point_cloud.append_points(point_cloud_set)
+    def append_points(self, points, index):
+        if self.points:
+            self.point_clouds[index].append_points(points)
             #self.point_cloud.append_texture(texture_set)
 
     def get_resolution(self):
@@ -564,7 +575,8 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._number_of_pictures = 0
         self._total = 0
         self._starttime = 0
-        self.point_cloud = None
+
+        self.point_clouds = []
 
     def get_time_stamp(self):
         return int(datetime.now().strftime("%s%f"))/1000

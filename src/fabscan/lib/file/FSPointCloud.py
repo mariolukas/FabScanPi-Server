@@ -34,6 +34,8 @@ class FSPointCloud():
         self.config = config
         self._logger = logging.getLogger(__name__)
 
+    def get_points(self):
+        return self.points
 
     def append_points(self, points):
         self.points += points

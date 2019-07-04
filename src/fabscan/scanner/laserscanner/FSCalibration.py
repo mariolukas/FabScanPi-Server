@@ -236,10 +236,10 @@ class FSCalibration(FSCalibrationInterface):
         self.shape = image[:, :, 0].shape
 
         #TODO: find out if it is better and try this...again.
-        #if (position > self.laser_calib_start and position < self.laser_calib_end):
-        #   flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
-        #else:
-        flags = cv2.CALIB_CB_FAST_CHECK
+        if (position > self.laser_calib_start and position < self.laser_calib_end):
+           flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
+        else:
+           flags = cv2.CALIB_CB_FAST_CHECK
 
         corners = self._imageprocessor.detect_corners(image, flags)
 
@@ -255,10 +255,10 @@ class FSCalibration(FSCalibrationInterface):
 
         pattern_image = self._capture_pattern()
 
-        #if (position > self.laser_calib_start and position < self.laser_calib_end):
-        #    flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
-        #else:
-        flags = cv2.CALIB_CB_FAST_CHECK
+        if (position > self.laser_calib_start and position < self.laser_calib_end):
+            flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
+        else:
+            flags = cv2.CALIB_CB_FAST_CHECK
 
         try:
             pose = self._imageprocessor.detect_pose(pattern_image, flags)

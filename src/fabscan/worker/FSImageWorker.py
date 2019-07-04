@@ -157,6 +157,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             data['point_cloud'] = point_cloud
                             data['texture'] = texture
                             data['image_type'] = 'depth'
+                            data['laser_index'] = image_task.index
                             #data['progress'] = image_task.progress
                             #data['resolution'] = image_task.resolution
 
