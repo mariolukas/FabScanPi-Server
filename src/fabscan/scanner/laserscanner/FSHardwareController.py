@@ -166,7 +166,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         with self._lock:
             #self._hardwarecontroller.led.on(30, 30, 30)
             self.laser.on(laser=index)
-            time.sleep(0.1)
+            time.sleep(0.6)
             #self.camera.device.flush_stream()
             laser_image = self.get_picture(flush=True)
             self.laser.off(laser=index)
