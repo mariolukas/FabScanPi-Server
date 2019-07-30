@@ -5,10 +5,10 @@
     },
     "laser": {
         "interleaved": "False",
-        "numbers": 2,
+        "numbers": 1,
         "color": "R (RGB)"
     },
-    "scanner_type": "laserscanner",
+    "scanner_type": "photogrammetry",
     "calibration": {
         "weight_matrix": [],
         "dist_camera_matrix": [],
@@ -40,7 +40,7 @@
     },
     "process_numbers": 4,
     "turntable": {
-        "steps": 3200,
+        "steps": 6400,
         "radius": 70
     },
     "camera": {

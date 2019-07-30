@@ -128,7 +128,7 @@
                                    <div style="margin-right:20em;">
                                        <div ng-class="{'fadeOut':!showThresholdValue}" class="slider-value-label">{{settings.threshold}}</div>
                                        <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Threshold</div>
-                                       <slider style="width:70%; margin-left:1em;" floor="0" ceiling="60" step="1" precision="1" ng-model="settings.threshold"></slider>
+                                       <slider style="width:70%; margin-left:1em;" floor="0" ceiling="100" step="1" precision="1" ng-model="settings.threshold"></slider>
                                    </div>
                                    <div style="margin-right:20em;">
                                        <div ng-class="{'longFadeOut':!showResolutionValue}" class="slider-value-label" >{{settings.resolution | toResolutionValue }}</div>

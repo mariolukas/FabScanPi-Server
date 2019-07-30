@@ -66,12 +66,14 @@ class FSScanServer(object):
         self._logger.info("FabScanPi-Server "+str(__version__))
 
         try:
+
             injector.provide(FSEventManagerInterface, FSEventManagerSingleton)
             injector.provide_instance(ConfigInterface, Config(self.config_file, True))
             injector.provide_instance(SettingsInterface, Settings(self.settings_file, True))
 
             # inject "dynamic" classes
             self.config = injector.get_instance(ConfigInterface)
+
             FSScannerFactory.injectScannerType(self.config.scanner_type)
 
             self.webserver = FSWebServer()

@@ -67,6 +67,7 @@ class Config(ConfigInterface):
             #outfile.write(to_unicode(str_))
 
     def saveAsFile(self, filename):
+
         current_config = self.todict(self.__dict__)
         try:
             del current_config['file']

@@ -4,14 +4,14 @@
         "scans": "/home/pi/scans/"
     },
     "laser": {
-        "numbers": 1
+        "numbers": 2
     },
     "scanner_type": "laserscanner",
     "calibration": {
         "weight_matrix": [],
         "dist_camera_matrix": [],
         "pattern": {
-            "square_size": 11,
+            "square_size": 10,
             "rows": 6,
             "columns": 8,
             "origin_distance": 37.2

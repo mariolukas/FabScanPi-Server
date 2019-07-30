@@ -5,14 +5,15 @@
     },
     "laser": {
         "interleaved": "True",
-        "numbers": 2
+        "numbers": 2,
+        "color": "R (RGB)"
     },
     "scanner_type": "laserscanner",
     "calibration": {
         "weight_matrix": [],
         "dist_camera_matrix": [],
         "pattern": {
-            "square_size": 8,
+            "square_size": 13,
             "rows": 6,
             "columns": 10,
             "origin_distance": 35
@@ -59,8 +60,8 @@
     },
     "serial": {
         "plattform_type": "cyclop",
-        "baudrate": 57600,
-        "autoflash": "True",
+        "baudrate": 14400,
+        "autoflash": "False",
         "port": "/dev/ttyUSB0",
         "flash_baudrate": 115200
     },

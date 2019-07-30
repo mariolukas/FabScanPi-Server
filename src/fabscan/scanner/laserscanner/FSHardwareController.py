@@ -143,7 +143,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def get_picture(self, flush=False):
         if flush:
             self.camera.device.flush_stream()
-            time.sleep(0.3)
+            #time.sleep(0.1)
         img = self.camera.device.get_frame()
         return img
 
@@ -166,11 +166,11 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         with self._lock:
             #self._hardwarecontroller.led.on(30, 30, 30)
             self.laser.on(laser=index)
-            time.sleep(0.7)
+            time.sleep(0.1)
             #self.camera.device.flush_stream()
             laser_image = self.get_picture(flush=True)
             self.laser.off(laser=index)
-            time.sleep(0.5)
+            #time.sleep(0.1)
             return laser_image
 
     def get_image_at_position(self, index=0):

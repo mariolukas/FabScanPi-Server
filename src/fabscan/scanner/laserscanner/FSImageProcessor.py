@@ -54,7 +54,7 @@ class ImageProcessor(ImageProcessorInterface):
         self.settings = settings
         self.config = config
         self._logger = logging.getLogger(__name__)
-        self.red_channel = 'R (RGB)'
+        self.laser_color_channel = self.config.laser.color
         self.threshold_enable = False
         self.threshold_value = 0
         self.blur_enable = True
@@ -148,24 +148,46 @@ class ImageProcessor(ImageProcessorInterface):
     def _threshold_image(self, image, blur_enable=True):
 
         image = cv2.threshold(
-            image, self.settings.threshold, 255, cv2.THRESH_TOZERO)[1]
+            image, self.settings.threshold, 255, cv2.THRESH_TOZERO+cv2.THRESH_OTSU)[1]
 
         if blur_enable:
-            image = cv2.blur(image, (5, 5))
+            image = cv2.GaussianBlur(image, (7, 7), 0)
 
         image = cv2.threshold(
-            image, self.settings.threshold, 255, cv2.THRESH_TOZERO)[1]
+            image, self.settings.threshold, 255,  cv2.THRESH_TOZERO+cv2.THRESH_OTSU)[1]
 
         return image
 
     def _obtain_red_channel(self, image):
         ret = None
-        if self.red_channel == 'R (RGB)':
+        if self.laser_color_channel == 'R (RGB)':
             ret = cv2.split(image)[2]
-        elif self.red_channel == 'Cr (YCrCb)':
+        elif self.laser_color_channel == 'G (RGB)':
+            ret = cv2.split(image)[1]
+        elif self.laser_color_channel == 'Cr (YCrCb)':
             ret = cv2.split(cv2.cvtColor(image, cv2.COLOR_RGB2YCR_CB))[1]
-        elif self.red_channel == 'U (YUV)':
+        elif self.laser_color_channel == 'U (YUV)':
             ret = cv2.split(cv2.cvtColor(image, cv2.COLOR_RGB2YUV))[1]
+
+        elif self.laser_color_detector == 'R (HSV)':
+            ret = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+            # lower mask (0-10)
+            # TODO: Use separate threshold value or 0 for 'V'
+            lower_red = np.array([0,50,self.threshold_value])
+            upper_red = np.array([10,255,255])
+            mask0 = cv2.inRange(ret, lower_red, upper_red)
+
+            # upper mask (170-180)
+            lower_red = np.array([160,50,self.threshold_value])
+            upper_red = np.array([180,255,255])
+            mask1 = cv2.inRange(ret, lower_red, upper_red)
+
+            # join masks
+            mask = mask0+mask1
+
+            ret = cv2.split(ret)[2]
+            ret[np.where(mask==0)] = 0
+
         return ret
 
     def compute_line_segmentation(self, image, index=0, roi_mask=False):

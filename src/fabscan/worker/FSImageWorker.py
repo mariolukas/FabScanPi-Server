@@ -133,10 +133,12 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
                             data['points'] = []
                             data['image_type'] = 'color'
+                            data['laser_index'] = None
 
                             event = dict()
                             event['event'] = "ON_IMAGE_PROCESSED"
                             event['data'] = data
+
 
                             self.event_q.put(event)
 

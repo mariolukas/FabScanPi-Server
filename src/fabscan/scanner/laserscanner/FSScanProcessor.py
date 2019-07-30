@@ -283,8 +283,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         # TODO: rename prefix to scan_id
         self._prefix = datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
 
-        for i in xrange(self.config.laser.numbers):
-            self.point_clouds[i] = FSPointCloud(color=self._is_color_scan)
+        self.point_clouds = [FSPointCloud(config=self.config, color=self._is_color_scan) for _ in xrange(self.config.laser.numbers)]
 
         if not (self.config.calibration.laser_planes[0]['normal'] == []) and self.actor_ref.is_alive():
             if self._is_color_scan:
@@ -457,12 +456,12 @@ class FSScanProcessor(FSScanProcessorInterface):
         scan_state = 'texture_scan'
         if event['image_type'] == 'depth' and event['point_cloud'] is not None:
             scan_state = 'object_scan'
-            points = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2],
+            point_cloud = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2],
                               event['texture'][0], event['texture'][1], event['texture'][2])
 
-            self.append_points(points, event['laser_index'])
+            self.append_points(point_cloud, event['laser_index'])
 
-            for index, point in enumerate(points):
+            for index, point in enumerate(point_cloud):
                 new_point = dict()
                 new_point['x'] = str(point[0])
                 new_point['y'] = str(point[2])
@@ -488,11 +487,10 @@ class FSScanProcessor(FSScanProcessorInterface):
             "state": scan_state
         }
 
-        self._logger.debug(str(self._progress) + " von " + str(self._total))
         self.eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
 
 
-        if self._progress >= self._total:
+        if self._progress == self._total:
             while not self.image_task_q.empty():
                 #wait until the last image is processed and send to the client.
                 time.sleep(0.1)
@@ -508,28 +506,38 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._logger.debug("Time Total: %i sec." % (duration,))
 
         self._starttime = 0
-        self._logger.info("Scan complete writing pointcloud.")
 
-        both_cloud = FSPointCloud(color=self._is_color_scan)
+        if len(self.point_clouds) == self.config.laser.numbers:
 
-        for laser_index in xrange(self.config.laser.numbers):
-            both_cloud.append_points(self.point_cloud[laser_index].get_points())
-            self.point_clouds[laser_index].saveAsFile(self._prefix+'_' + str(laser_index))
+            self._logger.info("Scan complete writing pointcloud.")
 
-        both_cloud.saveAsFile(self._prefix)
+            if self.config.laser.numbers > 1:
+                both_cloud = FSPointCloud(color=self._is_color_scan)
 
-        settings_filename = self.config.folders.scans+self._prefix+"/"+self._prefix+".fab"
-        self.settings.saveAsFile(settings_filename)
+            self._logger.debug('Number of PointClouds (for each laser one) : ' +str(len(self.point_clouds)))
 
-        message = {
-            "message": "SAVING_POINT_CLOUD",
-            "scan_id": self._prefix,
-            "level": "info"
-        }
+            for laser_index in xrange(self.config.laser.numbers):
+                points = self.point_clouds[laser_index].get_points()
+                if self.config.laser.numbers > 1:
+                    both_cloud.append_points(points)
+                self.point_clouds[laser_index].saveAsFile(self._prefix,  str(laser_index))
 
-        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+            if self.config.laser.numbers > 1:
+                both_cloud.saveAsFile(self._prefix, 'both')
 
-        self.utils.delete_image_folders(self._prefix)
+            settings_filename = self.config.folders.scans+self._prefix+"/"+self._prefix+".fab"
+            self.settings.saveAsFile(settings_filename)
+
+            message = {
+                "message": "SAVING_POINT_CLOUD",
+                "scan_id": self._prefix,
+                "level": "info"
+            }
+
+            self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+
+        #self.utils.delete_image_folders(self._prefix)
+        #TODO: add zip procedure for images
 
         self.reset_scanner_state()
 
@@ -548,7 +556,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
 
     def append_points(self, points, index):
-        if self.points:
+        if len(self.point_clouds) > 0:
             self.point_clouds[index].append_points(points)
             #self.point_cloud.append_texture(texture_set)
 

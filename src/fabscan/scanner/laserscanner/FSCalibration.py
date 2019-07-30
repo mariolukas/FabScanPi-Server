@@ -33,8 +33,8 @@ class FSCalibration(FSCalibrationInterface):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
         # super(FSCalibrationInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
 
-        self.LASER_PLANE_CALIBRATION_START_POS_DEGREE = 30 #65
-        self.LASER_PLANE_CALIBRATION_END_POS_DEGREE = 150 #115
+        self.LASER_PLANE_CALIBRATION_START_POS_DEGREE = 25 #65
+        self.LASER_PLANE_CALIBRATION_END_POS_DEGREE = 155 #115
         self._imageprocessor = imageprocessor
         self._hardwarecontroller = hardwarecontroller
         self.config = config
