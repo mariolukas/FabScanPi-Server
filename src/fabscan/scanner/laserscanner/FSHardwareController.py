@@ -129,7 +129,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self._settings_mode_is_off = False
         self.camera.device.flush_stream()
         self.laser.on(laser=0)
-        #self.turntable.start_turning()
+
 
     def settings_mode_off(self):
         self.turntable.stop_turning()
@@ -137,26 +137,22 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.laser.off(laser=0)
         self.laser.off(laser=1)
         self.camera.device.stop_stream()
-        #self.camera.device.flush_stream()
         self._settings_mode_is_off = True
 
     def get_picture(self, flush=False):
         if flush:
             self.camera.device.flush_stream()
-            #time.sleep(0.1)
         img = self.camera.device.get_frame()
         return img
 
     def get_pattern_image(self):
         with self._lock:
             self.led.on(110, 110, 110)
-            #self.camera.device.contrast = 40
             pattern_image = self.get_picture()
             self.led.off()
             return pattern_image
 
     def reset_hardware(self):
-        #with self._lock:
             self.led.off()
             self.laser.off(0)
             self.laser.off(1)
@@ -164,13 +160,11 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
     def get_laser_image(self, index):
         with self._lock:
-            #self._hardwarecontroller.led.on(30, 30, 30)
             self.laser.on(laser=index)
-            time.sleep(0.6)
-            #self.camera.device.flush_stream()
+            time.sleep(0.3)
             laser_image = self.get_picture(flush=True)
             self.laser.off(laser=index)
-            #time.sleep(0.1)
+
             return laser_image
 
     def get_image_at_position(self, index=0):

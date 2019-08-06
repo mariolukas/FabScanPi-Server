@@ -59,9 +59,9 @@
         "undistort": "False"
     },
     "serial": {
-        "plattform_type": "cyclop",
+        "plattform_type": "ciclop",
         "baudrate": 14400,
-        "autoflash": "False",
+        "autoflash": "True",
         "port": "/dev/ttyUSB0",
         "flash_baudrate": 115200
     },

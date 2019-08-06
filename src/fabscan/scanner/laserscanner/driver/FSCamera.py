@@ -20,6 +20,8 @@ from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 
+RING_BUFFER_SIZE=10
+
 try:
     import picamera
 except:
@@ -32,7 +34,7 @@ class FSCamera():
 
     def __init__(self, config):
 
-        self.camera_buffer = FSRingBuffer(10)
+        self.camera_buffer = FSRingBuffer(RING_BUFFER_SIZE)
         config = config
 
         if config.camera.type == 'PICAM':
@@ -80,6 +82,10 @@ class FSRingBuffer(threading.Thread):
         self.sync.set()
         self.data.clear()
         self.sync.clear()
+
+    def length(self):
+        return len(self.data)
+
 
 @inject(
     config=ConfigInterface,
@@ -340,6 +346,8 @@ class PiCam(threading.Thread):
 
     def flush_stream(self):
         self.camera_buffer.flush()
+        while self.camera_buffer.length() <= RING_BUFFER_SIZE:
+            time.sleep(0.01)
 
 ###
 # This class is used to catch openCV errors which are not catchable by python

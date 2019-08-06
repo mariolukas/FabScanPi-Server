@@ -170,7 +170,6 @@ class FSCalibration(FSCalibrationInterface):
         # 90 degree turn
         try:
             if not self._stop:
-                self._logger.debug(self.quater_turn)
                 self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
     #            self._hardwarecontroller.start_camera_stream(mode="calibration")
 
@@ -181,7 +180,7 @@ class FSCalibration(FSCalibrationInterface):
                 if not self._stop:
                     self._logger.debug("Capturing started...")
                     _capture(position)
-                    self._hardwarecontroller.turntable.enable_motors()
+
                     self._hardwarecontroller.turntable.step_blocking(-self.motorsteps_per_calibration_step, speed=900)
                     #self._hardwarecontroller.turntable.disable_motors()
                     position += self.motorsteps_per_calibration_step
