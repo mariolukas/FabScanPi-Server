@@ -136,7 +136,9 @@ class FSSerialCom():
                 time.sleep(2) # Wait for FabScan to initialize
                 self._serial.flushInput() # Flush startup text in serial input
                 self.send("M200;")
-                self._serial.readline();
+                #command = self.send_and_receive("M200;")
+
+                self._serial.readline()
                 # receive version number
                 value = self._serial.readline()
                 value = value.strip()

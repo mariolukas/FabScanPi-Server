@@ -41,7 +41,8 @@
     "process_numbers": 3,
     "turntable": {
         "steps": 3200,
-        "radius": 70
+        "radius": 70,
+        "height": 155
     },
     "camera": {
         "resolution": {

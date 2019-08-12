@@ -72,7 +72,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._scan_brightness = self.settings.camera.brightness
         self._scan_contrast = self.settings.camera.contrast
         self._scan_saturation = self.settings.camera.saturation
-
+        self.hardwareController.reset_hardware()
         self.eventmanager.subscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
 
         self._logger.info("Laser Scan Processor initilized..."+str(self))

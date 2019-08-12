@@ -229,7 +229,7 @@ class ImageProcessor(ImageProcessorInterface):
             u = (dr - v * math.sin(thetar)) / math.cos(thetar)
         return u, v
 
-    def compute_2d_points(self, image, index=0, roi_mask=True, refinement_method='SGF'):
+    def compute_2d_points(self, image, index=0, roi_mask=False, refinement_method='SGF'):
         if image is not None:
 
             image = self.compute_line_segmentation(image, index, roi_mask=roi_mask)
@@ -330,13 +330,17 @@ class ImageProcessor(ImageProcessorInterface):
             rho = np.sqrt(np.square(point_cloud[0, :]) + np.square(point_cloud[1, :]))
 
             z = point_cloud[2, :]
-            turntable_radius = int(self.config.turntable.radius)
-            additional_offset = 0.5
-            idx = np.where(z >= 0 &
-                           (rho >= -turntable_radius) &
-                           (rho <= turntable_radius))[0]
+            roi_diameter = self.config.turntable.radius
+            roi_height = self.config.turntable.height
+
+            idx = np.where((z >= 0) &
+                           (z <= roi_height) &
+                           (rho >= -(roi_diameter)) &
+                           (rho <= (roi_diameter)))[0]
+
             return point_cloud[:, idx]
         else:
+
             return point_cloud
 
 

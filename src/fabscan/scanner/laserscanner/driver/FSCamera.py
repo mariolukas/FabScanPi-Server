@@ -346,8 +346,6 @@ class PiCam(threading.Thread):
 
     def flush_stream(self):
         self.camera_buffer.flush()
-        while self.camera_buffer.length() <= RING_BUFFER_SIZE:
-            time.sleep(0.01)
 
 ###
 # This class is used to catch openCV errors which are not catchable by python

@@ -123,6 +123,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         call_function()
 
     def settings_mode_on(self):
+        self.turntable.enable_motors()
         while not self.camera.device.is_idle():
             time.sleep(0.1)
         self.camera.device.start_stream(mode="settings")
@@ -133,6 +134,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
     def settings_mode_off(self):
         self.turntable.stop_turning()
+        self.turntable.disable_motors()
         self.led.off()
         self.laser.off(laser=0)
         self.laser.off(laser=1)
@@ -142,6 +144,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def get_picture(self, flush=False):
         if flush:
             self.camera.device.flush_stream()
+            time.sleep(0.5)
         img = self.camera.device.get_frame()
         return img
 
@@ -157,13 +160,15 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
             self.laser.off(0)
             self.laser.off(1)
             self.turntable.stop_turning()
+            self.turntable.disable_motors()
 
     def get_laser_image(self, index):
         with self._lock:
             self.laser.on(laser=index)
-            time.sleep(0.3)
+            time.sleep(0.5)
             laser_image = self.get_picture(flush=True)
             self.laser.off(laser=index)
+            time.sleep(0.2)
 
             return laser_image
 

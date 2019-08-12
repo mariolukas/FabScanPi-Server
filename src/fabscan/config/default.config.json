@@ -4,7 +4,7 @@
         "scans": "/home/pi/scans/"
     },
     "laser": {
-        "numbers": 2
+        "numbers": 1
     },
     "scanner_type": "laserscanner",
     "calibration": {
@@ -14,7 +14,7 @@
             "square_size": 10,
             "rows": 6,
             "columns": 8,
-            "origin_distance": 37.2
+            "origin_distance": 35
         },
         "camera_matrix": [],
         "distortion_vector": [],
