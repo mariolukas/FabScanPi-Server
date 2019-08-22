@@ -4,7 +4,9 @@
         "scans": "/home/pi/scans/"
     },
     "laser": {
-        "numbers": 1
+        "interleaved": "False",
+        "numbers": 1,
+        "color": "R (RGB)"
     },
     "scanner_type": "laserscanner",
     "calibration": {
@@ -23,6 +25,11 @@
                 "deviation": 0,
                 "distance": 0,
                 "normal": []
+            },
+            {
+                "deviation": 0,
+                "distance": 0,
+                "normal": []
             }
         ],
         "platform_translation": [],
@@ -31,10 +38,11 @@
     "meshlab": {
         "path": "/usr/bin/"
     },
-    "process_numbers": 4,
+    "process_numbers": 3,
     "turntable": {
         "steps": 6400,
-        "radius": 70
+        "radius": 70,
+        "height": 155
     },
     "camera": {
         "resolution": {
@@ -48,7 +56,8 @@
         "rotate": "True",
         "hflip": "True",
         "vflip": "False",
-        "type": "PICAM"
+        "type": "PICAM",
+        "undistort": "False"
     },
     "serial": {
         "plattform_type": "fabscanpi",
