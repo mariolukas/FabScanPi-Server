@@ -40,7 +40,7 @@
     },
     "process_numbers": 3,
     "turntable": {
-        "steps": 3200,
+        "steps": 6400,
         "radius": 70,
         "height": 155
     },

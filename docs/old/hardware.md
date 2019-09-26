@@ -17,8 +17,8 @@
 #How to Assemble the Cabinet
 The laser cut files can be found at [https://github.com/mariolukas/FabScan-Case](https://github.com/mariolukas/FabScan-Case)
 
-![drawing_200](images/FabScanPI_closed.jpg)
-![drawing_200](images/FabScanPi_opened.jpg)
+![drawing_200](../images/FabScanPI_closed.jpg)
+![drawing_200](../images/FabScanPi_opened.jpg)
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/W9KgYL7sZN0" frameborder="0" allowfullscreen></iframe>
 
@@ -34,7 +34,7 @@ The HAT communicates over a serial connection with the Rasperry Pi.
 (GPIO14 and GPIO15 of the Raspberry Pi). The firmware and also updates are 
 flashed automatically by the FabscanPi-Server application.
 
-![drawing_400](images/fabscanpihat.png)
+![drawing_400](../images/fabscanpihat.png)
 
 
 **How to assemble the FabScanPi HAT**
@@ -168,8 +168,8 @@ corresponding lead pairs of the motor coils. The best way to find out something
 about the motor is to have a look at the datasheet of the motor manufacturer.
 In the following desciptions the pairs are called (2B, 1B) and (1A, 2A).
 
-![drawing_300](images/4wires.jpg) 
-![drawing_300](images/6wires.jpg)
+![drawing_300](../images/4wires.jpg) 
+![drawing_300](../images/6wires.jpg)
 
 There are several ways to find the pair wires without a datasheet. Some of them
 are described here:
@@ -188,7 +188,7 @@ motor (twiddle in both directions), the LED will light if the wires are a pair,
 swap wires until you light the LED.
 
 
-![drawing_400](images/hat_wires.jpg)
+![drawing_400](../images/hat_wires.jpg)
 
 
 
@@ -198,7 +198,7 @@ The FabScanPi HAT provides connectors for two lasers. But only one laser
 is supported until now. Connect your laser to the connectors labeled
 with ...
 
-![drawing_450](images/laser_connection.jpg)
+![drawing_450](../images/laser_connection.jpg)
 
 **Safety switch**
 
@@ -208,8 +208,8 @@ If you don't need a switch you still have to bridge this connector with
 a cable to get the lasers work. (left image: with bridged connector, 
 right image: connecting a switch)
 
-![test](images/laser_safety.jpg)
-![test](images/laser_safety_switch.jpg)
+![test](../images/laser_safety.jpg)
+![test](../images/laser_safety_switch.jpg)
 
 
 
@@ -229,7 +229,7 @@ for 1 turntable stepper motor, 1 PiCam and 1 laser.
 
 
 
-![drawing_400](images/fabscanpihat_12to5.png)
+![drawing_400](../images/fabscanpihat_12to5.png)
 
 
 
@@ -261,7 +261,7 @@ Connect 12V DC to the HAT (round connector) and connect a 5V DC power source to 
 
 
 
-![drawing_400](images/fabscanpihat_5V.png)
+![drawing_400](../images/fabscanpihat_5V.png)
 
 | Pin label      | Description                          |
 | -------------- | ------------------------------------ |
@@ -276,7 +276,7 @@ NOTE: For the final stage of constuction a more powerful power supply is needed.
 #Connecting the LED Ring
 This small manual will help you to assemble the Camera and LED ring combination. You will need a light if you want to perform texture scans (Check mark is set for Color Scan).
 
-![drawing_400](images/RingLicht_1.jpg)
+![drawing_400](../images/RingLicht_1.jpg)
 
 This is how it should look like if you finished the assembly.
 
@@ -284,7 +284,7 @@ This is how it should look like if you finished the assembly.
 
 The Ring-Light will include the  parts you can see in the next picture below (the camera modul is sold separately):
 
-![drawing_400](images/RingLicht_1b.jpg)
+![drawing_400](../images/RingLicht_1b.jpg)
 
 IMPORTANT: You will need the standard camera modul (which has a green pcb). The module used in the pictures is the IR version which has the same dimensions but different optical specifications.
 
@@ -292,31 +292,31 @@ IMPORTANT: You will need the standard camera modul (which has a green pcb). The 
 
 Step 1: Slide one end of the flat ribbon cable into the connector of the camera module (1). Make sure the blue plastic is on the side facing away from the camera. Push the lock bar of the connector gently into the lock position (2).
 
-![drawing_400](images/RingLicht_2.jpg)
+![drawing_400](../images/RingLicht_2.jpg)
 
 
 
 Step 2: Merge the flat ribbon cable through the elongated hole in the LED board.
 
-![drawing_400](images/RingLicht_3.jpg)
+![drawing_400](../images/RingLicht_3.jpg)
 
 
 
 Step 3: Put the four Screws through the holes in the camera board. The heads must be on the side where the lens is situated. Then put a spacer on every screw (as shown in the next picture). 
 
-![drawing_400](images/RingLicht_4.jpg)
+![drawing_400](../images/RingLicht_4.jpg)
 
 
 
 Step 4: Put the Camera modul on the LED board. All four screws must fit the appropriate hole. This can be a bit tricky but it is doable.
 
-![drawing_400](images/RingLicht_5.jpg)
+![drawing_400](../images/RingLicht_5.jpg)
 
 
 
 Step 5: Put a nut on each screw an pull them hand-tight. 
 
-![drawing_400](images/RingLicht_6.jpg)
+![drawing_400](../images/RingLicht_6.jpg)
 
 Now the Camera-LED assembly is ready for installation.
 
@@ -324,7 +324,7 @@ Now the Camera-LED assembly is ready for installation.
 
 The pins of the JST connector on the LED board have the following configuration:
 
-![drawing_400](images/JST-LEDboard-Configuration.jpg)
+![drawing_400](../images/JST-LEDboard-Configuration.jpg)
 
 
 

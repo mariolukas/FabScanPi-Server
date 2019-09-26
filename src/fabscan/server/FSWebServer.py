@@ -8,8 +8,6 @@ import threading
 
 import tornado.ioloop
 import tornado.web
-import tornado.httpserver
-
 import os
 import logging
 from fabscan.server.services.websocket.FSWebSocketHandler import FSWebSocketHandler

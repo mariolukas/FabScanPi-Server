@@ -116,7 +116,7 @@
 
   ​
 
-  ![Reboot](images/SourcesList.jpg)
+  ![Reboot](../images/SourcesList.jpg)
 
   NOTE: In newer images the entry is called ```stable``` instead of ```jessie```
 
@@ -271,7 +271,7 @@ IO9  -> MISO
 GND  -> GND
 ```
 
-  >![drawing_400](images/isp_pi_hat.png)
+  >![drawing_400](../images/isp_pi_hat.png)
   >  Download bootloader:
 
 
@@ -309,7 +309,7 @@ D12 -> MISO
 GND -> GND
 ```
 
-  ![drawing_400](images/isp_arduino_hat.png)
+  ![drawing_400](../images/isp_arduino_hat.png)
 ​	
   Download bootloader and ISP firmware:
 
@@ -334,7 +334,7 @@ or
 
 - **My scan looks like a cylinder**
 
-|![drawing_400](images/problem_2.png)   | ![drawing_400](images/problem_2b.png)  |   
+|![drawing_400](../images/problem_2.png)   | ![drawing_400](../images/problem_2b.png)  |   
 |---|---|
 |   This is the object.     |  This is the scan.    |  
 
@@ -342,7 +342,7 @@ The problem occurs when the laser is not aligned vertically. The following pictu
 the disalignment (blue) and how it should be aligned (red).
 
 
- |![drawing_400](images/problem_2c.png)   | ![drawing_400](images/problem_2d.png)  |   
+ |![drawing_400](../images/problem_2c.png)   | ![drawing_400](../images/problem_2d.png)  |   
 |---|---|
 |   Disaligned Laser line     |  Aligned Laser line.   |  
 
@@ -353,7 +353,7 @@ of the turntable ( this can be reached by turning the laser mount)
 
 - **My scan looks doubled**
   
-|![drawing_400](images/problem_1.png)   | ![drawing_400](images/problem_1b.png)  |   
+|![drawing_400](../images/problem_1.png)   | ![drawing_400](../images/problem_1b.png)  |   
 |---|---|
 |   This is the object.     |  This is the scan. The scan looks double.   |  
 
@@ -367,7 +367,7 @@ of the turntable ( this can be reached by turning the laser mount)
         "radius": 70
        }
        
-| ![drawing_200](images/motor_1.png)    | ![drawing_200](images/motor_2.png)  |   
+| ![drawing_200](../images/motor_1.png)    | ![drawing_200](../images/motor_2.png)  |   
 |---|---|
 |  Motor with 400 steps.     |  Motor with 200 steps.  |  
 
