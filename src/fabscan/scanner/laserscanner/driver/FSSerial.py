@@ -63,7 +63,7 @@ class FSSerialCom():
         self._logger.debug("Trying to connect Arduino on port: "+str(self._port))
         # open serial port
         try:
-            self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=2, write_timeout=2)
+            self._serial = serial.Serial(str(self._port), int(self._baudrate))
             time.sleep(1)
         except:
             self._logger.error("Could not open serial port")
@@ -169,21 +169,33 @@ class FSSerialCom():
 
 
     def readline(self):
-        i = self.buf.find(b"\n")
-        if i >= 0:
-            r = self.buf[:i+1]
-            self.buf = self.buf[i+1:]
-            return r
-        while True:
-            i = max(1, min(2048, self._serial.in_waiting))
-            data = self._serial.read(i)
-            i = data.find(b"\n")
+        read_timeout = False
+        try:
+            i = self.buf.find(b"\n")
             if i >= 0:
-                r = self.buf + data[:i+1]
-                self.buf[0:] = data[i+1:]
+                r = self.buf[:i+1]
+                self.buf = self.buf[i+1:]
                 return r
-            else:
-                self.buf.extend(data)
+            while not read_timeout:
+                i = max(1, min(2048, self._serial.in_waiting))
+                data = self._serial.read(i)
+
+                if not data:
+                    read_timeout = True
+                    self._serial.flushInput()
+                    self._serial.flushOutput()
+                    self._logger.debug('Serial read timeout occured, skipping current and waiting for next command.')
+
+                i = data.find(b"\n")
+                if i >= 0:
+                    r = self.buf + data[:i+1]
+                    self.buf[0:] = data[i+1:]
+                    return r
+                else:
+                    self.buf.extend(data)
+        except StandardError as err:
+            self._logger.error('Serial Error occured: ' + str(err))
+
 
     def flush(self):
        self._serial.flushInput()
