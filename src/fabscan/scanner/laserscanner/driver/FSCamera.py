@@ -260,25 +260,20 @@ class PiCam(threading.Thread):
             else:
                 time.sleep(0.05)
 
-    def get_frame(self, undistort=False):
+    def get_video_frame(self):
         image = None
         while image is None:
-            #with self.camera_buffer._lock:
                 image = self.camera_buffer.get()
 
-
-        #if undistort:
-        #    self._logger.debug(self.config.calibration.camera_matrix)
-        #    self.newcameramtx, self.roi = cv2.getOptimalNewCameraMatrix(np.asarray(self.config.calibration.camera_matrix), np.asarray(self.config.calibration.distortion_vector), self.resolution, 1, self.resolution )
-
-            #image = cv2.remap(image, self.mapx, self.mapy, cv2.INTER_LINEAR)
-        #    image = cv2.undistort(image,
-        #                          np.asarray(self.config.calibration.camera_matrix),
-        #                          np.asarray(self.config.calibration.distortion_vector),
-        #                          None,
-        #                          self.newcameramtx)
-
         return image
+
+
+    def get_snapshot(self):
+        image = np.empty((self.config.camera.resolution.height * self.config.camera.resolution.width * 3,), dtype=np.uint8)
+        image = self.camera.capture(image, 'bgr')
+        image = image.reshape((self.config.camera.resolution.height, self.config.camera.resolution.width, 3))
+        return image
+
 
     def set_mode(self, mode):
         camera_mode = {

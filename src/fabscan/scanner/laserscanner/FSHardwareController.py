@@ -141,11 +141,16 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.camera.device.stop_stream()
         self._settings_mode_is_off = True
 
-    def get_picture(self, flush=False):
+    def get_video_frame(self, flush=False):
         if flush:
             self.camera.device.flush_stream()
-            time.sleep(0.5)
-        img = self.camera.device.get_frame()
+            time.sleep(0.1)
+        img = self.camera.device.get_video_frame()
+        return img
+
+
+    def get_picture(self):
+        img = self.camera.device.get_snapshot()
         return img
 
     def get_pattern_image(self):
@@ -165,10 +170,9 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def get_laser_image(self, index):
         with self._lock:
             self.laser.on(laser=index)
-            time.sleep(0.5)
-            laser_image = self.get_picture(flush=True)
-            self.laser.off(laser=index)
             time.sleep(0.2)
+            laser_image = self.get_picture()
+            self.laser.off(laser=index)
 
             return laser_image
 
@@ -184,7 +188,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
             laser_image = self.get_laser_image(index)
 
             if self.config.laser.interleaved == "True":
-                backrgound_image = self.get_picture(flush=True)
+                backrgound_image = self.get_picture()
                 laser_image = cv2.subtract(laser_image, backrgound_image)
 
             return laser_image

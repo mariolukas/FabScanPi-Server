@@ -169,7 +169,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def create_texture_stream(self):
         try:
-            image = self.hardwareController.get_picture()
+            image = self.hardwareController.get_video_frame()
             #image = self.image_processor.get_texture_stream_frame(image)
             return image
         except StandardError, e:
@@ -178,7 +178,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def create_adjustment_stream(self):
         try:
-            image = self.hardwareController.get_picture()
+            image = self.hardwareController.get_video_frame()
             image = self.image_processor.get_adjustment_stream_frame(image)
             return image
         except StandardError, e:
@@ -186,7 +186,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def create_calibration_stream(self):
         try:
-            image = self.hardwareController.get_picture()
+            image = self.hardwareController.get_video_frame()
             image = self.image_processor.get_calibration_stream_frame(image)
             return image
         except StandardError, e:
@@ -195,7 +195,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def create_laser_stream(self):
         try:
-            image = self.hardwareController.get_picture()
+            image = self.hardwareController.get_video_frame()
 
             return image
         except StandardError, e:
@@ -453,29 +453,30 @@ class FSScanProcessor(FSScanProcessorInterface):
     def image_processed(self, eventmanager, event):
         points = []
 
-        scan_state = 'texture_scan'
-        if event['image_type'] == 'depth' and event['point_cloud'] is not None:
-            scan_state = 'object_scan'
-            point_cloud = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2],
-                              event['texture'][0], event['texture'][1], event['texture'][2])
+        try:
+            scan_state = 'texture_scan'
+            if event['image_type'] == 'depth' and event['point_cloud'] is not None:
+                scan_state = 'object_scan'
+                point_cloud = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2],
+                                  event['texture'][0], event['texture'][1], event['texture'][2])
 
-            self.append_points(point_cloud, event['laser_index'])
+                self.append_points(point_cloud, event['laser_index'])
 
-            for index, point in enumerate(point_cloud):
-                new_point = dict()
-                new_point['x'] = str(point[0])
-                new_point['y'] = str(point[2])
-                new_point['z'] = str(point[1])
+                for index, point in enumerate(point_cloud):
+                    new_point = dict()
+                    new_point['x'] = str(point[0])
+                    new_point['y'] = str(point[2])
+                    new_point['z'] = str(point[1])
 
-                new_point['r'] = str(point[5])
-                new_point['g'] = str(point[4])
-                new_point['b'] = str(point[3])
+                    new_point['r'] = str(point[5])
+                    new_point['g'] = str(point[4])
+                    new_point['b'] = str(point[3])
 
-                points.append(new_point)
+                    points.append(new_point)
+        except StandardError as err:
+            self._logger.error('Image processing Error:' +  str(err))
 
-        #self.semaphore.acquire()
         self._progress += 1
-        #self.semaphore.release()
 
         message = {
             "laser_index": event['laser_index'],

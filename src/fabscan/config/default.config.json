@@ -5,7 +5,7 @@
     },
     "laser": {
         "interleaved": "False",
-        "numbers": 1,
+        "numbers": 2,
         "color": "R (RGB)"
     },
     "scanner_type": "laserscanner",
@@ -16,7 +16,7 @@
             "square_size": 10,
             "rows": 6,
             "columns": 8,
-            "origin_distance": 35
+            "origin_distance": 37.2
         },
         "camera_matrix": [],
         "distortion_vector": [],
