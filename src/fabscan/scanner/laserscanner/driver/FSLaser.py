@@ -20,7 +20,7 @@ class Laser:
             self.serial_connection.send_and_receive(command)
             # some time until the laser is on.
             # FIXME: The serial needs some time until the laser is turned on.
-            time.sleep(0.15)
+            time.sleep(0.2)
             self.is_on[laser] = True
 
 

@@ -245,7 +245,7 @@ class FSScanner(threading.Thread):
             except:
                 hardware_info = "undefined"
 
-            self._upgrade_available, self._upgrade_version = upgrade_is_available(__version__)
+            self._upgrade_available, self._upgrade_version = upgrade_is_available(__version__, self.config.online_lookup_ip)
             self._logger.debug("Upgrade available: "+str(self._upgrade_available)+" "+self._upgrade_version)
 
             message = {
@@ -281,10 +281,10 @@ class FSScanner(threading.Thread):
 
     def run_temperature_watch_service(self):
         cpu_temp = get_cpu_temperature()
-        if ( cpu_temp > 78):
+        if ( cpu_temp > 82):
             self._logger.warning('High CPU Temperature: '+ str(cpu_temp) + " C")
             message = {
-                "message": "HIGH CPU Temp:  " + str(cpu_temp) + " C!",
+                "message": "CPU Temp:  " + str(cpu_temp) + " C! Maybe thermally throttle active.",
                 "level": "warn"
             }
 

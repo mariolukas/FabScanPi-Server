@@ -5,12 +5,46 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [0.8.0] -  unreleased
+### TODO: 
+- check current firmware for new features - done
+    - build for all supported platforms - done
+    - remove bootloader - done
+    
+- finish basic docs in rst
+- check if build process still works
+- add support to save images, texture and laser - done
+  - zip saved images. - done
+  - add support for image download - done
+  
+- bring default config to current state - done
+  - check 2 laser support and other stuff - done
+- add other default config for ciclop scanner -done
+- add connection lookup ip to config  - done ( needs to be tested)
+
+
 ### Added
+- temperature watch dog
+- support for second laser
+- ciclop and clones support ( interleaved image option )
+- new firmware for cncboard, ciclop and fabscan shield
+- new version of frontend with some bugfixes (see frontend repository)
+- scanning with multiple lasers saves multiple pointclouds now, one for each
+  laser and one merged. 
+- saving raw images for photogrammetry.
+- added firmware for ciclop, cncshield and snguinololu board
 
 ### Changed
+- default config file, added new params and settings
+- arduino firmware builds with arduino cli and make file now
 
 ### Fixed
+- communication with external hardware over serial (arduino, FabScanPi HAT)
+- connection issue, when no internet connection is available
+- prevent async steps while calibration and scanning 
+- stepper blocking mode
+- hardware connection check while server is starting (waking up the conttoller)
 
+ 
 ## [0.7.0] -  2019-02-21
 ### Added
 - new settings dialog options for hardware contolling

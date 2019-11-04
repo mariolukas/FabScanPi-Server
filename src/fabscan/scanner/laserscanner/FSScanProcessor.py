@@ -72,7 +72,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._scan_brightness = self.settings.camera.brightness
         self._scan_contrast = self.settings.camera.contrast
         self._scan_saturation = self.settings.camera.saturation
-        self.hardwareController.reset_hardware()
+
         self.eventmanager.subscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
 
         self._logger.info("Laser Scan Processor initilized..."+str(self))
@@ -169,7 +169,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def create_texture_stream(self):
         try:
-            image = self.hardwareController.get_video_frame()
+            image = self.hardwareController.get_picture()
             #image = self.image_processor.get_texture_stream_frame(image)
             return image
         except StandardError, e:
@@ -178,7 +178,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def create_adjustment_stream(self):
         try:
-            image = self.hardwareController.get_video_frame()
+            image = self.hardwareController.get_picture()
             image = self.image_processor.get_adjustment_stream_frame(image)
             return image
         except StandardError, e:
@@ -186,7 +186,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def create_calibration_stream(self):
         try:
-            image = self.hardwareController.get_video_frame()
+            image = self.hardwareController.get_picture()
             image = self.image_processor.get_calibration_stream_frame(image)
             return image
         except StandardError, e:
@@ -195,7 +195,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def create_laser_stream(self):
         try:
-            image = self.hardwareController.get_video_frame()
+            image = self.hardwareController.get_picture()
 
             return image
         except StandardError, e:
@@ -319,16 +319,13 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._scan_brightness = self.settings.camera.brightness
         self._scan_contrast = self.settings.camera.contrast
         self._scan_saturation = self.settings.camera.saturation
-
         self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
 
-        self.hardwareController.camera.device.flush_stream()
 
 
     def finish_texture_scan(self):
         self._logger.info("Finishing texture scan.")
         self.current_position = 0
-        self.hardwareController.camera.device.flush_stream()
 
         self.hardwareController.led.off()
 
@@ -339,11 +336,16 @@ class FSScanProcessor(FSScanProcessorInterface):
     def scan_next_texture_position(self):
         if not self._stop_scan:
             if self.current_position <= self._number_of_pictures and self.actor_ref.is_alive():
+
+                flush = False
+
                 if self.current_position == 0:
+                    flush = True
                     self.init_texture_scan()
 
-                color_image = self.hardwareController.get_picture()
-                self.hardwareController.move_to_next_position(steps=self._resolution, color=True )
+
+                color_image = self.hardwareController.get_picture(flush=flush)
+                self.hardwareController.move_to_next_position(steps=self._resolution, color=True)
 
                 task = ImageTask(color_image, self._prefix, self.current_position, self._number_of_pictures, task_type="PROCESS_COLOR_IMAGE")
                 self.image_task_q.put(task, True)
@@ -389,7 +391,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def scan_next_object_position(self):
         if not self._stop_scan:
-            if self.current_position <= self._number_of_pictures and self.actor_ref.is_alive():
+            if self.current_position < self._number_of_pictures and self.actor_ref.is_alive():
                 if self.current_position == 0:
                     self.init_object_scan()
 
@@ -453,6 +455,9 @@ class FSScanProcessor(FSScanProcessorInterface):
     def image_processed(self, eventmanager, event):
         points = []
 
+        if not 'laser_index' in event.keys():
+            event['laser_index'] = -1
+
         try:
             scan_state = 'texture_scan'
             if event['image_type'] == 'depth' and event['point_cloud'] is not None:
@@ -476,7 +481,9 @@ class FSScanProcessor(FSScanProcessorInterface):
         except StandardError as err:
             self._logger.error('Image processing Error:' +  str(err))
 
+        #self.semaphore.acquire()
         self._progress += 1
+        #self.semaphore.release()
 
         message = {
             "laser_index": event['laser_index'],
@@ -488,10 +495,11 @@ class FSScanProcessor(FSScanProcessorInterface):
             "state": scan_state
         }
 
+        self._logger.debug(str(self._progress) + " von " + str(self._total))
         self.eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
 
 
-        if self._progress == self._total:
+        if self._progress >= self._total:
             while not self.image_task_q.empty():
                 #wait until the last image is processed and send to the client.
                 time.sleep(0.1)
@@ -537,8 +545,11 @@ class FSScanProcessor(FSScanProcessorInterface):
 
             self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
-        #self.utils.delete_image_folders(self._prefix)
-        #TODO: add zip procedure for images
+        if bool(self.config.keep_raw_images):
+            self.utils.zipdir(str(self._prefix))
+
+        self.utils.delete_image_folders(self._prefix)
+
 
         self.reset_scanner_state()
 

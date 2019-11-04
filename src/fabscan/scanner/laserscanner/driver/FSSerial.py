@@ -82,6 +82,7 @@ class FSSerialCom():
         try:
            # check if device is available
            if self.avr_device_is_available():
+                   self.avr_device_is_available()
                    time.sleep(0.5)
                    # try to connect to arduino
                    self._connect()

@@ -229,7 +229,7 @@ class ImageProcessor(ImageProcessorInterface):
             u = (dr - v * math.sin(thetar)) / math.cos(thetar)
         return u, v
 
-    def compute_2d_points(self, image, index=0, roi_mask=False, refinement_method='SGF'):
+    def compute_2d_points(self, image, index=0, roi_mask=True, refinement_method='SGF'):
         if image is not None:
 
             image = self.compute_line_segmentation(image, index, roi_mask=roi_mask)
@@ -292,7 +292,7 @@ class ImageProcessor(ImageProcessorInterface):
             points_2d, image = self.compute_2d_points(laser_image, index)
             # FIXME; points_2d could contain empty arrays, resulting point_cloud to be None
             point_cloud = self.compute_point_cloud(_theta, points_2d, index=index)
-            point_cloud = self.mask_point_cloud(point_cloud)
+            masked_point_cloud = self.mask_point_cloud(point_cloud)
 
             if color_image is None:
 
@@ -310,7 +310,7 @@ class ImageProcessor(ImageProcessorInterface):
 
             texture = color_image[v, np.around(u).astype(int)].T
 
-            return point_cloud, texture
+            return masked_point_cloud, texture
         except Exception as e:
             self._logger.error("Process Error:"+str(e))
             return [], []
@@ -330,17 +330,16 @@ class ImageProcessor(ImageProcessorInterface):
             rho = np.sqrt(np.square(point_cloud[0, :]) + np.square(point_cloud[1, :]))
 
             z = point_cloud[2, :]
-            roi_diameter = self.config.turntable.radius
-            roi_height = self.config.turntable.height
+            turntable_radius = int(self.config.turntable.radius)
+            idx = np.where(z >= 0 &
+                           (z <= 120) &
+                           (rho >= -self.config.calibration.platform_translation[2]) &
+                           (rho <= self.config.calibration.platform_translation[2]))[0]
 
-            idx = np.where((z >= 0) &
-                           (z <= roi_height) &
-                           (rho >= -(roi_diameter)) &
-                           (rho <= (roi_diameter)))[0]
 
             return point_cloud[:, idx]
         else:
-
+            self._logger.debug('No points in cloud... masking not possible.')
             return point_cloud
 
 

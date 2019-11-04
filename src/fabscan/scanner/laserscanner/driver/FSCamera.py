@@ -20,8 +20,6 @@ from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 
-RING_BUFFER_SIZE=10
-
 try:
     import picamera
 except:
@@ -34,7 +32,7 @@ class FSCamera():
 
     def __init__(self, config):
 
-        self.camera_buffer = FSRingBuffer(RING_BUFFER_SIZE)
+        self.camera_buffer = FSRingBuffer(10)
         config = config
 
         if config.camera.type == 'PICAM':
@@ -82,10 +80,6 @@ class FSRingBuffer(threading.Thread):
         self.sync.set()
         self.data.clear()
         self.sync.clear()
-
-    def length(self):
-        return len(self.data)
-
 
 @inject(
     config=ConfigInterface,
@@ -245,6 +239,7 @@ class PiCam(threading.Thread):
         self.idle = True
         self.resolution = (self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
         self.camera = picamera.PiCamera(resolution=self.resolution)
+        #self.calculate_fixed_exposure()
         self.start()
 
     def run(self):
@@ -260,20 +255,36 @@ class PiCam(threading.Thread):
             else:
                 time.sleep(0.05)
 
-    def get_video_frame(self):
+    def get_frame(self, undistort=False):
         image = None
         while image is None:
+            #with self.camera_buffer._lock:
                 image = self.camera_buffer.get()
 
+
+        #if undistort:
+        #    self._logger.debug(self.config.calibration.camera_matrix)
+        #    self.newcameramtx, self.roi = cv2.getOptimalNewCameraMatrix(np.asarray(self.config.calibration.camera_matrix), np.asarray(self.config.calibration.distortion_vector), self.resolution, 1, self.resolution )
+
+            #image = cv2.remap(image, self.mapx, self.mapy, cv2.INTER_LINEAR)
+        #    image = cv2.undistort(image,
+        #                          np.asarray(self.config.calibration.camera_matrix),
+        #                          np.asarray(self.config.calibration.distortion_vector),
+        #                          None,
+        #                          self.newcameramtx)
+
         return image
 
-
-    def get_snapshot(self):
-        image = np.empty((self.config.camera.resolution.height * self.config.camera.resolution.width * 3,), dtype=np.uint8)
-        image = self.camera.capture(image, 'bgr')
-        image = image.reshape((self.config.camera.resolution.height, self.config.camera.resolution.width, 3))
-        return image
-
+    def calculate_fixed_exposure(self):
+        self.camera.iso = 100
+        # Wait for the automatic gain control to settle
+        time.sleep(2)
+        # Now fix the values
+        self.camera.shutter_speed = self.camera.exposure_speed
+        self.camera.exposure_mode = 'off'
+        g = self.camera.awb_gains
+        self.camera.awb_mode = 'off'
+        self.camera.awb_gains = g
 
     def set_mode(self, mode):
         camera_mode = {

@@ -123,57 +123,51 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         call_function()
 
     def settings_mode_on(self):
-        self.turntable.enable_motors()
         while not self.camera.device.is_idle():
             time.sleep(0.1)
         self.camera.device.start_stream(mode="settings")
         self._settings_mode_is_off = False
         self.camera.device.flush_stream()
         self.laser.on(laser=0)
-
+        #self.turntable.start_turning()
 
     def settings_mode_off(self):
         self.turntable.stop_turning()
-        self.turntable.disable_motors()
         self.led.off()
         self.laser.off(laser=0)
         self.laser.off(laser=1)
         self.camera.device.stop_stream()
+        #self.camera.device.flush_stream()
         self._settings_mode_is_off = True
 
-    def get_video_frame(self, flush=False):
+    def get_picture(self, flush=False):
         if flush:
             self.camera.device.flush_stream()
-            time.sleep(0.1)
-        img = self.camera.device.get_video_frame()
-        return img
-
-
-    def get_picture(self):
-        img = self.camera.device.get_snapshot()
+            time.sleep(0.3)
+        time.sleep(0.2)
+        img = self.camera.device.get_frame()
         return img
 
     def get_pattern_image(self):
         with self._lock:
             self.led.on(110, 110, 110)
+            #self.camera.device.contrast = 40
             pattern_image = self.get_picture()
             self.led.off()
             return pattern_image
 
     def reset_hardware(self):
+        #with self._lock:
             self.led.off()
             self.laser.off(0)
             self.laser.off(1)
             self.turntable.stop_turning()
-            self.turntable.disable_motors()
 
     def get_laser_image(self, index):
         with self._lock:
             self.laser.on(laser=index)
-            time.sleep(0.2)
-            laser_image = self.get_picture()
+            laser_image = self.get_picture(flush=True)
             self.laser.off(laser=index)
-
             return laser_image
 
     def get_image_at_position(self, index=0):
@@ -188,7 +182,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
             laser_image = self.get_laser_image(index)
 
             if self.config.laser.interleaved == "True":
-                backrgound_image = self.get_picture()
+                backrgound_image = self.get_picture(flush=True)
                 laser_image = cv2.subtract(laser_image, backrgound_image)
 
             return laser_image
