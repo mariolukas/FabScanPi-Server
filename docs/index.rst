@@ -54,6 +54,11 @@ Contents
    software_usermanual
    software_troubleshoot
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Calibration
+
+   scanner_calibration
 
 .. toctree::
    :maxdepth: 2
