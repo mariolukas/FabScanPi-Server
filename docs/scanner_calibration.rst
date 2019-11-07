@@ -1,8 +1,8 @@
 .. _scanner_calibration:
 
 
-Hardware Calibration
---------------------
+Prepare for Calibration
+-----------------------
 
 Before you can start with your first scans you must perform a calibration. That is necessary because every Scanner housing is a bit different.  By calibrating your scanner the software will get the exact parameters of your FabScanPi. You will have to do the calibration only once, the gathered data will be stored. But we recommend to do a calibration every time when the FabScanPi has been shipped, modified or when the scan results look distorted.
 
@@ -10,6 +10,9 @@ Before you can start with your first scans you must perform a calibration. That 
 
 First you need to be sure, that some requirements fit. Especially when you are planing to use two instead of only one laser. The following simple
 adjustments can improve your calibration quality a lot.
+
+Camera Alignment
+~~~~~~~~~~~~~~~~
 
 **Horizontal Camera Position**
 
@@ -20,6 +23,19 @@ the center of the image. You can push gently the camera lens into the direction 
 
 .. image:: images/camera_align.png
 
+**Camera Focus**
+
+Mosty the Raspberry Pi camera is not in focus by default ( `espesically V2 <https://www.jeffgeerling.com/blog/2017/fixing-blurry-focus-on-some-raspberry-pi-camera-v2-models>`_)
+There are several ways to fix that. The easiest option is to use the white piece of plasic which is delivered wiht almost every Raspberry Pi cam since a
+few years. You can stick it on top of the cam and adjust the focus by turning it. It has a hole in the middle so that you can see changes in realtime if you
+are running a live stream.
+
+.. image:: images/camera_focus.png
+
+.. note:: Build your own tool if you don't have the adjustment ring anymore. There are a lot of 3d printable wrenches for the Raspberry Pi camera on thingiverse. `https://www.thingiverse.com/thing:1570865 <https://www.thingiverse.com/thing:1570865>`_
+
+Laser Alignment
+~~~~~~~~~~~~~~~
 
 **Vertical Laser Alignment**
 
@@ -38,8 +54,8 @@ The lasers should cross the center of the turntable. You can rotate the laser mo
 
 **Laser Focus**
 
-This step depends on your laser. If you are using a laser which is adjustable in focus (left image), you should follow this step.
-When your laser has a fixed focus (right image) continue with the software calibration.
+This step depends on your laser. If you are using a laser with adjustable focus (right image), you should follow this step.
+When your laser has a fixed focus (left image) continue with `Start Scanner Calibration`_.
 
 .. image:: images/laser_variant.png
 
@@ -49,8 +65,8 @@ Turn the focus ring on the laser until you get a the sharpes possible line. If y
 
 
 
-Software Calibration
---------------------
+Start Scanner Calibration
+-------------------------
 
 The calibration will be done by scanning an calibration sheet with a specific pattern which must be placed on the turntable. The pattern must face the camera:
 
@@ -83,17 +99,20 @@ Place the calibration sheet on the turntable facing the camera. See `here <confi
 Please close the box to avoid external light sources to impact the calibration process. Start  your browser and call http://ip-of-your-raspberry-pi:8080 which will open the user interface.
 
 
-
 When you start your FabScanPi for the first time you will see an information in the upper left corner that you have to perform a calibration.
 
 .. image:: images/Manual_NoCalibration_1.jpg
 
 
+Click on the duck icon to open the settings dialog.
 
-Start the calibration procedure by clicking on the gun sight icon in the very upper left corner.
+.. image:: images/calibration_open_settings.png
 
-.. image:: images/Manual_1.jpg
+Select the calibration tab. It is the one with the crosshair icon.
 
+.. image:: images/calibration_tab.png
+
+Click on the "Start Calibration" Button. The calibration starts immediately.
 
 
 An information "Calibration started" will be displayed in the upper left corner.
