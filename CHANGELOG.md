@@ -4,23 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [0.8.0] -  unreleased
-### TODO: 
-- check current firmware for new features - done
-    - build for all supported platforms - done
-    - remove bootloader - done
-    
-- finish basic docs in rst
-- check if build process still works
-- add support to save images, texture and laser - done
-  - zip saved images. - done
-  - add support for image download - done
-  
-- bring default config to current state - done
-  - check 2 laser support and other stuff - done
-- add other default config for ciclop scanner -done
-- add connection lookup ip to config  - done ( needs to be tested)
+## [0.9.0] - unreleased
 
+### TODO
+- migrate python 2 to python 3
+- refactor serial driver make it more abstract to general connector interface
+- add connector for GPIO's
+- support for cricket board
+
+### Added
+
+### Changed
+
+### Fixed
+
+## [0.8.0] - 2019-08-11
 
 ### Added
 - temperature watch dog
@@ -36,13 +34,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - default config file, added new params and settings
 - arduino firmware builds with arduino cli and make file now
+- switched docs from md to rst
+- fixed build process
+- added support to save images, texture and laser 
+- zipping images 
 
 ### Fixed
 - communication with external hardware over serial (arduino, FabScanPi HAT)
-- connection issue, when no internet connection is available
+- high res out of memory bug
 - prevent async steps while calibration and scanning 
 - stepper blocking mode
 - hardware connection check while server is starting (waking up the conttoller)
+- removed bootloader form firmware to prevent flashing damages
+- fixed long timeouts while connecting to the client when no internet conneciton is availanel (aka cccamp bug)
 
  
 ## [0.7.0] -  2019-02-21

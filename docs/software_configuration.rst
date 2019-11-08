@@ -7,106 +7,26 @@ Configuration
 Setting up a WIFI connection
 ----------------------------
 
-This description explains howto setup a wifi stick for raspbian. I prefer to use an EDIMAX dongle, it worked best for me.
-First plug in your wifi dongle and log in via ssh with password "raspberry" (without quotes):
+This is the description for enabling wifi on the raspberry pi. Just create a file with the name
+wpa_supplicant.conf on the /boot folder. You can use nano and do it via a ssh connection to the
+raspberry pi, or remove the sd-card and use an sd-card reader on your computer. The /boot device
+will be mounted to your operating system.
+
+Add the following content to the file
 
 .. code:: bash
 
-   ssh pi@<your-fabscanpi-ip>
-
-First you have to activate the wifi option in your networking setup.
-
-.. code:: bash
-
-   sudo nano /etc/network/interfaces
-
-
-Uncomment the folling lines and save the changes.
-
-.. code:: bash
-
-   auto wlan0
-   allow-hotplug wlan0
-   iface wlan0 inet dhcp
-   wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-   iface default inet dhcp
-
-Now restart your network adapters.
-
-.. code:: bash
-
-   sudo /etc/init.d/networking restart
+   ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+   update_config=1
+   country=DE
+   network={
+        ssid="<your_wifi_ssid>"
+        psk="<your_password"
+        key_mgmt=WPA-PSK
+    }
 
 
-If you type ```sudo ifconfig``` there should be a wlan0 connection in the list.
-
-Your fasbcanpi image is ready to go. The only things you have to do is open wpa_supplicant.conf and
-insert your wifi ssid and your wifi secret.
-
-.. code:: bash
-
-   sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
-
-
-
-Save the file and try to connect to your wifi by typing the following command.
-
-.. code:: bash
-
-   sudo ifup wlan0
-
-
-In some cases you have to reboot the Raspberry Pi. Check if the wifi dongle's led is bliking.
-If you want to change your Raspberry Pi to a fix wifi IP address you have to change the interfaces file
-to get a static wifi connection.
-
-.. code:: bash
-
-   sudo nano /etc/network/interfaces
-
-
-Change the files content from
-
-.. code:: bash
-
-   auto lo
-   iface lo inet loopback
-
-   allow-hotplug eth0
-   iface eth0 inet dhcp
-
-   auto wlan0
-   allow-hotplug wlan0
-   iface wlan0 inet dhcp
-   wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-   iface default inet dhcp
-
-
-to
-
-.. code:: bash
-
-   auto lo
-   iface lo inet loopback
-
-   allow-hotplug eth0
-   iface eth0 inet dhcp
-
-   auto wlan0
-   allow-hotplug wlan0
-   iface wlan0 inet static
-   address <ip in your network>
-   netmask <your netmask>
-   gateway <your gateway>
-   wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-   iface default inet dhcp
-
-
-After you changed the file you can restart your network daemon.
-
-.. code:: bash
-
-   sudo /etc/init.d/networking restart
+Insert the sd-card if you have removed it. Do a reboot of the system (for both options needed).
 
 
 
