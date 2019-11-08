@@ -16,7 +16,7 @@ class Main(Daemon):
         def __init__(self, pidfile, configfile, basedir, host, port, debug, allowRoot, logConf):
             Daemon.__init__(self, pidfile)
 
-            self._logger =  logging.getLogger(__name__)
+            self._logger = logging.getLogger(__name__)
             self._logger.setLevel(logging.DEBUG)
             self._configfile = configfile
             self._basedir = basedir
@@ -27,12 +27,9 @@ class Main(Daemon):
             self._logConf = logConf
 
 
-	def run(self):
-        #server = FSScanServer(config_file)
-        #fabscan = FSScanServer(self._configfile, self._basedir, self._host, self._port, self._debug, self._allowRoot)
-
-		fabscan = FSScanServer(self._configfile)
-		fabscan.run()
+        def run(self):
+            fabscan = FSScanServer(self._configfile)
+            fabscan.run()
 
 def main():
 

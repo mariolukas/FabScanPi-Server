@@ -1,0 +1,72 @@
+{
+    "folders": {
+        "www": "/usr/share/fabscanpi/",
+        "scans": "/home/pi/scans/"
+    },
+    "laser": {
+        "interleaved": "True",
+        "numbers": 2,
+        "color": "R (RGB)"
+    },
+    "scanner_type": "laserscanner",
+    "calibration": {
+        "weight_matrix": [],
+        "dist_camera_matrix": [],
+        "pattern": {
+            "square_size": 13,
+            "rows": 6,
+            "columns": 10,
+            "origin_distance": 35
+        },
+        "camera_matrix": [],
+        "distortion_vector": [],
+        "laser_planes": [
+            {
+                "deviation": 0,
+                "distance": 0,
+                "normal": []
+            },
+            {
+                "deviation": 0,
+                "distance": 0,
+                "normal": []
+            }
+        ],
+        "platform_translation": [],
+        "platform_rotation": []
+    },
+    "meshlab": {
+        "path": "/usr/bin/"
+    },
+    "process_numbers": 4,
+    "turntable": {
+        "steps": 3200,
+        "radius": 100
+    },
+    "camera": {
+        "resolution": {
+            "width": 1640,
+            "height": 1232
+        },
+        "preview_resolution": {
+            "width": 800,
+            "height": 600
+        },
+        "rotate": "True",
+        "hflip": "True",
+        "vflip": "False",
+        "type": "PICAM",
+        "undistort": "False"
+    },
+    "serial": {
+        "plattform_type": "ciclop",
+        "baudrate": 14400,
+        "autoflash": "True",
+        "port": "/dev/ttyUSB0",
+        "flash_baudrate": 115200
+    },
+    "texture_illumination": 140,
+    "keep_raw_images": "True",
+    "discoverable": "True",
+    "online_lookup_ip": "8.8.8.8"
+}

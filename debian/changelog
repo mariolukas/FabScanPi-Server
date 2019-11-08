@@ -1,3 +1,30 @@
+fabscanpi-server (0.8.0) UNRELEASED; urgency=medium
+
+  * temperature watch dog
+  * support for second laser
+  * ciclop and clones support ( interleaved image option )
+  * new firmware for cncboard, ciclop and fabscan shield
+  * new version of frontend with some bugfixes (see frontend repository)
+  * scanning with multiple lasers saves multiple pointclouds now, one for each
+    laser and one merged.
+  * saving raw images for photogrammetry.
+  * added firmware for ciclop, cncshield and snguinololu board
+  * default config file, added new params and settings
+  * arduino firmware builds with arduino cli and make file now
+  * switched docs from md to rst
+  * fixed build process
+  * added support to save images, texture and laser
+  * zipping images
+  * communication with external hardware over serial (arduino, FabScanPi HAT)
+  * high res out of memory bug
+  * prevent async steps while calibration and scanning
+  * stepper blocking mode
+  * hardware connection check while server is starting (waking up the conttoller)
+  * removed bootloader form firmware to prevent flashing damages
+  * fixed long timeouts while connecting to the client when no internet conneciton is availanel (aka cccamp bug)
+
+ -- Mario Lukas <info@fabscan.org>  Fri, 8 Nov 2019 20:26:00 +0100
+
 fabscanpi-server (0.7.0) UNRELEASED; urgency=medium
   * api route for live log stream
   * api route for debug log zip download

@@ -4,14 +4,16 @@
         "scans": "/home/pi/scans/"
     },
     "laser": {
-        "numbers": 1
+        "interleaved": "False",
+        "numbers": 1,
+        "color": "R (RGB)"
     },
     "scanner_type": "laserscanner",
     "calibration": {
         "weight_matrix": [],
         "dist_camera_matrix": [],
         "pattern": {
-            "square_size": 11,
+            "square_size": 10,
             "rows": 6,
             "columns": 8,
             "origin_distance": 37.2
@@ -19,6 +21,11 @@
         "camera_matrix": [],
         "distortion_vector": [],
         "laser_planes": [
+            {
+                "deviation": 0,
+                "distance": 0,
+                "normal": []
+            },
             {
                 "deviation": 0,
                 "distance": 0,
@@ -31,10 +38,11 @@
     "meshlab": {
         "path": "/usr/bin/"
     },
-    "process_numbers": 4,
+    "process_numbers": 3,
     "turntable": {
         "steps": 6400,
-        "radius": 70
+        "radius": 70,
+        "height": 155
     },
     "camera": {
         "resolution": {
@@ -48,7 +56,8 @@
         "rotate": "True",
         "hflip": "True",
         "vflip": "False",
-        "type": "PICAM"
+        "type": "PICAM",
+        "undistort": "False"
     },
     "serial": {
         "plattform_type": "fabscanpi",
@@ -58,5 +67,6 @@
     },
     "texture_illumination": 140,
     "keep_raw_images": "True",
-    "discoverable": "True"
+    "discoverable": "True",
+    "online_lookup_ip": "8.8.8.8"
 }

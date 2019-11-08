@@ -5,4 +5,3 @@ __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
 from FSScanServer import FSScanServer
-

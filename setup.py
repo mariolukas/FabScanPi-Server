@@ -108,6 +108,7 @@ def params():
         ('/etc/sudoers.d/', ['debian/fabscanpi-sudoers']),
         ('/etc/fabscanpi/', ['src/fabscan/config/default.settings.json']),
         ('/etc/fabscanpi/', ['src/fabscan/config/default.config.json']),
+        ('/etc/fabscanpi/', ['src/fabscan/config/ciclop.config.json']),
         ('/usr/share/fabscanpi/', ['src/www/index.html']),
         ('/usr/share/fabscanpi/style/',['src/www/style/app.css', 'src/www/style/lib.css']),
         ('/usr/share/fabscanpi/js/',['src/www/js/app.js', 'src/www/js/lib.js']),

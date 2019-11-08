@@ -36,6 +36,7 @@ class FSWebServer(threading.Thread):
         threading.Thread.__init__(self)
         self.config = config
         self.exit = False
+        self.server_port = 8080
         self.scanprocessor = scanprocessor
         self.eventmanager = eventmanager
         self.hardwarecontroller = hardwarecontroller
@@ -63,7 +64,7 @@ class FSWebServer(threading.Thread):
 
     def run(self):
         webserver = self.routes()
-        webserver.listen(8080)
+        webserver.listen(self.server_port)
         tornado.ioloop.IOLoop.current().start()
 
     def kill(self):

@@ -20,7 +20,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -41,6 +40,8 @@ src/www/version.txt
 pip-log.txt
 pip-delete-this-directory.txt
 
+docs/build
+docs/.DS_Store
 # Unit test / coverage reports
 htmlcov/
 .tox/
@@ -60,7 +61,7 @@ coverage.xml
 *.log
 
 # Sphinx documentation
-docs/_build/
+docs/build/
 
 # PyBuilder
 target/

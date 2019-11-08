@@ -6,6 +6,8 @@ __email__ = "info@mariolukas.de"
 
 import logging
 import time
+import cv2
+import copy
 import threading
 import copy
 from fabscan.FSConfig import ConfigInterface
@@ -13,6 +15,7 @@ from fabscan.FSSettings import SettingsInterface
 from fabscan.lib.util.FSInject import singleton
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
+from fabscan.lib.file.FSImage import FSImage
 
 from fabscan.scanner.laserscanner.driver.FSTurntable import Turntable
 from fabscan.scanner.laserscanner.driver.FSCamera import FSCamera
@@ -35,7 +38,10 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
         self.config = config
         self.settings = settings
+        # debug
+        self.image = FSImage()
 
+        self._lock = threading.RLock()
         self._logger = logging.getLogger(__name__)
         self._settings_mode_is_off = True
         self.camera = None
@@ -46,6 +52,8 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.turntable = Turntable(serial_object=self.serial_connection)
         self.laser = Laser(self.serial_connection)
         self.led = Led(self.serial_connection)
+        self._logger.debug("Reset FabScanPi HAT...")
+        self.reset_devices()
 
         self._logger.debug("Reset FabScanPi HAT...")
         self.laser.off(laser=0)
@@ -54,6 +62,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.turntable.stop_turning()
         self._logger.debug("Hardware controller initialized...")
         self.lock = threading.Lock()
+
 
 
         self.hardware_test_functions = {
@@ -71,13 +80,13 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
                 },
                 "LABEL": "First Laser"
             },
-            #"RIGHT_LASER": {
-            #    "FUNCTIONS": {
-            #        "ON": lambda: self.laser.on(1),
-            #        "OFF": lambda: self.laser.off(1)
-            #    },
-            #    "LABEL": "Second Laser"
-            #},
+            "RIGHT_LASER": {
+                "FUNCTIONS": {
+                    "ON": lambda: self.laser.on(1),
+                    "OFF": lambda: self.laser.off(1)
+                },
+                "LABEL": "Second Laser"
+            },
             "LED_RING": {
                 "FUNCTIONS": {
                     "ON": lambda: self.led.on(255, 255, 255),
@@ -86,6 +95,13 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
                 "LABEL": "Led Ring"
             }
         }
+
+    def reset_devices(self):
+        for laser_index in range(self.config.laser.numbers):
+            self.laser.off(laser_index)
+        self.led.off()
+        self.turntable.stop_turning()
+        self.camera.device.stop_stream()
 
     def flush(self):
         self.camera.camera_buffer.flush()
@@ -119,44 +135,66 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.turntable.stop_turning()
         self.led.off()
         self.laser.off(laser=0)
+        self.laser.off(laser=1)
         self.camera.device.stop_stream()
-        self.camera.device.flush_stream()
+        #self.camera.device.flush_stream()
         self._settings_mode_is_off = True
-        time.sleep(0.3)
 
-
-    def get_picture(self):
+    def get_picture(self, flush=False):
+        if flush:
+            self.camera.device.flush_stream()
+            time.sleep(0.3)
+        time.sleep(0.2)
         img = self.camera.device.get_frame()
         return img
 
     def get_pattern_image(self):
-        self.led.on(110, 110, 110)
-        #self.camera.device.contrast = 40
-        pattern_image = self.get_picture()
-        self.led.off()
-        return pattern_image
+        with self._lock:
+            self.led.on(110, 110, 110)
+            #self.camera.device.contrast = 40
+            pattern_image = self.get_picture()
+            self.led.off()
+            return pattern_image
+
+    def reset_hardware(self):
+        #with self._lock:
+            self.led.off()
+            self.laser.off(0)
+            self.laser.off(1)
+            self.turntable.stop_turning()
 
     def get_laser_image(self, index):
-        #self._hardwarecontroller.led.on(30, 30, 30)
-        self.laser.on(laser=index)
-        time.sleep(3)
-        self.camera.device.flush_stream()
-        laser_image = self.get_picture()
-        self.laser.off(laser=index)
-        return laser_image
+        with self._lock:
+            self.laser.on(laser=index)
+            laser_image = self.get_picture(flush=True)
+            self.laser.off(laser=index)
+            return laser_image
 
-    def scan_at_position(self, steps=180, color=False):
+    def get_image_at_position(self, index=0):
         '''
         Take a step and return an image.
         Step size calculated to correspond to num_steps_per_rotation
         Returns resulting image
-            '''
+        '''
 
-        self.turntable.step(steps, speed=900)
-        time.sleep(0.7)
-        img = self.camera.device.get_frame()
+        with self._lock:
 
-        return img
+            laser_image = self.get_laser_image(index)
+
+            if self.config.laser.interleaved == "True":
+                backrgound_image = self.get_picture(flush=True)
+                laser_image = cv2.subtract(laser_image, backrgound_image)
+
+            return laser_image
+
+    def move_to_next_position(self, steps=180, color=False):
+        #with self._lock:
+            if color:
+                speed = 800
+            else:
+                speed = 500
+
+            self.turntable.step_blocking(steps, speed)
 
 
     def arduino_is_connected(self):

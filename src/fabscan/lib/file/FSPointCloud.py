@@ -34,6 +34,8 @@ class FSPointCloud():
         self.config = config
         self._logger = logging.getLogger(__name__)
 
+    def get_points(self):
+        return self.points
 
     def append_points(self, points):
         self.points += points
@@ -59,9 +61,12 @@ class FSPointCloud():
     def calculateNormals(self):
         pass
 
-    def saveAsFile(self, filename):
+    def saveAsFile(self, filename, postfix=''):
         basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self._dir_name = self.config.folders.scans+filename
+
+        if(len(postfix) > 0):
+            filename = filename + '_' + postfix
 
         try:
             if not os.path.exists(self._dir_name):

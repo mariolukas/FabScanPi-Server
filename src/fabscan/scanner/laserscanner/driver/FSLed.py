@@ -8,12 +8,17 @@ import time
 class Led:
     def __init__(self, serial_object):
         self.serial_connection = serial_object
+        self.is_on = False
 
     def on(self, red, green, blue):
+        if not self.is_on:
             command = "M05 R"+str(red)+" G"+str(green)+" B"+str(blue)+";"
             self.serial_connection.send_and_receive(command)
+            self.is_on = True
 
     def off(self):
+        if self.is_on:
             command = "M05 R0 G0 B0;"
             self.serial_connection.send_and_receive(command)
+            self.is_on = False
 

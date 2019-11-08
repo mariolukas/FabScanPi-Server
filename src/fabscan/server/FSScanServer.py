@@ -23,7 +23,7 @@ from fabscan.lib.util.FSUpdate import do_upgrade
 
 
 class FSScanServer(object):
-    def __init__(self,config_file, settings_file):
+    def __init__(self, config_file, settings_file):
         self.system_exit = FSSystemExit()
         self.config_file = config_file
         self.settings_file = settings_file
@@ -66,13 +66,14 @@ class FSScanServer(object):
         self._logger.info("FabScanPi-Server "+str(__version__))
 
         try:
+
             injector.provide(FSEventManagerInterface, FSEventManagerSingleton)
-            #injector.provide_instance(FSWebSocketServerInterface, FSWebSocketServer())
             injector.provide_instance(ConfigInterface, Config(self.config_file, True))
             injector.provide_instance(SettingsInterface, Settings(self.settings_file, True))
 
             # inject "dynamic" classes
             self.config = injector.get_instance(ConfigInterface)
+
             FSScannerFactory.injectScannerType(self.config.scanner_type)
 
             self.webserver = FSWebServer()

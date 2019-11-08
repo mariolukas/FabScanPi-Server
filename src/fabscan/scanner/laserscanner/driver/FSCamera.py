@@ -239,6 +239,7 @@ class PiCam(threading.Thread):
         self.idle = True
         self.resolution = (self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
         self.camera = picamera.PiCamera(resolution=self.resolution)
+        #self.calculate_fixed_exposure()
         self.start()
 
     def run(self):
@@ -274,6 +275,17 @@ class PiCam(threading.Thread):
 
         return image
 
+    def calculate_fixed_exposure(self):
+        self.camera.iso = 100
+        # Wait for the automatic gain control to settle
+        time.sleep(2)
+        # Now fix the values
+        self.camera.shutter_speed = self.camera.exposure_speed
+        self.camera.exposure_mode = 'off'
+        g = self.camera.awb_gains
+        self.camera.awb_mode = 'off'
+        self.camera.awb_gains = g
+
     def set_mode(self, mode):
         camera_mode = {
             "calibration": self.set_calibration_mode,
@@ -306,21 +318,6 @@ class PiCam(threading.Thread):
         try:
             #self.flush_stream()
             self.set_mode(mode)
-
-
-            #if len(self.config.calibration.camera_matrix) > 0:
-            #    self.newcameramtx, self.roi = cv2.getOptimalNewCameraMatrix(self.config.calibration.camera_matrix,
-            #                                                                self.config.calibration.distortion_vector,
-            #                                                                self.resolution,
-            #                                                                1,
-            #                                                                self.resolution)
-
-            #    self.mapx, self.mapy = cv2.initUndistortRectifyMap(self.config.calibration.camera_matrix,
-            #                                                       self.config.calibration.distortion_vector,
-            #                                                       None,
-            #                                                       self.newcameramtx,
-            #                                                       self.resolution,
-            #                                                       5)
 
             #if self.camera is None:
             #    self.camera = picamera.PiCamera(resolution=self.resolution)
@@ -355,7 +352,6 @@ class PiCam(threading.Thread):
 
     def flush_stream(self):
         self.camera_buffer.flush()
-
 
 ###
 # This class is used to catch openCV errors which are not catchable by python
@@ -452,7 +448,7 @@ class USBCam(threading.Thread):
 
     def set_settings_preview(self):
         self.resolution = (
-        self.config.camera.resolution.width, self.config.camera.resolution.height)
+        self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
         self.output = ProcessCamOutput(self.camera_buffer, self.resolution, mode="settings")
 
     def set_default_mode(self):

@@ -36,6 +36,8 @@ class FSSerialCom():
         else:
             self.flash_baudrate = 57600
 
+        self.buf = bytearray()
+
         self._baudrate = self.config.serial.baudrate
         self._serial = None
         self._connected = False
@@ -61,7 +63,7 @@ class FSSerialCom():
         self._logger.debug("Trying to connect Arduino on port: "+str(self._port))
         # open serial port
         try:
-            self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=5)
+            self._serial = serial.Serial(str(self._port), int(self._baudrate))
             time.sleep(1)
         except:
             self._logger.error("Could not open serial port")
@@ -80,6 +82,7 @@ class FSSerialCom():
         try:
            # check if device is available
            if self.avr_device_is_available():
+                   self.avr_device_is_available()
                    time.sleep(0.5)
                    # try to connect to arduino
                    self._connect()
@@ -134,7 +137,9 @@ class FSSerialCom():
                 time.sleep(2) # Wait for FabScan to initialize
                 self._serial.flushInput() # Flush startup text in serial input
                 self.send("M200;")
-                self._serial.readline();
+                #command = self.send_and_receive("M200;")
+
+                self._serial.readline()
                 # receive version number
                 value = self._serial.readline()
                 value = value.strip()
@@ -149,19 +154,49 @@ class FSSerialCom():
 
     def send_and_receive(self, message):
         self.send(message)
-       # time.sleep(0.2)
-        response = ""
-        self._stop = False
-        with self.lock:
-            while not self._stop:
-                response += self._serial.read()
-                if ">" in response:
-                    response = response.rstrip(">")
-                    response = response.translate(None, '\n\t\r')
-                    if response:
-                        self._logger.debug("Command successfully sent: " + response)
-                        self._stop = True
-                    break
+        self._serial.flush()
+        time.sleep(0.1)
+        while True:
+            try:
+                command = self.readline()
+                time.sleep(0.2)
+                command = self.readline()
+                self._logger.debug(command.rstrip("\n"))
+                #if state.rstrip("\n") == ">":
+                return command
+            except Exception as e:
+                self._logger.debug(e)
+                break
+
+
+    def readline(self):
+        read_timeout = False
+        try:
+            i = self.buf.find(b"\n")
+            if i >= 0:
+                r = self.buf[:i+1]
+                self.buf = self.buf[i+1:]
+                return r
+            while not read_timeout:
+                i = max(1, min(2048, self._serial.in_waiting))
+                data = self._serial.read(i)
+
+                if not data:
+                    read_timeout = True
+                    self._serial.flushInput()
+                    self._serial.flushOutput()
+                    self._logger.debug('Serial read timeout occured, skipping current and waiting for next command.')
+
+                i = data.find(b"\n")
+                if i >= 0:
+                    r = self.buf + data[:i+1]
+                    self.buf[0:] = data[i+1:]
+                    return r
+                else:
+                    self.buf.extend(data)
+        except StandardError as err:
+            self._logger.error('Serial Error occured: ' + str(err))
+
 
     def flush(self):
        self._serial.flushInput()

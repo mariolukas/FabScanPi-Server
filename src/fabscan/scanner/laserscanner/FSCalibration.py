@@ -21,7 +21,6 @@ from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
 from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
 
-
 @singleton(
     config=ConfigInterface,
     settings=SettingsInterface,
@@ -33,8 +32,8 @@ class FSCalibration(FSCalibrationInterface):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
         # super(FSCalibrationInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
 
-        #LASER_PLANE_CALIBRATION_START_POS_DEGREE = 45 #65
-        #LASER_PLANE_CALIBRATION_END_POS_DEGREE = 135 #115
+        self.LASER_PLANE_CALIBRATION_START_POS_DEGREE = 20 #15 #20 #25 #30 #65
+        self.LASER_PLANE_CALIBRATION_END_POS_DEGREE = 160 #165 #160 #155 #150 #115
         self._imageprocessor = imageprocessor
         self._hardwarecontroller = hardwarecontroller
         self.config = config
@@ -50,6 +49,11 @@ class FSCalibration(FSCalibrationInterface):
         self.quater_turn = int(self.config.turntable.steps / 4)
 
         self.motor_move_degree = 3.6 # 1.8,  2.7 , 3.6, 5.0
+        self.steps_five_degree = self.motor_move_degree / (360.0 / self.config.turntable.steps)
+        self.laser_calib_start = self.LASER_PLANE_CALIBRATION_START_POS_DEGREE * self.steps_five_degree / 5
+        self.laser_calib_end = self.LASER_PLANE_CALIBRATION_END_POS_DEGREE * self.steps_five_degree / 5
+
+
         self.motorsteps_per_calibration_step = self.motor_move_degree / (360.0 / self.config.turntable.steps)
         self.total_positions = int(((self.quater_turn / self.motorsteps_per_calibration_step) * 4) + 2)
         self.current_position = 0
@@ -84,14 +88,17 @@ class FSCalibration(FSCalibrationInterface):
     def start(self):
         #self._hardwarecontroller.stop_camera_stream()
         tools = FSSystem()
+        self._hardwarecontroller.stop_camera_stream()
         tools.delete_folder(self.config.folders.scans+'calibration')
         self._hardwarecontroller.turntable.enable_motors()
-        self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
-        #self.settings.camera.contrast = 30
-        #self.settings.camera.saturation = 20
-        #self.settings.camera.brightness = 50
+        time.sleep(0.4)
+
+        if self.config.laser.interleaved == "False":
+            self._logger.debug("Turning Leds on in non interleaved mode.")
+            self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
+
         self.reset_calibration_values()
-        self.settings.threshold = 30
+        self.settings.threshold = 25
         self._starttime = self.get_time_stamp()
 
         message = {
@@ -107,6 +114,10 @@ class FSCalibration(FSCalibrationInterface):
             self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
             self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
 
+            if self.config.laser.interleaved == "False":
+                self._hardwarecontroller.led.off()
+
+            self._hardwarecontroller.turntable.disable_motors()
 
             if self._stop:
                 self._logger.debug("Calibration canceled...")
@@ -143,6 +154,12 @@ class FSCalibration(FSCalibrationInterface):
             return
         except StandardError as e:
             self._logger.error(e)
+            message = {
+                    "message": "SCANNER_CALIBRATION_FAILED",
+                    "level": "warn"
+            }
+
+            self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
     def stop(self):
         self._stop = True
@@ -153,15 +170,20 @@ class FSCalibration(FSCalibrationInterface):
         # 90 degree turn
         try:
             if not self._stop:
+                self._logger.debug(self.quater_turn)
                 self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
+    #            self._hardwarecontroller.start_camera_stream(mode="calibration")
+
 
             position = 0
             while abs(position) < self.quater_turn * 2:
 
                 if not self._stop:
-
+                    self._logger.debug("Capturing started...")
                     _capture(position)
+                    self._hardwarecontroller.turntable.enable_motors()
                     self._hardwarecontroller.turntable.step_blocking(-self.motorsteps_per_calibration_step, speed=900)
+                    #self._hardwarecontroller.turntable.disable_motors()
                     position += self.motorsteps_per_calibration_step
 
                     self._logger.debug("Calibration Position "+str(self.current_position)+ " of "+str(self.total_positions))
@@ -186,26 +208,26 @@ class FSCalibration(FSCalibrationInterface):
 
     def _calculate_camera_calibration(self):
         error = 0
-        ret, cmat, dvec, rvecs, tvecs = cv2.calibrateCamera(
-            self.object_points, self.image_points, self.shape, None, None)
+        try:
+            if len(self.object_points) == 0 or len(self.image_points) == 0:
+                raise StandardError('Calibration Failed')
+            ret, cmat, dvec, rvecs, tvecs = cv2.calibrateCamera(
+                self.object_points, self.image_points, self.shape, None, None)
 
+            if ret:
+                # Compute calibration error
+                for i in xrange(len(self.object_points)):
+                    imgpoints2, _ = cv2.projectPoints(
+                        self.object_points[i], rvecs[i], tvecs[i], cmat, dvec)
+                    error += cv2.norm(self.image_points[i], imgpoints2, cv2.NORM_L2) / len(imgpoints2)
+                error /= len(self.object_points)
 
-        if ret:
-            # Compute calibration error
-            for i in xrange(len(self.object_points)):
-                imgpoints2, _ = cv2.projectPoints(
-                    self.object_points[i], rvecs[i], tvecs[i], cmat, dvec)
-                error += cv2.norm(self.image_points[i], imgpoints2, cv2.NORM_L2) / len(imgpoints2)
-            error /= len(self.object_points)
+                self.config.calibration.camera_matrix = copy.deepcopy(np.round(cmat, 3))
+                self.config.calibration.distortion_vector = copy.deepcopy(np.round(dvec.ravel(), 3))
 
-        self.config.calibration.camera_matrix = copy.deepcopy(np.round(cmat, 3))
-        self.config.calibration.distortion_vector = copy.deepcopy(np.round(dvec.ravel(), 3))
-
-        #nmtx, roi = cv2.getOptimalNewCameraMatrix(self.config.calibration.camera_matrix, self.config.calibration.distortion_vector,
-        #                                        (self.config.camera.resolution.witdth, self.config.camera.resolution.height), 1,
-        #                                       (self.config.camera.resolution.witdth, self.config.camera.resolution.height))
-
-        #self.config.calibration.dist_camera_matrix = copy.deepcopy(np.round(nmtx, 3))
+            return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
+        except StandardError as e:
+            self._logger.debug(e)
 
         return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
 
@@ -214,10 +236,10 @@ class FSCalibration(FSCalibrationInterface):
         self.shape = image[:, :, 0].shape
 
         #TODO: find out if it is better and try this...again.
-        #if (position > self.laser_calib_start and position < self.laser_calib_end):
-        #flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
-        #else:
-        flags = cv2.CALIB_CB_FAST_CHECK
+        if (position > self.laser_calib_start and position < self.laser_calib_end):
+           flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
+        else:
+           flags = cv2.CALIB_CB_FAST_CHECK
 
         corners = self._imageprocessor.detect_corners(image, flags)
 
@@ -231,15 +253,15 @@ class FSCalibration(FSCalibrationInterface):
 
     def _capture_scanner_calibration(self, position):
 
-        image = self._capture_pattern()
+        pattern_image = self._capture_pattern()
 
-        #if (position > self.laser_calib_start and position < self.laser_calib_end):
-        flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH #| cv2.CALIB_CB_NORMALIZE_IMAGE
-        #else:
-        #    flags = cv2.CALIB_CB_FAST_CHECK
+        if (position >= self.laser_calib_start and position <= self.laser_calib_end):
+            flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
+        else:
+            flags = cv2.CALIB_CB_FAST_CHECK
 
         try:
-            pose = self._imageprocessor.detect_pose(image, flags)
+            pose = self._imageprocessor.detect_pose(pattern_image, flags)
             plane = self._imageprocessor.detect_pattern_plane(pose)
         except StandardError as e:
             plane = None
@@ -254,21 +276,25 @@ class FSCalibration(FSCalibrationInterface):
             try:
                 exc_info = sys.exc_info()
                 #Laser Calibration
-                #if (position > self.laser_calib_start and position < self.laser_calib_end):
                 alpha = np.rad2deg(math.acos(normal[2] / np.linalg.norm((normal[0], normal[2])))) * math.copysign(1,normal[0])
+
                 self._logger.debug("Current Angle is:" + str(alpha))
-                if abs(alpha) < 35:
-                    #self.settings.camera.contrast = 40
-                    #self.settings.camera.brightness = 70
+                if ((abs(alpha) <= self.LASER_PLANE_CALIBRATION_START_POS_DEGREE) and (position > 0)):
+
                     self._hardwarecontroller.led.off()
                     for i in xrange(self.config.laser.numbers):
-                        image = self._capture_laser(i)
-                        image = self._imageprocessor.pattern_mask(image, corners)
-                        self.image = image
-                        fs_image = FSImage()
-                        fs_image.save_image(image, self.current_position, "laser", dir_name="calibration")
 
-                        points_2d, _ = self._imageprocessor.compute_2d_points(image, roi_mask=False, refinement_method='SGF')
+                        image = self._capture_laser(i)
+
+                        if self.config.laser.interleaved == "True":
+                            image = cv2.subtract(image, pattern_image)
+
+                        image = self._imageprocessor.pattern_mask(image, corners)
+
+                        fs_image = FSImage()
+                        fs_image.save_image(image, alpha, "laser_"+str(i), dir_name="calibration")
+
+                        points_2d, _ = self._imageprocessor.compute_2d_points(image, roi_mask=False, refinement_method='RANSAC')
                         point_3d = self._imageprocessor.compute_camera_point_cloud(points_2d, distance, normal)
 
                         if self._point_cloud[i] is None:
@@ -276,9 +302,6 @@ class FSCalibration(FSCalibrationInterface):
                         else:
                             self._point_cloud[i] = np.concatenate(
                                 (self._point_cloud[i], point_3d.T))
-
-                    #self.settings.camera.contrast = 40
-                    #self.settings.camera.brightness = 50
 
                 # Platform extrinsics
                 origin = corners[self.config.calibration.pattern.columns * (self.config.calibration.pattern.rows - 1)][0]
@@ -302,10 +325,8 @@ class FSCalibration(FSCalibrationInterface):
                 self.y += [t[1][0]]
                 self.z += [t[2][0]]
 
-            else:
-                self.image = image
-
-        self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
+        if self.config.laser.interleaved == "False":
+            self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
     def _capture_pattern(self):
         #pattern_image = self._hardwarecontroller.get_pattern_image()
@@ -315,7 +336,6 @@ class FSCalibration(FSCalibrationInterface):
 
     def _capture_laser(self, index):
         self._logger.debug("Starting laser capture...")
-        time.sleep(1.5)
         laser_image = self._hardwarecontroller.get_laser_image(index)
         return laser_image
 
@@ -332,9 +352,8 @@ class FSCalibration(FSCalibrationInterface):
 
         # Compute planes
         for i in xrange(self.config.laser.numbers):
-            #if self._is_calibrating:
-                plane = self.compute_plane(i, self._point_cloud[i])
-                self.distance[i], self.normal[i], self.std[i] = plane
+            plane = self.compute_plane(i, self._point_cloud[i])
+            self.distance[i], self.normal[i], self.std[i] = plane
 
         # Platform extrinsics
         self.t = None
@@ -361,8 +380,7 @@ class FSCalibration(FSCalibrationInterface):
 
         # Return response
         result = True
-        #self._logger.debug(np.linalg.norm(self.t - self.estimated_t))
-        #if self._is_calibrating:
+
         if self.t is not None and np.linalg.norm(self.t - self.estimated_t) < 180:
             response_platform_extrinsics = (
                 self.R, self.t, center, point, normal, [self.x, self.y, self.z], circle)
@@ -393,10 +411,8 @@ class FSCalibration(FSCalibrationInterface):
             self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
             response = None
 
-        #self._is_calibrating = False
-        self.image = None
-
         return response
+
 
     def compute_plane(self, index, X):
         if X is not None and X.shape[0] > 3:

@@ -128,7 +128,7 @@
                                    <div style="margin-right:20em;">
                                        <div ng-class="{'fadeOut':!showThresholdValue}" class="slider-value-label">{{settings.threshold}}</div>
                                        <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Threshold</div>
-                                       <slider style="width:70%; margin-left:1em;" floor="0" ceiling="60" step="1" precision="1" ng-model="settings.threshold"></slider>
+                                       <slider style="width:70%; margin-left:1em;" floor="0" ceiling="250" step="1" precision="1" ng-model="settings.threshold"></slider>
                                    </div>
                                    <div style="margin-right:20em;">
                                        <div ng-class="{'longFadeOut':!showResolutionValue}" class="slider-value-label" >{{settings.resolution | toResolutionValue }}</div>
@@ -145,6 +145,12 @@
                                    <div style="margin-right:20em;">
                                        <div style="width:100%; margin-bottom:1em; margin-top:1em;">
                                             <div style="display:inline-block; width:15em; color:white; padding-left:1em;" >Scan with Color</div><input  style="width:1em; height:1em; margin-left:1.5em; margin-top:0.5em;" type="checkbox"  ng-change="setColor()" ng-checked="colorIsSelected()" ng-model="settings.color">
+                                       </div>
+                                       <div style="width:100%; margin-bottom:1em;">
+                                           <div style="display:inline-block; width:15em; color:white; padding-left:1em;" >Show Laser Overlay</div><input  style="width:1em; height:1em; margin-left:1.5em; margin-top:0.5em;" type="checkbox"  ng-change="setLaserOverlay()" ng-checked="laserOverlaySelected()" ng-model="settings.show_laser_overlay">
+                                       </div>
+                                       <div style="width:100%; margin-bottom:1em;">
+                                           <div style="display:inline-block; width:15em; color:white; padding-left:1em;" >Show Calibration Pattern</div><input  style="width:1em; height:1em; margin-left:1.5em; margin-top:0.5em;" type="checkbox"  ng-change="setCalibrationPattern()" ng-checked="calibrationPatternSelected()" ng-model="settings.show_calibration_pattern">
                                        </div>
                                    </div>
 
@@ -197,14 +203,7 @@
                                            <button style="margin-right:1em;" class="fsButton" ng-repeat="function in devices[key]['FUNCTIONS']" ng-click="sendDeviceCommand(key, function)">{{function}}</button>
                                       </div>
                                    </div>
-                                   <div style="margin-right:20em;">
-                                       <div style="width:100%; margin-bottom:1em;">
-                                           <div style="display:inline-block; width:15em; color:white; padding-left:1em;" >Show Laser Overlay</div><input  style="width:1em; height:1em; margin-left:1.5em; margin-top:0.5em;" type="checkbox"  ng-change="setLaserOverlay()" ng-checked="laserOverlaySelected()" ng-model="settings.show_laser_overlay">
-                                       </div>
-                                       <div style="width:100%; margin-bottom:1em;">
-                                           <div style="display:inline-block; width:15em; color:white; padding-left:1em;" >Show Alignment Cross</div><input  style="width:1em; height:1em; margin-left:1.5em; margin-top:0.5em;" type="checkbox"  ng-change="setCalibrationPattern()" ng-checked="calibrationPatternSelected()" ng-model="settings.show_calibration_pattern">
-                                       </div>
-                                   </div>
+
                                </div>
 
 

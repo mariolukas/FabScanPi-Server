@@ -54,10 +54,10 @@ class ImageProcessor(ImageProcessorInterface):
         self.settings = settings
         self.config = config
         self._logger = logging.getLogger(__name__)
-        self.red_channel = 'R (RGB)'
+        self.laser_color_channel = self.config.laser.color
         self.threshold_enable = False
         self.threshold_value = 0
-        self.blur_enable = False
+        self.blur_enable = True
         self.blur_value = 0
         self.window_enable = False
         self.window_value = 0
@@ -148,30 +148,52 @@ class ImageProcessor(ImageProcessorInterface):
     def _threshold_image(self, image, blur_enable=True):
 
         image = cv2.threshold(
-            image, self.settings.threshold, 255, cv2.THRESH_TOZERO)[1]
+            image, self.settings.threshold, 255, cv2.THRESH_TOZERO+cv2.THRESH_OTSU)[1]
 
         if blur_enable:
-            image = cv2.blur(image, (5, 5))
+            image = cv2.GaussianBlur(image, (7, 7), 0)
 
         image = cv2.threshold(
-            image, self.settings.threshold, 255, cv2.THRESH_TOZERO)[1]
+            image, self.settings.threshold, 255,  cv2.THRESH_TOZERO+cv2.THRESH_OTSU)[1]
 
         return image
 
     def _obtain_red_channel(self, image):
         ret = None
-        if self.red_channel == 'R (RGB)':
-            ret = cv2.split(image)[0]
-        elif self.red_channel == 'Cr (YCrCb)':
+        if self.laser_color_channel == 'R (RGB)':
+            ret = cv2.split(image)[2]
+        elif self.laser_color_channel == 'G (RGB)':
+            ret = cv2.split(image)[1]
+        elif self.laser_color_channel == 'Cr (YCrCb)':
             ret = cv2.split(cv2.cvtColor(image, cv2.COLOR_RGB2YCR_CB))[1]
-        elif self.red_channel == 'U (YUV)':
+        elif self.laser_color_channel == 'U (YUV)':
             ret = cv2.split(cv2.cvtColor(image, cv2.COLOR_RGB2YUV))[1]
+
+        elif self.laser_color_detector == 'R (HSV)':
+            ret = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+            # lower mask (0-10)
+            # TODO: Use separate threshold value or 0 for 'V'
+            lower_red = np.array([0,50,self.threshold_value])
+            upper_red = np.array([10,255,255])
+            mask0 = cv2.inRange(ret, lower_red, upper_red)
+
+            # upper mask (170-180)
+            lower_red = np.array([160,50,self.threshold_value])
+            upper_red = np.array([180,255,255])
+            mask1 = cv2.inRange(ret, lower_red, upper_red)
+
+            # join masks
+            mask = mask0+mask1
+
+            ret = cv2.split(ret)[2]
+            ret[np.where(mask==0)] = 0
+
         return ret
 
-    def compute_line_segmentation(self, image, roi_mask=False):
+    def compute_line_segmentation(self, image, index=0, roi_mask=False):
         if image is not None:
             if roi_mask is True:
-                image = self.mask_image(image)
+                image = self.mask_image(image, index)
             image = self._obtain_red_channel(image)
             if image is not None:
                 # Threshold image
@@ -207,10 +229,10 @@ class ImageProcessor(ImageProcessorInterface):
             u = (dr - v * math.sin(thetar)) / math.cos(thetar)
         return u, v
 
-    def compute_2d_points(self, image, roi_mask=True, refinement_method='SGF'):
+    def compute_2d_points(self, image, index=0, roi_mask=True, refinement_method='SGF'):
         if image is not None:
 
-            image = self.compute_line_segmentation(image, roi_mask=roi_mask)
+            image = self.compute_line_segmentation(image, index, roi_mask=roi_mask)
 
             # Peak detection: center of mass
             s = image.sum(axis=1)
@@ -262,19 +284,22 @@ class ImageProcessor(ImageProcessorInterface):
         return image
 
     #FIXME: rename color_image into texture_image
-    def process_image(self, angle, laser_image, color_image=None):
+    def process_image(self, angle, laser_image, color_image=None, index=0):
         ''' Takes picture and angle (in degrees).  Adds to point cloud '''
 
         try:
             _theta = np.deg2rad(-angle)
-            points_2d, image = self.compute_2d_points(laser_image)
+            points_2d, image = self.compute_2d_points(laser_image, index)
             # FIXME; points_2d could contain empty arrays, resulting point_cloud to be None
-            point_cloud = self.compute_point_cloud(_theta, points_2d, index=0)
-            point_cloud = self.mask_point_cloud(point_cloud)
+            point_cloud = self.compute_point_cloud(_theta, points_2d, index=index)
+            masked_point_cloud = self.mask_point_cloud(point_cloud)
 
             if color_image is None:
 
-                r, g, b = self.color
+                if index == 1:
+                    r, g, b = (255, 0, 0)
+                else:
+                    r, g, b = self.color
 
                 color_image = np.zeros((self.image_height, self.image_width, 3), np.uint8)
                 color_image[:, :, 0] = r
@@ -285,28 +310,36 @@ class ImageProcessor(ImageProcessorInterface):
 
             texture = color_image[v, np.around(u).astype(int)].T
 
-            return point_cloud, texture
+            return masked_point_cloud, texture
         except Exception as e:
             self._logger.error("Process Error:"+str(e))
             return [], []
 
-    def mask_image(self, image):
-            mask = np.zeros(image.shape, np.uint8)
-            mask[0:self.image_height, (self.image_width/2):self.image_width] = image[0:self.image_height, (self.image_width/2):self.image_width]
+    def mask_image(self, image, index):
+            if index == 0:
+                mask = np.zeros(image.shape, np.uint8)
+                mask[0:self.image_height, (self.image_width/2):self.image_width] = image[0:self.image_height, (self.image_width/2):self.image_width]
+            else:
+                mask = np.zeros(image.shape, np.uint8)
+                mask[0:self.image_height, 0:(self.image_width/2)] = image[0:self.image_height, 0:(self.image_width/2)]
+
             return mask
 
     def mask_point_cloud(self, point_cloud):
         if point_cloud is not None and len(point_cloud) > 0:
             rho = np.sqrt(np.square(point_cloud[0, :]) + np.square(point_cloud[1, :]))
+
             z = point_cloud[2, :]
             turntable_radius = int(self.config.turntable.radius)
-            additional_offset = 0.5
-            idx = np.where((z > abs(self.config.calibration.platform_translation[0])+additional_offset) &
-                           (rho >= -turntable_radius) &
-                           (rho <= turntable_radius))[0]
+            idx = np.where(z >= 0 &
+                           (z <= 120) &
+                           (rho >= -self.config.calibration.platform_translation[2]) &
+                           (rho <= self.config.calibration.platform_translation[2]))[0]
+
 
             return point_cloud[:, idx]
         else:
+            self._logger.debug('No points in cloud... masking not possible.')
             return point_cloud
 
 
@@ -356,28 +389,8 @@ class ImageProcessor(ImageProcessorInterface):
         u, v = points_2d
         x = np.concatenate(((u - cx) / fx, (v - cy) / fy, np.ones(len(u)))).reshape(3, len(u))
 
-
-        ## points_for_undistort = np.array([np.concatenate((u, v)).reshape(2, len(u)).T])
-
-        #print points_for_undistort.shape
-        # use opencv's undistortPoints, which incorporates the distortion coefficients
-        ## points_undistorted = cv2.undistortPoints(points_for_undistort, np.asanyarray(self.config.calibration.camera_matrix),
-        ##                                         np.asanyarray(self.config.calibration.distortion_vector))
-
-        ##u, v = np.hsplit(points_undistorted[0], points_undistorted[0].shape[1])
-
-        ## make homogenous coordinates
-        ## x = np.concatenate((u.T[0], v.T[0], np.ones(len(u)))).reshape(3, len(u))
-        ## normalize to get unit direction vectors
-        ## cam_point_direction = x / np.linalg.norm(x, axis=0)
-
-        ### Compute laser intersection:
-        ### dlc = dot(laser_normal, cam_point_direction) = projection of camera ray on laser-plane normal
-        ### d / dlc = distance from cam center to 3D point
-        ### cam_point_direction * d / dlc = 3D point
-
-        #return d / np.dot(n, cam_point_direction) * cam_point_direction
         return d / np.dot(n, x) * x
+
 
     def detect_corners(self, image, flags=None):
         corners = self._detect_chessboard(image, flags)

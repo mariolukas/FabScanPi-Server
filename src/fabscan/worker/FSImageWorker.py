@@ -133,31 +133,36 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
                             data['points'] = []
                             data['image_type'] = 'color'
+                            data['laser_index'] = None
 
                             event = dict()
                             event['event'] = "ON_IMAGE_PROCESSED"
                             event['data'] = data
 
+
                             self.event_q.put(event)
 
                         if (image_task.task_type == "PROCESS_DEPTH_IMAGE"):
                             #self._logger.debug("process " + str(self.pid) + " handle image")
-
                             try:
+                                point_cloud = []
                                 angle = float(image_task.progress * 360) / float(image_task.resolution)
                                 #self._logger.debug("Progress "+str(image_task.progress)+" Resolution "+str(image_task.resolution)+" angle "+str(angle))
                                 self.image.save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)
                                 color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
 
-                                point_cloud, texture = self.image_processor.process_image(angle, image_task.image, color_image)
-                                # FIXME: Only send event if points is non-empty
+                                point_cloud, texture = self.image_processor.process_image(angle, image_task.image, color_image, index=image_task.index)
+
+
+                                data['point_cloud'] = point_cloud
+                                data['texture'] = texture
+                                data['image_type'] = 'depth'
+                                data['laser_index'] = image_task.index
+                                #data['progress'] = image_task.progress
+                                #data['resolution'] = image_task.resolution
+                            # FIXME: Only send event if points is non-empty
                             except StandardError as e:
                                 self._logger.debug(e)
-                            data['point_cloud'] = point_cloud
-                            data['texture'] = texture
-                            data['image_type'] = 'depth'
-                            #data['progress'] = image_task.progress
-                            #data['resolution'] = image_task.resolution
 
                             event = dict()
                             event['event'] = "ON_IMAGE_PROCESSED"

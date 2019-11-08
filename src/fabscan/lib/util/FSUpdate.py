@@ -20,16 +20,14 @@ _logger = logging.getLogger(__name__)
 
 def get_latest_version_tag():
 
-    if is_online(REMOTE_SERVER):
-        _logger.debug("Scanner is Online...")
-        try:
 
+        try:
             stage = "stable"
 
             if "+" in __version__:
                 stage = "testing"
 
-            response = urllib2.urlopen("http://archive.fabscan.org/dists/" + str(stage) + "/main/binary-armhf/Packages", timeout=0.4)
+            response = urllib2.urlopen("http://archive.fabscan.org/dists/" + str(stage) + "/main/binary-armhf/Packages",timeout=1)
             latest_version = __version__
             line = 'START'
             while line != '':
@@ -51,26 +49,29 @@ def get_latest_version_tag():
         except (Exception, urllib2.URLError) as e:
             _logger.error(e)
             return __version__
-    else:
-        _logger.debug("Scanner is offline...")
-        return __version__
 
-def is_online(hostname):
+
+
+def is_online(host="8.8.8.8", port=53, timeout=1):
+  """
+  Host: 8.8.8.8 (google-public-dns-a.google.com)
+  OpenPort: 53/tcp
+  Service: domain (DNS/TCP)
+  """
   try:
-    # see if we can resolve the host name -- tells us if there is
-    # a DNS listening
-    host = socket.gethostbyname(hostname)
-    # connect to the host -- tells us if the host is actually
-    # reachable
-    s = socket.create_connection((host, 80), 2)
+    socket.setdefaulttimeout(timeout)
+    socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
     return True
-  except:
-     pass
-  return False
+  except socket.error as ex:
+    _logger.debug('There is no internet Connection: ' + str(ex))
+    return False
 
-def upgrade_is_available(current_version):
+def upgrade_is_available(current_version, online_lookup_ip):
 
-    latest_version = get_latest_version_tag()
+    if is_online(host=online_lookup_ip):
+        latest_version = get_latest_version_tag()
+    else:
+        return __version__
 
     return semver.compare(latest_version, current_version) == 1, latest_version
 

@@ -7,6 +7,7 @@ import shlex
 import logging
 import glob
 import signal
+import zipfile
 
 from collections import namedtuple
 from fabscan.FSConfig import ConfigInterface
@@ -89,6 +90,15 @@ class FSSystem(object):
         mask = self.config.folders.scans+scan_id+"/"'*.[pso][ltb][lyj]'
         number_of_files = len(glob.glob(mask))
 
+    def zipdir(self, scan_id):
+        # ziph is zipfile handle
+        zipf = zipfile.ZipFile(self.config.folders.scans+scan_id+'/'+str(scan_id)+'.zip', 'w', zipfile.ZIP_DEFLATED)
+
+        for root, dirs, files in os.walk(self.config.folders.scans+scan_id+"/color_raw/"):
+            for file in files:
+                zipf.write(os.path.join(root, file))
+
+        zipf.close()
 
 def _json_object_hook(d):
     return namedtuple('X', d.keys())(*d.values())
