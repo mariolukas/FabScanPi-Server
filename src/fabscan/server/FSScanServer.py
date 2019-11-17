@@ -23,13 +23,12 @@ from fabscan.lib.util.FSUpdate import do_upgrade
 
 
 class FSScanServer(object):
-    def __init__(self, config_file, settings_file):
+    def __init__(self, args):
         self.system_exit = FSSystemExit()
-        self.config_file = config_file
-        self.settings_file = settings_file
+        self.config_file = args.config
+        self.settings_file = args.settings
+        self.args = args
         self.exit = False
-        self.restart = False
-        self.upgrade = False
         self.reboot = False
         self.shutdown = False
         self.scanner = None
@@ -41,66 +40,65 @@ class FSScanServer(object):
 
         if command == FSCommand.UPGRADE_SERVER:
             self.upgrade = True
-            self.system_exit.kill()
-
+            self.update_server()
+            self.restart()
 
         if command == FSCommand.RESTART_SERVER:
             self.restart = True
-            self.system_exit.kill()
+            self.restart()
 
+    def restart(self, override_sys=False):
+        """Restart the program with params if args is exists"""
+        self._logger.debug('argv is: %s' % sys.argv)
+        self._logger.debug('args is: %s' % self.args)
 
-    def restart_server(self):
-        try:
-            self.restart = False
-            FSSystem.run_command("/etc/init.d/fabscanpi-server restart", blocking=True)
-        except StandardError, e:
-            self._logger.error(e)
+        self.exit_services()
+
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
+
+    def exit_services(self):
+        self.webserver.kill()
+        self._logger.debug("Waiting for Webserver exit...")
+
+        self.scanner.kill()
+        self._logger.debug("Waiting for Scanner exit...")
+        self.scanner.join()
+
+    def create_services(self):
+        injector.provide(FSEventManagerInterface, FSEventManagerSingleton)
+        injector.provide_instance(ConfigInterface, Config(self.config_file, True))
+        injector.provide_instance(SettingsInterface, Settings(self.settings_file, True))
+
+        # inject "dynamic" classes
+        self.config = injector.get_instance(ConfigInterface)
+
+        FSScannerFactory.injectScannerType(self.config.scanner_type)
+
+        self.webserver = FSWebServer()
+        self.webserver.start()
+
+        self.scanner = FSScanner()
+        self.scanner.start()
+        FSEventManagerSingleton().instance.subscribe(FSEvents.COMMAND, self.on_server_command)
 
     def update_server(self):
-         try:
-             do_upgrade()
-         except StandardError, e:
-            self._logger.error(e)
+       try:
+         return do_upgrade()
+       except StandardError, e:
+         self._logger.error(e)
 
     def run(self):
         self._logger.info("FabScanPi-Server "+str(__version__))
 
         try:
 
-            injector.provide(FSEventManagerInterface, FSEventManagerSingleton)
-            injector.provide_instance(ConfigInterface, Config(self.config_file, True))
-            injector.provide_instance(SettingsInterface, Settings(self.settings_file, True))
-
-            # inject "dynamic" classes
-            self.config = injector.get_instance(ConfigInterface)
-
-            FSScannerFactory.injectScannerType(self.config.scanner_type)
-
-            self.webserver = FSWebServer()
-            self.webserver.start()
-
-            self.scanner = FSScanner()
-            self.scanner.start()
-            FSEventManagerSingleton().instance.subscribe(FSEvents.COMMAND, self.on_server_command)
+            self.create_services()
 
             while not self.system_exit.kill:
                 time.sleep(0.3)
 
-            if self.upgrade:
-                self._logger.info("Upgrading FabScanPi Server")
-                self.update_server()
-                self.restart = True
-
-            if self.restart:
-                self._logger.info("Restarting FabScanPi Server")
-                self.restart_server()
-
-            self.webserver.kill()
-            self._logger.debug("Waiting for Webserver exit...")
-
-            self.scanner.kill()
-            self._logger.debug("Waiting for Scanner exit...")
-            self.scanner.join()
+            self.exit_services()
 
             self._logger.info("FabScan Server Exit. Bye!")
             os._exit(1)

@@ -8,6 +8,6 @@ export PYBUILD_INSTALL_ARGS_python2=--prefix=/usr/
 #export PYBUILD_DISABLE=test
 
 %:
-	dh $@ --with python2 --buildsystem=pybuild
+	dh $@ --with python2 --buildsystem=pybuild --with=systemd
 
 #override_dh_usrlocal:

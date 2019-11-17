@@ -1,6 +1,7 @@
 import os
 import re
 import urllib2
+import ssl
 import socket
 
 REMOTE_SERVER = "fabscan.org"
@@ -8,6 +9,7 @@ REMOTE_SERVER = "fabscan.org"
 import semver
 import logging
 from fabscan.FSVersion import __version__
+from fabscan.lib.util.FSUtil import FSSystem
 
 
 __author__ = 'mariolukas'
@@ -27,7 +29,11 @@ def get_latest_version_tag():
             if "+" in __version__:
                 stage = "testing"
 
-            response = urllib2.urlopen("http://archive.fabscan.org/dists/" + str(stage) + "/main/binary-armhf/Packages",timeout=1)
+            if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
+                ssl._create_default_https_context = ssl._create_unverified_context
+
+            response = urllib2.urlopen("https://archive.fabscan.org/dists/" + str(stage) + "/main/binary-armhf/Packages", timeout=1)
+
             latest_version = __version__
             line = 'START'
             while line != '':
@@ -67,14 +73,15 @@ def is_online(host="8.8.8.8", port=53, timeout=1):
     return False
 
 def upgrade_is_available(current_version, online_lookup_ip):
-
-    if is_online(host=online_lookup_ip):
-        latest_version = get_latest_version_tag()
-    else:
-        return __version__
+    #if is_online(host=online_lookup_ip):
+    latest_version = get_latest_version_tag()
+    #else:
+    #    return __version__
 
     return semver.compare(latest_version, current_version) == 1, latest_version
 
 
 def do_upgrade():
-    os.system('nohup bash -c "sudo apt-get update -y && sudo apt-get dist-upgrade -y" >> /var/log/fabscanpi/upgrade.log')
+    return FSSystem.run_command('sudo apt-get update -y && sudo apt-get install --only-upgrade -y fabscanpi-server" >> /var/log/fabscanpi/upgrade.log', blocking=True)
+
+    #return os.system('sudo apt-get update -y && sudo apt-get install --only-upgrade -y fabscanpi-server" >> /var/log/fabscanpi/upgrade.log')

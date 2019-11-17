@@ -19,8 +19,8 @@ from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.FSConfig import ConfigInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
-from fabscan.lib.util.FSInject import inject, singleton
-from fabscan.lib.util.FSUpdate import upgrade_is_available, do_upgrade
+from fabscan.lib.util.FSInject import inject
+from fabscan.lib.util.FSUpdate import upgrade_is_available
 from fabscan.lib.util.FSDiscovery import register_to_discovery
 from fabscan.lib.util.FSSystemWatch import get_cpu_temperature
 
@@ -99,13 +99,13 @@ class FSScanner(threading.Thread):
     def run(self):
         while not self.exit:
             self.eventManager.handle_event_q()
-
             time.sleep(0.05)
-
-        self.scanProcessor.stop()
 
 
     def kill(self):
+        self.scanProcessor.stop()
+        # wait some time for hardware shutdown
+        time.sleep(2)
         self.exit = True
 
 
@@ -216,7 +216,8 @@ class FSScanner(threading.Thread):
         # Upgrade server
         elif command == FSCommand.UPGRADE_SERVER:
             if self._upgrade_available:
-                self._logger.info("Upgrade server")
+                self._logger.info("Started Server upgrade...")
+                self.eventManager.publish(FSCommand.UPGRADE_SERVER, dict())
                 self.set_state(FSState.UPGRADING)
                 return
 
@@ -260,10 +261,8 @@ class FSScanner(threading.Thread):
                 }
             }
 
-
             eventManager.send_client_message(FSEvents.ON_CLIENT_INIT, message)
             self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
-            #self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_IF_NOT_CALIBRATED})
 
         except StandardError, e:
             self._logger.error(e)

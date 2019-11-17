@@ -211,3 +211,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
     def stop_camera_stream(self):
         self.camera.device.stop_stream()
+
+    def destroy_camera_device(self):
+        self.camera.device.destroy_camera()
+

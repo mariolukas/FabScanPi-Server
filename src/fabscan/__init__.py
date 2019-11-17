@@ -127,8 +127,9 @@ def main():
             elif "restart" == args.daemon:
                 daemon.restart()
         else:
-            fabscan = FSScanServer(args.config, args.settings)
+            fabscan = FSScanServer(args)
             fabscan.run()
+
     except Exception, e:
         logger.fatal("Fatal error: %s", e)
         sys.exit(1)

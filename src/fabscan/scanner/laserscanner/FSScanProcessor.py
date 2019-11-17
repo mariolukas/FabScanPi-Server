@@ -429,9 +429,11 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     # on stop pykka actor
     def on_stop(self):
-        self._worker_pool.clear_task_queue()
-        self._worker_pool.kill()
-        self.hardwareController.stop_camera_stream()
+        if self._worker_pool:
+            self._worker_pool.clear_task_queue()
+            self._worker_pool.kill()
+        self.hardwareController.destroy_camera_device()
+
         self.hardwareController.turntable.stop_turning()
         self.hardwareController.led.off()
         for laser_index in range(self.config.laser.numbers):

@@ -347,6 +347,10 @@ class PiCam(threading.Thread):
             self._logger.error("Not able to stop camera.")
             self._logger.error(e)
 
+    def destroy_camera(self):
+        self.camera.close()
+        self.camera = None
+
     def is_idle(self):
         return self.idle
 

@@ -22,6 +22,8 @@ copyright = '2019, Mario Lukas'
 author = 'Mario Lukas'
 
 master_doc = 'index'
+
+latex_toplevel_sectioning = 'section'
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
