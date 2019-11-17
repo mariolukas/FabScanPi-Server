@@ -82,6 +82,13 @@ def upgrade_is_available(current_version, online_lookup_ip):
 
 
 def do_upgrade():
-    return FSSystem.run_command('sudo apt-get update -y && sudo apt-get install --only-upgrade -y fabscanpi-server" >> /var/log/fabscanpi/upgrade.log', blocking=True)
+    try:
+        rc_update = FSSystem.run_command("sudo apt-get update")
+        rc_upgrade = FSSystem.run_command("sudo apt-get install fabscanpi-server")
+        if (rc_update == 0 and rc_upgrade == 0):
+            return 1
+        else:
+            return 0
 
-    #return os.system('sudo apt-get update -y && sudo apt-get install --only-upgrade -y fabscanpi-server" >> /var/log/fabscanpi/upgrade.log')
+    except Exception, e:
+        logging.error(e)
