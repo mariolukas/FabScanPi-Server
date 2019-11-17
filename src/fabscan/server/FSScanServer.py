@@ -70,7 +70,7 @@ class FSScanServer(object):
 
     def restart(self, override_sys=False):
         message = {
-            "message": "RESTARRING_SERVER",
+            "message": "RESTARTING_SERVER",
             "level": "info"
         }
         self.eventManager.instance.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
