@@ -33,6 +33,7 @@ class FSScanServer(object):
         self.shutdown = False
         self.scanner = None
         self.webserver = None
+        self.eventManager = None
         self._logger = logging.getLogger(__name__)
 
     def on_server_command(self, mgr, event):
@@ -40,20 +41,41 @@ class FSScanServer(object):
 
         if command == FSCommand.UPGRADE_SERVER:
             self.upgrade = True
-            self.update_server()
-            self.restart()
+            message = {
+                "message": "UPGRADE_STARTED",
+                "level": "info"
+            }
+            self.eventManager.instance.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+
+
+            if self.update_server():
+                message = {
+                    "message": "UPGRADE_SUCCESS",
+                    "level": "success"
+                }
+                self.eventManager.instance.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+                self._logger.info('Update finished, restarting server.')
+                self.restart()
+            else:
+                message = {
+                    "message": "UPGRADE_FAILED",
+                    "level": "error"
+                }
+                self.eventManager.instance.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+                self._logger.error('Update failed.')
 
         if command == FSCommand.RESTART_SERVER:
             self.restart = True
             self.restart()
 
     def restart(self, override_sys=False):
-        """Restart the program with params if args is exists"""
-        self._logger.debug('argv is: %s' % sys.argv)
-        self._logger.debug('args is: %s' % self.args)
+        message = {
+            "message": "RESTARRING_SERVER",
+            "level": "info"
+        }
+        self.eventManager.instance.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
         self.exit_services()
-
         python = sys.executable
         os.execl(python, python, *sys.argv)
 
@@ -80,7 +102,8 @@ class FSScanServer(object):
 
         self.scanner = FSScanner()
         self.scanner.start()
-        FSEventManagerSingleton().instance.subscribe(FSEvents.COMMAND, self.on_server_command)
+        self.eventManager = FSEventManagerSingleton()
+        self.eventManager.instance.subscribe(FSEvents.COMMAND, self.on_server_command)
 
     def update_server(self):
        try:

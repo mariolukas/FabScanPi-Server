@@ -132,3 +132,6 @@ class FSEventManagerSingleton(FSEventManager):
     def __init__(self, instance):
         super(FSEventManager, self).__init__()
         self.instance=instance
+
+    def get_instance(self):
+        return self.instance

@@ -45,7 +45,7 @@ class FSSystem(object):
                 process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                 output, _ = process.communicate()
                 if output:
-                   logging.getLogger(__name__).debug(output.rstrip("\n"))
+                   logging.getLogger(__name__).info(output.rstrip("\n"))
                 rc = process.returncode
             else:
                 process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
@@ -54,7 +54,7 @@ class FSSystem(object):
                     if output == '' and process.poll() is not None:
                         break
                     if output:
-                        logging.getLogger(__name__).debug(output.rstrip("\n"))
+                        logging.getLogger(__name__).info(output.rstrip("\n"))
                 process.poll()
 
                 rc = process.returncode
