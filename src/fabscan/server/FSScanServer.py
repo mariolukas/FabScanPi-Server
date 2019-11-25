@@ -64,10 +64,6 @@ class FSScanServer(object):
                 self.eventManager.instance.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
                 self._logger.error('Update failed.')
 
-        if command == FSCommand.RESTART_SERVER:
-            self.restart = True
-            self.restart()
-
     def restart(self, override_sys=False):
         message = {
             "message": "RESTARTING_SERVER",

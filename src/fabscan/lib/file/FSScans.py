@@ -44,11 +44,15 @@ class FSScans():
         response['scans'] = []
 
         for dir in subdirectories:
-            if dir != "debug":
-                if os.path.os.path.exists(basedir + dir + "/scan_" + dir + ".ply"):
+            if dir != "debug" and dir != 'calibration':
+                if any(File.endswith(".ply") for File in os.listdir(basedir + dir)):
                     scan = dict()
                     scan['id'] = str(dir)
-                    scan['pointcloud'] = str("http://" + host + "/scans/" + dir + "/scan_" + dir + ".ply")
+                    if os.path.os.path.exists(basedir + dir + "/scan_" + dir + "_both.ply"):
+                        scan['pointcloud'] = str("http://" + host + "/scans/" + dir + "/scan_" + dir + "_both.ply")
+                    else:
+                        scan['pointcloud'] = str("http://" + host + "/scans/" + dir + "/scan_" + dir + "_0.ply")
+
                     scan['thumbnail'] = str("http://" + host + "/scans/" + dir + "/thumbnail_" + dir + ".png")
                     response['scans'].append(scan)
 
