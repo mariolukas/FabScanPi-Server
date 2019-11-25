@@ -157,11 +157,12 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
             return pattern_image
 
     def reset_hardware(self):
-        #with self._lock:
-            self.led.off()
-            self.laser.off(0)
-            self.laser.off(1)
-            self.turntable.stop_turning()
+        self.led.off()
+
+        for i in range(self.config.laser.numbers):
+            self.hardwareController.laser.off(i)
+
+        self.turntable.stop_turning()
 
     def get_laser_image(self, index):
         with self._lock:

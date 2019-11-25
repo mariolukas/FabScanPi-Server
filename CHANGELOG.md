@@ -25,7 +25,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 ### Fixed
-- update routine
+- update routine ( 6235dd6 )
+- fixed loading scans from file manger ( #134 )
+- 
 
 
 ## [0.8.0] - 2019-08-11

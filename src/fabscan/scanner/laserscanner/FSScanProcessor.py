@@ -146,8 +146,10 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def config_mode_off(self):
         self.hardwareController.stop_camera_stream()
-        self.hardwareController.laser.off(0)
-        self.hardwareController.laser.off(1)
+
+        for i in range(self.config.laser.numbers):
+            self.hardwareController.laser.off(i)
+
         self.hardwareController.led.off()
         self.hardwareController.turntable.stop_turning()
 
@@ -156,8 +158,18 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def notify_if_is_not_calibrated(self):
         self._logger.debug(self.config.calibration.camera_matrix)
-        is_calibrated = not (self.config.calibration.laser_planes[0]['normal'] == [])
-        self._logger.debug("FabScan is calibrated: "+str(is_calibrated))
+        correct_plane_number = len(self.config.calibration.laser_planes) == self.config.laser.numbers
+
+        distance_is_set = True
+        for i in range(self.config.laser.numbers-1):
+            if (self.config.calibration.laser_planes[i].distance == 0) or \
+               (self.config.calibration.laser_planes[i].distance is None):
+                distance_is_set = False
+                break
+
+        is_calibrated = correct_plane_number and distance_is_set
+
+        self._logger.debug("FabScan is calibrated: " + str(is_calibrated))
 
         if not is_calibrated:
             message = {
