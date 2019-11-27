@@ -84,7 +84,7 @@ def upgrade_is_available(current_version, online_lookup_ip):
 def do_upgrade():
     try:
         rc_update = FSSystem.run_command("sudo apt-get update")
-        rc_upgrade = FSSystem.run_command("sudo apt-get install  -o Dpkg::Options::='--force-confnew' fabscanpi-server")
+        rc_upgrade = FSSystem.run_command("sudo apt-get install -y -o Dpkg::Options::='--force-confnew' fabscanpi-server")
         return (rc_update == 0 and rc_upgrade == 0)
 
     except Exception, e:
