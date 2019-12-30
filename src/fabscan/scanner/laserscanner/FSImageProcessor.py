@@ -147,14 +147,22 @@ class ImageProcessor(ImageProcessorInterface):
 
     def _threshold_image(self, image, blur_enable=True):
 
+        if self.settings.auto_threshold == True:
+            threshold_value = 0
+            threshold_settings = cv2.THRESH_TOZERO+cv2.THRESH_OTSU
+        else:
+            threshold_value = self.settings.threshold
+            threshold_settings = cv2.THRESH_TOZERO
+
+
         image = cv2.threshold(
-            image, self.settings.threshold, 255, cv2.THRESH_TOZERO+cv2.THRESH_OTSU)[1]
+            image, threshold_value, 255, threshold_settings)[1]
 
         if blur_enable:
             image = cv2.GaussianBlur(image, (7, 7), 0)
 
         image = cv2.threshold(
-            image, self.settings.threshold, 255,  cv2.THRESH_TOZERO+cv2.THRESH_OTSU)[1]
+            image, threshold_value, 255,  threshold_settings)[1]
 
         return image
 

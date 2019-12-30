@@ -5,6 +5,7 @@
        "blue": 0
      },
      "center": 0.50,
+     "auto_threshold": "True",
      "threshold": 30,
      "camera":{
        "brightness" : 50,

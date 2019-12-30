@@ -204,7 +204,7 @@ class FSScanner(threading.Thread):
 
         # Meshing
         elif command == FSCommand.MESHING:
-            meshlab_task = FSMeshlabTask(event.scan_id, event.filter, event.format)
+            meshlab_task = FSMeshlabTask(event.scan_id, event.filter, event.format, event.file)
             meshlab_task.start()
             return
 

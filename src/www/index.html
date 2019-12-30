@@ -125,11 +125,12 @@
                                </div>
 
                                <div class="tab-content" ng-show="(selectedTab == 'general')">
-                                   <div style="margin-right:20em;">
+                                   <div ng-show="!autoThreshHoldIsSelected()" style="margin-right:20em;">
                                        <div ng-class="{'fadeOut':!showThresholdValue}" class="slider-value-label">{{settings.threshold}}</div>
                                        <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Threshold</div>
                                        <slider style="width:70%; margin-left:1em;" floor="0" ceiling="250" step="1" precision="1" ng-model="settings.threshold"></slider>
                                    </div>
+
                                    <div style="margin-right:20em;">
                                        <div ng-class="{'longFadeOut':!showResolutionValue}" class="slider-value-label" >{{settings.resolution | toResolutionValue }}</div>
                                        <div  style="display:inline-block; width:5em; color:white; padding-left:1em;">Resolution</div>
@@ -143,6 +144,10 @@
                                    </div>
                                    -->
                                    <div style="margin-right:20em;">
+                                       <div style="width:100%; margin-bottom:1em; margin-top:1em;">
+                                           <div style="display:inline-block; width:15em; color:white; padding-left:1em;" >Auto Threshold</div>
+                                           <input  style="width:1em; height:1em; margin-left:1.5em; margin-top:0.5em;" type="checkbox"  ng-change="setAutoThreshold()" ng-checked="autoThreshHoldIsSelected()" ng-model="settings.auto_threshold">
+                                       </div>
                                        <div style="width:100%; margin-bottom:1em; margin-top:1em;">
                                             <div style="display:inline-block; width:15em; color:white; padding-left:1em;" >Scan with Color</div><input  style="width:1em; height:1em; margin-left:1.5em; margin-top:0.5em;" type="checkbox"  ng-change="setColor()" ng-checked="colorIsSelected()" ng-model="settings.color">
                                        </div>
@@ -371,7 +376,7 @@
                                                  <li ng-repeat="raw_scan in raw_scans track by $index" style="padding:0.2em;">
                                                      <a href="#" ng-click="loadPointCloud(raw_scan.url)" style="text-decoration: none;">{{raw_scan.name}}</a>
                                                      <a ng-if="meshes.length == 0" href="#"><i tooltips title="Delete Scan" class="hvr-grow fa fa-trash fa-1x" ng-click="deleteFile(raw_scan.name)" style="float:right;"></i></a>
-                                                     <a href="#"><i tooltips title="Select MeshLab Filter" tooltip-side="top" ng-click="nextSubSelection()" class="hvr-grow fa fa-magic fa-1x" style="float:right;"></i></a>
+                                                     <a href="#"><i tooltips title="Select MeshLab Filter" tooltip-side="top" ng-click="nextSubSelection(raw_scan.name)" class="hvr-grow fa fa-magic fa-1x" style="float:right;"></i></a>
                                                      <a href="{{raw_scan.url}}"><i tooltips title="Donwload Scan" tooltip-side="top" class="hvr-grow fa fa-download fa-1x" style="float:right;"></i></a>
                                                      <!--<i tooltips title="Open Scan" tooltip-side="top" class="fa fa-folder-open fa-1x" style="float:right;"></i>-->
                                                  </li>

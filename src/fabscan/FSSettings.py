@@ -54,6 +54,7 @@ class Settings(SettingsInterface):
 
     def update(self, settings):
         self.threshold = settings.threshold
+        self.auto_threshold = settings.auto_threshold
         self.camera.brightness = settings.camera.brightness
         self.camera.contrast = settings.camera.contrast
         self.camera.saturation = settings.camera.saturation

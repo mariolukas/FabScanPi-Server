@@ -63,7 +63,8 @@
         "plattform_type": "fabscanpi",
         "baudrate": 57600,
         "autoflash": "True",
-        "port": "/dev/ttyAMA0"
+        "port": "/dev/ttyAMA0",
+        "flash_baudrate": 115200
     },
     "texture_illumination": 140,
     "keep_raw_images": "True",

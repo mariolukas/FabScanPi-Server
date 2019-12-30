@@ -8,11 +8,13 @@ import os
 import glob
 import serial
 import time
+import sys
 import logging
 import threading
 from fabscan.lib.util.FSUtil import FSSystem
 from fabscan.lib.util.FSInject import inject
 from fabscan.FSConfig import ConfigInterface
+
 
 
 @inject(
@@ -60,10 +62,10 @@ class FSSerialCom():
         return status == 0
 
     def _connect(self):
-        self._logger.debug("Trying to connect Arduino on port: "+str(self._port))
+        self._logger.debug("Trying to connect Arduino on port: " + str(self._port))
         # open serial port
         try:
-            self._serial = serial.Serial(str(self._port), int(self._baudrate))
+            self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=3)
             time.sleep(1)
         except:
             self._logger.error("Could not open serial port")
@@ -73,7 +75,7 @@ class FSSerialCom():
 
     def _openSerial(self):
         basedir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-        flash_file_version = max(sorted(glob.iglob(basedir+'/firmware/'+str(self.config.serial.plattform_type)+'_*.hex'), key=os.path.getctime, reverse=True))
+        flash_file_version = max(sorted(glob.iglob(basedir+'/firmware/'+str(self.config.serial.plattform_type)+'_*.hex'),  key=os.path.getctime, reverse=True))
 
         flash_version_number = os.path.basename(os.path.normpath(os.path.splitext(flash_file_version.split('_', 1)[-1])[0]))
 
@@ -82,7 +84,6 @@ class FSSerialCom():
         try:
            # check if device is available
            if self.avr_device_is_available():
-                   self.avr_device_is_available()
                    time.sleep(0.5)
                    # try to connect to arduino
                    self._connect()
@@ -115,7 +116,8 @@ class FSSerialCom():
                                         current_version = self.checkVersion()
                                         self._logger.info("Successfully flashed Firmware Version: "+current_version)
            else:
-                    self._logger.error("No FabScanPi HAT or compatible device found on port "+str(self._port))
+                    self._logger.error("Communication error on port "+str(self._port)+" try other flashing baudrate than "+str(self.flash_baudrate)+". Maybe corrupted bootloader.")
+
 
            # set connection states and version
            if self._serial.isOpen() and (current_version != "None"):
@@ -126,9 +128,11 @@ class FSSerialCom():
            else:
                   self._logger.error("Can not find Arduino or FabScanPi HAT")
                   self._connected = False
+                  sys.exit(1)
 
         except:
             self._logger.error("Fatal FabScanPi HAT or compatible connection error....")
+            sys.exit(1)
 
     def checkVersion(self):
         if self._serial:

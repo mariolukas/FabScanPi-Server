@@ -25,8 +25,8 @@ window.i18n["main"]["SCANNER_IN_CALIBRATION_MODE"] = function(d){return "Calibra
 window.i18n["main"]["STOPPED_CALIBRATION"] = function(d){return "Calibration stopped"}
 window.i18n["main"]["SCANNER_NOT_CALIBRATED"] = function(d){return "Scanner is not calibrated. For instructions visit: <a href='https://fabscanpi-server.readthedocs.io/en/latest/scanner_calibration.html'>fabscan.org</a>"}
 window.i18n["main"]["SCANNER_CALIBRATION_FAILED"] = function(d){return "Scanner calibration failed. Please try again."}
-window.i18n["main"]["UPGRADE_SUCCESS"] = function(d){return "Upgrade was successful. Server will restart soon."}
+window.i18n["main"]["UPGRADE_SUCCESS"] = function(d){return "Upgrade was successful."}
 window.i18n["main"]["UPGRADE_FAILED"] = function(d){return "Upgrade failed. See log for further information."}
 window.i18n["main"]["UPGRADE_STARTED"] = function(d){return "Upgrade process started..."}
-window.i18n["main"]["RESTARRING_SERVER"] = function(d){return "Server is going down for Restart."}
+window.i18n["main"]["RESTARTING_SERVER"] = function(d){return "Server is going down for Restart."}
 })();

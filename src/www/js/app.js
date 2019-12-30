@@ -1440,7 +1440,8 @@
       };
       service.runMeshing = function(scan_id,
     filter,
-    format) {
+    format,
+    file) {
         var message;
         message = {};
         message = {
@@ -1448,6 +1449,7 @@
           data: {
             command: FSEnumService.commands.MESHING,
             scan_id: scan_id,
+            file: file,
             format: format,
             filter: filter
           }
@@ -1694,6 +1696,9 @@
             break;
           default:
             toastr.info(message);
+        }
+        if (data['message'] === "RESTARTING_SERVER") {
+          location.reload();
         }
         return $scope.$apply();
       });
@@ -2290,6 +2295,16 @@
       $scope.setColor = function() {
         return updateSettings();
       };
+      $scope.setAutoThreshold = function() {
+        return updateSettings();
+      };
+      $scope.autoThreshHoldIsSelected = function() {
+        if ($scope.settings.auto_threshold) {
+          return true;
+        } else {
+          return false;
+        }
+      };
       $scope.colorIsSelected = function() {
         if ($scope.settings.color) {
           return true;
@@ -2452,6 +2467,7 @@
       $scope.settings = null;
       $scope.id = FSScanService.getScanId();
       $scope.selectedTab = 'download';
+      $scope.selectedFile = null;
       $scope.raw_scans = [];
       $scope.meshes = [];
       // used for debugging...
@@ -2530,7 +2546,8 @@
       $scope.selectTab = function(tab) {
         return $scope.selectedTab = tab;
       };
-      $scope.nextSubSelection = function() {
+      $scope.nextSubSelection = function(id) {
+        $scope.selectedFile = id;
         $('.filter-container').slick('slickNext');
         return false;
       };
@@ -2592,13 +2609,14 @@
           return $scope.loadPLY(mesh);
         }
       };
-      return $scope.runMeshing = function() {
+      return $scope.runMeshing = function(file) {
         $scope.toggleShareDialog();
         $log.info($scope.selectedFilter);
         $log.info($scope.selectedFormat);
         return FSScanService.runMeshing(FSScanService.getScanId(),
     $scope.selectedFilter,
-    $scope.selectedFormat);
+    $scope.selectedFormat,
+    $scope.selectedFile);
       };
     }
   ]);

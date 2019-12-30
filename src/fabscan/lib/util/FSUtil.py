@@ -48,7 +48,7 @@ class FSSystem(object):
                    logging.getLogger(__name__).info(output.rstrip("\n"))
                 rc = process.returncode
             else:
-                process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
+                process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE,  stderr=subprocess.PIPE, shell=False)
                 while True:
                     output = process.stdout.readline()
                     if output == '' and process.poll() is not None:

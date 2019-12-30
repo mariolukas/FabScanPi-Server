@@ -21,10 +21,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.8.1] - unreleased
 
 ### Added
-
-### Changed
+- auto threshold function
+- systemd service script 
 
 ### Fixed
+- fixed MeshLab meshing
+- fixed downloading scans
+- fixed manual threshold changes
+- fixed serial communication deadlock (aka serial connection timeout) 
 - update routine fixed ( 6235dd6 )
 - fixed loading scans from file manger ( #134 )
 - fixed laser calibration check ( #132 )
