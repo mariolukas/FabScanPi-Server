@@ -14,8 +14,8 @@
         "dist_camera_matrix": [],
         "pattern": {
             "square_size": 10,
-            "rows": 6,
-            "columns": 8,
+            "rows": 7,
+            "columns": 10,
             "origin_distance": 37.2
         },
         "camera_matrix": [],
