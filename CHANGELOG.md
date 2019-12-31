@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - migrate python 2 to python 3
 - refactor serial driver make it more abstract to general connector interface
 - add connector for GPIO's
-- support for cricket board
+- add support for cricket board
 
 ### Added
 
@@ -22,7 +22,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 - auto threshold function
-- systemd service script 
 
 ### Fixed
 - fixed MeshLab meshing
