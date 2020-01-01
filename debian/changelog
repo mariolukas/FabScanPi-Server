@@ -1,3 +1,7 @@
+fabscanpi-server (0.8.2) UNRELEASED; urgency=medium
+  * initial SystemV start script.
+ -- Mario Lukas <info@fabscan.org>  Mon, 1 Jan 2020 10:44:00 +0100
+
 fabscanpi-server (0.8.1) UNRELEASED; urgency=medium
   * auto threshold function
   * systemd service script
