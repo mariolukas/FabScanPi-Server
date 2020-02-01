@@ -5,7 +5,12 @@ __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
 import multiprocessing
-from Queue import Empty
+
+try:
+   from queue import Empty
+except ImportError:
+   from Queue import Empty
+
 from fabscan.lib.util.FSInject import singleton
 import logging
 

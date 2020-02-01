@@ -152,7 +152,7 @@ class FSCalibration(FSCalibrationInterface):
 
             self.reset_calibration_values()
             return
-        except StandardError as e:
+        except Exception as e:
             self._logger.error(e)
             message = {
                     "message": "SCANNER_CALIBRATION_FAILED",
@@ -201,7 +201,7 @@ class FSCalibration(FSCalibrationInterface):
             if not self._stop:
                 self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
                 _calibrate()
-        except StandardError as e:
+        except Exception as e:
             self._logger.debug("Calibration Error")
             self._logger.error(e)
 
@@ -210,13 +210,13 @@ class FSCalibration(FSCalibrationInterface):
         error = 0
         try:
             if len(self.object_points) == 0 or len(self.image_points) == 0:
-                raise StandardError('Calibration Failed')
+                raise Exception('Calibration Failed')
             ret, cmat, dvec, rvecs, tvecs = cv2.calibrateCamera(
                 self.object_points, self.image_points, self.shape, None, None)
 
             if ret:
                 # Compute calibration error
-                for i in xrange(len(self.object_points)):
+                for i in range(len(self.object_points)):
                     imgpoints2, _ = cv2.projectPoints(
                         self.object_points[i], rvecs[i], tvecs[i], cmat, dvec)
                     error += cv2.norm(self.image_points[i], imgpoints2, cv2.NORM_L2) / len(imgpoints2)
@@ -226,7 +226,7 @@ class FSCalibration(FSCalibrationInterface):
                 self.config.calibration.distortion_vector = copy.deepcopy(np.round(dvec.ravel(), 3))
 
             return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
-        except StandardError as e:
+        except Exception as e:
             self._logger.debug(e)
 
         return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
@@ -263,7 +263,7 @@ class FSCalibration(FSCalibrationInterface):
         try:
             pose = self._imageprocessor.detect_pose(pattern_image, flags)
             plane = self._imageprocessor.detect_pattern_plane(pose)
-        except StandardError as e:
+        except Exception as e:
             plane = None
             self._logger.error(e)
 
@@ -282,7 +282,7 @@ class FSCalibration(FSCalibrationInterface):
                 if ((abs(alpha) <= self.LASER_PLANE_CALIBRATION_START_POS_DEGREE) and (position > 0)):
 
                     self._hardwarecontroller.led.off()
-                    for i in xrange(self.config.laser.numbers):
+                    for i in range(self.config.laser.numbers):
 
                         image = self._capture_laser(i)
 
@@ -309,7 +309,7 @@ class FSCalibration(FSCalibrationInterface):
                 t = self._imageprocessor.compute_camera_point_cloud(
                     origin, distance, normal)
 
-            except StandardError, e:
+            except Exception as e:
                 self._logger.exception(e)
                 self._logger.error("Laser Capture Error: "+str(e))
                 message = {
@@ -343,7 +343,7 @@ class FSCalibration(FSCalibrationInterface):
         response = None
         # Laser triangulation
         # Save point clouds
-        for i in xrange(self.config.laser.numbers):
+        for i in range(self.config.laser.numbers):
             self.save_point_cloud('CALIBRATION_' + str(i) + '.ply', self._point_cloud[i])
 
         self.distance = [None, None]
@@ -351,7 +351,7 @@ class FSCalibration(FSCalibrationInterface):
         self.std = [None, None]
 
         # Compute planes
-        for i in xrange(self.config.laser.numbers):
+        for i in range(self.config.laser.numbers):
             plane = self.compute_plane(i, self._point_cloud[i])
             self.distance[i], self.normal[i], self.std[i] = plane
 
@@ -360,7 +360,7 @@ class FSCalibration(FSCalibrationInterface):
         self.x = np.array(self.x)
         self.y = np.array(self.y)
         self.z = np.array(self.z)
-        points = zip(self.x, self.y, self.z)
+        points = list(zip(self.x, self.y, self.z))
 
         if len(points) > 4:
             # Fitting a plane
@@ -491,7 +491,7 @@ class FSCalibration(FSCalibrationInterface):
         best_inlier_num = 0
         best_inliers = None
         data_idx = np.arange(data.shape[0])
-        for _ in xrange(max_trials):
+        for _ in range(max_trials):
             sample = data[np.random.randint(0, data.shape[0], 3)]
             if model_class.is_degenerate(sample):
                 continue

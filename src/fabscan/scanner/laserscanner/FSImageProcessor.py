@@ -114,7 +114,7 @@ class ImageProcessor(ImageProcessorInterface):
         best_inlier_num = 0
         best_inliers = None
         data_idx = np.arange(data.shape[0])
-        for _ in xrange(max_trials):
+        for _ in range(max_trials):
             sample = data[np.random.randint(0, data.shape[0], 2)]
             if model_class.is_degenerate(sample):
                 continue
@@ -138,7 +138,7 @@ class ImageProcessor(ImageProcessorInterface):
             _min = peak - window_value
             _max = peak + window_value + 1
             mask = np.zeros_like(image)
-            for i in xrange(self.image_height):
+            for i in range(self.image_height):
                 mask[i, _min[i]:_max[i]] = 255
                 # Apply mask
         image = cv2.bitwise_and(image, mask)
@@ -278,7 +278,7 @@ class ImageProcessor(ImageProcessorInterface):
         if bool(self.settings.show_laser_overlay):
             points, ret_img = self.compute_2d_points(image, roi_mask=False)
             u, v = points
-            c = zip(u, v)
+            c = list(zip(u, v))
 
             for t in c:
                 cv2.line(image, (int(t[0]) - 1, int(t[1])), (int(t[0]) + 1, int(t[1])), (255, 0, 0), thickness=1,
@@ -347,7 +347,6 @@ class ImageProcessor(ImageProcessorInterface):
 
             return point_cloud[:, idx]
         else:
-            self._logger.debug('No points in cloud... masking not possible.')
             return point_cloud
 
 

@@ -10,12 +10,10 @@ import numpy as np
 import io
 import os
 import time
-import sys, re, threading, collections
-import traceback
-import PIL
-from cStringIO import StringIO
+import sys, threading, collections
 
-from fabscan.lib.util.FSInject import inject, singleton
+
+from fabscan.lib.util.FSInject import inject
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
@@ -51,6 +49,7 @@ class FSRingBuffer(threading.Thread):
 
     # Initialize the buffer.
     def __init__(self, size_max):
+        self._logger = logging.getLogger(__name__)
         self.max = size_max
         self.data = collections.deque(maxlen=size_max)
         self.sync = threading.Event()
@@ -68,7 +67,9 @@ class FSRingBuffer(threading.Thread):
         #with self._lock:
             if len(self.data) >= 1:
                 image = self.data[-1]
+                #self._logger.debug("Image is not none...")
             else:
+                #self._logger.debug("Image is none.")
                 image = None
             return image
 
@@ -109,7 +110,6 @@ class CamProcessor(threading.Thread):
             # Wait for an image to be written to the stream
             if self.event.wait(1):
                 try:
-
                     self.stream.seek(0)
                     data = np.fromstring(self.stream.getvalue(), dtype=np.uint8)
                     image = cv2.imdecode(data, 1)
@@ -124,19 +124,6 @@ class CamProcessor(threading.Thread):
                     if self.mode == "settings":
                         image = self.imageprocessor.get_laser_stream_frame(image)
 
-
-                    #if self.use_distortion:
-                    # if image is not None and \
-                    #         self.config.calibration.camera_matrix is not [] and \
-                    #         self.config.calibration.distortion_vector is not [] and \
-                    #         self.config.calibration.dist_camera_matrix is not []:
-                    #     image = cv2.undistort(image,
-                    #                           self.config.camera_matrix,
-                    #                           self.config.distortion_vector,
-                    #                           None,
-                    #                           self.config.dist_camera_matrix)
-
-                    #while not self.fs_ring_buffer.sync.wait(1):
                     self.fs_ring_buffer.append(image)
 
                 except:
@@ -167,9 +154,8 @@ class ProcessCamOutput(object):
         self.format_is_mjpeg = False
 
     def write(self, buf):
-
         try:
-            if ((buf[0][0] == 255) and (buf[1][0] == 216)) or buf.startswith(b'\xff\xd8'):
+            if buf.startswith(b'\xff\xd8'):
                 # New frame; set the current processor going and grab
                 # a spare one
                 if self.processor:
@@ -184,7 +170,8 @@ class ProcessCamOutput(object):
                         self.processor = None
             if self.processor:
                 self.processor.stream.write(buf)
-        except:
+        except Exception as err:
+            #self._logger.error("Error whie writing the buffer: " + str(err))
             pass
 
     def flush(self):
@@ -205,7 +192,8 @@ class ProcessCamOutput(object):
             try:
                 proc.terminated = True
                 proc.join()
-            except StandardError as e:
+            except Exception as e:
+                self._logger.error("Error while Pool loopback: " + str(e))
                 pass
             if self.pool.empty:
                 break
@@ -227,64 +215,51 @@ class PiCam(threading.Thread):
 
         self.camera = None
         self.output = None
-        # self.resolution = (self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
+
+        self.capture_stream = io.BytesIO()
 
         self.camera_buffer = cam_ring_buffer
-
-        self.newcameramtx = None
-        self.roi = None
-        self.mapx = None
-        self.mapy = None
 
         self.idle = True
         self.resolution = (self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
         self.camera = picamera.PiCamera(resolution=self.resolution)
-        #self.calculate_fixed_exposure()
         self.start()
 
     def run(self):
         while True:
             if not self.idle and self.camera.recording:
                 try:
-                    self.camera.wait_recording(0.5)
+                    self.camera.wait_recording(0.1)
                     self.camera.contrast = self.settings.camera.contrast
                     self.camera.brightness = self.settings.camera.brightness
                     self.camera.saturation = self.settings.camera.saturation
-                except:
+
+                except Exception as err:
+                    self._logger.error("Error while camera is recording: " + str(err))
                     pass
+
             else:
                 time.sleep(0.05)
 
     def get_frame(self, undistort=False):
         image = None
         while image is None:
-            #with self.camera_buffer._lock:
-                image = self.camera_buffer.get()
-
-
-        #if undistort:
-        #    self._logger.debug(self.config.calibration.camera_matrix)
-        #    self.newcameramtx, self.roi = cv2.getOptimalNewCameraMatrix(np.asarray(self.config.calibration.camera_matrix), np.asarray(self.config.calibration.distortion_vector), self.resolution, 1, self.resolution )
-
-            #image = cv2.remap(image, self.mapx, self.mapy, cv2.INTER_LINEAR)
-        #    image = cv2.undistort(image,
-        #                          np.asarray(self.config.calibration.camera_matrix),
-        #                          np.asarray(self.config.calibration.distortion_vector),
-        #                          None,
-        #                          self.newcameramtx)
-
+            image = self.camera_buffer.get()
         return image
 
-    def calculate_fixed_exposure(self):
-        self.camera.iso = 100
-        # Wait for the automatic gain control to settle
-        time.sleep(2)
-        # Now fix the values
-        self.camera.shutter_speed = self.camera.exposure_speed
-        self.camera.exposure_mode = 'off'
-        g = self.camera.awb_gains
-        self.camera.awb_mode = 'off'
-        self.camera.awb_gains = g
+    def capture_frame(self):
+
+        self.camera.capture(self.capture_stream, format='jpeg', use_video_port=True)
+        self.capture_stream.seek(0)
+        data = np.fromstring(self.capture_stream.getvalue(), dtype=np.uint8)
+        image = cv2.imdecode(data, 1)
+        if self.config.camera.rotate == "True":
+            image = cv2.transpose(image)
+        if self.config.camera.hflip == "True":
+            image = cv2.flip(image, 1)
+        if self.config.camera.vflip == "True":
+            image = cv2.flip(image, 0)
+        return image
 
     def set_mode(self, mode):
         camera_mode = {
@@ -316,35 +291,32 @@ class PiCam(threading.Thread):
     def start_stream(self, mode="default"):
 
         try:
-            #self.flush_stream()
+
             self.set_mode(mode)
 
-            #if self.camera is None:
-            #    self.camera = picamera.PiCamera(resolution=self.resolution)
             if self.camera:
                 self.camera.resolution = self.resolution
 
             self.idle = False
             self.camera.start_recording(self.output, format='mjpeg')
             self._logger.debug("Cam Stream with Resolution " + str(self.resolution) + " started")
-        except StandardError as e:
-            self._logger.error("Not able to initialize Raspberry Pi Camera.")
+        except Exception as e:
+            self._logger.error("Not able to initialize Raspberry Pi Camera." + str(e))
             self._logger.error(e)
 
     def stop_stream(self):
-        time.sleep(0.5)
+
         try:
             if self.camera.recording:
                 self.camera.stop_recording()
             while self.camera.recording:
-                time.sleep(0.4)
-            #self.camera.close()
-            #self.camera = None
+                time.sleep(0.05)
+
             self.idle = True
             self._logger.debug("Cam Stream with Resolution " + str(self.resolution) + " stopped")
 
-        except StandardError as e:
-            self._logger.error("Not able to stop camera.")
+        except Exception as e:
+            self._logger.error("Not able to stop camera." + str(e))
             self._logger.error(e)
 
     def destroy_camera(self):
@@ -432,7 +404,6 @@ class USBCam(threading.Thread):
     def get_frame(self):
         image = None
         while image is None:
-            #with self.camera_buffer._lock:
             image = self.camera_buffer.get()
         return image
 
@@ -480,7 +451,7 @@ class USBCam(threading.Thread):
             self.idle = False
 
             self._logger.debug("Cam Stream with Resolution " + str(self.resolution) + " started")
-        except StandardError as e:
+        except Exception as e:
             self._logger.error("Not able to initialize USB Camera.")
             self._logger.error(e)
 
@@ -494,7 +465,7 @@ class USBCam(threading.Thread):
             self.idle = True
             self._logger.debug("Cam Stream with Resolution " + str(self.resolution) + " stopped")
 
-        except StandardError as e:
+        except Exception as e:
             self._logger.error("Not able to stop camera.")
             self._logger.error(e)
 

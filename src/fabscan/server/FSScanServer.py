@@ -10,7 +10,7 @@ import sys
 import os
 
 
-from FSWebServer import FSWebServer
+from .FSWebServer import FSWebServer
 from fabscan.FSVersion import __version__
 from fabscan.lib.util.FSInject import injector
 from fabscan.lib.util.FSUtil import FSSystem, FSSystemExit
@@ -104,7 +104,7 @@ class FSScanServer(object):
     def update_server(self):
        try:
          return do_upgrade()
-       except StandardError, e:
+       except Exception as e:
          self._logger.error(e)
 
     def run(self):
@@ -115,7 +115,7 @@ class FSScanServer(object):
             self.create_services()
 
             while not self.system_exit.kill:
-                time.sleep(0.3)
+                time.sleep(0.01)
 
             self.exit_services()
 

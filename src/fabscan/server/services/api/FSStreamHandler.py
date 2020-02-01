@@ -4,7 +4,7 @@ import tornado.gen
 import time
 import logging
 import cv2
-import StringIO
+import io
 from PIL import Image
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand
 from fabscan.FSEvents import FSEvents
@@ -27,9 +27,9 @@ class FSStreamHandler(tornado.web.RequestHandler):
                 future_image = self.scanprocessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_LASER_STREAM},
                                                       block=False)
                 img = future_image.get()
-        except StandardError as e:
-            pass
-            # self._logger.error(e)
+        except Exception as e:
+            #pass
+             self._logger.error("Error while trying to trigger the scan processor: " + str(e))
 
         ret, jpeg = cv2.imencode('.jpg', img)
         return jpeg.tostring()
@@ -48,6 +48,7 @@ class FSStreamHandler(tornado.web.RequestHandler):
                          'no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0')
         self.set_header('Connection', 'close')
         self.set_header('Content-Type', 'multipart/x-mixed-replace;boundary=--boundarydonotcross')
+        self.set_header('Connection', 'close')
 
         while True:
             # Generating images for mjpeg stream and wraps them into http resp
@@ -55,7 +56,7 @@ class FSStreamHandler(tornado.web.RequestHandler):
             self.write("--boundarydonotcross\n")
             self.write("Content-type: image/jpeg\r\n")
             self.write("Content-length: %s\r\n\r\n" % len(img))
-            self.write(str(img))
+            self.write(img)
             yield tornado.gen.Task(self.flush)
 
     def on_finish(self):

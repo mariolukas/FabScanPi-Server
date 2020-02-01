@@ -110,13 +110,13 @@ def main():
         logger.setLevel(level)
 
     if args.version:
-        print "FabScan Pi version %s" % __version__
+        print("FabScan Pi version %s" % __version__)
         sys.exit(0)
 
     try:
         if args.daemon:
             if sys.platform == "darwin" or sys.platform == "win32":
-                print >> sys.stderr, "Sorry, daemon mode is only supported under Linux right now"
+                print("Sorry, daemon mode is only supported under Linux right now")
                 sys.exit(2)
 
             daemon = Main(args.pidfile, args.config, args.basedir, args.host, args.port, args.debug, args.allowRoot, args.logConf)
@@ -130,7 +130,7 @@ def main():
             fabscan = FSScanServer(args)
             fabscan.run()
 
-    except Exception, e:
+    except Exception as e:
         logger.fatal("Fatal error: %s", e)
         sys.exit(1)
 

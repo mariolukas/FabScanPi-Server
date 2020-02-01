@@ -1,4 +1,4 @@
-import urlparse, os
+import urllib.parse, os
 import json
 import logging
 from fabscan.server.services.api.FSStaticFileHandler import FSStaticFileHandler

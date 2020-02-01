@@ -32,7 +32,7 @@ class Settings(SettingsInterface):
                 return key, element
 
 
-        object_dict = dict(_traverse(k, v) for k, v in settings.iteritems())
+        object_dict = dict(_traverse(k, v) for k, v in settings.items())
 
         self.__dict__.update(object_dict)
 
@@ -70,7 +70,7 @@ class Settings(SettingsInterface):
     def todict(self, obj, classkey=None):
         if isinstance(obj, dict):
             data = {}
-            for (k, v) in obj.items():
+            for (k, v) in list(obj.items()):
                 data[k] = self.todict(v, classkey)
             return data
         elif hasattr(obj, "_ast"):
@@ -79,7 +79,7 @@ class Settings(SettingsInterface):
             return [self.todict(v, classkey) for v in obj]
         elif hasattr(obj, "__dict__"):
             data = dict([(key, self.todict(value, classkey))
-                for key, value in obj.__dict__.iteritems()
+                for key, value in obj.__dict__.items()
                 if not callable(value) and not key.startswith('_')])
             if classkey is not None and hasattr(obj, "__class__"):
                 data[classkey] = obj.__class__.__name__

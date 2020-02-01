@@ -45,16 +45,18 @@ class FSSystem(object):
                 process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                 output, _ = process.communicate()
                 if output:
-                   logging.getLogger(__name__).info(output.rstrip("\n"))
+                   logging.getLogger(__name__).info(output.rstrip(b"\n"))
                 rc = process.returncode
             else:
                 process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE,  stderr=subprocess.PIPE, shell=False)
                 while True:
+
                     output = process.stdout.readline()
-                    if output == '' and process.poll() is not None:
+
+                    if output == b'' and process.poll() is not None:
                         break
                     if output:
-                        logging.getLogger(__name__).info(output.rstrip("\n"))
+                        logging.getLogger(__name__).info(output.rstrip(b"\n"))
                 process.poll()
 
                 rc = process.returncode
@@ -101,7 +103,7 @@ class FSSystem(object):
         zipf.close()
 
 def _json_object_hook(d):
-    return namedtuple('X', d.keys())(*d.values())
+    return namedtuple('X', list(d.keys()))(*list(d.values()))
 
 def json2obj(data):
     return json.loads(data, object_hook=_json_object_hook)

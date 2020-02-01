@@ -1,6 +1,6 @@
 import os
 import re
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import ssl
 import socket
 
@@ -32,15 +32,15 @@ def get_latest_version_tag():
             if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
                 ssl._create_default_https_context = ssl._create_unverified_context
 
-            response = urllib2.urlopen("https://archive.fabscan.org/dists/" + str(stage) + "/main/binary-armhf/Packages", timeout=1)
+            response = urllib.request.urlopen("https://archive.fabscan.org/dists/" + str(stage) + "/main/binary-armhf/Packages", timeout=1)
 
             latest_version = __version__
             line = 'START'
             while line != '':
-                line = response.readline()
+                line = response.readline().decode('utf-8')
                 if PACKAGE_PATTERN.match(line):
                     while line != '':
-                        line = response.readline()
+                        line = response.readline().decode('utf-8')
                         match = VERSION_PATTERN.match(line)
                         if match is not None:
                             package_version = match.group(1)
@@ -52,10 +52,9 @@ def get_latest_version_tag():
                                 pass
                             break
             return latest_version
-        except (Exception, urllib2.URLError) as e:
-            _logger.error(e)
+        except (Exception, urllib.error.URLError) as e:
+            _logger.error("Error while getting latest version tag: " + str(e))
             return __version__
-
 
 
 def is_online(host="8.8.8.8", port=53, timeout=1):
@@ -87,6 +86,6 @@ def do_upgrade():
         rc_upgrade = FSSystem.run_command("sudo apt-get install -y -o Dpkg::Options::='--force-confnew' fabscanpi-server")
         return (rc_update == 0 and rc_upgrade == 0)
 
-    except Exception, e:
-        logging.error(e)
+    except Exception as e:
+        logging.error("Error while updte" + str(e))
         return 1

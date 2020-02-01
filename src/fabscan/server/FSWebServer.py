@@ -8,6 +8,8 @@ import threading
 
 import tornado.ioloop
 import tornado.web
+import tornado.httpserver
+import asyncio
 import os
 import logging
 from fabscan.server.services.websocket.FSWebSocketHandler import FSWebSocketHandler
@@ -45,6 +47,7 @@ class FSWebServer(threading.Thread):
         self._logger = logging.getLogger(__name__)
         self._logger.debug(self.www_folder)
 
+
     def routes(self):
         return tornado.web.Application([
             (r"/api/v1/filters/", FSFilterHandler),
@@ -63,6 +66,8 @@ class FSWebServer(threading.Thread):
         ])
 
     def run(self):
+        self._logger.debug("Server listening on port %d", self.server_port)
+        asyncio.set_event_loop(asyncio.new_event_loop())
         webserver = self.routes()
         webserver.listen(self.server_port)
         tornado.ioloop.IOLoop.current().start()

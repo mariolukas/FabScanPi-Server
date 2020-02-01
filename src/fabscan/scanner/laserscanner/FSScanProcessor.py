@@ -184,7 +184,7 @@ class FSScanProcessor(FSScanProcessorInterface):
             image = self.hardwareController.get_picture()
             #image = self.image_processor.get_texture_stream_frame(image)
             return image
-        except StandardError, e:
+        except Exception as e:
             #self._logger.error(e)
             pass
 
@@ -193,7 +193,7 @@ class FSScanProcessor(FSScanProcessorInterface):
             image = self.hardwareController.get_picture()
             image = self.image_processor.get_adjustment_stream_frame(image)
             return image
-        except StandardError, e:
+        except Exception as e:
             pass
 
     def create_calibration_stream(self):
@@ -201,7 +201,7 @@ class FSScanProcessor(FSScanProcessorInterface):
             image = self.hardwareController.get_picture()
             image = self.image_processor.get_calibration_stream_frame(image)
             return image
-        except StandardError, e:
+        except Exception as e:
             # images are dropped this cateched exception.. no error hanlder needed here.
             pass
 
@@ -210,7 +210,8 @@ class FSScanProcessor(FSScanProcessorInterface):
             image = self.hardwareController.get_picture()
 
             return image
-        except StandardError, e:
+        except Exception as e:
+            self._logger.error("Error while grabbing laser Frame: " + str(e))
             # images are dropped this cateched exception.. no error hanlder needed here.
             pass
 
@@ -220,14 +221,14 @@ class FSScanProcessor(FSScanProcessorInterface):
             self.settings.update(settings)
             #FIXME: Only change Color Settings when values changed.
             self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
-        except StandardError, e:
+        except Exception as e:
             # images are dropped this cateched exception.. no error hanlder needed here.
             pass
 
     def update_config(self, config):
         try:
             self.config.update(config)
-        except StandardError, e:
+        except Exception as e:
             pass
 
     def start_calibration(self):
@@ -283,11 +284,12 @@ class FSScanProcessor(FSScanProcessorInterface):
 
 
         self.hardwareController.turntable.enable_motors()
+        self.hardwareController.laser.on(0)
         self.hardwareController.start_camera_stream(mode="default")
         self._resolution = int(self.settings.resolution)
         self._laser_positions = int(self.settings.laser_positions)
         self._is_color_scan = bool(self.settings.color)
-
+        self.hardwareController.laser.on(1)
         self._number_of_pictures = self.config.turntable.steps / int(self.settings.resolution)
         self.current_position = 0
         self._starttime = self.get_time_stamp()
@@ -295,7 +297,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         # TODO: rename prefix to scan_id
         self._prefix = datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
 
-        self.point_clouds = [FSPointCloud(config=self.config, color=self._is_color_scan) for _ in xrange(self.config.laser.numbers)]
+        self.point_clouds = [FSPointCloud(config=self.config, color=self._is_color_scan) for _ in range(self.config.laser.numbers)]
 
         if not (self.config.calibration.laser_planes[0]['normal'] == []) and self.actor_ref.is_alive():
             if self._is_color_scan:
@@ -392,7 +394,7 @@ class FSScanProcessor(FSScanProcessorInterface):
             self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
 
         self.hardwareController.camera.device.flush_stream()
-        self.hardwareController.camera.device.camera.awb_mode = 'auto'
+        #self.hardwareController.camera.device.camera.awb_mode = 'auto'
 
         if not self._worker_pool.workers_active():
             self._worker_pool.create(self.config.process_numbers)
@@ -455,7 +457,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._stop_scan = True
         self._worker_pool.kill()
         self._starttime = 0
-        self.utils.delete_scan(self._prefix)
+        #self.utils.delete_scan(self._prefix)
         self.reset_scanner_state()
         self._logger.info("Scan stoped")
         self.hardwareController.stop_camera_stream()
@@ -469,15 +471,15 @@ class FSScanProcessor(FSScanProcessorInterface):
     def image_processed(self, eventmanager, event):
         points = []
 
-        if not 'laser_index' in event.keys():
+        if not 'laser_index' in list(event.keys()):
             event['laser_index'] = -1
 
         try:
             scan_state = 'texture_scan'
             if event['image_type'] == 'depth' and event['point_cloud'] is not None:
                 scan_state = 'object_scan'
-                point_cloud = zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2],
-                                  event['texture'][0], event['texture'][1], event['texture'][2])
+                point_cloud = list(zip(event['point_cloud'][0], event['point_cloud'][1], event['point_cloud'][2],
+                                  event['texture'][0], event['texture'][1], event['texture'][2]))
 
                 self.append_points(point_cloud, event['laser_index'])
 
@@ -492,7 +494,7 @@ class FSScanProcessor(FSScanProcessorInterface):
                     new_point['b'] = str(point[3])
 
                     points.append(new_point)
-        except StandardError as err:
+        except Exception as err:
             self._logger.error('Image processing Error:' +  str(err))
 
         #self.semaphore.acquire()
@@ -539,7 +541,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
             self._logger.debug('Number of PointClouds (for each laser one) : ' +str(len(self.point_clouds)))
 
-            for laser_index in xrange(self.config.laser.numbers):
+            for laser_index in range(self.config.laser.numbers):
                 points = self.point_clouds[laser_index].get_points()
                 if self.config.laser.numbers > 1:
                     both_cloud.append_points(points)

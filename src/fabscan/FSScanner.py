@@ -249,12 +249,13 @@ class FSScanner(threading.Thread):
             self._upgrade_available, self._upgrade_version = upgrade_is_available(__version__, self.config.online_lookup_ip)
             self._logger.debug("Upgrade available: "+str(self._upgrade_available)+" "+self._upgrade_version)
 
+            #FIXME: todict leads to too many recursion problems. refactor settings class
             message = {
                 "client": event['client'],
                 "state": self.get_state(),
                 "server_version": 'v.'+__version__,
                 "firmware_version": str(hardware_info),
-                "settings": self.settings.todict(self.settings),
+                #"settings": self.settings.todict(self.settings),
                 "upgrade": {
                     "available": self._upgrade_available,
                     "version": self._upgrade_version
@@ -264,8 +265,8 @@ class FSScanner(threading.Thread):
             eventManager.send_client_message(FSEvents.ON_CLIENT_INIT, message)
             self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
 
-        except StandardError, e:
-            self._logger.error(e)
+        except Exception as e:
+            self._logger.error("Client Connection Error: " + str(e))
 
     def set_state(self, state):
         self._state = state
@@ -281,7 +282,7 @@ class FSScanner(threading.Thread):
     def run_temperature_watch_service(self):
         cpu_temp = get_cpu_temperature()
         if ( cpu_temp > 82):
-            self._logger.warning('High CPU Temperature: '+ str(cpu_temp) + " C")
+            self._logger.warning('High CPU Temperature: ' + str(cpu_temp) + " C")
             message = {
                 "message": "CPU Temp:  " + str(cpu_temp) + " C! Maybe thermally throttle active.",
                 "level": "warn"

@@ -47,11 +47,11 @@ class FSSerialCom():
         self._openSerial()
         self._logger.debug("Connection baudrate is: "+str(self._baudrate))
         self._logger.debug("Firmware flashing baudrate is: "+str(self.flash_baudrate))
-        self.lock = threading.RLock()
+
         self._stop = False
 
     def avr_device_is_available(self):
-        status = FSSystem.run_command("sudo avrdude-autoreset -p m328p -b "+str(self.flash_baudrate)+" -carduino -P"+str(self._port))
+        status = FSSystem.run_command("sudo avrdude-autoreset -p m328p -b "+str(self.flash_baudrate)+" -carduino -P" + str(self._port))
         return status == 0
 
     def avr_flash(self, fname):
@@ -91,7 +91,7 @@ class FSSerialCom():
                    # if connection is opened successfully
                    if self._serial.isOpen():
                            current_version = self.checkVersion()
-                           self._logger.debug("Installed firmware version: "+current_version)
+                           self._logger.debug("Installed firmware version: " + str(current_version))
                            # check if autoflash is active
                            if self.config.serial.autoflash == "True":
                                ## check if firmware is up to date, if not flash new firmware
@@ -102,7 +102,7 @@ class FSSerialCom():
                                         time.sleep(0.5)
                                         self._connect()
                                         current_version = self.checkVersion()
-                                        self._logger.info("Successfully flashed new Firmware Version: "+current_version)
+                                        self._logger.info("Successfully flashed new Firmware Version: " + str(current_version))
 
 
                    # no firmware is installed, flash firmware
@@ -114,14 +114,14 @@ class FSSerialCom():
                                         time.sleep(0.5)
                                         self._connect()
                                         current_version = self.checkVersion()
-                                        self._logger.info("Successfully flashed Firmware Version: "+current_version)
+                                        self._logger.info("Successfully flashed Firmware Version: " + str(current_version))
            else:
-                    self._logger.error("Communication error on port "+str(self._port)+" try other flashing baudrate than "+str(self.flash_baudrate)+". Maybe corrupted bootloader.")
+                    self._logger.error("Communication error on port " + str(self._port) + " try other flashing baudrate than " + str(self.flash_baudrate) + ". Maybe corrupted bootloader.")
 
 
            # set connection states and version
            if self._serial.isOpen() and (current_version != "None"):
-                  self._logger.info("FabScanPi is connected to FabScanPi HAT or compatible on port: "+str(self._port))
+                  self._logger.info("FabScanPi is connected to FabScanPi HAT or compatible on port: " + str(self._port))
                   current_version = self.checkVersion()
                   self._firmware_version = current_version
                   self._connected = True
@@ -130,14 +130,14 @@ class FSSerialCom():
                   self._connected = False
                   sys.exit(1)
 
-        except:
-            self._logger.error("Fatal FabScanPi HAT or compatible connection error....")
+        except Exception as e:
+            self._logger.error("Fatal FabScanPi HAT or compatible connection error...." + str(e))
             sys.exit(1)
 
     def checkVersion(self):
         if self._serial:
             try:
-                self._serial.write("\r\n\r\n")
+                self._serial.write("\r\n\r\n".encode())
                 time.sleep(2) # Wait for FabScan to initialize
                 self._serial.flushInput() # Flush startup text in serial input
                 self.send("M200;")
@@ -148,28 +148,27 @@ class FSSerialCom():
                 value = self._serial.readline()
                 value = value.strip()
                 if value != "":
-                    return value
+                    return value.decode()
                 else:
                     return "None"
             except Exception as e:
-                self._logger.error(e)
+                self._logger.error("Check Version Error: " + str(e))
         else:
             return "None"
 
     def send_and_receive(self, message):
         self.send(message)
         self._serial.flush()
-        time.sleep(0.1)
+        time.sleep(0.01)
         while True:
             try:
                 command = self.readline()
-                time.sleep(0.2)
+                time.sleep(0.01)
                 command = self.readline()
-                self._logger.debug(command.rstrip("\n"))
-                #if state.rstrip("\n") == ">":
-                return command
+
+                return command.decode()
             except Exception as e:
-                self._logger.debug(e)
+                self._logger.debug("Send/Receive Error: " + str(e))
                 break
 
 
@@ -198,7 +197,7 @@ class FSSerialCom():
                     return r
                 else:
                     self.buf.extend(data)
-        except StandardError as err:
+        except Exception as err:
             self._logger.error('Serial Error occured: ' + str(err))
 
 
@@ -208,9 +207,10 @@ class FSSerialCom():
 
     def send(self, message):
         try:
-            self._serial.write(message + "\n")
+            message = message + "\n"
+            self._serial.write(message.encode())
         except Exception as e:
-            self._logger.error(e)
+            self._logger.error("Error while sending: " + str(e))
 
 
     def is_connected(self):

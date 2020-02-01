@@ -42,9 +42,9 @@ class FSWebSocketHandler(tornado.websocket.WebSocketHandler):
             self.eventManager.publish(message.event, message.data)
 
 
-        except (RuntimeError, TypeError, NameError):
+        except Exception as e:
             traceback.print_exc(file=sys.stdout)
-            self._logger.debug("Runtime error in Websocket message handler")
+            self._logger.debug("Runtime error in Websocket message handler: " + str(e))
 
     def on_close(self):
         """
@@ -61,9 +61,9 @@ class FSWebSocketHandler(tornado.websocket.WebSocketHandler):
         json_encoded = json.dumps(message)
         try:
             self.write_message(json_encoded)
-        except (RuntimeError, TypeError, NameError):
+        except Exception as e:
             traceback.print_exc(file=sys.stdout)
-            self._logger.debug("Runtime error in Websocket message handler")
+            self._logger.debug("Runtime error in Websocket message handler:" + str(e))
 
 
     def on_socket_send(self, events, message):

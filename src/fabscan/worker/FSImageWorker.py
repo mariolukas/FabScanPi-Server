@@ -4,7 +4,7 @@ __license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
-from Queue import Empty
+from queue import Empty
 import multiprocessing
 import logging
 import time
@@ -33,7 +33,7 @@ class FSImageWorkerPool():
         self._logger = logging.getLogger(__name__)
 
         self.workers = []
-        self._number_of_workers = 8
+        self._number_of_workers = config.process_numbers
         self._workers_active = False
 
 
@@ -161,7 +161,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                                 #data['progress'] = image_task.progress
                                 #data['resolution'] = image_task.resolution
                             # FIXME: Only send event if points is non-empty
-                            except StandardError as e:
+                            except Exception as e:
                                 self._logger.debug(e)
 
                             event = dict()
