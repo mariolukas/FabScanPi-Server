@@ -26,6 +26,8 @@ from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand
 from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
 
+import asyncio
+
 @singleton(
     config=ConfigInterface,
     settings=SettingsInterface,
@@ -38,6 +40,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration):
         super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration)
 
+        asyncio.set_event_loop(asyncio.new_event_loop())
         self.settings = settings
         self.config = config
         self._logger = logging.getLogger(__name__)
@@ -318,7 +321,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
             event = FSEvent()
             event.command = 'STOP'
-            self.eventmanager.publish(FSEvents.COMMAND, event, None)
+            self.eventmanager.publish(FSEvents.COMMAND, event)
 
     def init_texture_scan(self):
         message = {

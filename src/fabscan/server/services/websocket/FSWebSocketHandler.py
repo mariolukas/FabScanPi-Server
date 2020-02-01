@@ -5,11 +5,12 @@ import logging
 import traceback
 from fabscan.FSEvents import FSEvents
 from fabscan.lib.util.FSUtil import json2obj
+import asyncio
 
 class FSWebSocketHandler(tornado.websocket.WebSocketHandler):
 
     def __init__(self, *args, **kwargs):
-
+        asyncio.set_event_loop(asyncio.new_event_loop())
         self.eventManager = kwargs.pop('eventmanager').instance
         self.eventManager.subscribe(FSEvents.ON_SOCKET_BROADCAST, self.on_socket_broadcast)
         self.eventManager.subscribe(FSEvents.ON_SOCKET_SEND, self.on_socket_send)

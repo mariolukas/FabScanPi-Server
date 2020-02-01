@@ -255,7 +255,7 @@ class FSScanner(threading.Thread):
                 "state": self.get_state(),
                 "server_version": 'v.'+__version__,
                 "firmware_version": str(hardware_info),
-                #"settings": self.settings.todict(self.settings),
+               # "settings": self.settings, #self.settings.todict(self.settings),
                 "upgrade": {
                     "available": self._upgrade_available,
                     "version": self._upgrade_version

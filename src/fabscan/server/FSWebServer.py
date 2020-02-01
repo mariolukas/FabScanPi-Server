@@ -25,7 +25,7 @@ from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.FSConfig import ConfigSingleton, ConfigInterface
 from fabscan.lib.util.FSInject import inject
-
+from tornado.platform.asyncio import AnyThreadEventLoopPolicy
 @inject(
     config=ConfigInterface,
     scanprocessor=FSScanProcessorInterface,
@@ -36,6 +36,7 @@ class FSWebServer(threading.Thread):
 
     def __init__(self, config, scanprocessor, eventmanager, hardwarecontroller):
         threading.Thread.__init__(self)
+        asyncio.set_event_loop_policy(AnyThreadEventLoopPolicy())
         self.config = config
         self.exit = False
         self.server_port = 8080
@@ -67,10 +68,11 @@ class FSWebServer(threading.Thread):
 
     def run(self):
         self._logger.debug("Server listening on port %d", self.server_port)
-        asyncio.set_event_loop(asyncio.new_event_loop())
+        #asyncio.set_event_loop(asyncio.new_event_loop())
         webserver = self.routes()
         webserver.listen(self.server_port)
-        tornado.ioloop.IOLoop.current().start()
+        tornado.ioloop.IOLoop.instance().start()
+
 
     def kill(self):
         tornado.ioloop.IOLoop.instance().stop()
