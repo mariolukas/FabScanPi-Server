@@ -59,7 +59,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._progress = 0
         self._is_color_scan = True
         self.point_clouds = []
-        self.image_task_q = multiprocessing.Queue(self.config.process_numbers*2)
+        self.image_task_q = multiprocessing.Queue(self.config.file.process_numbers*2)
         self.current_position = 0
         self._stop_scan = False
         self._current_laser_position = 1
@@ -72,9 +72,9 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         self._worker_pool = None
 
-        self._scan_brightness = self.settings.camera.brightness
-        self._scan_contrast = self.settings.camera.contrast
-        self._scan_saturation = self.settings.camera.saturation
+        self._scan_brightness = self.settings.file.camera.brightness
+        self._scan_contrast = self.settings.file.camera.contrast
+        self._scan_saturation = self.settings.file.camera.saturation
 
         self.eventmanager.subscribe(FSEvents.ON_IMAGE_PROCESSED, self.image_processed)
 
@@ -150,7 +150,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     def config_mode_off(self):
         self.hardwareController.stop_camera_stream()
 
-        for i in range(self.config.laser.numbers):
+        for i in range(self.config.file.laser.numbers):
             self.hardwareController.laser.off(i)
 
         self.hardwareController.led.off()
@@ -160,13 +160,13 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.hardwareController.call_test_function(function)
 
     def notify_if_is_not_calibrated(self):
-        self._logger.debug(self.config.calibration.camera_matrix)
-        correct_plane_number = len(self.config.calibration.laser_planes) == self.config.laser.numbers
+        self._logger.debug(self.config.file.calibration.camera_matrix)
+        correct_plane_number = len(self.config.file.calibration.laser_planes) == self.config.file.laser.numbers
 
         distance_is_set = True
-        for i in range(self.config.laser.numbers-1):
-            if (self.config.calibration.laser_planes[i].distance == 0) or \
-               (self.config.calibration.laser_planes[i].distance is None):
+        for i in range(self.config.file.laser.numbers-1):
+            if (self.config.file.calibration.laser_planes[i].distance == 0) or \
+               (self.config.file.calibration.laser_planes[i].distance is None):
                 distance_is_set = False
                 break
 
@@ -223,14 +223,14 @@ class FSScanProcessor(FSScanProcessorInterface):
         try:
             self.settings.update(settings)
             #FIXME: Only change Color Settings when values changed.
-            self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
+            self.hardwareController.led.on(self.settings.file.led.red, self.settings.file.led.green, self.settings.file.led.blue)
         except Exception as e:
             # images are dropped this cateched exception.. no error hanlder needed here.
             pass
 
     def update_config(self, config):
         try:
-            self.config.update(config)
+            self.config.file.update(config)
         except Exception as e:
             pass
 
@@ -289,25 +289,25 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.hardwareController.turntable.enable_motors()
         self.hardwareController.laser.on(0)
         self.hardwareController.start_camera_stream(mode="default")
-        self._resolution = int(self.settings.resolution)
-        self._laser_positions = int(self.settings.laser_positions)
-        self._is_color_scan = bool(self.settings.color)
+        self._resolution = int(self.settings.file.resolution)
+        self._laser_positions = int(self.settings.file.laser_positions)
+        self._is_color_scan = bool(self.settings.file.color)
         self.hardwareController.laser.on(1)
-        self._number_of_pictures = self.config.turntable.steps / int(self.settings.resolution)
+        self._number_of_pictures = self.config.file.turntable.steps / int(self.settings.file.resolution)
         self.current_position = 0
         self._starttime = self.get_time_stamp()
 
         # TODO: rename prefix to scan_id
         self._prefix = datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
 
-        self.point_clouds = [FSPointCloud(config=self.config, color=self._is_color_scan) for _ in range(self.config.laser.numbers)]
+        self.point_clouds = [FSPointCloud(config=self.config, color=self._is_color_scan) for _ in range(self.config.file.laser.numbers)]
 
-        if not (self.config.calibration.laser_planes[0]['normal'] == []) and self.actor_ref.is_alive():
+        if not (self.config.file.calibration.laser_planes[0]['normal'] == []) and self.actor_ref.is_alive():
             if self._is_color_scan:
-                self._total = (self._number_of_pictures * self.config.laser.numbers) + self._number_of_pictures
+                self._total = (self._number_of_pictures * self.config.file.laser.numbers) + self._number_of_pictures
                 self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
             else:
-                self._total = self._number_of_pictures * self.config.laser.numbers
+                self._total = self._number_of_pictures * self.config.file.laser.numbers
                 self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
         else:
             self._logger.debug("FabScan is not calibrated scan canceled")
@@ -331,12 +331,12 @@ class FSScanProcessor(FSScanProcessorInterface):
 
 
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-        self._worker_pool.create(self.config.process_numbers)
+        self._worker_pool.create(self.config.file.process_numbers)
 
-        self._scan_brightness = self.settings.camera.brightness
-        self._scan_contrast = self.settings.camera.contrast
-        self._scan_saturation = self.settings.camera.saturation
-        self.hardwareController.led.on(self.config.texture_illumination, self.config.texture_illumination, self.config.texture_illumination)
+        self._scan_brightness = self.settings.file.camera.brightness
+        self._scan_contrast = self.settings.file.camera.contrast
+        self._scan_saturation = self.settings.file.camera.saturation
+        self.hardwareController.led.on(self.config.file.texture_illumination, self.config.file.texture_illumination, self.config.file.texture_illumination)
 
 
 
@@ -346,9 +346,9 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         self.hardwareController.led.off()
 
-        self.settings.camera.brightness = self._scan_brightness
-        self.settings.camera.contrast = self._scan_contrast
-        self.settings.camera.saturation = self._scan_saturation
+        self.settings.file.camera.brightness = self._scan_brightness
+        self.settings.file.camera.contrast = self._scan_contrast
+        self.settings.file.camera.saturation = self._scan_saturation
 
     def scan_next_texture_position(self):
         if not self._stop_scan:
@@ -389,18 +389,18 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
         self.current_position = 0
-        self._laser_positions = self.settings.laser_positions
+        self._laser_positions = self.settings.file.laser_positions
         # wait for ending of texture stream
 
-        if self.config.laser.interleaved == "False":
+        if self.config.file.laser.interleaved == "False":
             self.hardwareController.laser.on()
-            self.hardwareController.led.on(self.settings.led.red, self.settings.led.green, self.settings.led.blue)
+            self.hardwareController.led.on(self.settings.file.led.red, self.settings.file.led.green, self.settings.file.led.blue)
 
         self.hardwareController.camera.device.flush_stream()
         #self.hardwareController.camera.device.camera.awb_mode = 'auto'
 
         if not self._worker_pool.workers_active():
-            self._worker_pool.create(self.config.process_numbers)
+            self._worker_pool.create(self.config.file.process_numbers)
 
     def finish_object_scan(self):
         self._logger.info("Finishing object scan.")
@@ -412,7 +412,7 @@ class FSScanProcessor(FSScanProcessorInterface):
                 if self.current_position == 0:
                     self.init_object_scan()
 
-                for laser_index in range(self.config.laser.numbers):
+                for laser_index in range(self.config.file.laser.numbers):
                     laser_image = self.hardwareController.get_image_at_position(index=laser_index)
                     task = ImageTask(laser_image, self._prefix, self.current_position, self._number_of_pictures, index=laser_index)
                     self.image_task_q.put(task)
@@ -453,7 +453,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         self.hardwareController.turntable.stop_turning()
         self.hardwareController.led.off()
-        for laser_index in range(self.config.laser.numbers):
+        for laser_index in range(self.config.file.laser.numbers):
             self.hardwareController.laser.off(laser_index)
 
     def stop_scan(self):
@@ -535,26 +535,26 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         self._starttime = 0
 
-        if len(self.point_clouds) == self.config.laser.numbers:
+        if len(self.point_clouds) == self.config.file.laser.numbers:
 
             self._logger.info("Scan complete writing pointcloud.")
 
-            if self.config.laser.numbers > 1:
+            if self.config.file.laser.numbers > 1:
                 both_cloud = FSPointCloud(color=self._is_color_scan)
 
             self._logger.debug('Number of PointClouds (for each laser one) : ' +str(len(self.point_clouds)))
 
-            for laser_index in range(self.config.laser.numbers):
+            for laser_index in range(self.config.file.laser.numbers):
                 points = self.point_clouds[laser_index].get_points()
-                if self.config.laser.numbers > 1:
+                if self.config.file.laser.numbers > 1:
                     both_cloud.append_points(points)
                 self.point_clouds[laser_index].saveAsFile(self._prefix,  str(laser_index))
 
-            if self.config.laser.numbers > 1:
+            if self.config.file.laser.numbers > 1:
                 both_cloud.saveAsFile(self._prefix, 'both')
 
-            settings_filename = self.config.folders.scans+self._prefix+"/"+self._prefix+".fab"
-            self.settings.saveAsFile(settings_filename)
+            settings_filename = self.config.file.folders.scans+self._prefix+"/"+self._prefix+".fab"
+            self.settings.save_json(settings_filename)
 
             message = {
                 "message": "SAVING_POINT_CLOUD",
@@ -564,7 +564,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
             self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
-        if bool(self.config.keep_raw_images):
+        if bool(self.config.file.keep_raw_images):
             self.utils.zipdir(str(self._prefix))
 
         self.utils.delete_image_folders(self._prefix)
@@ -592,7 +592,7 @@ class FSScanProcessor(FSScanProcessorInterface):
             #self.point_cloud.append_texture(texture_set)
 
     def get_resolution(self):
-        return self.settings.resolution
+        return self.settings.file.resolution
 
     def get_number_of_pictures(self):
         return self._number_of_pictures
@@ -604,7 +604,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._logger.info("Reseting scanner states ... ")
         self.hardwareController.camera.device.flush_stream()
 
-        for i in range(self.config.laser.numbers):
+        for i in range(self.config.file.laser.numbers):
             self.hardwareController.laser.off()
 
         self.hardwareController.led.off()

@@ -1,96 +1,85 @@
-__author__ = "Mario Lukas"
-__copyright__ = "Copyright 2017"
-__license__ = "GPL v2"
-__maintainer__ = "Mario Lukas"
-__email__ = "info@mariolukas.de"
-
-import os
 import json
 from fabscan.lib.util.FSInject import inject, singleton
 
+class Map(dict):
+    def __init__(self, *args, **kwargs):
+        super(Map, self).__init__(*args, **kwargs)
+        for arg in args:
+            if isinstance(arg, dict):
+                for k, v in arg.items():
+                    if isinstance(v, dict):
+                        v = Map(v)
+                    if isinstance(v, list):
+                        self.__convert(v)
+                    self[k] = v
+
+        if kwargs:
+            for k, v in kwargs.items():
+                if isinstance(v, dict):
+                    v = Map(v)
+                elif isinstance(v, list):
+                    self.__convert(v)
+                self[k] = v
+
+    def __convert(self, v):
+        for elem in range(0, len(v)):
+            if isinstance(v[elem], dict):
+                v[elem] = Map(v[elem])
+            elif isinstance(v[elem], list):
+                self.__convert(v[elem])
+
+    def __getattr__(self, attr):
+        return self.get(attr)
+
+    def __setattr__(self, key, value):
+        self.__setitem__(key, value)
+
+    def __setitem__(self, key, value):
+        super(Map, self).__setitem__(key, value)
+        self.__dict__.update({key: value})
+
+    def __delattr__(self, item):
+        self.__delitem__(item)
+
+    def __delitem__(self, key):
+        super(Map, self).__delitem__(key)
+        del self.__dict__[key]
+
 class SettingsInterface(object):
-      def __init__(self, settings, first=True):
+      def __init__(self, file_name):
         pass
 
-
 class Settings(SettingsInterface):
+    def __init__(self, file_name):
+        # concatenation of default and custom dict can be archived by using
+        # self.json =  {**loaded_defaults, **loaded_file}
+        self.file_name = file_name
+        self.file = self.load_json(file_name)
+        self.convertToDotDict()
 
-    def __init__(self, settings, first=True):
+    def convertToDotDict(self):
+        self.file = Map(self.file)
 
+    def load_json(self, file):
+        with open(file) as json_data_file:
+          data = json.load(json_data_file)
+          return data
 
-        if first:
-            self.file = settings
-            with open(settings) as file:
-                settings = file.read()
-
-            settings = json.loads(settings)
-
-        def _traverse(key, element):
-            if isinstance(element, dict):
-                return key, Settings(element, first=False)
-            else:
-                return key, element
-
-
-        object_dict = dict(_traverse(k, v) for k, v in settings.items())
-
-        self.__dict__.update(object_dict)
-
-    def save(self):
-        current_settings = self.todict(self.__dict__)
-
-        try:
-            del current_settings['file']
-        except KeyError:
-            pass
-
-        with open(self.file, 'w+') as outfile:
-            json.dump(current_settings, outfile, indent=4, ensure_ascii=False)
-
-    def saveAsFile(self, filename):
-        current_settings = self.todict(self.__dict__)
-        with open(filename, 'w+') as outfile:
-            json.dump(current_settings, outfile, indent=4, ensure_ascii=False)
-
-    def update(self, settings):
-        self.threshold = settings.threshold
-        self.auto_threshold = settings.auto_threshold
-        self.camera.brightness = settings.camera.brightness
-        self.camera.contrast = settings.camera.contrast
-        self.camera.saturation = settings.camera.saturation
-        self.resolution = settings.resolution
-        self.color = settings.color
-        self.led.blue = settings.led.blue
-        self.led.green = settings.led.green
-        self.led.red = settings.led.red
-        self.show_laser_overlay = settings.show_laser_overlay
-        self.show_calibration_pattern = settings.show_calibration_pattern
-
-
-    def todict(self, obj, classkey=None):
-        if isinstance(obj, dict):
-            data = {}
-            for (k, v) in list(obj.items()):
-                data[k] = self.todict(v, classkey)
-            return data
-        elif hasattr(obj, "_ast"):
-            return self.todict(obj._ast())
-        elif hasattr(obj, "__iter__"):
-            return [self.todict(v, classkey) for v in obj]
-        elif hasattr(obj, "__dict__"):
-            data = dict([(key, self.todict(value, classkey))
-                for key, value in obj.__dict__.items()
-                if not callable(value) and not key.startswith('_')])
-            if classkey is not None and hasattr(obj, "__class__"):
-                data[classkey] = obj.__class__.__name__
-            return data
+    def save_json(self, file_name=None):
+        if file_name:
+            destination_file = file_name
         else:
-            return obj
+            destination_file = self.file_name
+        with open(destination_file, 'w') as outfile:
+            json.dump(self.file, outfile, indent=4, ensure_ascii=False)
+
+    def update(self):
+        pass
 
 @singleton(
     instance=Settings
 )
 class SettingsSingleton(Settings):
-    def __init__(self, settings, instance):
-        super(Settings, self).__init__(self, settings)
+    def __init__(self, file_name, instance):
+        super(Settings, self).__init__(self, file_name)
         self.instance = instance

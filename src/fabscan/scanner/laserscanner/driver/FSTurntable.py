@@ -17,7 +17,7 @@ class Turntable(object):
         self.serial_connection = serial_object
         # Number of steps for the turntable to do a full rotation
         # DEFAULT Value for FS Shield is 1/16 Step
-        self.steps_for_full_rotation = self.config.turntable.steps
+        self.steps_for_full_rotation = self.config.file.turntable.steps
         # scaler for silent step sticks was in firmware before.
         self.scaler = 4
 

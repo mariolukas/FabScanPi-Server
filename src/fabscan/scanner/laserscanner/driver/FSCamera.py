@@ -33,13 +33,13 @@ class FSCamera():
         self.camera_buffer = FSRingBuffer(10)
         config = config
 
-        if config.camera.type == 'PICAM':
+        if config.file.camera.type == 'PICAM':
             self.device = PiCam(self.camera_buffer)
 
-        if config.camera.type == 'USBCAM':
+        if config.file.camera.type == 'USBCAM':
             self.device = USBCam(self.camera_buffer)
 
-        if config.camera.type == 'dummy':
+        if config.file.camera.type == 'dummy':
             self.device = DummyCam()
 
     def is_connected(self):
@@ -114,19 +114,21 @@ class CamProcessor(threading.Thread):
                     data = np.fromstring(self.stream.getvalue(), dtype=np.uint8)
                     image = cv2.imdecode(data, 1)
 
-                    if self.config.camera.rotate == "True":
+                    if self.config.file.camera.rotate == "True":
                         image = cv2.transpose(image)
-                    if self.config.camera.hflip == "True":
+                    if self.config.file.camera.hflip == "True":
                         image = cv2.flip(image, 1)
-                    if self.config.camera.vflip == "True":
+                    if self.config.file.camera.vflip == "True":
                         image = cv2.flip(image, 0)
 
                     if self.mode == "settings":
                         image = self.imageprocessor.get_laser_stream_frame(image)
-
                     self.fs_ring_buffer.append(image)
 
-                except:
+                except Exception as e:
+                    # we have an image but another kind of error.
+                    if image:
+                        self._logger.error(e)
                     pass
 
                 finally:
@@ -221,7 +223,7 @@ class PiCam(threading.Thread):
         self.camera_buffer = cam_ring_buffer
 
         self.idle = True
-        self.resolution = (self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
+        self.resolution = (self.config.file.camera.preview_resolution.width, self.config.file.camera.preview_resolution.height)
         self.camera = picamera.PiCamera(resolution=self.resolution)
         self.start()
 
@@ -230,9 +232,9 @@ class PiCam(threading.Thread):
             if not self.idle and self.camera.recording:
                 try:
                     self.camera.wait_recording(0.1)
-                    self.camera.contrast = self.settings.camera.contrast
-                    self.camera.brightness = self.settings.camera.brightness
-                    self.camera.saturation = self.settings.camera.saturation
+                    #self.camera.contrast = self.settings.file.camera.contrast
+                    #self.camera.brightness = self.settings.file.camera.brightness
+                    #self.camera.saturation = self.settings.file.camera.saturation
 
                 except Exception as err:
                     self._logger.error("Error while camera is recording: " + str(err))
@@ -253,11 +255,11 @@ class PiCam(threading.Thread):
         self.capture_stream.seek(0)
         data = np.fromstring(self.capture_stream.getvalue(), dtype=np.uint8)
         image = cv2.imdecode(data, 1)
-        if self.config.camera.rotate == "True":
+        if self.config.file.camera.rotate == "True":
             image = cv2.transpose(image)
-        if self.config.camera.hflip == "True":
+        if self.config.file.camera.hflip == "True":
             image = cv2.flip(image, 1)
-        if self.config.camera.vflip == "True":
+        if self.config.file.camera.vflip == "True":
             image = cv2.flip(image, 0)
         return image
 
@@ -272,20 +274,20 @@ class PiCam(threading.Thread):
 
     def set_alignement_preview(self):
         self.resolution = (
-        self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
+        self.config.file.camera.preview_resolution.width, self.config.file.camera.preview_resolution.height)
         self.output = ProcessCamOutput(self.camera_buffer, self.resolution, mode="alignment")
 
     def set_settings_preview(self):
         self.resolution = (
-        self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
+        self.config.file.camera.preview_resolution.width, self.config.file.camera.preview_resolution.height)
         self.output = ProcessCamOutput(self.camera_buffer, self.resolution, mode="settings")
 
     def set_default_mode(self):
-        self.resolution = (self.config.camera.resolution.width, self.config.camera.resolution.height)
+        self.resolution = (self.config.file.camera.resolution.width, self.config.file.camera.resolution.height)
         self.output = ProcessCamOutput(self.camera_buffer, self.resolution)
 
     def set_calibration_mode(self):
-        self.resolution = (self.config.camera.resolution.width, self.config.camera.resolution.height)
+        self.resolution = (self.config.file.camera.resolution.width, self.config.file.camera.resolution.height)
         self.output = ProcessCamOutput(self.camera_buffer, self.resolution)
 
     def start_stream(self, mode="default"):
@@ -418,20 +420,20 @@ class USBCam(threading.Thread):
 
     def set_alignement_preview(self):
         self.resolution = (
-        self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
+        self.config.file.camera.preview_resolution.width, self.config.file.camera.preview_resolution.height)
         self.output = ProcessCamOutput(self.camera_buffer, self.resolution, mode="alignment")
 
     def set_settings_preview(self):
         self.resolution = (
-        self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height)
+        self.config.file.camera.preview_resolution.width, self.config.file.camera.preview_resolution.height)
         self.output = ProcessCamOutput(self.camera_buffer, self.resolution, mode="settings")
 
     def set_default_mode(self):
-        self.resolution = (self.config.camera.resolution.width, self.config.camera.resolution.height)
+        self.resolution = (self.config.file.camera.resolution.width, self.config.file.camera.resolution.height)
         self.output = ProcessCamOutput(self.camera_buffer, self.resolution)
 
     def set_calibration_mode(self):
-        self.resolution = (self.config.camera.resolution.width, self.config.camera.resolution.height)
+        self.resolution = (self.config.file.camera.resolution.width, self.config.file.camera.resolution.height)
         self.output = ProcessCamOutput(self.camera_buffer, self.resolution)
 
     def start_stream(self, mode="default"):

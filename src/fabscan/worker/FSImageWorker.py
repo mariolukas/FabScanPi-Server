@@ -33,7 +33,7 @@ class FSImageWorkerPool():
         self._logger = logging.getLogger(__name__)
 
         self.workers = []
-        self._number_of_workers = config.process_numbers
+        self._number_of_workers = config.file.process_numbers
         self._workers_active = False
 
 

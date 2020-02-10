@@ -63,7 +63,7 @@ class FSPointCloud():
 
     def saveAsFile(self, filename, postfix=''):
         basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        self._dir_name = self.config.folders.scans+filename
+        self._dir_name = self.config.file.folders.scans+filename
 
         if(len(postfix) > 0):
             filename = filename + '_' + postfix

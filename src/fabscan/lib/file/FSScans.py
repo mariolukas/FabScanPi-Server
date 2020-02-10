@@ -31,13 +31,13 @@ class FSScans():
 
 
     def get_scan_files(self, scan_id):
-        scan_dir = self.config.folders.scans + scan_id
+        scan_dir = self.config.file.folders.scans + scan_id
         files = glob.glob(scan_dir + '/scan_*.[p][l][y]')
         return files
 
 
     def get_list_of_scans(self, host):
-        basedir = self.config.folders.scans
+        basedir = self.config.file.folders.scans
 
         subdirectories = sorted(os.listdir(str(basedir)), reverse=True)
         response = dict()
@@ -60,7 +60,7 @@ class FSScans():
 
 
     def get_scan_by_id(self, host, id):
-        basedir = self.config.folders.scans
+        basedir = self.config.file.folders.scans
 
         scan = dict()
         scan['id'] = id
@@ -97,7 +97,7 @@ class FSScans():
 
 
     def delete_file(self, scan_id, file_name):
-        file = self.config.folders.scans + scan_id + "/" + file_name
+        file = self.config.file.folders.scans + scan_id + "/" + file_name
 
         os.unlink(file)
 
@@ -113,7 +113,7 @@ class FSScans():
 
 
     def delete_scan(self, id):
-        dir_name = self.config.folders.scans + id
+        dir_name = self.config.file.folders.scans + id
         shutil.rmtree(dir_name, ignore_errors=True)
 
         response = dict()
@@ -126,7 +126,7 @@ class FSScans():
     def create_preview_image(self, data, scan_id):
         object = json2obj(str(data))
 
-        dir_name = self.config.folders.scans
+        dir_name = self.config.file.folders.scans
         png = base64.decodestring(object.image[22:])
         image_file = open(dir_name + scan_id + "/" + scan_id + ".png", "w")
         image_file.write(png)
@@ -150,7 +150,7 @@ class FSScans():
 
         object = json2obj(str(data))
 
-        dir_name =  self.config.folders.scans
+        dir_name =  self.config.file.folders.scans
         png = base64.decodestring(object.image[22:])
         image_file = open(dir_name+scan_id+"/"+scan_id+".png", "w")
         image_file.write(png)

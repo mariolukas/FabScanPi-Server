@@ -46,15 +46,15 @@ class FSCalibration(FSCalibrationInterface):
         self.image_points = []
         self.object_points = []
         self.calibration_brightness = [20, 20, 20]
-        self.quater_turn = int(self.config.turntable.steps / 4)
+        self.quater_turn = int(self.config.file.turntable.steps / 4)
 
         self.motor_move_degree = 3.6 # 1.8,  2.7 , 3.6, 5.0
-        self.steps_five_degree = self.motor_move_degree / (360.0 / self.config.turntable.steps)
+        self.steps_five_degree = self.motor_move_degree / (360.0 / self.config.file.turntable.steps)
         self.laser_calib_start = self.LASER_PLANE_CALIBRATION_START_POS_DEGREE * self.steps_five_degree / 5
         self.laser_calib_end = self.LASER_PLANE_CALIBRATION_END_POS_DEGREE * self.steps_five_degree / 5
 
 
-        self.motorsteps_per_calibration_step = self.motor_move_degree / (360.0 / self.config.turntable.steps)
+        self.motorsteps_per_calibration_step = self.motor_move_degree / (360.0 / self.config.file.turntable.steps)
         self.total_positions = int(((self.quater_turn / self.motorsteps_per_calibration_step) * 4) + 2)
         self.current_position = 0
         self._starttime = 0
@@ -89,11 +89,11 @@ class FSCalibration(FSCalibrationInterface):
         #self._hardwarecontroller.stop_camera_stream()
         tools = FSSystem()
         self._hardwarecontroller.stop_camera_stream()
-        tools.delete_folder(self.config.folders.scans+'calibration')
+        tools.delete_folder(self.config.file.folders.scans+'calibration')
         self._hardwarecontroller.turntable.enable_motors()
         time.sleep(0.4)
 
-        if self.config.laser.interleaved == "False":
+        if self.config.file.laser.interleaved == "False":
             self._logger.debug("Turning Leds on in non interleaved mode.")
             self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
@@ -114,7 +114,7 @@ class FSCalibration(FSCalibrationInterface):
             self._do_calibration(self._capture_camera_calibration, self._calculate_camera_calibration)
             self._do_calibration(self._capture_scanner_calibration, self._calculate_scanner_calibration)
 
-            if self.config.laser.interleaved == "False":
+            if self.config.file.laser.interleaved == "False":
                 self._hardwarecontroller.led.off()
 
             self._hardwarecontroller.turntable.disable_motors()
@@ -141,7 +141,7 @@ class FSCalibration(FSCalibrationInterface):
                         "message": "FINISHED_CALIBRATION",
                         "level": "info"
                 }
-                self.config.save()
+                self.config.save_json()
 
                 self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
@@ -186,7 +186,7 @@ class FSCalibration(FSCalibrationInterface):
                     #self._hardwarecontroller.turntable.disable_motors()
                     position += self.motorsteps_per_calibration_step
 
-                    self._logger.debug("Calibration Position "+str(self.current_position)+ " of "+str(self.total_positions))
+                    #self._logger.debug("Calibration Position "+str(self.current_position)+ " of "+str(self.total_positions))
                     message = {
                         "progress": self.current_position,
                         "resolution": self.total_positions,
@@ -222,8 +222,8 @@ class FSCalibration(FSCalibrationInterface):
                     error += cv2.norm(self.image_points[i], imgpoints2, cv2.NORM_L2) / len(imgpoints2)
                 error /= len(self.object_points)
 
-                self.config.calibration.camera_matrix = copy.deepcopy(np.round(cmat, 3))
-                self.config.calibration.distortion_vector = copy.deepcopy(np.round(dvec.ravel(), 3))
+                self.config.file.calibration.camera_matrix = copy.deepcopy(np.round(cmat, 3))
+                self.config.file.calibration.distortion_vector = copy.deepcopy(np.round(dvec.ravel(), 3))
 
             return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
         except Exception as e:
@@ -276,21 +276,22 @@ class FSCalibration(FSCalibrationInterface):
             try:
                 exc_info = sys.exc_info()
                 #Laser Calibration
-                alpha = np.rad2deg(math.acos(normal[2] / np.linalg.norm((normal[0], normal[2])))) * math.copysign(1,normal[0])
+                alpha = np.rad2deg(math.acos(normal[2] / np.linalg.norm((normal[0], normal[2])))) * math.copysign(1, normal[0])
 
                 self._logger.debug("Current Angle is:" + str(alpha))
                 if ((abs(alpha) <= self.LASER_PLANE_CALIBRATION_START_POS_DEGREE) and (position > 0)):
 
                     self._hardwarecontroller.led.off()
-                    for i in range(self.config.laser.numbers):
+                    for i in range(self.config.file.laser.numbers):
 
                         image = self._capture_laser(i)
 
-                        if self.config.laser.interleaved == "True":
+                        if self.config.file.laser.interleaved == "True":
                             image = cv2.subtract(image, pattern_image)
 
                         image = self._imageprocessor.pattern_mask(image, corners)
 
+                        # TODO: make  image saving contitional in confg --> calibration -> debug  ->  true/false
                         fs_image = FSImage()
                         fs_image.save_image(image, alpha, "laser_"+str(i), dir_name="calibration")
 
@@ -304,7 +305,7 @@ class FSCalibration(FSCalibrationInterface):
                                 (self._point_cloud[i], point_3d.T))
 
                 # Platform extrinsics
-                origin = corners[self.config.calibration.pattern.columns * (self.config.calibration.pattern.rows - 1)][0]
+                origin = corners[self.config.file.calibration.pattern.columns * (self.config.file.calibration.pattern.rows - 1)][0]
                 origin = np.array([[origin[0]], [origin[1]]])
                 t = self._imageprocessor.compute_camera_point_cloud(
                     origin, distance, normal)
@@ -325,7 +326,7 @@ class FSCalibration(FSCalibrationInterface):
                 self.y += [t[1][0]]
                 self.z += [t[2][0]]
 
-        if self.config.laser.interleaved == "False":
+        if self.config.file.laser.interleaved == "False":
             self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
     def _capture_pattern(self):
@@ -343,7 +344,7 @@ class FSCalibration(FSCalibrationInterface):
         response = None
         # Laser triangulation
         # Save point clouds
-        for i in range(self.config.laser.numbers):
+        for i in range(self.config.file.laser.numbers):
             self.save_point_cloud('CALIBRATION_' + str(i) + '.ply', self._point_cloud[i])
 
         self.distance = [None, None]
@@ -351,7 +352,7 @@ class FSCalibration(FSCalibrationInterface):
         self.std = [None, None]
 
         # Compute planes
-        for i in range(self.config.laser.numbers):
+        for i in range(self.config.file.laser.numbers):
             plane = self.compute_plane(i, self._point_cloud[i])
             self.distance[i], self.normal[i], self.std[i] = plane
 
@@ -370,7 +371,7 @@ class FSCalibration(FSCalibrationInterface):
             # Fitting a circle inside the plane
             center, self.R, circle = self.fit_circle(point, normal, points)
             # Get real origin
-            self.t = center - self.config.calibration.pattern.origin_distance * np.array(normal)
+            self.t = center - self.config.file.calibration.pattern.origin_distance * np.array(normal)
 
             self._logger.info("Platform calibration ")
             self._logger.info(" Center Point: "+str(center))
@@ -396,9 +397,9 @@ class FSCalibration(FSCalibrationInterface):
             result = False
 
         if result:
-            self.config.calibration.platform_translation = copy.deepcopy(self.t)
-            self.config.calibration.platform_rotation = copy.deepcopy(self.R)
-            self.config.calibration.laser_planes = copy.deepcopy(response_laser_triangulation)
+            self.config.file.calibration.platform_translation = copy.deepcopy(self.t)
+            self.config.file.calibration.platform_rotation = copy.deepcopy(self.R)
+            self.config.file.calibration.laser_planes = copy.deepcopy(response_laser_triangulation)
             response = (True, (response_platform_extrinsics, response_laser_triangulation))
         else:
             self._logger.error("Calibration process was not able to estimate laser planes.")
@@ -509,7 +510,7 @@ class FSCalibration(FSCalibrationInterface):
 
     def save_point_cloud(self, filename, point_cloud):
         if point_cloud is not None:
-            f = open(self.config.folders.scans+'/calibration/'+filename, 'wb')
+            f = open(str(self.config.file.folders.scans)+'/calibration/'+str(filename), 'wb')
             self.save_point_cloud_stream(f, point_cloud)
             f.close()
 
@@ -517,7 +518,7 @@ class FSCalibration(FSCalibrationInterface):
         frame = "ply\n"
         frame += "format binary_little_endian 1.0\n"
         frame += "comment Generated by FabScanPi software\n"
-        frame += "element vertex {0}\n".format(len(point_cloud))
+        frame += "element vertex {0}\n".format(str(len(point_cloud)))
         frame += "property float x\n"
         frame += "property float y\n"
         frame += "property float z\n"
@@ -528,8 +529,8 @@ class FSCalibration(FSCalibrationInterface):
         frame += "property list uchar int vertex_indices\n"
         frame += "end_header\n"
         for point in point_cloud:
-            frame += struct.pack("<fffBBB", point[0], point[1], point[2], 255, 0, 0)
-        stream.write(frame)
+            frame += str(struct.pack("<fffBBB", point[0], point[1], point[2], 255, 0, 0))
+        stream.write(frame.encode(encoding='UTF-8'))
 
     def get_time_stamp(self):
         return int(datetime.now().strftime("%s%f"))/1000

@@ -43,8 +43,8 @@ class FSWebServer(threading.Thread):
         self.scanprocessor = scanprocessor
         self.eventmanager = eventmanager
         self.hardwarecontroller = hardwarecontroller
-        self.www_folder = os.path.join(os.path.dirname(__file__), self.config.folders.www)
-        self.scan_folder = os.path.join(os.path.dirname(__file__), self.config.folders.scans)
+        self.www_folder = os.path.join(os.path.dirname(__file__), self.config.file.folders.www)
+        self.scan_folder = os.path.join(os.path.dirname(__file__), self.config.file.folders.scans)
         self._logger = logging.getLogger(__name__)
         self._logger.debug(self.www_folder)
 

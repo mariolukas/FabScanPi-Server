@@ -96,7 +96,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         }
 
     def reset_devices(self):
-        for laser_index in range(self.config.laser.numbers):
+        for laser_index in range(self.config.file.laser.numbers):
             self.laser.off(laser_index)
         self.led.off()
         self.turntable.stop_turning()
@@ -170,14 +170,14 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def reset_hardware(self):
         self.led.off()
 
-        for i in range(self.config.laser.numbers):
+        for i in range(self.config.file.laser.numbers):
             self.hardwareController.laser.off(i)
 
         self.turntable.stop_turning()
 
     def get_laser_image(self, index):
             self.laser.on(laser=index)
-            laser_image = self.get_picture()
+            laser_image = self.get_picture(flush=True)
             self.laser.off(laser=index)
             return laser_image
 
@@ -190,7 +190,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
         laser_image = self.get_laser_image(index)
 
-        if self.config.laser.interleaved == "True":
+        if self.config.file.laser.interleaved == "True":
             backrgound_image = self.get_picture(flush=True)
             laser_image = cv2.subtract(laser_image, backrgound_image)
 

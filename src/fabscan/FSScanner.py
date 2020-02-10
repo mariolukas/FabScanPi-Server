@@ -89,7 +89,7 @@ class FSScanner(threading.Thread):
         self._logger.info("Number of cpu cores: " + str(multiprocessing.cpu_count()))
         self.config = config
 
-        if bool(self.config.discoverable):
+        if bool(self.config.file.discoverable):
            self.run_discovery_service()
            self.scheduler.add_job(self.run_discovery_service, 'interval', minutes=30, id='register_discovery_service')
            self._logger.info("Added discovery scheduling job.")
@@ -224,7 +224,7 @@ class FSScanner(threading.Thread):
         elif command == FSCommand.GET_CONFIG:
             message = {
                 "client": event['client'],
-                "config": self.config.todict(self.config)
+                "config": self.config.file.todict(self.config)
             }
             self.eventManager.send_client_message(FSEvents.ON_GET_CONFIG, message)
             return
@@ -246,7 +246,7 @@ class FSScanner(threading.Thread):
             except:
                 hardware_info = "undefined"
 
-            self._upgrade_available, self._upgrade_version = upgrade_is_available(__version__, self.config.online_lookup_ip)
+            self._upgrade_available, self._upgrade_version = upgrade_is_available(__version__, self.config.file.online_lookup_ip)
             self._logger.debug("Upgrade available: "+str(self._upgrade_available)+" "+self._upgrade_version)
 
             #FIXME: todict leads to too many recursion problems. refactor settings class

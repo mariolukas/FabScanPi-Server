@@ -19,7 +19,7 @@ class FSDownloadHandler(BaseHandler):
     def get(self, *args, **kwargs):
         file_name = kwargs.get('file_name')
         scan_id = kwargs.get('scan_id')
-        scan_folder = os.path.join(os.path.join(os.path.dirname(__file__), self.config.folders.scans))
+        scan_folder = os.path.join(os.path.join(os.path.dirname(__file__), self.config.file.folders.scans))
         self._logger.debug(file_name)
 
 

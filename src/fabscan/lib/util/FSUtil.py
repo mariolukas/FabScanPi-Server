@@ -13,7 +13,6 @@ from collections import namedtuple
 from fabscan.FSConfig import ConfigInterface
 from fabscan.lib.util.FSInject import inject
 
-
 class FSSystemExit(object):
 
     def __init__(self):
@@ -77,26 +76,26 @@ class FSSystem(object):
 
 
     def delete_image_folders(self,scan_id):
-        folder = self.config.folders.scans+scan_id+"/color_raw/"
+        folder = self.config.file.folders.scans+scan_id+"/color_raw/"
         self.delete_folder(folder)
 
-        folder = self.config.folders.scans+scan_id+"/laser_raw/"
+        folder = self.config.file.folders.scans+scan_id+"/laser_raw/"
         self.delete_folder(folder)
 
 
     def delete_scan(self, scan_id, ignore_errors=True):
 
         #basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        folder = self.config.folders.scans+scan_id+"/"
+        folder = self.config.file.folders.scans+scan_id+"/"
 
-        mask = self.config.folders.scans+scan_id+"/"'*.[pso][ltb][lyj]'
+        mask = self.config.file.folders.scans+scan_id+"/"'*.[pso][ltb][lyj]'
         number_of_files = len(glob.glob(mask))
 
     def zipdir(self, scan_id):
         # ziph is zipfile handle
-        zipf = zipfile.ZipFile(self.config.folders.scans+scan_id+'/'+str(scan_id)+'.zip', 'w', zipfile.ZIP_DEFLATED)
+        zipf = zipfile.ZipFile(self.config.file.folders.scans+scan_id+'/'+str(scan_id)+'.zip', 'w', zipfile.ZIP_DEFLATED)
 
-        for root, dirs, files in os.walk(self.config.folders.scans+scan_id+"/color_raw/"):
+        for root, dirs, files in os.walk(self.config.file.folders.scans+scan_id+"/color_raw/"):
             for file in files:
                 zipf.write(os.path.join(root, file))
 

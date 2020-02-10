@@ -13,7 +13,6 @@
        "saturation": 0
      },
      "resolution": 4,
-     "laser_positions": 1,
      "color" : "True",
      "show_laser_overlay": "True",
      "show_calibration_pattern": "True"

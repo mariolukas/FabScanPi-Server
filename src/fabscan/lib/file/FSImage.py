@@ -29,7 +29,7 @@ class FSImage(object):
 
     def save_image(self, img, number, prefix, dir_name="scans"):
 
-        dir_name = self.config.folders.scans+dir_name
+        dir_name = self.config.file.folders.scans+dir_name
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
         prefix = os.path.join(dir_name, "%s_{0}" % prefix)
@@ -38,7 +38,7 @@ class FSImage(object):
         return prefix.format(number) + ".jpg"
 
     def load_image(self, number, prefix, dir_name="scans"):
-        dir_name =  self.config.folders.scans+dir_name
+        dir_name =  self.config.file.folders.scans+dir_name
         prefix = os.path.join(dir_name, "%s_{0}" % prefix)
         number = str(number).zfill(3)
         if os.path.isfile(prefix.format(number) + ".jpg"):

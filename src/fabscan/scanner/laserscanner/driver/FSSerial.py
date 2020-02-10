@@ -27,20 +27,20 @@ class FSSerialCom():
 
         self._logger = logging.getLogger(__name__)
 
-        if hasattr(self.config.serial, 'port'):
-            self._port = self.config.serial.port
+        if hasattr(self.config.file.serial, 'port'):
+            self._port = self.config.file.serial.port
             self._logger.debug("Port in Config found")
         else:
             self._port = "/dev/ttyAMA0"
 
-        if hasattr(self.config.serial, 'flash_baudrate'):
-            self.flash_baudrate = self.config.serial.flash_baudrate
+        if hasattr(self.config.file.serial, 'flash_baudrate'):
+            self.flash_baudrate = self.config.file.serial.flash_baudrate
         else:
             self.flash_baudrate = 57600
 
         self.buf = bytearray()
 
-        self._baudrate = self.config.serial.baudrate
+        self._baudrate = self.config.file.serial.baudrate
         self._serial = None
         self._connected = False
         self._firmware_version = None
@@ -75,7 +75,7 @@ class FSSerialCom():
 
     def _openSerial(self):
         basedir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-        flash_file_version = max(sorted(glob.iglob(basedir+'/firmware/'+str(self.config.serial.plattform_type)+'_*.hex'),  key=os.path.getctime, reverse=True))
+        flash_file_version = max(sorted(glob.iglob(basedir+'/firmware/'+str(self.config.file.serial.plattform_type)+'_*.hex'),  key=os.path.getctime, reverse=True))
 
         flash_version_number = os.path.basename(os.path.normpath(os.path.splitext(flash_file_version.split('_', 1)[-1])[0]))
 
@@ -93,7 +93,7 @@ class FSSerialCom():
                            current_version = self.checkVersion()
                            self._logger.debug("Installed firmware version: " + str(current_version))
                            # check if autoflash is active
-                           if self.config.serial.autoflash == "True":
+                           if self.config.file.serial.autoflash == "True":
                                ## check if firmware is up to date, if not flash new firmware
                                if not current_version == flash_version_number:
                                    self._close()
@@ -108,7 +108,7 @@ class FSSerialCom():
                    # no firmware is installed, flash firmware
                    else:
                             # if auto flash is activated
-                            if self.config.serial.autoflash == "True":
+                            if self.config.file.serial.autoflash == "True":
                                     self._logger.info("No firmware detected trying to flash firmware...")
                                     if self.avr_flash(flash_file_version):
                                         time.sleep(0.5)

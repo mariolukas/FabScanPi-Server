@@ -1,115 +1,81 @@
-__author__ = "Mario Lukas"
-__copyright__ = "Copyright 2017"
-__license__ = "GPL v2"
-__maintainer__ = "Mario Lukas"
-__email__ = "info@mariolukas.de"
-
-import os
 import json
-from fabscan.lib.util.FSInject import singleton
-import io
+from fabscan.lib.util.FSInject import inject, singleton
 import numpy as np
 
-try:
-    to_unicode = str
-except NameError:
-    to_unicode = str
+#https://github.com/BerkeleyAutomation/autolab_core/blob/master/autolab_core/json_serialization.py
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
+
+
+class YAMLobj(dict):
+    def __init__(self, args):
+        super(YAMLobj, self).__init__(args)
+        if isinstance(args, dict):
+            for k, v in args.items():
+                if not isinstance(v, dict):
+                    self[k] = v
+                else:
+                    self.__setattr__(k, YAMLobj(v))
+
+    def __getattr__(self, attr):
+        return self.get(attr)
+
+    def __setattr__(self, key, value):
+        self.__setitem__(key, value)
+
+    def __setitem__(self, key, value):
+        super(YAMLobj, self).__setitem__(key, value)
+        self.__dict__.update({key: value})
+
+    def __delattr__(self, item):
+        self.__delitem__(item)
+
+    def __delitem__(self, key):
+        super(YAMLobj, self).__delitem__(key)
+        del self.__dict__[key]
+
 
 class ConfigInterface(object):
-    def __init__(self, config, first=True):
+      def __init__(self, file_name):
         pass
 
-
-#FIXME: define and use default settings if not specified e.g. config.laser.numbers, config.pattern.origin_distance
-
 class Config(ConfigInterface):
-    def __init__(self, config, first=True):
+    def __init__(self, file_name):
+        # concatenation of default and custom dict can be archived by using
+        # self.json =  {**loaded_defaults, **loaded_file}
+        self.file_name = file_name
+        self.file = self.load_json(file_name)
+        self.file = YAMLobj(self.file)
 
-        if first:
-            self.file = config
-            with open(config) as file:
-                config = file.read()
-            config = json.loads(config)
+    def load_json(self, file):
+        with open(file) as json_data_file:
+          data = json.load(json_data_file)
+          return data
 
-            if not hasattr(config, 'scanner_type'):
-                config['scanner_type'] = "laserscanner"
-                #config.scanner_type = "laserscanner"
+    def save_json(self, file_name=None):
+        if file_name:
+            destination_file = file_name
+        else:
+            destination_file = self.file_name
 
-            if not hasattr(config, 'texture_illumination'):
-                config['texture_illumination'] = 40
-                #config.texture_illumination = 40
+        with open(destination_file, 'w') as outfile:
+            json.dump(self.file, outfile, cls=NumpyEncoder, indent=4, ensure_ascii=False)
 
-            #if not hasattr(config, 'weight_matirx'):
-            #    config['weight_matrix'] = self._compute_weight_matrix(config)
-
-        def _traverse(key, element):
-            if isinstance(element, dict):
-
-
-                return key, Config(element, first=False)
-            else:
-                return key, element
-
-        object_dict = dict(_traverse(k, v) for k, v in config.items())
-
-        self.__dict__.update(object_dict)
-
-
-    def save(self):
-        current_config = self.todict(self.__dict__)
-        try:
-            del current_config['file']
-        except KeyError:
-            pass
-
-        with open(self.file, 'w+') as outfile:
-            json.dump(current_config, outfile, indent=4, ensure_ascii=False)
-            #outfile.write(to_unicode(str_))
-
-    def saveAsFile(self, filename):
-
-        current_config = self.todict(self.__dict__)
-        try:
-            del current_config['file']
-        except KeyError:
-            pass
-
-        with open(filename, 'w+') as outfile:
-            json.dump(current_config, outfile,  indent=4, ensure_ascii=False)
-            #outfile.write(to_unicode(str_))
-
-
-    def todict(self, obj, classkey=None):
-            if isinstance(obj, dict):
-                data = {}
-                for (k, v) in list(obj.items()):
-                    data[k] = self.todict(v, classkey)
-                return data
-            elif hasattr(obj, "_ast"):
-                return self.todict(obj._ast())
-            elif hasattr(obj, "__iter__"):
-                return [self.todict(v, classkey) for v in obj]
-            elif hasattr(obj, "__dict__"):
-                data = dict([(key, self.todict(value, classkey))
-                    for key, value in obj.__dict__.items()
-                    if not callable(value) and not key.startswith('_')])
-                if classkey is not None and hasattr(obj, "__class__"):
-                    data[classkey] = obj.__class__.__name__
-                return data
-            else:
-                return obj
-
-    def update(self, config):
-        self.calibration.pattern.rows = config.calibration.pattern.rows
-        self.calibration.pattern.columns = config.calibration.pattern.columns
-        self.calibration.pattern.square_size = config.calibration.pattern.square_size
-        self.calibration.pattern.origin_distance = config.calibration.pattern.origin_distance
-
+    def update(self):
+        pass
 
 @singleton(
     instance=Config
 )
 class ConfigSingleton(Config):
-    def __init__(self, config,instance, first=True ):
-        super(Config, self).__init__(self, config, first)
+    def __init__(self, file_name, instance):
+        super(Config, self).__init__(self, file_name)
         self.instance = instance

@@ -8,6 +8,7 @@ import time
 import logging
 import sys
 import os
+import json
 
 
 from .FSWebServer import FSWebServer
@@ -84,14 +85,14 @@ class FSScanServer(object):
         self.scanner.join()
 
     def create_services(self):
+
         injector.provide(FSEventManagerInterface, FSEventManagerSingleton)
-        injector.provide_instance(ConfigInterface, Config(self.config_file, True))
-        injector.provide_instance(SettingsInterface, Settings(self.settings_file, True))
+        injector.provide_instance(ConfigInterface, Config(self.config_file))
+        injector.provide_instance(SettingsInterface, Settings(self.settings_file))
 
         # inject "dynamic" classes
         self.config = injector.get_instance(ConfigInterface)
-
-        FSScannerFactory.injectScannerType(self.config.scanner_type)
+        FSScannerFactory.injectScannerType(self.config.file.scanner_type)
 
         self.webserver = FSWebServer()
         self.webserver.start()
@@ -108,7 +109,7 @@ class FSScanServer(object):
          self._logger.error(e)
 
     def run(self):
-        self._logger.info("FabScanPi-Server "+str(__version__))
+        self._logger.info("FabScanPi-Server " + str(__version__))
 
         try:
 
