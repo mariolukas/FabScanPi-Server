@@ -291,9 +291,22 @@ class ImageProcessor(ImageProcessorInterface):
 
         return image
 
+    def decode_image(self, image):
+        image = cv2.imdecode(image, 1)
+        if self.config.file.camera.rotate == "True":
+            image = cv2.transpose(image)
+        if self.config.file.camera.hflip == "True":
+            image = cv2.flip(image, 1)
+        if self.config.file.camera.vflip == "True":
+            image = cv2.flip(image, 0)
+
+        return image
+
     #FIXME: rename color_image into texture_image
     def process_image(self, angle, laser_image, color_image=None, index=0):
         ''' Takes picture and angle (in degrees).  Adds to point cloud '''
+
+        laser_image = self.decode_image(laser_image)
 
         try:
             _theta = np.deg2rad(-angle)
@@ -326,10 +339,10 @@ class ImageProcessor(ImageProcessorInterface):
     def mask_image(self, image, index):
             if index == 0:
                 mask = np.zeros(image.shape, np.uint8)
-                mask[0:self.image_height, (self.image_width/2):self.image_width] = image[0:self.image_height, (self.image_width/2):self.image_width]
+                mask[0:self.image_height, (self.image_width // 2):self.image_width] = image[0:self.image_height, (self.image_width // 2):self.image_width]
             else:
                 mask = np.zeros(image.shape, np.uint8)
-                mask[0:self.image_height, 0:(self.image_width/2)] = image[0:self.image_height, 0:(self.image_width/2)]
+                mask[0:self.image_height, 0:(self.image_width // 2)] = image[0:self.image_height, 0:(self.image_width // 2)]
 
             return mask
 

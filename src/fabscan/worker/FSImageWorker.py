@@ -148,7 +148,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                                 point_cloud = []
                                 angle = float(image_task.progress * 360) / float(image_task.resolution)
                                 #self._logger.debug("Progress "+str(image_task.progress)+" Resolution "+str(image_task.resolution)+" angle "+str(angle))
-                                self.image.save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)
+                                #self.image.save_image(image_task.image, image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/laser_'+image_task.raw_dir)
                                 color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
 
                                 point_cloud, texture = self.image_processor.process_image(angle, image_task.image, color_image, index=image_task.index)

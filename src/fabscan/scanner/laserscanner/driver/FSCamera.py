@@ -111,15 +111,10 @@ class CamProcessor(threading.Thread):
             if self.event.wait(1):
                 try:
                     self.stream.seek(0)
-                    data = np.fromstring(self.stream.getvalue(), dtype=np.uint8)
-                    image = cv2.imdecode(data, 1)
+                    image = np.fromstring(self.stream.getvalue(), dtype=np.uint8)
+                    #image = cv2.imdecode(self.stream.getvalue(), 1)
 
-                    if self.config.file.camera.rotate == "True":
-                        image = cv2.transpose(image)
-                    if self.config.file.camera.hflip == "True":
-                        image = cv2.flip(image, 1)
-                    if self.config.file.camera.vflip == "True":
-                        image = cv2.flip(image, 0)
+                    image = self.imageprocessor.decode_image(image)
 
                     if self.mode == "settings":
                         image = self.imageprocessor.get_laser_stream_frame(image)
@@ -195,7 +190,6 @@ class ProcessCamOutput(object):
                 proc.terminated = True
                 proc.join()
             except Exception as e:
-                self._logger.error("Error while Pool loopback: " + str(e))
                 pass
             if self.pool.empty:
                 break
@@ -253,14 +247,8 @@ class PiCam(threading.Thread):
 
         self.camera.capture(self.capture_stream, format='jpeg', use_video_port=True)
         self.capture_stream.seek(0)
-        data = np.fromstring(self.capture_stream.getvalue(), dtype=np.uint8)
-        image = cv2.imdecode(data, 1)
-        if self.config.file.camera.rotate == "True":
-            image = cv2.transpose(image)
-        if self.config.file.camera.hflip == "True":
-            image = cv2.flip(image, 1)
-        if self.config.file.camera.vflip == "True":
-            image = cv2.flip(image, 0)
+        image = np.fromstring(self.capture_stream.getvalue(), dtype=np.uint8)
+
         return image
 
     def set_mode(self, mode):

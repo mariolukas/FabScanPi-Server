@@ -12,6 +12,7 @@ import zipfile
 from collections import namedtuple
 from fabscan.FSConfig import ConfigInterface
 from fabscan.lib.util.FSInject import inject
+from fabscan.lib.util.FSJson import YAMLobj
 
 class FSSystemExit(object):
 
@@ -101,11 +102,9 @@ class FSSystem(object):
 
         zipf.close()
 
-def _json_object_hook(d):
-    return namedtuple('X', list(d.keys()))(*list(d.values()))
-
 def json2obj(data):
-    return json.loads(data, object_hook=_json_object_hook)
+    _jsonDict = json.loads(data)
+    return YAMLobj(_jsonDict)
 
 def new_message():
         message = dict()

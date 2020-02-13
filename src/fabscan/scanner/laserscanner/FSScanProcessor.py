@@ -55,7 +55,6 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._resolution = 16
         self._number_of_pictures = 0
         self._total = 0
-        self._laser_positions = 1
         self._progress = 0
         self._is_color_scan = True
         self.point_clouds = []
@@ -225,7 +224,7 @@ class FSScanProcessor(FSScanProcessorInterface):
             #FIXME: Only change Color Settings when values changed.
             self.hardwareController.led.on(self.settings.file.led.red, self.settings.file.led.green, self.settings.file.led.blue)
         except Exception as e:
-            # images are dropped this cateched exception.. no error hanlder needed here.
+            self._logger.error('Updating Settings failed: ' + str(e))
             pass
 
     def update_config(self, config):
@@ -290,10 +289,9 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.hardwareController.laser.on(0)
         self.hardwareController.start_camera_stream(mode="default")
         self._resolution = int(self.settings.file.resolution)
-        self._laser_positions = int(self.settings.file.laser_positions)
         self._is_color_scan = bool(self.settings.file.color)
         self.hardwareController.laser.on(1)
-        self._number_of_pictures = self.config.file.turntable.steps / int(self.settings.file.resolution)
+        self._number_of_pictures = int(self.config.file.turntable.steps // self.settings.file.resolution)
         self.current_position = 0
         self._starttime = self.get_time_stamp()
 
@@ -389,7 +387,6 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
         self.current_position = 0
-        self._laser_positions = self.settings.file.laser_positions
         # wait for ending of texture stream
 
         if self.config.file.laser.interleaved == "False":
@@ -498,7 +495,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
                     points.append(new_point)
         except Exception as err:
-            self._logger.error('Image processing Error:' +  str(err))
+            self._logger.error('Image processing Error:' + str(err))
 
         #self.semaphore.acquire()
         self._progress += 1
@@ -526,11 +523,10 @@ class FSScanProcessor(FSScanProcessorInterface):
             self.scan_complete()
 
 
-
     def scan_complete(self):
 
         end_time = self.get_time_stamp()
-        duration = int(end_time - self._starttime)/1000
+        duration = int((end_time - self._starttime)//1000)
         self._logger.debug("Time Total: %i sec." % (duration,))
 
         self._starttime = 0

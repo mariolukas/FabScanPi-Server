@@ -224,7 +224,7 @@ class FSScanner(threading.Thread):
         elif command == FSCommand.GET_CONFIG:
             message = {
                 "client": event['client'],
-                "config": self.config.file.todict(self.config)
+                "config": self.config.file
             }
             self.eventManager.send_client_message(FSEvents.ON_GET_CONFIG, message)
             return
@@ -232,7 +232,7 @@ class FSScanner(threading.Thread):
         elif command == FSCommand.GET_SETTINGS:
             message = {
                 "client": event['client'],
-                "settings": self.settings.todict(self.settings)
+                "settings": self.settings.file
             }
             self.eventManager.send_client_message(FSEvents.ON_GET_SETTINGS, message)
             return
@@ -247,7 +247,7 @@ class FSScanner(threading.Thread):
                 hardware_info = "undefined"
 
             self._upgrade_available, self._upgrade_version = upgrade_is_available(__version__, self.config.file.online_lookup_ip)
-            self._logger.debug("Upgrade available: "+str(self._upgrade_available)+" "+self._upgrade_version)
+            self._logger.debug("Upgrade available: " + str(self._upgrade_available)+" "+self._upgrade_version)
 
             #FIXME: todict leads to too many recursion problems. refactor settings class
             message = {
@@ -255,7 +255,7 @@ class FSScanner(threading.Thread):
                 "state": self.get_state(),
                 "server_version": 'v.'+__version__,
                 "firmware_version": str(hardware_info),
-               # "settings": self.settings, #self.settings.todict(self.settings),
+                "settings": self.settings.file,
                 "upgrade": {
                     "available": self._upgrade_available,
                     "version": self._upgrade_version
@@ -290,7 +290,7 @@ class FSScanner(threading.Thread):
 
             self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
         else:
-            self._logger.debug("CPU Temperature: "  + str(cpu_temp) + " C")
+            self._logger.debug("CPU Temperature: " + str(cpu_temp) + " C")
 
 
     def run_discovery_service(self):
