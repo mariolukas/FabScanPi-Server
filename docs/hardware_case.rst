@@ -9,27 +9,27 @@ Lid Assembly
 
 **Step 1:**
 
-.. image:: images/step_1.JPG
+.. image:: images/case_step_1.jpg
    :width: 600
 
 **Step 2:**
 
-.. image:: images/step_2.JPG
+.. image:: images/case_step_2.jpg
    :width: 600
 
 **Step 3:**
 
-.. image:: images/step_3.JPG
+.. image:: images/case_step_3.jpg
    :width: 600
 
 **Step 4:**
 
-.. image:: images/step_4.JPG
+.. image:: images/case_step_4.jpg
    :width: 600
 
 **Step 5:**
 
-.. image:: images/step_5.JPG
+.. image:: images/case_step_5.jpg
    :width: 600
 
 Cabinet Assembly
@@ -37,32 +37,32 @@ Cabinet Assembly
 
 **Step 6:**
 
-.. image:: images/step_6.JPG
+.. image:: images/case_step_6.jpg
    :width: 600
 
 **Step 7:**
 
-.. image:: images/step_7.JPG
+.. image:: images/case_step_7.jpg
    :width: 600
 
 **Step 8:**
 
-.. image:: images/step_8.JPG
+.. image:: images/case_step_8.jpg
    :width: 600
 
 **Step 9:**
 
-.. image:: images/step_9.JPG
+.. image:: images/case_step_9.jpg
    :width: 600
 
 **Step 10:**
 
-.. image:: images/step_10.JPG
+.. image:: images/case_step_10.jpg
    :width: 600
 
 **Step 11:**
 
-.. image:: images/step_11.JPG
+.. image:: images/case_step_11.jpg
    :width: 600
 
 Laser Mount Assembly
@@ -70,15 +70,15 @@ Laser Mount Assembly
 
 **Step 12:**
 
-.. image:: images/step_12.JPG
+.. image:: images/case_step_12.jpg
    :width: 600
 
 **Step 13:**
 
-.. image:: images/step_13.JPG
+.. image:: images/case_step_13.jpg
    :width: 600
 
 **Step 14:**
 
-.. image:: images/step_14.JPG
+.. image:: images/case_step_14.jpg
    :width: 600
