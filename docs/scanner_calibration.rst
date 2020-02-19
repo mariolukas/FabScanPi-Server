@@ -80,7 +80,7 @@ Option 2: You have an 3D-printer available and can print out our calibration she
 
 .. note:: To get a perfectly flat and stable surface glue the calibration sheet on a piece of thick pcb (printed circuit board).
 
- `Download calibration mount and sheet! <https://github.com/mariolukas/FabScan-Case/tree/master/calibratio>`_
+ `Download calibration mount and sheet! <https://github.com/mariolukas/FabScan-Case/tree/master/calibration>`_
 
 Version V1 and V2 have the same size. Both will fit. But V2 is more printer friendly.
 
