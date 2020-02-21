@@ -1,11 +1,14 @@
 .. _hardware_enclosure
 
-********
-The Case
-********
+*********
+Mechanics
+*********
 
-Lid Assembly
-------------
+FabScan Pi Case
+===============
+
+The Lid
+~~~~~~~
 
 **Step 1:**
 
@@ -32,53 +35,53 @@ Lid Assembly
 .. image:: images/case_step_5.jpg
    :width: 600
 
-Cabinet Assembly
-----------------
+The Cabinet
+~~~~~~~~~~~
 
-**Step 6:**
+**Step 1:**
 
 .. image:: images/case_step_6.jpg
    :width: 600
 
-**Step 7:**
+**Step 2:**
 
 .. image:: images/case_step_7.jpg
    :width: 600
 
-**Step 8:**
+**Step 3:**
 
 .. image:: images/case_step_8.jpg
    :width: 600
 
-**Step 9:**
+**Step 4:**
 
 .. image:: images/case_step_9.jpg
    :width: 600
 
-**Step 10:**
+**Step 5:**
 
 .. image:: images/case_step_10.jpg
    :width: 600
 
-**Step 11:**
+**Step 6:**
 
 .. image:: images/case_step_11.jpg
    :width: 600
 
-Laser Mount Assembly
---------------------
+The Laser Mount
+~~~~~~~~~~~~~~~
 
-**Step 12:**
+**Step 1:**
 
 .. image:: images/case_step_12.jpg
    :width: 600
 
-**Step 13:**
+**Step 2:**
 
 .. image:: images/case_step_13.jpg
    :width: 600
 
-**Step 14:**
+**Step 3:**
 
 .. image:: images/case_step_14.jpg
    :width: 600

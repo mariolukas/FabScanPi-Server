@@ -150,6 +150,11 @@ If you are using another power supply which is capable of delivering 12V and 5V 
 Connecting the Stepper Motor(s)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+**The Motor drivers**
+
+TODO
+
+**Wiring of the Motors**
 
 There are different kinds of stepper motos. Mostly with 4 or 6 leads. For
 connecting the stepper motor to the FabScanPi HAT you need to know the
@@ -205,14 +210,6 @@ right image: connecting a switch)
    :width: 400
 .. image:: images/laser_safety_switch.jpg
    :width: 400
-
-
-
-Connecting the Motor drivers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-TODO
-
 
 
 Connecting the Power Supply
