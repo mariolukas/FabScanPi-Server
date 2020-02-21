@@ -20,8 +20,8 @@ flashed automatically by the FabscanPi-Server application.
 .. image:: images/fabscanpihat.png
 
 
-How to assemble the FabScanPi HAT
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Assemble the FabScanPi HAT
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 .. note:: About soldering: If you are soldering for the very fist time, we suggest to read the comic `"Soldering is Easy" <https://mightyohm.com/files/soldercomic/FullSolderComic_EN.pdf>` by Mitch Altman (soldering wisdom), Andie Nordgren (comic adaption) and Jeff Keyzer (layout and editing)._
