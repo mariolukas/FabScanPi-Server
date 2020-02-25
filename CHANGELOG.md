@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### TODO
 - add a more precise camera calibration (remove distortion)
 - make calibration more robust
+- split camera calibration for combo and seperate camera calibration
+- add independent chooseable settings for texture and object scan
+  saturation, contrast, brightness, lights etc..
 
 ## [0.11.0] - unreleased
 ### TODO
