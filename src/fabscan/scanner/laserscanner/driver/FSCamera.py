@@ -112,12 +112,11 @@ class CamProcessor(threading.Thread):
                 try:
                     self.stream.seek(0)
                     image = np.fromstring(self.stream.getvalue(), dtype=np.uint8)
-                    #image = cv2.imdecode(self.stream.getvalue(), 1)
-
-                    image = self.imageprocessor.decode_image(image)
 
                     if self.mode == "settings":
+                       # image = self.imageprocessor.decode_image(image)
                         image = self.imageprocessor.get_laser_stream_frame(image)
+
                     self.fs_ring_buffer.append(image)
 
                 except Exception as e:
@@ -219,16 +218,22 @@ class PiCam(threading.Thread):
         self.idle = True
         self.resolution = (self.config.file.camera.preview_resolution.width, self.config.file.camera.preview_resolution.height)
         self.camera = picamera.PiCamera(resolution=self.resolution)
+
+        self.camera.framerate = 30
+        # Wait for the automatic gain control to settle
+
+
         self.start()
 
     def run(self):
         while True:
-            if not self.idle and self.camera.recording:
+            if self.camera and not self.idle and self.camera.recording:
                 try:
                     self.camera.wait_recording(0.1)
-                    #self.camera.contrast = self.settings.file.camera.contrast
-                    #self.camera.brightness = self.settings.file.camera.brightness
-                    #self.camera.saturation = self.settings.file.camera.saturation
+                    self.camera.contrast = self.settings.file.camera.contrast
+                    self.camera.brightness = self.settings.file.camera.brightness
+                    self.camera.brightness = self.settings.file.camera.brightness
+                    self.camera.saturation = self.settings.file.camera.saturation
 
                 except Exception as err:
                     self._logger.error("Error while camera is recording: " + str(err))
@@ -286,6 +291,13 @@ class PiCam(threading.Thread):
 
             if self.camera:
                 self.camera.resolution = self.resolution
+                # time.sleep(2)
+                # # Now fix the values
+                # self.camera.shutter_speed = self.camera.exposure_speed
+                # self.camera.exposure_mode = 'off'
+                # g = self.camera.awb_gains
+                # self.camera.awb_mode = 'off'
+                # self.camera.awb_gains = g
 
             self.idle = False
             self.camera.start_recording(self.output, format='mjpeg')

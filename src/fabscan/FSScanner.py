@@ -15,7 +15,6 @@ from fabscan.FSVersion import __version__
 
 from fabscan.FSEvents import FSEventManagerInterface, FSEvents
 from fabscan.worker.FSMeshlab import FSMeshlabTask
-from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.FSConfig import ConfigInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
@@ -54,12 +53,11 @@ class FSCommand(object):
     UPDATE_CONFIG = "UPDATE_CONFIG"
 
 
-
 @inject(
         settings=SettingsInterface,
         config=ConfigInterface,
         eventmanager=FSEventManagerInterface,
-        scanprocessor=FSScanProcessorInterface
+        scanprocessor=FSScanProcessorInterface,
 )
 class FSScanner(threading.Thread):
     def __init__(self, settings, config, eventmanager, scanprocessor):
@@ -69,6 +67,7 @@ class FSScanner(threading.Thread):
         self.settings = settings
         self.config = config
         self.eventManager = eventmanager.instance
+
         self.scanProcessor = scanprocessor.start()
 
         self._state = FSState.IDLE
@@ -90,17 +89,15 @@ class FSScanner(threading.Thread):
         self.config = config
 
         if bool(self.config.file.discoverable):
-           self.run_discovery_service()
-           self.scheduler.add_job(self.run_discovery_service, 'interval', minutes=30, id='register_discovery_service')
-           self._logger.info("Added discovery scheduling job.")
+            self.run_discovery_service()
+            self.scheduler.add_job(self.run_discovery_service, 'interval', minutes=30, id='register_discovery_service')
+            self._logger.info("Added discovery scheduling job.")
 
         self.scheduler.add_job(self.run_temperature_watch_service, 'interval', minutes=1, id='cpu_temperature_service')
 
     def run(self):
         while not self.exit:
-            self.eventManager.handle_event_q()
-            time.sleep(0.05)
-
+            time.sleep(0.2)
 
     def kill(self):
         self.scanProcessor.stop()
@@ -124,7 +121,7 @@ class FSScanner(threading.Thread):
         elif command == FSCommand.UPDATE_SETTINGS:
             if self._state is FSState.SETTINGS:
                 self.scanProcessor.tell(
-                        {FSEvents.COMMAND: FSScanProcessorCommand.UPDATE_SETTINGS, 'SETTINGS': event.settings}
+                    {FSEvents.COMMAND: FSScanProcessorCommand.UPDATE_SETTINGS, 'SETTINGS': event.settings}
                 )
                 return
 
@@ -237,8 +234,6 @@ class FSScanner(threading.Thread):
             self.eventManager.send_client_message(FSEvents.ON_GET_SETTINGS, message)
             return
 
-
-    # new client conneted
     def on_client_connected(self, eventManager, event):
         try:
             try:
@@ -276,12 +271,10 @@ class FSScanner(threading.Thread):
     def get_state(self):
         return self._state
 
-
     ## Scheduled functions see init function!!
-
     def run_temperature_watch_service(self):
         cpu_temp = get_cpu_temperature()
-        if ( cpu_temp > 82):
+        if cpu_temp > 82:
             self._logger.warning('High CPU Temperature: ' + str(cpu_temp) + " C")
             message = {
                 "message": "CPU Temp:  " + str(cpu_temp) + " C! Maybe thermally throttle active.",
@@ -291,7 +284,6 @@ class FSScanner(threading.Thread):
             self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
         else:
             self._logger.debug("CPU Temperature: " + str(cpu_temp) + " C")
-
 
     def run_discovery_service(self):
 

@@ -28,7 +28,7 @@ class Turntable(object):
         steps *= self.scaler
 
         if self.serial_connection != None:
-            command = "G04 T"+str(steps)+" F"+str(speed)+";"
+            command = "G04 T"+str(steps)+" F"+str(speed)
             self.serial_connection.send_and_receive(command)
             time.sleep(0.8)
 
@@ -36,29 +36,29 @@ class Turntable(object):
         steps *= self.scaler
 
         if self.serial_connection != None:
-            command = "G02 T"+str(steps)+" F"+str(speed)+";"
+            command = "G02 T"+str(steps)+" F"+str(speed)
             self.serial_connection.send_and_receive(command)
 
 
     def enable_motors(self):
         if self.serial_connection != None:
-            command = "M17;"
+            command = "M17"
             self.serial_connection.send_and_receive(command)
 
     def disable_motors(self):
         if self.serial_connection != None:
-            command = "M18;"
+            command = "M18"
             self.serial_connection.send_and_receive(command)
 
     def start_turning(self):
         if self.serial_connection != None:
             self.enable_motors()
-            command = "G06;"
+            command = "G06"
             self.serial_connection.send_and_receive(command)
 
     def stop_turning(self):
         if self.serial_connection != None:
             self.disable_motors()
-            command = "G07;"
+            command = "G07"
             self.serial_connection.send_and_receive(command)
 

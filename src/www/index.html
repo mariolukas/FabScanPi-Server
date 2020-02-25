@@ -376,7 +376,7 @@
                                                  <li ng-repeat="raw_scan in raw_scans track by $index" style="padding:0.2em;">
                                                      <a href="#" ng-click="loadPointCloud(raw_scan.url)" style="text-decoration: none;">{{raw_scan.name}}</a>
                                                      <a ng-if="meshes.length == 0" href="#"><i tooltips title="Delete Scan" class="hvr-grow fa fa-trash fa-1x" ng-click="deleteFile(raw_scan.name)" style="float:right;"></i></a>
-                                                     <a href="#"><i tooltips title="Select MeshLab Filter" tooltip-side="top" ng-click="nextSubSelection(raw_scan.name)" class="hvr-grow fa fa-magic fa-1x" style="float:right;"></i></a>
+                                                    <!-- <a href="#"><i tooltips title="Select MeshLab Filter" tooltip-side="top" ng-click="nextSubSelection(raw_scan.name)" class="hvr-grow fa fa-magic fa-1x" style="float:right;"></i></a>-->
                                                      <a href="{{raw_scan.url}}"><i tooltips title="Donwload Scan" tooltip-side="top" class="hvr-grow fa fa-download fa-1x" style="float:right;"></i></a>
                                                      <!--<i tooltips title="Open Scan" tooltip-side="top" class="fa fa-folder-open fa-1x" style="float:right;"></i>-->
                                                  </li>

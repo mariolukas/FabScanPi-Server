@@ -5,6 +5,7 @@ __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
 import multiprocessing
+import json
 
 try:
    from queue import Empty
@@ -106,25 +107,17 @@ class FSEventManager(FSEventManagerInterface):
 
         self.publish(FSEvents.ON_SOCKET_SEND, event_message)
 
+
     def broadcast_client_message(self, type, data):
         event_message = dict()
         event_message['type'] = type
         event_message['data'] = data
 
+        event_message = json.dumps(event_message)
         self.publish(FSEvents.ON_SOCKET_BROADCAST, event_message)
 
     def reset(self):
         self.subscriptions = {}
-
-    def handle_event_q(self):
-        if not self.event_q.empty():
-            try:
-                event = self.event_q.get_nowait()
-                self.publish(event['event'], event['data'])
-
-            except Empty:
-                    pass
-        pass
 
     def get_event_q(self):
         return self.event_q

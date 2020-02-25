@@ -1869,11 +1869,10 @@
         $scope.streamUrl = "";
         return $scope.$apply();
       };
-      startStream = function() {
-        $scope.streamUrl = Configuration.installation.apiurl + 'api/v1/streams/?type=textures';
-        $scope.showStream = true;
-        return $scope.$apply();
-      };
+      startStream = function() {};
+      //$scope.streamUrl = Configuration.installation.apiurl+'api/v1/streams/?type=textures'
+      //$scope.showStream = true
+      //$scope.$apply()
       resetSate = function() {
         $scope.remainingTime = [];
         $scope.showStream = false;

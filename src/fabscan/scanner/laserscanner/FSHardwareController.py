@@ -60,9 +60,6 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.led.off()
         self.turntable.stop_turning()
         self._logger.debug("Hardware controller initialized...")
-        self.lock = threading.Lock()
-
-
 
         self.hardware_test_functions = {
             "TURNTABLE": {
@@ -147,8 +144,6 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def get_picture(self, flush=False):
         if flush:
             self.camera.device.flush_stream()
-            #time.sleep(0.1)
-        #time.sleep(0.2)
         try:
             img = self.camera.device.get_frame()
         except Exception as e:
@@ -158,6 +153,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def capture(self):
         img = self.camera.device.capture_frame()
         return img
+
 
     def get_pattern_image(self):
 
@@ -177,7 +173,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
     def get_laser_image(self, index):
             self.laser.on(laser=index)
-            laser_image = self.capture()
+            laser_image = self.get_picture(flush=True)
             self.laser.off(laser=index)
             return laser_image
 
@@ -201,7 +197,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
             if color:
                 speed = 800
             else:
-                speed = 500
+                speed = 2000
 
             self.turntable.step_blocking(steps, speed)
 
@@ -216,7 +212,8 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
        return self.camera.is_connected()
 
     def start_camera_stream(self, mode="default"):
-        self.camera.device.start_stream(mode)
+        if self.camera.device.is_idle():
+           self.camera.device.start_stream(mode)
 
     def stop_camera_stream(self):
         self.camera.device.stop_stream()

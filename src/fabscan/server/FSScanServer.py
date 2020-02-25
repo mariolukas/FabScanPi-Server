@@ -116,12 +116,12 @@ class FSScanServer(object):
             self.create_services()
 
             while not self.system_exit.kill:
-                time.sleep(0.01)
+                time.sleep(0.1)
 
             self.exit_services()
 
             self._logger.info("FabScan Server Exit. Bye!")
-            os._exit(1)
+            sys.exit(1)
 
         except (KeyboardInterrupt, SystemExit):
             self._logger.info("FabScan Server Exit. Bye!")

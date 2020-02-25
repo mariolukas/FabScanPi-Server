@@ -68,7 +68,6 @@ class FSWebServer(threading.Thread):
 
     def run(self):
         self._logger.debug("Server listening on port %d", self.server_port)
-        #asyncio.set_event_loop(asyncio.new_event_loop())
         webserver = self.routes()
         webserver.listen(self.server_port)
         tornado.ioloop.IOLoop.instance().start()

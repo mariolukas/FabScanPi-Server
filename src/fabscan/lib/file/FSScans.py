@@ -9,6 +9,7 @@ import base64
 import shutil
 import logging
 import glob
+import json
 from PIL import Image
 
 from fabscan.lib.util.FSUtil import json2obj
@@ -124,10 +125,10 @@ class FSScans():
 
 
     def create_preview_image(self, data, scan_id):
-        object = json2obj(str(data))
-
+        #object = json2obj(str(data))
+        object = json.loads(data)
         dir_name = self.config.file.folders.scans
-        png = base64.decodestring(object.image[22:])
+        png = base64.decodebytes(object.image[22:])
         image_file = open(dir_name + scan_id + "/" + scan_id + ".png", "w")
         image_file.write(png)
 

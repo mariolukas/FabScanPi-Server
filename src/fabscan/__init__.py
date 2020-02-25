@@ -80,7 +80,7 @@ def main():
 
     args = parser.parse_args()
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('%(asctime)s [%(process)d:%(thread)d] %(levelname)s - %(name)s: %(message)s')
     logger=logging.getLogger("fabscan")
 
     if args.debugger_host:

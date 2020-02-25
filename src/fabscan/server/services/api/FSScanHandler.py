@@ -34,5 +34,6 @@ class FSScanHandler(BaseHandler):
         #body = json.loads(self.request.body)
         scan_id = kwargs.get('scan_id')
         #scan_id = body.id
-        response = self.scanlib.create_preview_image(self.request.body, scan_id)
-        self.write(json.dumps(response))
+        #response = self.scanlib.create_preview_image(self.request.body, scan_id)
+        #self.write(json.dumps(response))
+        self.write('Done')

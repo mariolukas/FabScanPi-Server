@@ -24,13 +24,15 @@ class FSScanProcessorCommand(object):
     GET_LASER_STREAM = "GET_LASER_STREAM"
     GET_ADJUSTMENT_STREAM = "GET_ADJUSTMENT_STREAM"
     GET_TEXTURE_STREAM = "GET_TEXTURE_STREAM"
+    GET_SETTINGS_STREAM = "GET_SETTINGS_STREAM"
     NOTIFY_IF_NOT_CALIBRATED = "NOTIFY_IF_NOT_CALIBRATED"
     CALL_HARDWARE_TEST_FUNCTION = "CALL_HARDWARE_TEST_FUNCTION"
     CONFIG_MODE_ON = "CONFIG_MODE_ON"
     CONFIG_MODE_OFF = "CONFIG_MODE_OFF"
+    IMAGE_PROCESSED = "IMAGE_PROCESSED"
 
 
 class FSScanProcessorInterface(ThreadingActor):
-    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration):
-        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration)
+    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration, workerpool):
+        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration, workerpool)
         pass

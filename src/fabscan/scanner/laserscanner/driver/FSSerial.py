@@ -10,7 +10,6 @@ import serial
 import time
 import sys
 import logging
-import threading
 from fabscan.lib.util.FSUtil import FSSystem
 from fabscan.lib.util.FSInject import inject
 from fabscan.FSConfig import ConfigInterface
@@ -63,7 +62,6 @@ class FSSerialCom():
 
     def _connect(self):
         self._logger.debug("Trying to connect Arduino on port: " + str(self._port))
-        # open serial port
         try:
             self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=3)
             time.sleep(1)
@@ -82,41 +80,34 @@ class FSSerialCom():
         self._logger.debug("Latest available firmware version is: "+flash_version_number)
 
         try:
-           # check if device is available
            if self.avr_device_is_available():
-                   time.sleep(0.5)
-                   # try to connect to arduino
-                   self._connect()
+               time.sleep(0.5)
+               self._connect()
 
-                   # if connection is opened successfully
-                   if self._serial.isOpen():
-                           current_version = self.checkVersion()
-                           self._logger.debug("Installed firmware version: " + str(current_version))
-                           # check if autoflash is active
-                           if self.config.file.serial.autoflash == "True":
-                               ## check if firmware is up to date, if not flash new firmware
-                               if not current_version == flash_version_number:
-                                   self._close()
-                                   self._logger.info("Old or no firmare detected trying to flash current firmware...")
-                                   if self.avr_flash(flash_file_version):
-                                        time.sleep(0.5)
-                                        self._connect()
-                                        current_version = self.checkVersion()
-                                        self._logger.info("Successfully flashed new Firmware Version: " + str(current_version))
+               if self._serial.isOpen():
+                   current_version = self.checkVersion()
+                   self._logger.debug("Installed firmware version: " + str(current_version))
+
+                   if self.config.file.serial.autoflash == "True" and (not current_version == flash_version_number):
+                       self._logger.info("Old or no firmare detected trying to flash current firmware...")
+                       self._close()
+                       if self.avr_flash(flash_file_version):
+                            time.sleep(0.5)
+                            self._connect()
+                            current_version = self.checkVersion()
+                            self._logger.info("Successfully flashed new Firmware Version: " + str(current_version))
 
 
-                   # no firmware is installed, flash firmware
-                   else:
-                            # if auto flash is activated
-                            if self.config.file.serial.autoflash == "True":
-                                    self._logger.info("No firmware detected trying to flash firmware...")
-                                    if self.avr_flash(flash_file_version):
-                                        time.sleep(0.5)
-                                        self._connect()
-                                        current_version = self.checkVersion()
-                                        self._logger.info("Successfully flashed Firmware Version: " + str(current_version))
+               else:
+                    self._logger.info("No firmware detected trying to flash firmware...")
+                    if self.config.file.serial.autoflash == "True" and (self.avr_flash(flash_file_version)):
+                        time.sleep(0.5)
+                        self._logger.info("Firmware flashed, reconnecting to Board...")
+                        self._connect()
+                        current_version = self.checkVersion()
+                        self._logger.info("Successfully flashed Firmware Version: " + str(current_version))
            else:
-                    self._logger.error("Communication error on port " + str(self._port) + " try other flashing baudrate than " + str(self.flash_baudrate) + ". Maybe corrupted bootloader.")
+                self._logger.error("Communication error on port " + str(self._port) + " try other flashing baudrate than " + str(self.flash_baudrate) + ". Maybe corrupted bootloader.")
 
 
            # set connection states and version
@@ -141,7 +132,6 @@ class FSSerialCom():
                 time.sleep(2) # Wait for FabScan to initialize
                 self._serial.flushInput() # Flush startup text in serial input
                 self.send("M200;")
-                #command = self.send_and_receive("M200;")
 
                 self._serial.readline()
                 # receive version number
@@ -152,29 +142,25 @@ class FSSerialCom():
                 else:
                     return "None"
             except Exception as e:
-                self._logger.error("Check Version Error: " + str(e))
+                self._logger.error("Check Version Error " + str(e))
         else:
             return "None"
 
     def send_and_receive(self, message):
         self.send(message)
-        self._serial.flush()
         time.sleep(0.01)
         while True:
             try:
                 command = self.readline()
-                time.sleep(0.01)
-                command = self.readline()
-
                 return command.decode()
             except Exception as e:
                 self._logger.debug("Send/Receive Error: " + str(e))
                 break
 
-
     def readline(self):
         read_timeout = False
         try:
+
             i = self.buf.find(b"\n")
             if i >= 0:
                 r = self.buf[:i+1]
@@ -198,20 +184,18 @@ class FSSerialCom():
                 else:
                     self.buf.extend(data)
         except Exception as err:
-            self._logger.error('Serial Error occured: ' + str(err))
-
+            self._logger.warning('Serial Error while reading ' + str(err))
 
     def flush(self):
-       self._serial.flushInput()
-       self._serial.flushOutput()
+        self._serial.flushInput()
+        self._serial.flushOutput()
 
     def send(self, message):
         try:
             message = message + "\n"
             self._serial.write(message.encode())
         except Exception as e:
-            self._logger.error("Error while sending: " + str(e))
-
+            self._logger.error("Serial Error while writing: " + str(e))
 
     def is_connected(self):
         return self._connected
