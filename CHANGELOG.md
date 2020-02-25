@@ -4,21 +4,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [0.9.0] - unreleased
+## [0.x.x] - unreleased
+- implement a plugin system
+
+## [0.12.0] - unreleased
+- add a more precise camera calibration (remove distortion)
+- make calibration more robust
+
+## [0.11.0] - unreleased
+- introduce new user interface
+
+## [0.10.0] - unreleased
 
 ### TODO
-- migrate python 2 to python 3
 - refactor serial driver make it more abstract to general connector interface
 - add connector for GPIO's
-- add support for cricket board
+- add connector for adafruit crickit board
+
+[0.9.0] - unreleased
 
 ### Added
+- new firmware version
+- new frontend version (meshlab options are removed within this version)
 
 ### Changed
+- migrated form python2 to python3 
+- refactored image worker and worker pool
+- refactored serial communication parts of firmware
+- serial connection speedup
+- general processing speedup
+- removed ugly event handler from main scanner handler ( task queue is handled by actor now)
 
 ### Fixed
+- put websocket callbacks to tornado ioloop
 
-## [0.8.1] - unreleased
+
+## [0.8.2] - 2020-01-01
+
+### Fixed
+- serial connection issues
+- fixed init.d start script
+- fixed sudo users
+- fxed serial deadlock
+
+## [0.8.1] - 2019-12-31
 
 ### Added
 - auto threshold function
