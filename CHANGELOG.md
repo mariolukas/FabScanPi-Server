@@ -5,13 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [0.x.x] - unreleased
+### TODO
 - implement a plugin system
 
 ## [0.12.0] - unreleased
+### TODO
 - add a more precise camera calibration (remove distortion)
 - make calibration more robust
 
 ## [0.11.0] - unreleased
+### TODO
 - introduce new user interface
 
 ## [0.10.0] - unreleased
@@ -21,7 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - add connector for GPIO's
 - add connector for adafruit crickit board
 
-[0.9.0] - unreleased
+## [0.9.0] - unreleased
 
 ### Added
 - new firmware version
