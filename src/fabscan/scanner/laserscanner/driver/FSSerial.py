@@ -147,11 +147,16 @@ class FSSerialCom():
             return "None"
 
     def send_and_receive(self, message):
+
         self.send(message)
-        time.sleep(0.01)
+
+        # NOTE: readline is needed to be called two times, because the first will receive the echoed command
+        #       the second one will return the prompt char ">". The mcu processing is done between
+        #       this actions! We need to wait until processing (e.g. motor move) is done.
         while True:
             try:
                 command = self.readline()
+                self.readline()
                 return command.decode()
             except Exception as e:
                 self._logger.debug("Send/Receive Error: " + str(e))
@@ -160,7 +165,6 @@ class FSSerialCom():
     def readline(self):
         read_timeout = False
         try:
-
             i = self.buf.find(b"\n")
             if i >= 0:
                 r = self.buf[:i+1]

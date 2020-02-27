@@ -114,7 +114,6 @@ class CamProcessor(threading.Thread):
                     image = np.fromstring(self.stream.getvalue(), dtype=np.uint8)
 
                     if self.mode == "settings":
-                       # image = self.imageprocessor.decode_image(image)
                         image = self.imageprocessor.get_laser_stream_frame(image)
 
                     self.fs_ring_buffer.append(image)

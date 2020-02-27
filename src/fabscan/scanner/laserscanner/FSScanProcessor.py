@@ -240,7 +240,6 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def start_calibration(self):
         self.hardwareController.settings_mode_off()
-        time.sleep(0.5)
         self.calibration.start()
 
     def stop_calibration(self):
@@ -270,6 +269,8 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def settings_mode_off(self):
         self.hardwareController.settings_mode_off()
+
+    ## general start sequence
 
     def start_scan(self):
         self.settings_mode_off()
@@ -316,6 +317,7 @@ class FSScanProcessor(FSScanProcessorInterface):
             event.command = 'STOP'
             self.eventmanager.publish(FSEvents.COMMAND, event)
 
+    ## texture callbacks
     def init_texture_scan(self):
         message = {
             "message": "SCANNING_TEXTURE",
@@ -341,15 +343,6 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.hardwareController.camera.device.flush_stream()
 
 
-    def finish_texture_scan(self):
-        self._logger.info("Finishing texture scan.")
-        self.current_position = 0
-
-        self.hardwareController.led.off()
-
-        self.settings.file.camera.brightness = self._scan_brightness
-        self.settings.file.camera.contrast = self._scan_contrast
-        self.settings.file.camera.saturation = self._scan_saturation
 
     def scan_next_texture_position(self):
         if not self._stop_scan:
@@ -380,6 +373,18 @@ class FSScanProcessor(FSScanProcessorInterface):
                if self.actor_ref.is_alive():
                   self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
 
+
+    def finish_texture_scan(self):
+        self._logger.info("Finishing texture scan.")
+        self.current_position = 0
+
+        self.hardwareController.led.off()
+
+        self.settings.file.camera.brightness = self._scan_brightness
+        self.settings.file.camera.contrast = self._scan_contrast
+        self.settings.file.camera.saturation = self._scan_saturation
+
+    ## object scan callbacks
     def init_object_scan(self):
 
         self.hardwareController.start_camera_stream()
@@ -547,8 +552,6 @@ class FSScanProcessor(FSScanProcessorInterface):
         duration = int((end_time - self._starttime)//1000)
         self._logger.debug("Time Total: %i sec." % (duration,))
 
-        self._starttime = 0
-
         if len(self.point_clouds) == self.config.file.laser.numbers:
 
             self._logger.info("Scan complete writing pointcloud.")
@@ -616,7 +619,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def reset_scanner_state(self):
         self._logger.info("Reseting scanner states ... ")
-        self.hardwareController.camera.device.flush_stream()
+        #self.hardwareController.camera.device.flush_stream()
 
         for i in range(self.config.file.laser.numbers):
             self.hardwareController.laser.off()

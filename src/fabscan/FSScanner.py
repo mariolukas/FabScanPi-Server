@@ -178,7 +178,6 @@ class FSScanner(threading.Thread):
 
         # Start calibration
         elif command == FSCommand.CALIBRATE:
-            self._logger.debug("Calibration started....")
             self.set_state(FSState.CALIBRATING)
             self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START_CALIBRATION})
             return

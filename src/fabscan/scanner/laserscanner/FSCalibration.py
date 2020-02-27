@@ -8,14 +8,12 @@ from fabscan.lib.util.FSInject import singleton
 from fabscan.lib.util.FSUtil import FSSystem
 from fabscan.lib.file.FSImage import FSImage
 import cv2
-import traceback
 import sys
 import copy
 import math
 
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
-from fabscan.FSEvents import FSEventManagerSingleton
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
@@ -86,12 +84,12 @@ class FSCalibration(FSCalibrationInterface):
 
 
     def start(self):
-        #self._hardwarecontroller.stop_camera_stream()
+
+        self._logger.debug("Calibration started....")
         tools = FSSystem()
-        self._hardwarecontroller.stop_camera_stream()
+        #self._hardwarecontroller.stop_camera_stream()
         tools.delete_folder(self.config.file.folders.scans+'calibration')
-        self._hardwarecontroller.turntable.enable_motors()
-        time.sleep(0.4)
+        #self._hardwarecontroller.turntable.enable_motors()
 
         if self.config.file.laser.interleaved == "False":
             self._logger.debug("Turning Leds on in non interleaved mode.")
@@ -117,10 +115,10 @@ class FSCalibration(FSCalibrationInterface):
             if self.config.file.laser.interleaved == "False":
                 self._hardwarecontroller.led.off()
 
-            self._hardwarecontroller.turntable.disable_motors()
+            #self._hardwarecontroller.turntable.disable_motors()
 
             if self._stop:
-                self._logger.debug("Calibration canceled...")
+                self._logger.debug("Calibration stopped...")
 
 
                 # send information to client that calibration is finished
@@ -153,7 +151,7 @@ class FSCalibration(FSCalibrationInterface):
             self.reset_calibration_values()
             return
         except Exception as e:
-            self._logger.error(e)
+            self._logger.error('Error while calibration' +str(e))
             message = {
                     "message": "SCANNER_CALIBRATION_FAILED",
                     "level": "warn"
@@ -170,10 +168,7 @@ class FSCalibration(FSCalibrationInterface):
         # 90 degree turn
         try:
             if not self._stop:
-                self._logger.debug(self.quater_turn)
-                self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
-    #            self._hardwarecontroller.start_camera_stream(mode="calibration")
-
+                self._hardwarecontroller.move_to_next_position(steps=self.quater_turn)
 
             position = 0
             while abs(position) < self.quater_turn * 2:
@@ -181,9 +176,8 @@ class FSCalibration(FSCalibrationInterface):
                 if not self._stop:
                     self._logger.debug("Capturing started...")
                     _capture(position)
-                    self._hardwarecontroller.turntable.enable_motors()
-                    self._hardwarecontroller.turntable.step_blocking(-self.motorsteps_per_calibration_step, speed=900)
-                    #self._hardwarecontroller.turntable.disable_motors()
+                    #self._hardwarecontroller.turntable.enable_motors()
+                    self._hardwarecontroller.move_to_next_position(steps=-self.motorsteps_per_calibration_step)
                     position += self.motorsteps_per_calibration_step
 
                     #self._logger.debug("Calibration Position "+str(self.current_position)+ " of "+str(self.total_positions))
@@ -199,7 +193,7 @@ class FSCalibration(FSCalibrationInterface):
                     break
 
             if not self._stop:
-                self._hardwarecontroller.turntable.step_blocking(self.quater_turn, speed=900)
+                self._hardwarecontroller.move_to_next_position(steps=self.quater_turn)
                 _calibrate()
         except Exception as e:
             self._logger.debug("Calibration Error")
@@ -317,7 +311,7 @@ class FSCalibration(FSCalibrationInterface):
                     "message": "LASER_CALIBRATION_ERROR",
                     "level": "error"
                 }
-            #    #self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+                self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
                 t = None
 
 
@@ -331,8 +325,9 @@ class FSCalibration(FSCalibrationInterface):
 
     def _capture_pattern(self):
         #pattern_image = self._hardwarecontroller.get_pattern_image()
-        time.sleep(1.5)
+        #time.sleep(1.5)
         pattern_image = self._hardwarecontroller.get_picture()
+        pattern_image = self._imageprocessor.decode_image(pattern_image)
         return pattern_image
 
     def _capture_laser(self, index):
@@ -487,6 +482,7 @@ class FSCalibration(FSCalibrationInterface):
 
         return center_point, R, [cxTupel, cyTupel, czTupel]
 
+
     def ransac(self, data, model_class, min_samples, threshold, max_trials=500):
         best_model = None
         best_inlier_num = 0
@@ -534,8 +530,6 @@ class FSCalibration(FSCalibrationInterface):
 
     def get_time_stamp(self):
         return int(datetime.now().strftime("%s%f"))/1000
-
-import numpy.linalg
 
 
 from scipy.sparse import linalg
