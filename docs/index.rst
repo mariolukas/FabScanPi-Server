@@ -43,6 +43,7 @@ Contents
    hardware_bom
    hardware_case
    hardware_electronics
+   hardware_troubleshoot
 
 .. toctree::
    :maxdepth: 2
