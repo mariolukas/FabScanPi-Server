@@ -5,8 +5,8 @@ The Electronics
 ***************
 
 
-The FabScanPi HAT
-=================
+FabScanPi HAT
+=============
 
 
 The FabScan HAT is basically a combination of an `Arduino <https://www.arduino.cc/>` and the old

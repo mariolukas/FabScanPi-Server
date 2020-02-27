@@ -4,8 +4,8 @@
 The Mechanics
 *************
 
-The FabScanPi
-=============
+FabScan Pi
+==========
 
 Bill of Materials
 -----------------
