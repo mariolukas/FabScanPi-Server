@@ -40,7 +40,6 @@ Contents
    :maxdepth: 2
    :caption: Hardware
 
-   hardware_bom
    hardware_mechanics
    hardware_electronics
    hardware_troubleshoot
