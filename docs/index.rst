@@ -41,7 +41,7 @@ Contents
    :caption: Hardware
 
    hardware_bom
-   hardware_case
+   hardware_mechanics
    hardware_electronics
    hardware_troubleshoot
 

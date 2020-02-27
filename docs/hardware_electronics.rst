@@ -5,12 +5,12 @@ The Electronics
 ***************
 
 
-About the FabScanPi HAT
-=======================
+The FabScanPi HAT
+=================
 
 
-The FabScan HAT is basically a combination of an [Arduino](https://www.arduino.cc/) and the old
-[FabScan Shield](https://github.com/watterott/FabScan-Shield) for [Arduino](https://www.arduino.cc/). It provides all connectors for the hardware
+The FabScan HAT is basically a combination of an `Arduino <https://www.arduino.cc/>` and the old
+`FabScan Shield <https://github.com/watterott/FabScan-Shield>` for `Arduino <https://www.arduino.cc/>`. It provides all connectors for the hardware
 parts (like motors, servos, lasers, LED's etc.) Instead of an USB
 connection to the Raspberry Pi, the HAT is attached on the Pi's pinheaders.
 The HAT communicates over a serial connection with the Rasperry Pi.
@@ -21,10 +21,10 @@ flashed automatically by the FabscanPi-Server application.
 
 
 Assemble the FabScanPi HAT
-==========================
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-.. note:: About soldering: If you are soldering for the very fist time, we suggest to read the comic ["Soldering is Easy"](https://mightyohm.com/files/soldercomic/FullSolderComic_EN.pdf) by Mitch Altman (soldering wisdom), Andie Nordgren (comic adaption) and Jeff Keyzer (layout and editing)._
+.. note:: About soldering: If you are soldering for the very fist time, we suggest to read the comic `"Soldering is Easy" <https://mightyohm.com/files/soldercomic/FullSolderComic_EN.pdf>` by Mitch Altman (soldering wisdom), Andie Nordgren (comic adaption) and Jeff Keyzer (layout and editing)._
 
 
 .. raw:: html
@@ -118,7 +118,7 @@ Now the DC-jack power connector will be installed into three oval pin holes acro
    :width: 400
 
 
-**Assembling the Raspberry-Pi Connector**
+**Adding the Raspberry-Pi connector**
 
 Now the 2x20-pin socket connector must be installed from the rear side of the PCB (where we only did soldering till now). Soldering of the 2x20-pin connector is done on the front side (where all our parts are placed). This connector is used as interface for the Raspberry-Pi.
 
@@ -135,11 +135,11 @@ The center pin is for +12V DC, the outer connector tongue is for GND.
    :width: 400
 
 
-**Mount the 5V DC/DC converter or 5V external Power Source**
+**Adding the 5V DC/DC converter or 5V external Power Source**
 
 Additionally to the 12V DC coming from the power supply the FabScanPi needs 5V DC. Now you have to decide if you want to use a DC/DC converter IC which generates the 5V out of the 12V from the external 12 power supply (common solution).
 
-For the DC/DC converter option you can find further instructions and pictures on the [Watterott electronic website](https://github.com/watterott/RPi-FabScan-HAT/blob/master/hardware/RPi-FabScan-HAT_Assembly.pdf).
+For the DC/DC converter option you can find further instructions and pictures on the `Watterott electronic website` <https://github.com/watterott/RPi-FabScan-HAT/blob/master/hardware/RPi-FabScan-HAT_Assembly.pdf>.
 
 
 
@@ -147,8 +147,14 @@ If you are using another power supply which is capable of delivering 12V and 5V 
 
 
 
-#Connecting the Stepper Motor(s)
+Connecting the Stepper Motor(s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+**The Motor drivers**
+
+TODO
+
+**Wiring of the Motors**
 
 There are different kinds of stepper motos. Mostly with 4 or 6 leads. For
 connecting the stepper motor to the FabScanPi HAT you need to know the
@@ -182,7 +188,8 @@ swap wires until you light the LED.
    :width: 400
 
 
-#Connecting the Lasers
+Connecting the Lasers
+~~~~~~~~~~~~~~~~~~~~~
 
 The FabScanPi HAT provides connectors for two lasers. But only one laser
 is supported until now. Connect your laser to the connectors labeled
@@ -205,14 +212,10 @@ right image: connecting a switch)
    :width: 400
 
 
+Connecting the Power Supply
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+You will have the following options for powering your FabScan.
 
-#Connecting the Motor drivers
-
-TODO
-
-
-
-#Connecting the Power Supply
 The FabScanPi will need 12V DC and 5V DC. There are different options to fulfil this requirement:
 
 **Option A:** (recommended)
@@ -233,7 +236,7 @@ for 1 turntable stepper motor, 1 PiCam and 1 laser.
 | 5V             | 5V output from regulator to FabScanPi HAT |
 +----------------+-------------------------------------------+
 
-For the DC/DC converter option you can find further instructions and pictures on the [Watterott electronic website](https://learn.watterott.com/fabscan/hat_assembly.pdf).
+For the DC/DC converter option you can find further instructions and pictures on the `Watterott electronic website <https://learn.watterott.com/fabscan/hat_assembly.pdf>`.
 
 
 NOTE: For the final stage of constuction a more powerful power supply is needed. At the moment there are no technical specifications available.
@@ -272,7 +275,9 @@ NOTE: For the final stage of constuction a more powerful power supply is needed.
 
 
 
-#Connecting the LED Ring
+Connecting the LED Ring
+~~~~~~~~~~~~~~~~~~~~~~~
+
 This small manual will help you to assemble the Camera and LED ring combination. You will need a light if you want to perform texture scans (Check mark is set for Color Scan).
 
 .. image:: images/RingLicht_1.jpg
@@ -332,10 +337,4 @@ The pins of the JST connector on the LED board have the following configuration:
 
 .. image:: images/JST-LEDboard-Configuration.jpg
    :width: 400
-
-
-
-#Additional Motors for the Lasers
-
-TODO
 
