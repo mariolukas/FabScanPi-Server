@@ -54,7 +54,6 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self._logger.debug("Reset FabScanPi HAT...")
         self.reset_devices()
 
-        self._logger.debug("Reset FabScanPi HAT...")
         self.laser.off(laser=0)
         #self.laser.off(laser=1)
         self.led.off()

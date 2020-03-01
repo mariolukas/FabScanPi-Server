@@ -63,7 +63,7 @@ class FSSerialCom():
     def _connect(self):
         self._logger.debug("Trying to connect Arduino on port: " + str(self._port))
         try:
-            self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=3)
+            self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=10)
             time.sleep(1)
         except:
             self._logger.error("Could not open serial port")
@@ -112,14 +112,14 @@ class FSSerialCom():
 
            # set connection states and version
            if self._serial.isOpen() and (current_version != "None"):
-                  self._logger.info("FabScanPi is connected to FabScanPi HAT or compatible on port: " + str(self._port))
-                  current_version = self.checkVersion()
-                  self._firmware_version = current_version
-                  self._connected = True
+              self._logger.info("FabScanPi is connected to FabScanPi HAT or compatible on port: " + str(self._port))
+              current_version = self.checkVersion()
+              self._firmware_version = current_version
+              self._connected = True
            else:
-                  self._logger.error("Can not find Arduino or FabScanPi HAT")
-                  self._connected = False
-                  sys.exit(1)
+              self._logger.error("Can not find Arduino or FabScanPi HAT")
+              self._connected = False
+              sys.exit(1)
 
         except Exception as e:
             self._logger.error("Fatal FabScanPi HAT or compatible connection error...." + str(e))
@@ -131,7 +131,7 @@ class FSSerialCom():
                 self._serial.write("\r\n\r\n".encode())
                 time.sleep(2) # Wait for FabScan to initialize
                 self._serial.flushInput() # Flush startup text in serial input
-                self.send("M200;")
+                self.send("M200")
 
                 self._serial.readline()
                 # receive version number
@@ -149,15 +149,18 @@ class FSSerialCom():
     def send_and_receive(self, message):
 
         self.send(message)
-
+        #self._serial.flush()
+        time.sleep(0.1)
         # NOTE: readline is needed to be called two times, because the first will receive the echoed command
         #       the second one will return the prompt char ">". The mcu processing is done between
         #       this actions! We need to wait until processing (e.g. motor move) is done.
         while True:
             try:
                 command = self.readline()
-                self.readline()
-                return command.decode()
+                command = self.readline()
+                self._logger.debug(command.rstrip(b"\n"))
+                #if state.rstrip("\n") == ">":
+                return command
             except Exception as e:
                 self._logger.debug("Send/Receive Error: " + str(e))
                 break
