@@ -28,7 +28,9 @@ class Turntable(object):
         steps *= self.scaler
 
         if self.serial_connection != None:
-            command = "G04 T"+str(steps)+" F"+str(speed)
+            command = "G01 T"+str(steps)+" F"+str(speed)
+            #if steps < 0:
+            #    command = command.replace('\U00002013', '-')
             self.serial_connection.send_and_receive(command)
             time.sleep(0.8)
 
@@ -36,7 +38,10 @@ class Turntable(object):
         steps *= self.scaler
 
         if self.serial_connection != None:
-            command = "G02 T"+str(steps)+" F"+str(speed)
+
+            command = "G01 T"+str(steps)+" F"+str(speed)
+
+            #    command = command.replace('\U00002013', '-')
             self.serial_connection.send_and_receive(command)
 
 

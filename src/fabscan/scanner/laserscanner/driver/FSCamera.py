@@ -30,7 +30,7 @@ class FSCamera():
 
     def __init__(self, config):
 
-        self.camera_buffer = FSRingBuffer(10)
+        self.camera_buffer = FSRingBuffer(5)
         config = config
 
         if config.file.camera.type == 'PICAM':
@@ -298,9 +298,9 @@ class PiCam(threading.Thread):
                 # self.camera.awb_mode = 'off'
                 # self.camera.awb_gains = g
 
-            self.idle = False
-            self.camera.start_recording(self.output, format='mjpeg')
-            self._logger.debug("Cam Stream with Resolution " + str(self.resolution) + " started")
+                self.idle = False
+                self.camera.start_recording(self.output, format='mjpeg')
+                self._logger.debug("Cam Stream with Resolution " + str(self.resolution) + " started")
         except Exception as e:
             self._logger.error("Not able to initialize Raspberry Pi Camera." + str(e))
             self._logger.error(e)

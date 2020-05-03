@@ -43,8 +43,8 @@ class FSImageWorkerPool(ThreadingActor):
 
         self._logger = logging.getLogger(__name__)
 
-        self._task_q = multiprocessing.Queue(self.config.file.process_numbers*2)
-        self._output_q = multiprocessing.Queue(self.config.file.process_numbers*2)
+        self._task_q = multiprocessing.Queue(self.config.file.process_numbers)
+        self._output_q = multiprocessing.Queue(self.config.file.process_numbers)
 
         self._input_count = 0
         self._output_count = 0
@@ -56,7 +56,7 @@ class FSImageWorkerPool(ThreadingActor):
 
     def on_receive(self, event):
         if event[FSEvents.COMMAND] == FSSWorkerPoolCommand.CREATE:
-            self.create(self._number_of_workers)
+            self.create(event['NUMBER_OF_WORKERS'])
         if event[FSEvents.COMMAND] == FSSWorkerPoolCommand.KILL:
             self.kill()
         if event[FSEvents.COMMAND] == FSSWorkerPoolCommand.CLEAR_QUEUE:
@@ -179,7 +179,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                         if image_task.task_type == "KILL":
                             self._logger.debug("Killed Worker Process with PID "+str(self.pid))
                             self.exit = True
-                            break
+
 
                         if (image_task.task_type == "PROCESS_COLOR_IMAGE"):
 
@@ -191,6 +191,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             data['laser_index'] = None
 
                             self.output_q.put(data)
+
 
                         if (image_task.task_type == "PROCESS_DEPTH_IMAGE"):
                             self._logger.debug('Image Processing starts.')
@@ -209,12 +210,19 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             except Exception as e:
                                 self._logger.debug(e)
 
+
                             self.output_q.put(data)
+                            color_image = None
+                            point_cloud = None
+                            texture = None
+
                             self._logger.debug('Image Processing finished.')
 
+                        image_task = None
+
                 except Empty:
-                    time.sleep(0.01)
+                    time.sleep(0.1)
                     pass
             else:
                 # thread idle
-                time.sleep(0.01)
+                time.sleep(0.1)

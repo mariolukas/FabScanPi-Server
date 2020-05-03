@@ -35,6 +35,7 @@ class FSImage(object):
         prefix = os.path.join(dir_name, "%s_{0}" % prefix)
         number = str(number).zfill(3)
         cv2.imwrite(prefix.format(number) + ".jpg", img)
+        img = None
         return prefix.format(number) + ".jpg"
 
     def load_image(self, number, prefix, dir_name="scans"):

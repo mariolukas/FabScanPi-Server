@@ -11,8 +11,6 @@ import struct
 import numpy as np
 from fabscan.FSConfig import ConfigInterface
 from fabscan.lib.util.FSInject import inject
-from fabscan.FSVersion import __version__
-
 
 class PointCloudError(Exception):
 

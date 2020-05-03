@@ -191,14 +191,8 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
         return laser_image
 
-    def move_to_next_position(self, steps=180, color=False):
-
-            if color:
-                speed = 800
-            else:
-                speed = 2000
-
-            self.turntable.step_blocking(steps, speed)
+    def move_to_next_position(self, steps=180, speed=800):
+        self.turntable.step_blocking(steps, speed)
 
 
     def arduino_is_connected(self):
