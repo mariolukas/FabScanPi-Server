@@ -31,9 +31,7 @@ class FSScanHandler(BaseHandler):
              self.write(json.dumps(files))
 
     def post(self, *args, **kwargs):
-        #body = json.loads(self.request.body)
         scan_id = kwargs.get('scan_id')
-        #scan_id = body.id
-        #response = self.scanlib.create_preview_image(self.request.body, scan_id)
-        #self.write(json.dumps(response))
-        self.write('Done')
+        data = tornado.escape.json_decode(self.request.body)
+        response = self.scanlib.create_preview_image(data['image'].encode(), scan_id)
+        self.write(json.dumps(response))

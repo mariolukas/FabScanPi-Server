@@ -2,8 +2,8 @@ Source: fabscanpi-server
 Section: net
 Priority: optional
 Maintainer: Mario Lukas (info@mariolukas.de) 
-Build-Depends: debhelper (>= 8.0.0), python (>= 2.7), dh-python, cdbs
-X-Python-Version: >=2.7
+Build-Depends: debhelper (>= 8.0.0), python (>= 3.5), dh-python, cdbs
+X-Python-Version: >=3.5
 Standards-Version: 3.9.3
 
 Package: fabscanpi-server

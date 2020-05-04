@@ -56,6 +56,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._progress = 0
         self._is_color_scan = True
         self.point_clouds = []
+        self.both_cloud = []
 
         self.current_position = 0
         self._stop_scan = False
@@ -296,7 +297,13 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         # initialize pointcloud actors...
         self.point_clouds = []
-        self.point_clouds = [FSPointCloud(config=self.config, color=self._is_color_scan) for _ in range(self.config.file.laser.numbers)]
+        #self.point_clouds = [FSPointCloud(config=self.config, color=self._is_color_scan) for _ in range(self.config.file.laser.numbers)]
+
+        for laser_index in range(self.config.file.laser.numbers):
+            self.point_clouds.append(FSPointCloud(config=self.config, color=self._is_color_scan, filename=self._prefix, postfix=laser_index))
+
+        if self.config.file.laser.numbers > 1:
+            self.both_cloud = FSPointCloud(color=self._is_color_scan, filename=self._prefix, postfix='both')
 
         if not (self.config.file.calibration.laser_planes[0]['normal'] == []) and self.actor_ref.is_alive():
             if self._is_color_scan:
@@ -466,6 +473,8 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         self.hardwareController.destroy_camera_device()
 
+        self.finishFiles()
+
         self.hardwareController.turntable.stop_turning()
         self.hardwareController.led.off()
         for laser_index in range(self.config.file.laser.numbers):
@@ -477,7 +486,9 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         self.clear_and_stop_worker_pool()
         self._starttime = 0
-        #self.utils.delete_scan(self._prefix)
+        self.finishFiles()
+
+        self.utils.delete_scan(self._prefix)
         self.reset_scanner_state()
         self._logger.info("Scan stoped")
         self.hardwareController.stop_camera_stream()
@@ -564,24 +575,14 @@ class FSScanProcessor(FSScanProcessorInterface):
         if len(self.point_clouds) == self.config.file.laser.numbers:
 
             self._logger.info("Scan complete writing pointcloud.")
-
-            if self.config.file.laser.numbers > 1:
-                both_cloud = FSPointCloud(color=self._is_color_scan)
-
             self._logger.debug('Number of PointClouds (for each laser one) : ' +str(len(self.point_clouds)))
 
-            for laser_index in range(self.config.file.laser.numbers):
-                if self.config.file.laser.numbers > 1:
-                    both_cloud.points += self.point_clouds[laser_index].get_points()
-                self.point_clouds[laser_index].saveAsFile(self._prefix,  str(laser_index))
-
-            if self.config.file.laser.numbers > 1:
-                both_cloud.saveAsFile(self._prefix, 'both')
+            self.finishFiles()
 
             settings_filename = self.config.file.folders.scans+self._prefix+"/"+self._prefix+".fab"
             self.settings.save_json(settings_filename)
 
-            both_cloud = None
+
 
             message = {
                 "message": "SAVING_POINT_CLOUD",
@@ -617,6 +618,36 @@ class FSScanProcessor(FSScanProcessorInterface):
     def append_points(self, points, index):
         if len(self.point_clouds) > 0:
             self.point_clouds[index].append_points(points)
+        if len(self.point_clouds) > 1:
+            self.both_cloud.append_points(points)
+
+    def finishFiles(self):
+
+        try:
+            for laser_index in range(self.config.file.laser.numbers):
+                if self.point_clouds[laser_index]:
+                    self.point_clouds[laser_index].closeFile()
+                    self.point_clouds[laser_index] = None
+
+            if self.config.file.laser.numbers > 1:
+                if self.both_cloud:
+                    self.both_cloud.closeFile()
+                    self.both_cloud = None
+        except IOError:
+            #TODO: Call stop scan function if this fails to release the scan process
+            self._logger.error("Closing PointCloud files failed.")
+            self.scan_failed()
+
+
+    def scan_failed(self):
+        message = {
+            "message": "SCAN_FAILED_STOPPING",
+            "scan_id": self._prefix,
+            "level": "error"
+        }
+
+        self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+        self.stop_scan()
 
     def get_resolution(self):
         return self.settings.file.resolution
@@ -642,7 +673,6 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._total = 0
         self._starttime = 0
 
-        self.point_clouds = None
 
     def get_time_stamp(self):
         return int(datetime.now().strftime("%s%f"))/1000

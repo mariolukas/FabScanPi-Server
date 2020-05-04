@@ -40,10 +40,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - serial connection speedup
 - general processing speedup
 - removed ugly event handler from main scanner handler ( task queue is handled by actor now)
+- scan data is saved to a file during the scan process
+- free more memory by resetting unused image space
+- added process and thread number to logger formatter 
 
 ### Fixed
 - put websocket callbacks to tornado ioloop
-
+- bugfixes in firmware
 
 ## [0.8.2] - 2020-01-01
 
