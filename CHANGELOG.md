@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - put websocket callbacks to tornado ioloop
 - bugfixes in firmware
+- fixed camera image rotation bug
 
 ## [0.8.2] - 2020-01-01
 

@@ -70,11 +70,18 @@ class ImageProcessor(ImageProcessorInterface):
         self.object_pattern_points = self.create_object_pattern_points()
 
     def init(self, resolution):
-        self.image_height = resolution[0]
-        self.image_width = resolution[1]
+
+        if self.config.file.camera.rotate == "True":
+            self.image_height = resolution[0]
+            self.image_width = resolution[1]
+        else:
+            self.image_height = resolution[1]
+            self.image_width = resolution[0]
+
         self._weight_matrix = self._compute_weight_matrix()
 
     def _compute_weight_matrix(self):
+
         _weight_matrix = np.array(
             (np.matrix(np.linspace(0, self.image_width - 1, self.image_width)).T *
              np.matrix(np.ones(self.image_height))).T)
@@ -131,6 +138,7 @@ class ImageProcessor(ImageProcessorInterface):
 
     def _window_mask(self, image, window_enable=True):
 
+        height, width = image.shape
         window_value = 3
         mask = 0
         if window_enable:
@@ -138,7 +146,7 @@ class ImageProcessor(ImageProcessorInterface):
             _min = peak - window_value
             _max = peak + window_value + 1
             mask = np.zeros_like(image)
-            for i in range(self.image_height):
+            for i in range(height):
                 mask[i, _min[i]:_max[i]] = 255
                 # Apply mask
         image = cv2.bitwise_and(image, mask)

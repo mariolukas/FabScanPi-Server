@@ -197,8 +197,8 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             self._logger.debug('Image Processing starts.')
                             try:
 
-                                self.image.save_image(image_task.image, image_task.progress, image_task.prefix,
-                                                      dir_name=image_task.prefix + '/raw_' + image_task.raw_dir)
+                                #self.image.save_image(image_task.image, image_task.progress, image_task.prefix,
+                                #                      dir_name=image_task.prefix + '/raw_' + image_task.raw_dir)
 
                                 image_task.image = self.image_processor.decode_image(image_task.image)
                                 angle = float(image_task.progress * 360) / float(image_task.resolution)
