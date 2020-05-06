@@ -1,3 +1,26 @@
+fabscanpi-server (0.9.0) UNRELEASED; urgency=medium
+  * migrated form python2 to python3
+  * refactored image worker and worker pool
+  * refactored serial communication parts of firmware
+  * serial connection speedup
+  * general processing speedup
+  * removed ugly event handler from main scanner handler ( task queue is handled by actor now)
+  * scan data is saved to a file during the scan process
+  * free more memory by resetting unused image space
+  * added process and thread number to logger formatter
+  * put websocket callbacks to tornado ioloop
+  * bugfixes in firmware
+  * fixed camera image rotation bug
+  * new firmware version
+  * new frontend version (meshlab options are removed within this version)
+
+ -- Mario Lukas <info@fabscan.org>  Fri, 8 May 2020 09:44:00 +0100
+
+fabscanpi-server (0.8.2) UNRELEASED; urgency=medium
+  * initial SystemV start script.
+
+ -- Mario Lukas <info@fabscan.org>  Mon, 1 Jan 2020 10:44:00 +0100
+
 fabscanpi-server (0.8.1) UNRELEASED; urgency=medium
   * auto threshold function
   * systemd service script
