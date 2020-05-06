@@ -1,7 +1,10 @@
 .. _development_backend:
 
-**********************************
-Backend: FabScanPi-Server (Python)
-**********************************
+****************
+FabScanPi-Server
+****************
+
+Setting up a Development environment
+------------------------------------
 
 TODO
