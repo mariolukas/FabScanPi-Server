@@ -124,15 +124,22 @@ and picamera. The easiest way to install all dependencies is to use debians pack
 like opencv with tbb support and libtbb are not provided by the official raspbian mirrors. You need to add the
 fabscan repository to your apt source list.
 
+
 Build Debian package
 Install dependencies
 
 .. code:: bash
 
-    sudo apt-get install build-essential dpkg-dev debhelper devscripts fakeroot cdbs python-setuptools python-support
+    sudo apt-get install build-essential dpkg-dev debhelper devscripts fakeroot cdbs python-setuptools dh-python python-support
 
+Clone Repistory
 
-The package is build by calling
+.. code:: Bash
+
+   git clone https://github.com/mariolukas/FabScanPi-Server.git
+   cd FabScanPi-Server
+
+The package is built by calling
 
 .. code:: bash
 
