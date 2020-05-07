@@ -1,4 +1,4 @@
- #!/bin/sh
+#!/bin/bash
 # /etc/init.d/fabscanpi-server
 ### BEGIN INIT INFO
 # Provides:          fabscanpi-server
@@ -11,6 +11,7 @@
 # Short-Description: Start and stop the fabscanpi-server daemon
 # Description:       fabscanpi-server daemon
 ### END INIT INFO
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 
 DAEMONUSER=fabscan
 DESC="FabScanPi Daemon"

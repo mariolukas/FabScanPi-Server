@@ -27,15 +27,15 @@ env:
   - secure: mtixe+yGZ0+mDmcvcFhlETHbmS0umal53U8rh+gvn0+QuuVY0WilLUf5eE3tLZtifyrC0XHkGXpOiaRKS0k5sWuryhEHc5nU7h85uw209hHMNuR2wsMFTln6vUpjZkXxCUuY1qBS9SRK6JrBro0j8aDm7/hj/ESyjp+eexA6hjX/EuYHT5TjuPgrgx8V6kJAWLM56H7pQqFX2sYlCfqSPm4HntA50JP84FcJ6DOczV3RgwKJLXftYWRfcw4ANtcM+5uoaNXkNzdRmqB91W+A+k/lKmtAdpldJhVpsLt43nk+m75+EUjqinuvwzVlz2xPxUC3L/t8HAxqudmg+41MSDhUUcDnPN0AkIE6lzYsBkSZ6fR36xgPVnGHnsTTiN+j7aOpnxjrGzofb0KGOCbfn8TWiw013F7fM5gVL94FkIWpDrfgBgU/tdkmjhnMEnNqyYXsrtRIG+PexZV4PFg5GtStIZsy/BVZRvroHBnmQs7AS19w6NnsdvLHM6P3U+K37shpZgWSXKKKLyqV/NRi/iSa8dbPRISoZCn8x84vEU8bsTIUqT+n9cN75RbcSOIdvj4cDE+GJqWJh+afBfacuiYtgMMrh0/w3ad2ldCkF6uzBSsvPnuc+NBBp0M2uKiKhhqLz/uB8iYS0Gzmso6defDGgocnut++cRW2f3IfdAE=
 before_deploy:
 - export RELEASE_FILE_NAME=$(ls ../*.deb)
-after_deploy:
-- NOW=`date +%Y-%m-%d-%H-%M`
-- cd ..
-- git clone https://github.com/mariolukas/FabScanPi-Build-Raspbian.git
-- cd FabScanPi-Build-Raspbian
-- git config credential.helper "store --file=.git/credentials"
-- echo "https://${GH_TOKEN}:@github.com" > .git/credentials
-- git tag v.${NOW} -m "new release ${RELEASE_FILE_NAME}"
-- git push origin --tags
+#after_deploy:
+#- NOW=`date +%Y-%m-%d-%H-%M`
+#- cd ..
+#- git clone https://github.com/mariolukas/FabScanPi-Build-Raspbian.git
+#- cd FabScanPi-Build-Raspbian
+#- git config credential.helper "store --file=.git/credentials"
+#- echo "https://${GH_TOKEN}:@github.com" > .git/credentials
+#- git tag v.${NOW} -m "new release ${RELEASE_FILE_NAME}"
+#- git push origin --tags
 deploy:
   provider: releases
   skip_cleanup: true
