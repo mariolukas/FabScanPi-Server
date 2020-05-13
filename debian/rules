@@ -9,3 +9,6 @@ export PYBUILD_INSTALL_ARGS_python3=--prefix=/usr/
 	dh $@ --with python3 --buildsystem=pybuild
 
 #override_dh_usrlocal:
+
+override_dh_auto_test:
+	@echo "No tests."
