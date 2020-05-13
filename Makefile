@@ -1,7 +1,7 @@
 # $Id: Makefile,v 1.6 2014/10/29 01:01:35 Mario Lukas Exp $
 #
 
-PYTHON=`which python`
+PYTHON=/usr/bin/python3
 DESTDIR=/
 BUILDIR=$(CURDIR)/debian/fabscanpi-server
 PROJECT=fabscanpi-server
