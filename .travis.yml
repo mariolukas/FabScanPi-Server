@@ -3,10 +3,22 @@ group: edge
 language: python
 python:
 - 3.7
+
+# We need to install python3.6 and python3.7 packages from a third party
+# repo as they are not available on standard Ubuntu Xenial.
+addons:
+  apt:
+    sources:
+    - sourceline: 'ppa:deadsnakes/ppa'
+    packages:
+    - python3.6  # To compile targets with a 3.6 compiler.
+    - python3.6-dev  # To build host extension modules under 3.6
+    - python3.7-dev  # To build host extension modules under 3.7
+    -
 before_install:
 - openssl aes-256-cbc -K $encrypted_f5913d2a38b3_key -iv $encrypted_f5913d2a38b3_iv -in fabscan.key.enc -out fabscan.key -d
 - sudo apt-get -qq update
-- sudo apt-get install -y python3 libcurl3 build-essential python3-tornado python3-setuptools debhelper dh-systemd cdbs
+- sudo apt-get install -y libcurl3 build-essential python3-tornado python3-setuptools debhelper dh-systemd cdbs
   dh-python fakeroot python3-pip rsync locales
 before_script:
 - CURRENT_DATE=$(date +%Y%m%d%H%M)
