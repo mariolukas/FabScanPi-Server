@@ -14,7 +14,7 @@ addons:
     - python3.6  # To compile targets with a 3.6 compiler.
     - python3.6-dev  # To build host extension modules under 3.6
     - python3.7-dev  # To build host extension modules under 3.7
-    -
+    - python3-all
 before_install:
 - openssl aes-256-cbc -K $encrypted_f5913d2a38b3_key -iv $encrypted_f5913d2a38b3_iv -in fabscan.key.enc -out fabscan.key -d
 - sudo apt-get -qq update
