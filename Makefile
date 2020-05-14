@@ -28,7 +28,7 @@ deb:
 	#$(PYTHON) setup.py sdist $(COMPILE) --dist-dir=../
 	#rename -f 's/$(PROJECT)-(.*)\.tar\.gz/$(PROJECT)_$$1\.orig\.tar\.gz/' ../*
 	# build the package
-	dpkg-buildpackage -b -uc -us -i -I 
+	dpkg-buildpackage -b -uc -us -i -I
 
 clean:
 	$(PYTHON) setup.py clean
