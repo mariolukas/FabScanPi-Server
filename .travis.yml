@@ -1,5 +1,10 @@
 dist: xenial
 sudo: yes
+language: python
+virtualenv:
+    system_site_packages: true
+python:
+    - "3.7"
 # We need to install python3.6 and python3.7 packages from a third party
 # repo as they are not available on standard Ubuntu Xenial.
 addons:
