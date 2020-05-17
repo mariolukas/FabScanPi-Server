@@ -14,6 +14,7 @@ before_install:
 - sudo apt-get install -y python3.7 libcurl3 build-essential python3-tornado python3-setuptools debhelper dh-systemd cdbs
   dh-python fakeroot python3-pip rsync locales
 - python3 --version
+- sudo update-alternatives --set python /usr/bin/python3.7 python --version
 before_script:
 - CURRENT_DATE=$(date +%Y%m%d%H%M)
 - VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}')
