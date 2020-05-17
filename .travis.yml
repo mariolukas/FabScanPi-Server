@@ -1,22 +1,18 @@
 dist: xenial
 language: python
-virtualenv:
-    system_site_packages: true
 python:
     - "3.7"
 # We need to install python3.6 and python3.7 packages from a third party
 # repo as they are not available on standard Ubuntu Xenial.
-addons:
-  apt:
-    sources:
-    - sourceline: 'ppa:deadsnakes/ppa'
-    packages:
-    - python3.7
 before_install:
 - openssl aes-256-cbc -K $encrypted_f5913d2a38b3_key -iv $encrypted_f5913d2a38b3_iv -in fabscan.key.enc -out fabscan.key -d
+- sudo add-apt-repository -y ppa:deadsnakes/ppa
 - sudo apt-get -qq update
-- sudo apt-get install -y python3.7 libcurl3 build-essential python3-tornado python3-setuptools debhelper dh-systemd cdbs
+- sudo apt-get install -y python3.7 python3.7-dev libcurl3 build-essential python3-tornado python3-setuptools debhelper dh-systemd cdbs
   dh-python fakeroot python3-pip rsync locales
+- virtualenv -p /usr/bin/python3.7 hotspot-env
+- source hotspot-env/bin/activate
+-
 before_script:
 - CURRENT_DATE=$(date +%Y%m%d%H%M)
 - VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}')
