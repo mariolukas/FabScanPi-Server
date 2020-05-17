@@ -1,5 +1,4 @@
 dist: xenial
-sudo: yes
 language: python
 virtualenv:
     system_site_packages: true
@@ -18,8 +17,6 @@ before_install:
 - sudo apt-get -qq update
 - sudo apt-get install -y python3.7 libcurl3 build-essential python3-tornado python3-setuptools debhelper dh-systemd cdbs
   dh-python fakeroot python3-pip rsync locales
-- sudo update-alternatives --list python3
-- sudo update-alternatives --set python3 /usr/bin/python3.7 python --version
 before_script:
 - CURRENT_DATE=$(date +%Y%m%d%H%M)
 - VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}')
