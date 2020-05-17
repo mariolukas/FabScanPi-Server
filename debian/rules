@@ -6,7 +6,6 @@ export PYBUILD_INSTALL_ARGS_python3=--install-scripts=/usr/bin/
 export PYBUILD_INSTALL_ARGS_python3=--prefix=/usr/
 #export PYBUILD_DESTDIR_python3=debian/
 #export PYBUILD_DISABLE=test
-export PYBUILD_INTERPRETERS=python3.7
 
 %:
 	dh $@ --with python3 --buildsystem=pybuild
