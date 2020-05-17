@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 # Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
-#export PYBUILD_NAME=fabscanpi-server
+export PYBUILD_NAME=fabscanpi-server
 export PYBUILD_INSTALL_ARGS_python3=--install-scripts=/usr/bin/
 export PYBUILD_INSTALL_ARGS_python3=--prefix=/usr/
 #export PYBUILD_DESTDIR_python2=debian/
