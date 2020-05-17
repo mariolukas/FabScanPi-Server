@@ -12,3 +12,4 @@ export PYBUILD_INSTALL_ARGS_python3=--prefix=/usr/
 
 #override_dh_usrlocal:
 
+override_dh_auto_test:
