@@ -1,4 +1,5 @@
-dist: bionic
+dist: xenial
+sudo: yes
 # We need to install python3.6 and python3.7 packages from a third party
 # repo as they are not available on standard Ubuntu Xenial.
 addons:
