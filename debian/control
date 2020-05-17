@@ -2,14 +2,13 @@ Source: fabscanpi-server
 Section: net
 Priority: optional
 Maintainer: Mario Lukas (info@mariolukas.de) 
-Build-Depends: debhelper (>= 9), dh-python, python3.7, cdbs
-X-Python3-Version: >= 3.6
+Build-Depends: debhelper (>= 9), dh-python, python3.7, cdbs (>= 0.4.90)
+X-Python3-Version: >= 3.7
 Standards-Version: 3.9.3
 
 Package: fabscanpi-server
 Architecture: all
 Homepage: http://fabscan.org
-X-Python3-Version: ${python:Versions}
 Depends: ${python3:Depends}, ${misc:Depends}, meshlab, xvfb, avrdude, strace, python3-opencv, python3-funcsigs, python3-apscheduler, python3-tornado, libtbb2, python3-pil, python3-serial, python3-pykka, python3-picamera, python3-requests, python3-rpi.gpio, python3-semver, xvfb, meshlab, strace, avrdude, python3-scipy
 Description:
  FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
