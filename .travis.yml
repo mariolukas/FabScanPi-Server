@@ -12,7 +12,7 @@ before_install:
   dh-python fakeroot python3-pip rsync locales
 - virtualenv -p /usr/bin/python3.7 hotspot-env
 - source hotspot-env/bin/activate
--
+
 before_script:
 - CURRENT_DATE=$(date +%Y%m%d%H%M)
 - VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}')
