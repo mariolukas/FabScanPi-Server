@@ -1,6 +1,4 @@
 dist: xenial
-group: edge
-language: python
 # We need to install python3.6 and python3.7 packages from a third party
 # repo as they are not available on standard Ubuntu Xenial.
 addons:
@@ -8,7 +6,7 @@ addons:
     sources:
     - sourceline: 'ppa:deadsnakes/ppa'
     packages:
-    - python3-all
+    - python3.7
 before_install:
 - openssl aes-256-cbc -K $encrypted_f5913d2a38b3_key -iv $encrypted_f5913d2a38b3_iv -in fabscan.key.enc -out fabscan.key -d
 - sudo apt-get -qq update
