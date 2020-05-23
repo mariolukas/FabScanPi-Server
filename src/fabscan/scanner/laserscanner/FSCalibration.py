@@ -45,7 +45,7 @@ class FSCalibration(FSCalibrationInterface):
         self.distortion_vector = None
         self.image_points = []
         self.object_points = []
-        self.calibration_brightness = [20, 20, 20]
+        self.calibration_brightness = [100, 100, 100]
         self.quater_turn = int(self.config.file.turntable.steps / 4)
 
         self.motor_move_degree = 3.6 # 1.8,  2.7 , 3.6, 5.0
