@@ -4,6 +4,7 @@ __license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
+import cv2
 import time
 import logging
 from datetime import datetime
@@ -70,6 +71,14 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._scan_saturation = self.settings.file.camera.saturation
         self._logger.info("Laser Scan Processor initilized.")
 
+        # prevent deadlocks when opencv tbb is not available
+
+        cv_build_info = cv2.getBuildInformation()
+
+        # fallback to one worker.
+        if not "TBB" in cv_build_info:
+            self._logger.warning("OpenCV does not support TBB. Falling back to single processing.")
+            self.config.file.process_numbers = 1
 
     def on_receive(self, event):
         if event[FSEvents.COMMAND] == FSScanProcessorCommand.START:

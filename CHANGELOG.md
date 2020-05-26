@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - new firmware version
 - new frontend version (meshlab options are removed within this version)
+- check for TBB support and fallback if multiprocessing is not available in  opencv
 
 ### Changed
 - migrated form python2 to python3 
