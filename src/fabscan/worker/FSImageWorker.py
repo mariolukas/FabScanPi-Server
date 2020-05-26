@@ -109,10 +109,19 @@ class FSImageWorkerPool(ThreadingActor):
         self._workers_active = True
         return self.workers
 
+    def clear_queue(self, q):
+        while not q.empty():
+            try:
+                q.get(False)
+            except Empty:
+                continue
+
     def clear_task_queue(self):
         try:
-            while not self._task_q.empty():
-                self._task_q.get_nowait()
+
+            self.clear_queue(self._task_q)
+            self.clear_queue(self._output_q)
+
             self._output_count = 0
             self._input_count = 0
         except Empty:
