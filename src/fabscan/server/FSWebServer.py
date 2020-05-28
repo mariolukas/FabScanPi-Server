@@ -5,7 +5,7 @@ __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
 import threading
-
+import sys
 import tornado.ioloop
 import tornado.web
 import tornado.httpserver
@@ -67,11 +67,15 @@ class FSWebServer(threading.Thread):
         ])
 
     def run(self):
+
         self._logger.debug("Server listening on port %d", self.server_port)
         webserver = self.routes()
-        webserver.listen(self.server_port)
-        tornado.ioloop.IOLoop.instance().start()
-
+        try:
+            webserver.listen(self.server_port)
+            tornado.ioloop.IOLoop.instance().start()
+        except Exception as e:
+            self._logger.error(e)
+            sys.exit(0)
 
     def kill(self):
         tornado.ioloop.IOLoop.instance().stop()

@@ -479,7 +479,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     def on_stop(self):
 
 
-        self.clear_and_stop_worker_pool()
+        self.stop_scan()
 
         self.hardwareController.destroy_camera_device()
 
@@ -499,7 +499,8 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._starttime = 0
         self.finishFiles()
 
-        self.utils.delete_scan(self._prefix)
+        if self._prefix:
+            self.utils.delete_scan(self._prefix)
         self.reset_scanner_state()
         self._logger.info("Scan stoped")
         self.hardwareController.stop_camera_stream()
@@ -629,7 +630,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         try:
             for laser_index in range(self.config.file.laser.numbers):
-                if self.point_clouds[laser_index]:
+                if self.point_clouds and len(self.point_clouds) > 0 and self.point_clouds[laser_index]:
                     self.point_clouds[laser_index].closeFile()
                     self.point_clouds[laser_index] = None
 

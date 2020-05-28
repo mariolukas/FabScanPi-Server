@@ -165,6 +165,7 @@ class FSCalibration(FSCalibrationInterface):
         self._stop = True
 
 
+
     def _do_calibration(self, _capture, _calibrate):
 
         # 90 degree turn

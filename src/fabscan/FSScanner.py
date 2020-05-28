@@ -101,8 +101,9 @@ class FSScanner(threading.Thread):
 
     def kill(self):
         self.scanProcessor.stop()
+        self.scheduler.shutdown()
         # wait some time for hardware shutdown
-        time.sleep(2)
+        time.sleep(1)
         self.exit = True
 
 
@@ -285,10 +286,9 @@ class FSScanner(threading.Thread):
             self._logger.debug("CPU Temperature: " + str(cpu_temp) + " C")
 
     def run_discovery_service(self):
-        pass
-        #try:
-        #    hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
-        #except:
-        #    hardware_info = "undefined"
+        try:
+            hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
+        except:
+            hardware_info = "undefined"
 
-        #register_to_discovery(str(__version__), str(hardware_info))
+        register_to_discovery(str(__version__), str(hardware_info))
