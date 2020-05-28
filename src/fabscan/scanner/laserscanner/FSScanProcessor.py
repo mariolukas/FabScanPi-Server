@@ -478,6 +478,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     # pykka actor stop event
     def on_stop(self):
 
+
         self.clear_and_stop_worker_pool()
 
         self.hardwareController.destroy_camera_device()
@@ -492,6 +493,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     # on stop command by user
     def stop_scan(self):
         self._stop_scan = True
+
 
         self.clear_and_stop_worker_pool()
         self._starttime = 0
@@ -511,7 +513,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     def clear_and_stop_worker_pool(self):
 
         # clear queue
-        if self._worker_pool:
+        if self._worker_pool.is_alive():
 
             self._worker_pool.tell(
                 {FSEvents.COMMAND: FSSWorkerPoolCommand.CLEAR_QUEUE}
@@ -520,6 +522,8 @@ class FSScanProcessor(FSScanProcessorInterface):
             self._worker_pool.tell(
                 {FSEvents.COMMAND: FSSWorkerPoolCommand.KILL}
             )
+
+            self._worker_pool.stop()
 
     def image_processed(self, result):
         if not self._stop_scan:
