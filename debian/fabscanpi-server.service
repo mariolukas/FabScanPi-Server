@@ -6,6 +6,7 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=fabscan
+PermissionsStartOnly=true
 EnvironmentFile=-/etc/default/fabscanpi-server
 ExecStartPre=/usr/bin/avrdude-autoreset -c arduino -p m328p -P /dev/ttyAMA0 -b 115200 -l /dev/null
 ExecStart=/usr/bin/fabscanpi-server --config=${CONFIG} --settings=${SETTINGS} --logfile=${LOG}
