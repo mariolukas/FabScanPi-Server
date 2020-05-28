@@ -7,7 +7,7 @@ Wants=network-online.target
 Type=simple
 User=fabscan
 EnvironmentFile=-/etc/default/fabscanpi-server
-ExecStart=/usr/bin/fabscanpi-server ${DAEMON_ARGS}
+ExecStart=/usr/bin/fabscanpi-server --config=${CONFIG} --settings=${SETTINGS} --logfile=${LOG}
 
 [Install]
 WantedBy=multi-user.target
