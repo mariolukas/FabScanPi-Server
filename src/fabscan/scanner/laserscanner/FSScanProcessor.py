@@ -592,15 +592,6 @@ class FSScanProcessor(FSScanProcessorInterface):
             self.settings.save_json(settings_filename)
 
 
-
-            message = {
-                "message": "SAVING_POINT_CLOUD",
-                "scan_id": self._prefix,
-                "level": "info"
-            }
-
-            self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-
         #if bool(self.config.file.keep_raw_images):
         #    self.utils.zipdir(str(self._prefix))
 

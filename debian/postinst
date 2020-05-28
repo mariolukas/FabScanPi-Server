@@ -39,6 +39,12 @@ fi
 # Change permission to allow $FABSCAN_USER to write data
 chown -R $FABSCAN_USER:nogroup $SCANS_DIR
 
-/etc/init.d/fabscanpi-server start
+#/etc/init.d/fabscanpi-server start
+
+systemctl enable fabscanpi-server
+systemctl start fabscanpi-server
+
+# add fabscan server to default runlevels
+#update-rc.d fabscanpi-server defaults
 
 exit 0

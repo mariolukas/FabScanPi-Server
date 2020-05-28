@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # from https://github.com/mharizanov/avrdude-rpi
 
@@ -34,7 +34,7 @@ def process():
     except:
       continue
 
-print "avrdude-original: Using autoreset DTR on GPIO Pin " +str(pin)
+print("avrdude-original: Using autoreset DTR on GPIO Pin " +str(pin))
 reset()
 process()
 GPIO.cleanup()
