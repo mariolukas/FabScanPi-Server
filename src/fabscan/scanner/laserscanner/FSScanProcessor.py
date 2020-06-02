@@ -550,7 +550,7 @@ class FSScanProcessor(FSScanProcessorInterface):
                             self.append_points((x, y, z, r, g, b,), result['laser_index'])
 
                 except Exception as err:
-                    self._logger.error('Image processing Error:' + str(err))
+                    self._logger.warning('Image processing Failure:' + str(err))
 
 
 
