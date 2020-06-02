@@ -9,7 +9,7 @@ import fabscan
 import os
 
 def main():
-    #os.system('/usr/bin/avrdude-autoreset -c arduino -p m328p -P /dev/ttyAMA0 -b 115200  -l /dev/null')
+    os.system('/usr/bin/avrdude-autoreset -c arduino -p m328p -P /dev/ttyAMA0 -b 115200  -l /dev/null')
     fabscan.main()
 
 if __name__ == "__main__":
