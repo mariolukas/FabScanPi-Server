@@ -26,7 +26,6 @@ class FSSerialCom():
         self.config = config
 
         # run avr as system command for waking up arduino
-        os.system('/usr/bin/avrdude-autoreset -c arduino -p m328p -P '+str(self._port)+' -b '+str(self.flash_baudrate)+' -l /dev/null')
 
         self._logger = logging.getLogger(__name__)
 
