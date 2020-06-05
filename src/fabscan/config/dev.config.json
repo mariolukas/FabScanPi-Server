@@ -66,7 +66,7 @@
         "flash_baudrate": 115200,
         "port": "/dev/ttyAMA0"
     },
-    "texture_illumination": 255,
+    "texture_illumination": 200,
     "keep_raw_images": "True",
     "discoverable": "True",
     "online_lookup_ip": "8.8.8.8"

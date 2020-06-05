@@ -23,9 +23,9 @@ window.i18n["main"]["FINISHED_CALIBRATION"] = function(d){return "Calibration fi
 window.i18n["main"]["UPGRADE_IN_PROGRESS"] = function(d){return "Software wird aktualisiert..."}
 window.i18n["main"]["SCANNER_IN_CALIBRATION_MODE"] = function(d){return "Scanner wird kalibriert. Bitte warten..."}
 window.i18n["main"]["STOPPED_CALIBRATION"] = function(d){return "Kalibrierung abgebrochen"}
-window.i18n["main"]["SCANNER_NOT_CALIBRATED"] = function(d){return "Scanner is not calibrated. For instructions visit: <a href='https://fabscanpi-server.readthedocs.io/en/latest/scanner_calibration.html'>fabscan.org</a>"}
+window.i18n["main"]["SCANNER_NOT_CALIBRATED"] = function(d){return "Scanner ist nicht kalibiriert. Anleitung unter: <a href='http://mariolukas.github.io/FabScanPi-Server/software/'>fabscan.org</a>"}
 window.i18n["main"]["SCANNER_CALIBRATION_FAILED"] = function(d){return "Scanner calibration failed. Please try again."}
-window.i18n["main"]["UPGRADE_SUCCESS"] = function(d){return "Upgrade was successful."}
+window.i18n["main"]["UPGRADE_SUCCESS"] = function(d){return "Upgrade was successful. Server will restart soon."}
 window.i18n["main"]["UPGRADE_FAILED"] = function(d){return "Upgrade failed. See log for further information."}
 window.i18n["main"]["UPGRADE_STARTED"] = function(d){return "Upgrade process started..."}
 window.i18n["main"]["RESTARTING_SERVER"] = function(d){return "Server is going down for Restart."}
