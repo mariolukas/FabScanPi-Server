@@ -46,7 +46,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         self.eventmanager = eventmanager.instance
         self.calibration = calibration
-        self._worker_pool = FSImageWorkerPool.start(scanprocessor=self.actor_ref)
+        self._worker_pool = None
         self.hardwareController = hardwarecontroller
         self.image_processor = imageprocessor
 
@@ -287,6 +287,9 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._logger.info("Scan started")
         self._stop_scan = False
 
+        if self._worker_pool is None or not self._worker_pool.is_alive():
+            self._worker_pool = FSImageWorkerPool.start(scanprocessor=self.actor_ref)
+
         self.hardwareController.turntable.enable_motors()
         for i in range(int(self.config.file.laser.numbers)):
             self.hardwareController.laser.off(0)
@@ -309,7 +312,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         #self.point_clouds = [FSPointCloud(config=self.config, color=self._is_color_scan) for _ in range(self.config.file.laser.numbers)]
 
         for laser_index in range(self.config.file.laser.numbers):
-            self.point_clouds.append(FSPointCloud(config=self.config, color=self._is_color_scan, filename=self._prefix, postfix=laser_index))
+            self.point_clouds.append(FSPointCloud(config=self.config, color=self._is_color_scan, filename=self._prefix, postfix=laser_index, binary=False))
 
         if self.config.file.laser.numbers > 1:
             self.both_cloud = FSPointCloud(color=self._is_color_scan, filename=self._prefix, postfix='both')

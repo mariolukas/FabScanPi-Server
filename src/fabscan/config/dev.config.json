@@ -1,6 +1,6 @@
 {
     "folders": {
-        "www": "/usr/share/fabscanpi/",
+        "www": "/home/pi/fabscan/src/www/",
         "scans": "/home/pi/scans/"
     },
     "laser": {

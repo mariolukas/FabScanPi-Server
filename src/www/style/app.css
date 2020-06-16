@@ -56,7 +56,7 @@ button:focus {outline:0;}
 }
 .control:hover input:not([disabled]):checked ~ .control_indicator,
 .control input:checked:focus ~ .control_indicator {
-    background: #0e6647d;
+    background: #e6647d;
 }
 .control input:disabled ~ .control_indicator {
     background: #e6e6e6;
@@ -707,11 +707,11 @@ html, body {
 
 .thumbnail div {
     bottom: 2em;
-    position: absolute;
     text-align: center;
+    font-size: 0.7em;
     width: 160px;
     background-color: rgba(163, 144, 144, 0.5);
-    color: grey;
+    color: rgba(239, 241, 244, 0.79);
 }
 
 .options div {
@@ -729,6 +729,13 @@ html, body {
 .options a {
     color: white;
     text-decoration: none;
+}
+
+.noPreview{
+    margin: 0 auto;
+    width: 80px;
+    color: grey;
+    opacity: 0.5;
 }
 
 slider {
@@ -863,7 +870,7 @@ and (max-device-width: 590px) {
 
     .preview-image {
         margin: 0 auto;
-
+        background-color: #999999;
     }
 
     .tab-content {

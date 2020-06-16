@@ -57,8 +57,8 @@ class FSStreamHandler(tornado.web.RequestHandler):
         self.set_header('Content-Type', 'multipart/x-mixed-replace;boundary=--boundarydonotcross')
         self.set_header('Connection', 'close')
 
-        try:
-            while True:
+        while True:
+            try:
                 # Generating images for mjpeg stream and wraps them into http resp
                 img = self.getFrame(stream_type)
                 self.write("--boundarydonotcross\n")
@@ -66,8 +66,8 @@ class FSStreamHandler(tornado.web.RequestHandler):
                 self.write("Content-length: %s\r\n\r\n" % len(img))
                 self.write(img)
                 yield tornado.gen.Task(self.flush)
-        except Exception as e:
-            self._logger.warning('Stream canceled....' + str(e))
+            except Exception as e:
+                self._logger.warning('Stream canceled....' + str(e))
 
     def on_finish(self):
         self.scanprocessor.stop()
