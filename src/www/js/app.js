@@ -1,66 +1,36 @@
+/*
+*/
+
+
+/*
+*/
+
+
 (function() {
-  /* */
-  //#######################################################################
-  //#######################################################################
   var m, mods;
 
-  // Wire modules together
-  /* */
-  mods = [
-    'common.services.envProvider',
-    'common.filters.currentStateFilter',
-    'common.filters.toLabelFilter',
-    'common.filters.toResolutionValue',
-    'fabscan.directives.FSWebglDirective',
-    'fabscan.directives.FSMJPEGStream',
-    'fabscan.directives.FSModalDialog',
-    'fabscan.directives.text',
-    'fabscan.services.FSMessageHandlerService',
-    'fabscan.services.FSEnumService',
-    'fabscan.services.FSWebsocketConnectionFactory',
-    'fabscan.services.FSScanService',
-    'fabscan.services.FSi18nService',
-    'common.filters.scanDataAvailableFilter',
-    'fabscan.directives.onSizeChanged',
-    'common.services.Configuration',
-    'common.services.toastrWrapperSvc',
-    'fabscan.controller.FSPreviewController',
-    'fabscan.controller.FSAppController',
-    'fabscan.controller.FSNewsController',
-    'fabscan.controller.FSSettingsController',
-    'fabscan.controller.FSScanController',
-    'fabscan.controller.FSLoadingController',
-    'fabscan.controller.FSShareController',
-    'ngSanitize',
-    'ngTouch',
-    'ngCookies',
-    '720kb.tooltips',
-    'ngProgress',
-    'vr.directives.slider',
-    'slickCarousel' //#######################################################################
-//#######################################################################
-//#######################################################################
-//#######################################################################
-  ];
+  mods = ['common.services.envProvider', 'common.filters.currentStateFilter', 'common.filters.toLabelFilter', 'common.filters.toResolutionValue', 'fabscan.directives.FSWebglDirective', 'fabscan.directives.FSMJPEGStream', 'fabscan.directives.FSModalDialog', 'fabscan.directives.FSImageError', 'fabscan.directives.text', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSEnumService', 'fabscan.services.FSWebsocketConnectionFactory', 'fabscan.services.FSScanService', 'fabscan.services.FSi18nService', 'common.filters.scanDataAvailableFilter', 'fabscan.directives.onSizeChanged', 'common.services.Configuration', 'common.services.toastrWrapperSvc', 'fabscan.controller.FSPreviewController', 'fabscan.controller.FSAppController', 'fabscan.controller.FSNewsController', 'fabscan.controller.FSSettingsController', 'fabscan.controller.FSScanController', 'fabscan.controller.FSLoadingController', 'fabscan.controller.FSShareController', 'ngSanitize', 'ngTouch', 'ngCookies', '720kb.tooltips', 'ngProgress', 'vr.directives.slider', 'slickCarousel'];
 
-  /* */
-  // Declare routes
-  /* */
+  /*
+  */
 
-  //routesConfigFn = ($routeProvider)->
 
-  //	$routeProvider.otherwise({redirectTo: '/'})
-  /* */
-  // Create and bootstrap app module
-  /* */
-  //'ng.jsoneditor'
+  /*
+  */
+
+
+  /*
+  */
+
+
+  /*
+  */
+
+
   m = angular.module('fabscan', mods);
 
-  //m.config ['$routeProvider', routesConfigFn]
   m.config([
-    'common.services.envProvider',
-    function(envProvider) {
-      // Allows the environment provider to run whatever config block it wants.
+    'common.services.envProvider', function(envProvider) {
       if (envProvider.appConfig != null) {
         return envProvider.appConfig();
       }
@@ -68,9 +38,7 @@
   ]);
 
   m.run([
-    'common.services.env',
-    function(env) {
-      // Allows the environment service to run whatever app run block it wants.
+    'common.services.env', function(env) {
       if (env.appRun != null) {
         return env.appRun();
       }
@@ -78,8 +46,7 @@
   ]);
 
   m.config([
-    '$httpProvider',
-    function($httpProvider) {
+    '$httpProvider', function($httpProvider) {
       return $httpProvider.defaults.useXDomain = true;
     }
   ]);
@@ -87,6 +54,33 @@
   angular.element(document).ready(function() {
     return angular.bootstrap(document, ['fabscan']);
   });
+
+}).call(this);
+
+(function() {
+  var name;
+
+  name = 'fabscan.directives.FSImageError';
+
+  angular.module(name, []).directive("errSrc", [
+    '$log', function($log) {
+      return {
+        link: function(scope, element, attrs) {
+          element.bind('error', function() {
+            if (attrs.src !== attrs.errSrc) {
+              attrs.$set('src', attrs.errSrc);
+              element.addClass('noPreview');
+            }
+          });
+          attrs.$observe('ngSrc', function(value) {
+            if (!value && attrs.errSrc) {
+              attrs.$set('src', attrs.errSrc);
+            }
+          });
+        }
+      };
+    }
+  ]);
 
 }).call(this);
 
@@ -106,6 +100,7 @@
       link: function(scope, element, attrs) {
         scope.$watch('url', (function(newVal, oldVal) {
           var doc, iframe, iframeHtml;
+
           if (newVal) {
             iframe = document.createElement('iframe');
             iframe.setAttribute('width', '100%');
@@ -138,18 +133,14 @@
   name = 'fabscan.directives.FSModalDialog';
 
   angular.module(name, []).directive("modalDialog", [
-    '$log',
-    function($log) {},
-    {
+    '$log', function($log) {}, {
       restrict: 'E',
       scope: {
         show: '='
       },
       replace: true,
       transclude: true,
-      link: function(scope,
-    element,
-    attrs) {
+      link: function(scope, element, attrs) {
         scope.dialogStyle = {};
         if (attrs.width) {
           scope.dialogStyle.width = attrs.width;
@@ -161,7 +152,7 @@
           scope.show = false;
         };
       },
-      template: "<div class='ng-modal' ng-show='show'> <div class='ng-modal-overlay' ng-click='hideModal()'></div> <div class='ng-modal-dialog' ng-style='dialogStyle'> <div class='ng-modal-close' ng-click='hideModal()'>X</div> <div class='ng-modal-dialog-content' ng-transclude></div> </div> </div>"
+      template: "<div class='ng-modal' ng-show='show'>    <div class='ng-modal-overlay' ng-click='hideModal()'></div>    <div class='ng-modal-dialog' ng-style='dialogStyle'>      <div class='ng-modal-close' ng-click='hideModal()'>X</div>      <div class='ng-modal-dialog-content' ng-transclude></div>    </div>  </div>"
     }
   ]);
 
@@ -173,15 +164,10 @@
   name = 'fabscan.directives.slick';
 
   angular.module(name, []).directive("slickSlider", [
-    '$log',
-    '$timeout',
-    function($log,
-    $timeout) {
+    '$log', '$timeout', function($log, $timeout) {
       return {
         restrict: 'A',
-        link: function(scope,
-    element,
-    attrs) {
+        link: function(scope, element, attrs) {
           $timeout(function() {
             $(element).slick(scope.$eval(attrs.slickSlider));
           });
@@ -198,21 +184,18 @@
   name = 'fabscan.directives.text';
 
   angular.module(name, []).directive("text", [
-    'fabscan.services.FSi18nService',
-    function(i18n) {
+    'fabscan.services.FSi18nService', function(i18n) {
       return {
         restrict: 'A',
-        link: function(scope,
-    element,
-    attrs) {
+        link: function(scope, element, attrs) {
           var renderText;
+
           renderText = function() {
             return element[0].textContent = i18n.formatText(attrs.text);
           };
           scope.$watch(function() {
             return attrs.text;
-          },
-    function() {
+          }, function() {
             return renderText();
           });
         }
@@ -228,53 +211,14 @@
   name = 'fabscan.directives.FSWebglDirective';
 
   angular.module(name, []).directive("fsWebgl", [
-    '$log',
-    '$rootScope',
-    '$http',
-    'fabscan.services.FSEnumService',
-    'common.services.Configuration',
-    function($log,
-    $rootScope,
-    $http,
-    FSEnumService,
-    Configuration) {
+    '$log', '$rootScope', '$http', 'fabscan.services.FSEnumService', 'common.services.Configuration', function($log, $rootScope, $http, FSEnumService, Configuration) {
       var postLink;
+
       return {
         restrict: "A",
-        //scope:
-        //  width: "="
-        //  height: "="
-        //  fillcontainer: "="
-        //  scale: "="
-        //  materialType: "="
-        //  newPoints: "="
-        link: postLink = function(scope,
-    element,
-    attrs) {
-          var camera,
-    cameraTarget,
-    colors,
-    contH,
-    contW,
-    controls,
-    currentPointcloudAngle,
-    current_point,
-    materials,
-    mesh,
-    mouseX,
-    mouseY,
-    mousedown,
-    pointcloud,
-    positions,
-    rad,
-    renderer,
-    scanLoaded,
-    scene,
-    turntable,
-    turntable_radius,
-    turntable_thickness,
-    windowHalfX,
-    windowHalfY;
+        link: postLink = function(scope, element, attrs) {
+          var camera, cameraTarget, colors, contH, contW, controls, currentPointcloudAngle, current_point, materials, mesh, mouseX, mouseY, mousedown, pointcloud, positions, rad, renderer, scanLoaded, scene, turntable, turntable_radius, turntable_thickness, windowHalfX, windowHalfY;
+
           camera = void 0;
           scene = void 0;
           current_point = 0;
@@ -311,21 +255,16 @@
           materials = {};
           turntable_radius = 70;
           turntable_thickness = 5;
-          $rootScope.$on('clearcanvas',
-    function() {
+          $rootScope.$on('clearcanvas', function() {
             $log.info("view cleared");
             return scope.clearView();
           });
-          scope.$on(FSEnumService.events.ON_STATE_CHANGED,
-    function(events,
-    data) {
+          scope.$on(FSEnumService.events.ON_STATE_CHANGED, function(events, data) {
             if (data['state'] === FSEnumService.states.SCANNING) {
               return scope.clearView();
             }
           });
-          scope.$on(FSEnumService.events.ON_INFO_MESSAGE,
-    function(event,
-    data) {
+          scope.$on(FSEnumService.events.ON_INFO_MESSAGE, function(event, data) {
             if (data['message'] === 'SCANNING_TEXTURE' || data['message'] === 'START_CALIBRATION') {
               scene.remove(turntable);
             }
@@ -347,125 +286,57 @@
             }
           });
           scope.init = function() {
-            var axes,
-    geometry,
-    material,
-    plane;
-            // Camera
-            //camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 1, 4800)
-            //camera.position.z = 1380
-            //camera.position.y = 850
+            var axes, geometry, material, plane;
 
-            //camera.rotation.order = 'YXZ'
-            //camera.position.set(0,0,1500)
             current_point = 0;
-            camera = new THREE.PerspectiveCamera(48.8,
-    window.innerWidth / window.innerHeight,
-    1,
-    1000);
+            camera = new THREE.PerspectiveCamera(48.8, window.innerWidth / window.innerHeight, 1, 1000);
             camera.position.z = 180;
             camera.position.y = 40;
             scene = new THREE.Scene();
-            scene.fog = new THREE.Fog(0x72645b,
-    200,
-    600);
-            plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(2000,
-    2000),
-    new THREE.MeshPhongMaterial({
+            scene.fog = new THREE.Fog(0x72645b, 200, 600);
+            plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(2000, 2000), new THREE.MeshPhongMaterial({
               ambient: 0x999999,
               color: 0x999999,
               specular: 0x101010
             }));
             plane.rotation.x = -Math.PI / 2;
-            plane.position.y = -2 * turntable_thickness;
+            plane.position.y = -turntable_thickness;
             scene.add(plane);
             plane.receiveShadow = true;
             scene.add(new THREE.AmbientLight(0x777777));
-            //light = new THREE.DirectionalLight( 0xffffff );
-            //light.position.set( 0, 1, 1 ).normalize();
-            //scene.add(light);
-            scope.addShadowedLight(1,
-    1,
-    1,
-    0xffffff,
-    0.35);
-            scope.addShadowedLight(0.5,
-    1,
-    -1,
-    0xffaa00,
-    1);
-            //scene.add( new THREE.HemisphereLight( 0x443333, 0x111122 ) );
-
-            //addShadowedLight( 1, 1, 1, 0xffffff, 1.35 );
-            //addShadowedLight( 0.5, 1, -1, 0xffaa00, 1 );
-            //Grid
-            //gridXZ = new THREE.GridHelper(4000, 100)
-
-            //scene.add(gridXZ)
+            scope.addShadowedLight(1, 1, 1, 0xffffff, 0.35);
+            scope.addShadowedLight(0.5, 1, -1, 0xffaa00, 1);
             axes = new THREE.AxisHelper(10);
-            geometry = new THREE.CylinderGeometry(turntable_radius,
-    turntable_radius,
-    turntable_thickness,
-    32);
+            geometry = new THREE.CylinderGeometry(turntable_radius, turntable_radius, turntable_thickness, 32);
             material = new THREE.MeshPhongMaterial({
               color: 0xd3d2c9
             });
-            turntable = new THREE.Mesh(geometry,
-    material);
-            turntable.position.y -= turntable_thickness;
+            turntable = new THREE.Mesh(geometry, material);
             turntable.name = "turntable";
             scene.add(turntable);
             renderer = new THREE.WebGLRenderer({
               preserveDrawingBuffer: true
             });
-            //renderer.setColor(0x000000, 0)
-            //renderer.setSize( window.innerWidth, window.innerHeight )
-            //renderer.setSize(contW,contH-4)
-            //renderer = new THREE.WebGLRenderer( { antialias: true } )
             renderer.setClearColor(scene.fog.color);
-            //renderer.setPixelRatio( window.devicePixelRatio )
-            renderer.setSize(window.innerWidth,
-    window.innerHeight);
+            renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.gammaInput = true;
             renderer.gammaOutput = true;
             renderer.shadowMapEnabled = true;
             renderer.shadowMapCullFace = THREE.CullFaceBack;
-            // element is provided by the angular directive
             element[0].appendChild(renderer.domElement);
-            window.addEventListener("resize",
-    scope.onWindowResize,
-    false);
-            window.addEventListener("DOMMouseScroll",
-    scope.onMouseWheel,
-    false);
-            window.addEventListener("mousewheel",
-    scope.onMouseWheel,
-    false);
-            document.addEventListener("keydown",
-    scope.onKeyDown,
-    false);
-            element[0].addEventListener("mousemove",
-    scope.onMouseMove,
-    false);
-            element[0].addEventListener("mousedown",
-    scope.onMouseDown,
-    false);
-            element[0].addEventListener("mouseup",
-    scope.onMouseUp,
-    false);
+            window.addEventListener("resize", scope.onWindowResize, false);
+            window.addEventListener("DOMMouseScroll", scope.onMouseWheel, false);
+            window.addEventListener("mousewheel", scope.onMouseWheel, false);
+            document.addEventListener("keydown", scope.onKeyDown, false);
+            element[0].addEventListener("mousemove", scope.onMouseMove, false);
+            element[0].addEventListener("mousedown", scope.onMouseDown, false);
+            element[0].addEventListener("mouseup", scope.onMouseUp, false);
           };
-          // ----------------------------------
-          // Controls
-          // ----------------------------------
-
-          // -----------------------------------
-          // Event listeners
-          // -----------------------------------
           scope.createPreviewImage = function(id) {
             var screenshot;
+
             screenshot = renderer.domElement.toDataURL('image/png');
-            return $http.post(Configuration.installation.apiurl + "api/v1/scans/" + id + "/previews",
-    {
+            return $http.post(Configuration.installation.apiurl + "api/v1/scans/" + id + "/previews", {
               image: screenshot
             }).success(function(response) {
               $log.info(response);
@@ -491,8 +362,9 @@
           };
           scope.onMouseMove = function(evt) {
             var d;
+
             if (mousedown) {
-              d = ((evt.movementX > 0) ? 0.1 : -0.1);
+              d = (evt.movementX > 0 ? 0.1 : -0.1);
               if (pointcloud && scope.scanLoaded) {
                 pointcloud.rotation.z += d;
               }
@@ -504,33 +376,10 @@
               }
             }
           };
-          //scope.onMouseWheel = (evt) ->
-
-          //  d = ((if (typeof evt.wheelDelta isnt "undefined") then (-evt.wheelDelta) else evt.detail))
-          //  d =  ((if (d > 0) then 0.1 else -0.1))
-          //console.log d
-          //cPos = camera.position
-          //return  if isNaN(cPos.x) or isNaN(cPos.y) or isNaN(cPos.y)
-          //  if pointcloud
-          //    if scope.scanComplete
-          //        pointcloud.rotation.y +=d
-          //    else
-          //        pointcloud.rotation.z += d
-
-          // Your zomm limitation
-          // For X axe you can add anothers limits for Y / Z axes
-          //return  if cPos.z > 50 or cPos.z < -50
-          //mb = (if d > 0 then 1.1 else 0.9)
-          //cPos.x = cPos.x * mb
-          //cPos.y = cPos.y * mb
-          //cPos.z = cPos.z * mb
-          //  return
-
-          // Handle colors and pointsize
           scope.onKeyDown = function(evt) {
             var material;
+
             if (evt.keyCode === 189 || evt.keyCode === 109) {
-              // Increase/decrease point size
               pointSize -= 0.003;
             }
             if (evt.keyCode === 187 || evt.keyCode === 107) {
@@ -548,21 +397,15 @@
             if (evt.keyCode === 52) {
               changeColor("rgb");
             }
-            // Re-render the scene
             material = new THREE.ParticleBasicMaterial({
               size: pointSize,
               vertexColors: true
             });
-            pointcloud = new THREE.ParticleSystem(geometry,
-    material);
+            pointcloud = new THREE.ParticleSystem(geometry, material);
             scene = new THREE.Scene();
-            //scene.fog = new THREE.FogExp2(0x000000, 0.0009)
             scene.add(pointcloud);
             return scope.render();
           };
-          // -----------------------------------
-          // Updates
-          // -----------------------------------
           scope.resizeCanvas = function() {
             contW = (scope.fillcontainer ? element[0].clientWidth : scope.width);
             contH = scope.height;
@@ -570,40 +413,26 @@
             windowHalfY = contH / 2;
             camera.aspect = contW / contH;
             camera.updateProjectionMatrix();
-            renderer.setSize(contW,
-    contH);
+            renderer.setSize(contW, contH);
           };
           scope.resizeObject = function() {};
-          //icosahedron.scale.set scope.scale, scope.scale, scope.scale
-          //shadowMesh.scale.set scope.scale, scope.scale, scope.scale
           scope.changeMaterial = function() {};
-          //icosahedron.material = materials[scope.materialType]
-          scope.Float32Concat = function(first,
-    second) {
-            var firstLength,
-    result;
+          scope.Float32Concat = function(first, second) {
+            var firstLength, result;
+
             firstLength = first.length;
             result = new Float32Array(firstLength + second.length);
             result.set(first);
-            result.set(second,
-    firstLength);
+            result.set(second, firstLength);
             return result;
           };
-          scope.addShadowedLight = function(x,
-    y,
-    z,
-    color,
-    intensity) {
-            var d,
-    directionalLight;
-            directionalLight = new THREE.DirectionalLight(color,
-    intensity);
-            directionalLight.position.set(x,
-    y,
-    z);
+          scope.addShadowedLight = function(x, y, z, color, intensity) {
+            var d, directionalLight;
+
+            directionalLight = new THREE.DirectionalLight(color, intensity);
+            directionalLight.position.set(x, y, z);
             scene.add(directionalLight);
             directionalLight.castShadow = true;
-            // directionalLight.shadowCameraVisible = true;
             d = 1;
             directionalLight.shadowCameraLeft = -d;
             directionalLight.shadowCameraRight = d;
@@ -617,6 +446,7 @@
           };
           scope.renderMesh = function(meshFormat) {
             var material;
+
             scope.clearView();
             scope.objectGeometry.computeFaceNormals();
             if (meshFormat === 'stl') {
@@ -632,14 +462,9 @@
                 vertexColors: THREE.FaceColors
               });
             }
-            mesh = new THREE.Mesh(scope.objectGeometry,
-    material);
-            mesh.position.set(0,
-    -0.25,
-    0);
-            mesh.rotation.set(-Math.PI / 2,
-    0,
-    0);
+            mesh = new THREE.Mesh(scope.objectGeometry, material);
+            mesh.position.set(0, -0.25, 0);
+            mesh.rotation.set(-Math.PI / 2, 0, 0);
             if (meshFormat === 'stl') {
               mesh.castShadow = true;
               mesh.receiveShadow = true;
@@ -648,16 +473,14 @@
           };
           scope.renderPLY = function() {
             var material;
+
             pointcloud = new THREE.Object3D;
             material = new THREE.PointsMaterial({
               size: 0.5,
               vertexColors: THREE.FaceColors
             });
-            pointcloud = new THREE.Points(scope.objectGeometry,
-    material);
-            pointcloud.rotation.set(-Math.PI / 2,
-    0,
-    0);
+            pointcloud = new THREE.Points(scope.objectGeometry, material);
+            pointcloud.rotation.set(-Math.PI / 2, 0, 0);
             return scene.add(pointcloud);
           };
           scope.renderObjectAsType = function(type) {
@@ -672,37 +495,35 @@
           };
           scope.loadSTL = function(file) {
             var loader;
+
             scope.clearView();
             scope.scanComplete = false;
             loader = new THREE.STLLoader();
-            loader.load(file,
-    function(objectGeometry) {
-              //scene.add( new THREE.Mesh( geometry ) )
+            loader.load(file, function(objectGeometry) {
               scope.objectGeometry = objectGeometry;
               if (file.indexOf("mesh") > -1) {
                 scope.renderMesh('stl');
               }
               return scope.scanLoaded = true;
             });
-            return loader.addEventListener('progress',
-    function(item) {
+            return loader.addEventListener('progress', function(item) {
               scope.progressHandler(item);
               return $log.info("Not implemented yet");
             });
           };
           scope.loadPLY = function(file) {
             var loader;
+
+            $log.debug(file);
             scope.clearView();
             scope.scanComplete = false;
             loader = new THREE.PLYLoader();
             loader.useColor = true;
             loader.colorsNeedUpdate = true;
-            loader.addEventListener('progress',
-    function(item) {
+            loader.addEventListener('progress', function(item) {
               return scope.progressHandler(item);
             });
-            return loader.load(file,
-    function(objectGeometry) {
+            return loader.load(file, function(objectGeometry) {
               scope.objectGeometry = objectGeometry;
               if (file.indexOf("mesh") > -1) {
                 scope.renderMesh();
@@ -711,16 +532,9 @@
               }
             });
           };
-          scope.addPoints = function(points,
-    progress,
-    resolution) {
-            var color,
-    degree,
-    geometry,
-    i,
-    material,
-    new_colors,
-    new_positions;
+          scope.addPoints = function(points, progress, resolution) {
+            var color, degree, geometry, i, material, new_colors, new_positions;
+
             scope.scanComplete = false;
             if (points && (points.length > 0)) {
               if (pointcloud) {
@@ -746,26 +560,19 @@
                 positions = new_positions;
                 colors = new_colors;
               } else {
-                positions = scope.Float32Concat(positions,
-    new_positions);
-                colors = scope.Float32Concat(colors,
-    new_colors);
+                positions = scope.Float32Concat(positions, new_positions);
+                colors = scope.Float32Concat(colors, new_colors);
               }
               geometry = new THREE.BufferGeometry();
               geometry.dynamic = true;
-              geometry.addAttribute('position',
-    new THREE.BufferAttribute(positions,
-    3));
-              geometry.addAttribute('color',
-    new THREE.BufferAttribute(colors,
-    3));
+              geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+              geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
               if (!pointcloud) {
                 material = new THREE.PointsMaterial({
                   size: 0.5,
                   vertexColors: THREE.VertexColors
                 });
-                pointcloud = new THREE.Points(geometry,
-    material);
+                pointcloud = new THREE.Points(geometry, material);
               } else {
                 pointcloud.geometry.dispose();
                 pointcloud.geometry = geometry;
@@ -779,19 +586,6 @@
               }
             }
           };
-          //  $log.info currentPointcloudAngle - scope.rad
-
-          //while i < points.length
-          //point = new THREE.Vector3(parseFloat(points[i].x), parseFloat(points[i].z)+450, parseFloat(points[i].y))
-          //pointcloud.geometry.vertices.push(point)
-          //pointcloud.geometry.dispose()
-          //_points[current_point] = points
-          //i++
-          //current_point++
-
-          //if progress == resolution
-          //scope.createScreenShot()
-          //pointcloudRotation = angle
           scope.clearView = function() {
             if (pointcloud) {
               positions = void 0;
@@ -800,54 +594,27 @@
               return scene.remove(mesh);
             }
           };
-          // -----------------------------------
-          // Draw and Animate
-          // -----------------------------------
           scope.animate = function() {
             requestAnimationFrame(scope.animate);
             scope.render();
           };
           scope.render = function() {
-            //camera.position.x += (mouseX - camera.position.x) * 0.05
-
-            //camera.position.y += ( - mouseY - camera.position.y ) * 0.05;
-
-            //camera.lookAt scene.position
-
-            //camera.lookAt scene
-            //pointcloud.add( camera )
-            //camera.position.set( 15, 0, 0 );
-            //camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
-            //pointcloud.rotation.y
-            //camera.lookAt( cameraTarget )
-            renderer.render(scene,
-    camera);
+            renderer.render(scene, camera);
           };
-          // -----------------------------------
-          // Watches
-          // -----------------------------------
-          //controls.update()
-          scope.$watch("newPoints",
-    function(newValue,
-    oldValue) {
+          scope.$watch("newPoints", function(newValue, oldValue) {
             if (newValue !== []) {
               if (newValue !== oldValue) {
                 scope.addPoints(newValue);
               }
             }
           });
-          scope.$watch("fillcontainer + width + height",
-    function() {
+          scope.$watch("fillcontainer + width + height", function() {
             scope.resizeCanvas();
           });
-          scope.$watch("scale",
-    function() {
+          scope.$watch("scale", function() {
             scope.resizeObject();
           });
-          scope.$watch("materialType",
-    function() {});
-          // Begin
-          //scope.changeMaterial()
+          scope.$watch("materialType", function() {});
           scope.init();
           scope.animate();
         }
@@ -863,38 +630,31 @@
   name = 'fabscan.directives.onSizeChanged';
 
   angular.module(name, []).directive('onSizeChanged', [
-    '$window',
-    function($window) {
+    '$window', function($window) {
       return {
         restrict: 'A',
         scope: {
           onSizeChanged: '&'
         },
-        link: function(scope,
-    $element,
-    attr) {
-          var cacheElementSize,
-    element,
-    onWindowResize;
+        link: function(scope, $element, attr) {
+          var cacheElementSize, element, onWindowResize;
+
           element = $element[0];
-          cacheElementSize = function(scope,
-    element) {
+          cacheElementSize = function(scope, element) {
             scope.cachedElementWidth = element.offsetWidth;
             scope.cachedElementHeight = element.offsetHeight;
           };
           onWindowResize = function() {
-            var expression,
-    isSizeChanged;
+            var expression, isSizeChanged;
+
             isSizeChanged = scope.cachedElementWidth !== element.offsetWidth || scope.cachedElementHeight !== element.offsetHeight;
             if (isSizeChanged) {
               expression = scope.onSizeChanged();
               expression();
             }
           };
-          cacheElementSize(scope,
-    element);
-          $window.addEventListener('resize',
-    onWindowResize);
+          cacheElementSize(scope, element);
+          $window.addEventListener('resize', onWindowResize);
         }
       };
     }
@@ -902,22 +662,19 @@
 
 }).call(this);
 
+/*
+Takes a string and makes it lowercase
+Example of a 'common' filter that can be shared by all views
+*/
+
+
 (function() {
-  /*
-  Takes a string and makes it lowercase
-  Example of a 'common' filter that can be shared by all views
-  */
   var name;
 
   name = 'common.filters.currentStateFilter';
 
-  // Note that for filters I keep the name SHORT
-  // and they do not match the name of the module
   angular.module(name, []).filter('currentState', [
-    '$log',
-    'fabscan.services.FSScanService',
-    function($log,
-    FSScanService) {
+    '$log', 'fabscan.services.FSScanService', function($log, FSScanService) {
       return function(state) {
         if (state === FSScanService.getScannerState()) {
           return true;
@@ -930,22 +687,19 @@
 
 }).call(this);
 
+/*
+Takes a string and makes it lowercase
+Example of a 'common' filter that can be shared by all views
+*/
+
+
 (function() {
-  /*
-  Takes a string and makes it lowercase
-  Example of a 'common' filter that can be shared by all views
-  */
   var name;
 
   name = 'common.filters.scanDataAvailableFilter';
 
-  // Note that for filters I keep the name SHORT
-  // and they do not match the name of the module
   angular.module(name, []).filter('scanDataAvailable', [
-    '$log',
-    'fabscan.services.FSScanService',
-    function($log,
-    FSScanService) {
+    '$log', 'fabscan.services.FSScanService', function($log, FSScanService) {
       return function() {
         if (FSScanService.getScanId() !== null) {
           return true;
@@ -963,26 +717,18 @@
 
   name = 'common.filters.toLabelFilter';
 
-  // Note that for filters I keep the name SHORT
-  // and they do not match the name of the module
   angular.module(name, []).filter('toLabel', [
-    '$log',
-    function($log) {
+    '$log', function($log) {
       return function(str) {
-        var date,
-    label_parts,
-    time;
+        var date, label_parts, time;
+
         label_parts = str.split("-");
         date = label_parts[0];
         time = label_parts[1];
-        date = date.slice(0,
-    4) + "-" + date.slice(4);
-        date = date.slice(0,
-    7) + "-" + date.slice(7);
-        time = time.slice(0,
-    2) + ":" + time.slice(2);
-        time = time.slice(0,
-    5) + ":" + time.slice(5);
+        date = date.slice(0, 4) + "-" + date.slice(4);
+        date = date.slice(0, 7) + "-" + date.slice(7);
+        time = time.slice(0, 2) + ":" + time.slice(2);
+        time = time.slice(0, 5) + ":" + time.slice(5);
         return date + " " + time;
       };
     }
@@ -990,20 +736,19 @@
 
 }).call(this);
 
+/*
+Takes a string and makes it lowercase
+Example of a 'common' filter that can be shared by all views
+*/
+
+
 (function() {
-  /*
-  Takes a string and makes it lowercase
-  Example of a 'common' filter that can be shared by all views
-  */
   var name;
 
   name = 'common.filters.toLowerFilter';
 
-  // Note that for filters I keep the name SHORT
-  // and they do not match the name of the module
   angular.module(name, []).filter('toLower', [
-    '$log',
-    function($log) {
+    '$log', function($log) {
       return function(str) {
         return str.toLowerCase();
       };
@@ -1017,11 +762,8 @@
 
   name = 'common.filters.toResolutionValue';
 
-  // Note that for filters I keep the name SHORT
-  // and they do not match the name of the module
   angular.module(name, []).filter('toResolutionValue', [
-    '$log',
-    function($log) {
+    '$log', function($log) {
       return function(str) {
         if (str === -1) {
           return "best about 120 seconds";
@@ -1050,21 +792,15 @@
   name = 'common.services.Configuration';
 
   angular.module(name, []).factory(name, [
-    '$log',
-    '$location',
-    function($log,
-    $location) {
-      var config,
-    host,
-    http,
-    localDebug,
-    ws;
+    '$log', '$location', function($log, $location) {
+      var config, host, http, localDebug, ws;
+
       localDebug = $location.host() === 'localhost';
       config = null;
       host = $location.host();
       http = 'http';
       ws = 'ws';
-      //console.log($location.protocol())
+      console.log($location.protocol());
       if ($location.protocol() === 'https') {
         http = 'https';
         ws = 'wss';
@@ -1085,7 +821,7 @@
             host: host,
             websocketurl: ws + '://' + host + '/websocket',
             httpurl: http + '://' + host + ':8080/',
-            newsurl: 'https://fabscanpi-server.readthedocs.io/en/latest/news/',
+            newsurl: http + '://fabscanpi-server.readthedocs.io/en/latest/news/',
             apiurl: http + '://' + host + '/'
           }
         };
@@ -1097,89 +833,13 @@
 }).call(this);
 
 (function() {
-  /*
-  Example of a service shared across views.
-  Wrapper around the data layer for the app. 
-  */
-  var DataSvc, name;
-
-  name = 'common.services.dataSvc';
-
-  DataSvc = class DataSvc {
-    constructor($log1, $http1, env1) {
-      this.$log = $log1;
-      this.$http = $http1;
-      this.env = env1;
-    }
-
-    _get(relPath) {
-      return this.$http.get(`${this.env.serverUrl}/${relPath}`);
-    }
-
-    getPeople() {
-      return this._get('people');
-    }
-
-    getPerson(id) {
-      return this._get(`person/${id}`);
-    }
-
-  };
-
-  angular.module(name, []).factory(name, [
-    '$log',
-    '$http',
-    'common.services.env',
-    function($log,
-    $http,
-    env) {
-      return new DataSvc($log,
-    $http,
-    env);
-    }
-  ]);
-
-}).call(this);
-
-(function() {
-  /*
-  DEV
-  */
-  var Environment, EnvironmentProvider, mod, modName, providerName;
-
-  providerName = 'common.services.env'; // angular adds the 'Provider' suffix for us.
-
-  modName = `${providerName}Provider`;
-
-  Environment = (function() {
-    class Environment {};
-
-    Environment.prototype.env = 'DEV';
-
-    return Environment;
-
-  }).call(this);
-
-  EnvironmentProvider = class EnvironmentProvider {
-    $get() {
-      return new Environment();
-    }
-
-  };
-
-  mod = angular.module(modName, []);
-
-  mod.provider(providerName, new EnvironmentProvider());
-
-}).call(this);
-
-(function() {
   var name;
 
   name = 'fabscan.services.FSEnumService';
 
   angular.module(name, []).factory(name, function() {
     var FSEnumService;
+
     FSEnumService = {};
     FSEnumService.events = {
       ON_NEW_PROGRESS: 'ON_NEW_PROGRESS',
@@ -1215,56 +875,12 @@
 (function() {
   var name;
 
-  name = 'fabscan.services.FSi18nService';
-
-  angular.module(name, []).factory(name, [
-    '$window',
-    function($window) {
-      var service;
-      service = {};
-      service.formatText = function(key,
-    values = {}) {
-        var catalog,
-    catalogId,
-    textId;
-        [catalogId,
-    textId] = key.split(".");
-        if (catalogId && textId) {
-          if (catalogId in $window.i18n) {
-            catalog = $window.i18n[catalogId];
-            if (textId in catalog) {
-              return catalog[textId](values);
-            }
-          }
-        }
-        return key;
-      };
-      return service;
-    }
-  ]);
-
-}).call(this);
-
-(function() {
-  var name;
-
   name = 'fabscan.services.FSMessageHandlerService';
 
   angular.module(name, []).factory(name, [
-    '$log',
-    '$timeout',
-    '$rootScope',
-    '$http',
-    'fabscan.services.FSWebsocketConnectionFactory',
-    'common.services.Configuration',
-    function($log,
-    $timeout,
-    $rootScope,
-    $http,
-    FSWebsocketConnectionFactory,
-    Configuration) {
-      var FSMessageHandlerService,
-    socket;
+    '$log', '$timeout', '$rootScope', '$http', 'fabscan.services.FSWebsocketConnectionFactory', 'common.services.Configuration', function($log, $timeout, $rootScope, $http, FSWebsocketConnectionFactory, Configuration) {
+      var FSMessageHandlerService, socket;
+
       socket = null;
       FSMessageHandlerService = {};
       FSMessageHandlerService.connectToScanner = function(scope) {
@@ -1275,8 +891,7 @@
         };
         socket.onopen = function(event) {
           scope.isConnected = true;
-          $rootScope.$broadcast("CONNECTION_STATE_CHANGED",
-    true);
+          $rootScope.$broadcast("CONNECTION_STATE_CHANGED", scope.isConnected);
           return console.log('Websocket connected to ' + socket.url);
         };
         socket.onerror = function(event) {
@@ -1285,20 +900,18 @@
         socket.onclose = function(event) {
           scope.isConnected = false;
           socket = null;
-          $rootScope.$broadcast("CONNECTION_STATE_CHANGED",
-    scope.isConnected);
+          $rootScope.$broadcast("CONNECTION_STATE_CHANGED", scope.isConnected);
           $timeout(function() {
             return FSMessageHandlerService.connectToScanner(scope);
-          },
-    100);
+          }, 100);
           return console.log("Connection closed");
         };
         return socket.onmessage = function(event) {
           var message;
+
           message = jQuery.parseJSON(event.data);
           $log.info(message['data']);
-          return $rootScope.$broadcast(message['type'],
-    message['data']);
+          return $rootScope.$broadcast(message['type'], message['data']);
         };
       };
       FSMessageHandlerService.sendData = function(message) {
@@ -1316,15 +929,9 @@
   name = 'fabscan.services.FSScanService';
 
   angular.module(name, []).factory(name, [
-    '$log',
-    '$rootScope',
-    'fabscan.services.FSEnumService',
-    'fabscan.services.FSMessageHandlerService',
-    function($log,
-    $rootScope,
-    FSEnumService,
-    FSMessageHandlerService) {
+    '$log', '$rootScope', 'fabscan.services.FSEnumService', 'fabscan.services.FSMessageHandlerService', function($log, $rootScope, FSEnumService, FSMessageHandlerService) {
       var service;
+
       service = {};
       service.state = FSEnumService.states.IDLE;
       service.scanId = null;
@@ -1346,13 +953,10 @@
       };
       service.startScan = function(options) {
         var message;
+
         service.state = FSEnumService.states.SCANNING;
         service.setScanId(null);
         service.initStartTime();
-        // FIXME: ( or find better solution )
-        // needed to be done here, cause raspberry has not a real time clock,
-        // when no internet connection is availabale on the fabscan the time
-        // will be set (default) to 1970, this leads to a wrong calculation...
         message = {};
         message = {
           event: FSEnumService.events.COMMAND,
@@ -1366,6 +970,7 @@
       };
       service.updateSettings = function(settings) {
         var message;
+
         message = {};
         message = {
           event: FSEnumService.events.COMMAND,
@@ -1378,6 +983,7 @@
       };
       service.startSettings = function(settings) {
         var message;
+
         message = {};
         message = {
           event: FSEnumService.events.COMMAND,
@@ -1385,11 +991,11 @@
             command: FSEnumService.commands.SCAN
           }
         };
-        //settings: settings
         return FSMessageHandlerService.sendData(message);
       };
       service.upgradeServer = function() {
         var message;
+
         $log.debug("Upgrade Server called.");
         message = {};
         message = {
@@ -1402,6 +1008,7 @@
       };
       service.restartServer = function() {
         var message;
+
         message = {};
         message = {
           event: FSEnumService.events.COMMAND,
@@ -1413,6 +1020,7 @@
       };
       service.stopScan = function() {
         var message;
+
         service.setScanId(null);
         message = {};
         message = {
@@ -1426,6 +1034,7 @@
       };
       service.startCalibration = function() {
         var message;
+
         message = {};
         service.initStartTime();
         message = {
@@ -1438,18 +1047,15 @@
         FSMessageHandlerService.sendData(message);
         return $rootScope.$broadcast(FSEnumService.commands.CALIBRATE);
       };
-      service.runMeshing = function(scan_id,
-    filter,
-    format,
-    file) {
+      service.runMeshing = function(scan_id, filter, format) {
         var message;
+
         message = {};
         message = {
           event: FSEnumService.events.COMMAND,
           data: {
             command: FSEnumService.commands.MESHING,
             scan_id: scan_id,
-            file: file,
             format: format,
             filter: filter
           }
@@ -1458,6 +1064,7 @@
       };
       service.exitScan = function() {
         var message;
+
         message = {};
         message = {
           event: FSEnumService.events.COMMAND,
@@ -1475,13 +1082,12 @@
       };
       service.getSettings = function() {
         var message;
+
         message = {};
         return message = {
           event: FSEnumService.events.COMMAND
         };
       };
-      //data:
-      //command: FSEnumService.commands.GET_SETTINGS
       return service;
     }
   ]);
@@ -1495,6 +1101,7 @@
 
   angular.module(name, []).factory(name, function() {
     var service;
+
     service = {};
     service.createWebsocketConnection = function(url) {
       return new WebSocket(url);
@@ -1505,17 +1112,129 @@
 }).call(this);
 
 (function() {
-  /*
-  Example of how to wrap a 3rd party library, allowing it to be injectable instead of using the global var
-  */
+  var name;
+
+  name = 'fabscan.services.FSi18nService';
+
+  angular.module(name, []).factory(name, [
+    '$window', function($window) {
+      var service;
+
+      service = {};
+      service.formatText = function(key, values) {
+        var catalog, catalogId, textId, _ref;
+
+        if (values == null) {
+          values = {};
+        }
+        _ref = key.split("."), catalogId = _ref[0], textId = _ref[1];
+        if (catalogId && textId) {
+          if (catalogId in $window.i18n) {
+            catalog = $window.i18n[catalogId];
+            if (textId in catalog) {
+              return catalog[textId](values);
+            }
+          }
+        }
+        return key;
+      };
+      return service;
+    }
+  ]);
+
+}).call(this);
+
+/*
+Example of a service shared across views.
+Wrapper around the data layer for the app.
+*/
+
+
+(function() {
+  var DataSvc, name;
+
+  name = 'common.services.dataSvc';
+
+  DataSvc = (function() {
+    function DataSvc($log, $http, env) {
+      this.$log = $log;
+      this.$http = $http;
+      this.env = env;
+    }
+
+    DataSvc.prototype._get = function(relPath) {
+      return this.$http.get("" + this.env.serverUrl + "/" + relPath);
+    };
+
+    DataSvc.prototype.getPeople = function() {
+      return this._get('people');
+    };
+
+    DataSvc.prototype.getPerson = function(id) {
+      return this._get("person/" + id);
+    };
+
+    return DataSvc;
+
+  })();
+
+  angular.module(name, []).factory(name, [
+    '$log', '$http', 'common.services.env', function($log, $http, env) {
+      return new DataSvc($log, $http, env);
+    }
+  ]);
+
+}).call(this);
+
+/*
+DEV
+*/
+
+
+(function() {
+  var Environment, EnvironmentProvider, mod, modName, providerName;
+
+  providerName = 'common.services.env';
+
+  modName = "" + providerName + "Provider";
+
+  Environment = (function() {
+    function Environment() {}
+
+    Environment.prototype.env = 'DEV';
+
+    return Environment;
+
+  })();
+
+  EnvironmentProvider = (function() {
+    function EnvironmentProvider() {}
+
+    EnvironmentProvider.prototype.$get = function() {
+      return new Environment();
+    };
+
+    return EnvironmentProvider;
+
+  })();
+
+  mod = angular.module(modName, []);
+
+  mod.provider(providerName, new EnvironmentProvider());
+
+}).call(this);
+
+/*
+Example of how to wrap a 3rd party library, allowing it to be injectable instead of using the global var
+*/
+
+
+(function() {
   var name;
 
   name = 'common.services.toastrWrapperSvc';
 
   angular.module(name, []).factory(name, function() {
-    // override some default settings
-    // window.toastr.options.timeOut = 1000
-    //window.toastr.options.
     window.toastr.options.newestOnTop = true;
     window.toastr.options.positionClass = "toast-top-left";
     return window.toastr;
@@ -1529,28 +1248,7 @@
   name = 'fabscan.controller.FSAppController';
 
   angular.module(name, []).controller(name, [
-    '$log',
-    '$scope',
-    '$timeout',
-    '$http',
-    '$rootScope',
-    'ngProgress',
-    'common.services.toastrWrapperSvc',
-    'fabscan.services.FSMessageHandlerService',
-    'fabscan.services.FSEnumService',
-    'fabscan.services.FSScanService',
-    'fabscan.services.FSi18nService',
-    function($log,
-    $scope,
-    $timeout,
-    $http,
-    $rootScope,
-    ngProgress,
-    toastr,
-    FSMessageHandlerService,
-    FSEnumService,
-    FSScanService,
-    FSi18nService) {
+    '$log', '$scope', '$timeout', '$http', '$rootScope', 'ngProgress', 'common.services.toastrWrapperSvc', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSEnumService', 'fabscan.services.FSScanService', 'fabscan.services.FSi18nService', function($log, $scope, $timeout, $http, $rootScope, ngProgress, toastr, FSMessageHandlerService, FSEnumService, FSScanService, FSi18nService) {
       $scope.streamUrl = " ";
       $scope.settings = {};
       $scope.scanComplete = false;
@@ -1566,8 +1264,7 @@
       $scope.initError = false;
       $timeout((function() {
         $scope.appInitError();
-      }),
-    60000);
+      }), 15000);
       $scope.appInitError = function() {
         return $scope.initError = true;
       };
@@ -1602,21 +1299,17 @@
       $scope.upgradeServer = function() {
         return FSScanService.upgradeServer();
       };
-      $scope.$on("CONNECTION_STATE_CHANGED",
-    function(event,
-    connected) {
-        $log.info("Connected: " + connected);
+      $scope.$on("CONNECTION_STATE_CHANGED", function(event, connected) {
+        $log.info("Connected");
         $scope.isConnected = connected;
-        //$scope.appIsInitialized = true
         if (!connected) {
           $scope.appIsInitialized = false;
         }
         return $scope.$apply();
       });
-      $scope.$on(FSEnumService.events.ON_CLIENT_INIT,
-    function(event,
-    data) {
+      $scope.$on(FSEnumService.events.ON_CLIENT_INIT, function(event, data) {
         var _settings;
+
         $log.info("Initing");
         $scope.appIsInitialized = true;
         $scope.remainingTime = [];
@@ -1625,9 +1318,7 @@
         $scope.server_version = data['server_version'];
         $scope.firmware_version = data['firmware_version'];
         if (data['upgrade']['available']) {
-          toastr.info('Click here for upgrade! ',
-    'Version ' + data['upgrade']['version'] + ' now available',
-    {
+          toastr.info('Click here for upgrade! ', 'Version ' + data['upgrade']['version'] + ' now available', {
             timeOut: 0,
             closeButton: true,
             onclick: function() {
@@ -1636,24 +1327,19 @@
           });
         }
         _settings = data['settings'];
-        //_settings.resolution *=-1
-        angular.copy(_settings,
-    $scope.settings);
+        angular.copy(_settings, $scope.settings);
         FSScanService.setScannerState(data['state']);
         $scope.appIsUpgrading = data['state'] === FSEnumService.states.UPGRADING;
         if (data['state'] === FSEnumService.states.IDLE) {
           $scope.displayNews(true);
         }
         $log.debug("WebSocket connection ready...");
-        //toastr.info(FSi18nService.translateKey('main','CONNECTED_TO_SERVER'))
         return $scope.$apply();
       });
       $scope.displayNews = function(value) {
         return $scope.showNews = value;
       };
-      $scope.$on(FSEnumService.events.ON_STATE_CHANGED,
-    function(event,
-    data) {
+      $scope.$on(FSEnumService.events.ON_STATE_CHANGED, function(event, data) {
         $scope.showNews = false;
         $log.info("NEW STATE: " + data['state']);
         FSScanService.setScannerState(data['state']);
@@ -1666,19 +1352,16 @@
         } else {
           $scope.isCalibrating = false;
         }
-        //$scope.$broadcast('refreshSlider');
         return $scope.$apply();
       });
-      $scope.$on(FSEnumService.events.ON_INFO_MESSAGE,
-    function(event,
-    data) {
+      $scope.$on(FSEnumService.events.ON_INFO_MESSAGE, function(event, data) {
         var message;
+
         $log.info(data['message']);
         message = FSi18nService.formatText('main.' + data['message']);
         switch (data['level']) {
           case "info":
-            toastr.info(message,
-    {
+            toastr.info(message, {
               timeOut: 5000
             });
             break;
@@ -1686,8 +1369,7 @@
             toastr.warning(message);
             break;
           case "error":
-            toastr.error(message,
-    {
+            toastr.error(message, {
               timeOut: 0
             });
             break;
@@ -1696,9 +1378,6 @@
             break;
           default:
             toastr.info(message);
-        }
-        if (data['message'] === "RESTARTING_SERVER") {
-          location.reload();
         }
         return $scope.$apply();
       });
@@ -1714,20 +1393,8 @@
   name = "fabscan.controller.FSLoadingController";
 
   angular.module(name, []).controller(name, [
-    '$log',
-    '$scope',
-    '$rootScope',
-    'fabscan.services.FSScanService',
-    'fabscan.services.FSEnumService',
-    'common.services.Configuration',
-    function($log,
-    $scope,
-    $rootScope,
-    FSScanService,
-    FSEnum,
-    Configuration) {
-      $scope.loadPointCloud = function(pointcloud,
-    id) {
+    '$log', '$scope', '$rootScope', 'fabscan.services.FSScanService', 'fabscan.services.FSEnumService', 'common.services.Configuration', function($log, $scope, $rootScope, FSScanService, FSEnum, Configuration) {
+      $scope.loadPointCloud = function(pointcloud, id) {
         $scope.setScanIsLoading(true);
         $scope.setScanIsComplete(false);
         $scope.toggleLoadDialog();
@@ -1736,8 +1403,7 @@
         toastr.info("Loading scanned Pointcloud " + id);
         return $scope.loadPLY(pointcloud);
       };
-      return $scope.loadMesh = function(mesh,
-    id) {};
+      return $scope.loadMesh = function(mesh, id) {};
     }
   ]);
 
@@ -1749,27 +1415,12 @@
   name = "fabscan.controller.FSNewsController";
 
   angular.module(name, []).controller(name, [
-    '$log',
-    '$scope',
-    '$http',
-    '$timeout',
-    '$cookies',
-    '$q',
-    'common.services.Configuration',
-    function($log,
-    $scope,
-    $http,
-    $timeout,
-    $cookies,
-    $q,
-    configuration) {
-      var deferred,
-    hashCode,
-    timeoutPromise;
+    '$log', '$scope', '$http', '$timeout', '$cookies', '$q', 'common.services.Configuration', function($log, $scope, $http, $timeout, $cookies, $q, configuration) {
+      var deferred, hashCode, timeoutPromise;
+
       hashCode = function(str) {
-        var char,
-    hash,
-    i;
+        var char, hash, i;
+
         hash = 0;
         if (str.length === 0) {
           return hash;
@@ -1779,41 +1430,25 @@
           char = str.charCodeAt(i);
           hash = (hash << 5) - hash + char;
           hash = hash & hash;
-          // Convert to 32bit integer
           i++;
         }
         return hash;
       };
       timeoutPromise = $timeout((function() {
-        //aborts the request when timed out
         deferred.resolve();
         console.log('News request timeout...');
         $scope.displayNews(false);
-      }),
-    1);
+      }), 30);
       deferred = $q.defer();
       $scope.news = "No news available.";
       return $http({
         method: 'GET',
         url: configuration.installation.newsurl,
         timeout: deferred.promise
-      }).success(function(data,
-    status,
-    headers,
-    config) {
-        //    newsHASH = hashCode(data)
-        //    if newsHASH == $cookies.newsHASH
-        //      $log.debug("Nothing new here")
-        //    else
-        //      $log.debug("Some news are available")
-
-        //$log.info("News Hash "+hashCode(data))
+      }).success(function(data, status, headers, config) {
         $scope.news = data;
         return $timeout.cancel(timeoutPromise);
-      }).error(function(data,
-    status,
-    headers,
-    config) {
+      }).error(function(data, status, headers, config) {
         return $scope.news = "Error retrieving news.";
       });
     }
@@ -1823,31 +1458,14 @@
 
 (function() {
   var name,
-    indexOf = [].indexOf;
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   name = "fabscan.controller.FSPreviewController";
 
   angular.module(name, []).controller(name, [
-    '$log',
-    '$scope',
-    '$rootScope',
-    '$http',
-    'ngProgress',
-    'common.services.Configuration',
-    'fabscan.services.FSEnumService',
-    'fabscan.services.FSScanService',
-    function($log,
-    $scope,
-    $rootScope,
-    $http,
-    ngProgress,
-    Configuration,
-    FSEnum,
-    FSScanService) {
-      var median,
-    resetSate,
-    startStream,
-    stopStream;
+    '$log', '$scope', '$rootScope', '$http', 'ngProgress', 'common.services.Configuration', 'fabscan.services.FSEnumService', 'fabscan.services.FSScanService', function($log, $scope, $rootScope, $http, ngProgress, Configuration, FSEnum, FSScanService) {
+      var median, resetSate, startStream, stopStream;
+
       $scope.canvasWidth = 400;
       $scope.canvasHeight = 500;
       $scope.dofillcontainer = true;
@@ -1885,44 +1503,27 @@
       if (FSScanService.getScannerState() === FSEnum.states.CALIBRATING) {
         $scope.showStream = true;
       }
-      $scope.$on(FSEnum.events.ON_STATE_CHANGED,
-    function(event,
-    data) {
-        // if data['state'] == FSEnum.states.SETTINGS
-        //    startStream()
+      $scope.$on(FSEnum.events.ON_STATE_CHANGED, function(event, data) {
         if (data['state'] === FSEnum.states.IDLE) {
           return stopStream();
         }
       });
-      $rootScope.$on('clearView',
-    function() {
+      $rootScope.$on('clearView', function() {
         return $scope.clearView();
       });
-      $scope.start_stream_conditions = ['SCANNING_TEXTURE',
-    'START_CALIBRATION'];
-      $scope.stop_stream_conditions = ['STOP_CALIBRATION',
-    'SCANNING_OBJECT'];
-      $scope.reset_conditions = ['SCAN_CANCELED',
-    'SCAN_STOPED'];
-      $scope.$on(FSEnum.events.ON_INFO_MESSAGE,
-    function(event,
-    data) {
-        var ref,
-    ref1,
-    ref2;
-        if (ref = data['message'],
-    indexOf.call($scope.start_stream_conditions,
-    ref) >= 0) {
+      $scope.start_stream_conditions = ['SCANNING_TEXTURE', 'START_CALIBRATION'];
+      $scope.stop_stream_conditions = ['STOP_CALIBRATION', 'SCANNING_OBJECT'];
+      $scope.reset_conditions = ['SCAN_CANCELED', 'SCAN_STOPED'];
+      $scope.$on(FSEnum.events.ON_INFO_MESSAGE, function(event, data) {
+        var _ref, _ref1, _ref2;
+
+        if (_ref = data['message'], __indexOf.call($scope.start_stream_conditions, _ref) >= 0) {
           startStream();
         }
-        if (ref1 = data['message'],
-    indexOf.call($scope.stop_stream_conditions,
-    ref1) >= 0) {
+        if (_ref1 = data['message'], __indexOf.call($scope.stop_stream_conditions, _ref1) >= 0) {
           stopStream();
         }
-        if (ref2 = data['message'],
-    indexOf.call($scope.reset_conditions,
-    ref2) >= 0) {
+        if (_ref2 = data['message'], __indexOf.call($scope.reset_conditions, _ref2) >= 0) {
           resetSate();
         }
         if (data['message'] === 'SCAN_COMPLETE') {
@@ -1932,12 +1533,9 @@
           return resetSate();
         }
       });
-      $scope.$on(FSEnum.events.ON_NEW_PROGRESS,
-    function(event,
-    data) {
-        var _time_values,
-    percentage,
-    timeTaken;
+      $scope.$on(FSEnum.events.ON_NEW_PROGRESS, function(event, data) {
+        var percentage, timeTaken, _time_values;
+
         if (FSScanService.state !== FSEnum.states.IDLE) {
           $scope.resolution = data['resolution'];
           $scope.progress = data['progress'];
@@ -1947,12 +1545,10 @@
             $scope.sampledRemainingTime = 0;
             _time_values = [];
           } else {
-            //ngProgress.start()
             timeTaken = data['timestamp'] - $scope.startTime;
             $scope.remainingTime.push(parseFloat(Math.floor(((timeTaken / $scope.progress) * ($scope.resolution - $scope.progress)) / 1000)));
             if ($scope.remainingTime.length > 20) {
-              _time_values = $scope.remainingTime.slice(Math.max($scope.remainingTime.length - 8,
-    1));
+              _time_values = $scope.remainingTime.slice(Math.max($scope.remainingTime.length - 8, 1));
             } else {
               _time_values = $scope.remainingTime;
             }
@@ -1969,13 +1565,12 @@
             $scope.sampledRemainingTime = 0;
             _time_values = [];
           }
-          return $scope.addPoints(data['points'],
-    data['progress'],
-    data['resolution']);
+          return $scope.addPoints(data['points'], data['progress'], data['resolution']);
         }
       });
       $scope.progressHandler = function(item) {
         var percentage;
+
         if ($scope.progress === 0) {
           ngProgress.start();
           $scope.progress = item.total;
@@ -1993,8 +1588,8 @@
       };
       median = function(values) {
         var half;
-        values.sort(function(a,
-    b) {
+
+        values.sort(function(a, b) {
           return a - b;
         });
         half = Math.floor(values.length / 2);
@@ -2033,24 +1628,7 @@
   name = "fabscan.controller.FSScanController";
 
   angular.module(name, []).controller(name, [
-    '$log',
-    '$scope',
-    '$rootScope',
-    'ngProgress',
-    '$http',
-    'common.services.Configuration',
-    'fabscan.services.FSEnumService',
-    'fabscan.services.FSScanService',
-    'fabscan.services.FSMessageHandlerService',
-    function($log,
-    $scope,
-    $rootScope,
-    ngProgress,
-    $http,
-    Configuration,
-    FSEnumService,
-    FSScanService,
-    FSMessageHandlerService) {
+    '$log', '$scope', '$rootScope', 'ngProgress', '$http', 'common.services.Configuration', 'fabscan.services.FSEnumService', 'fabscan.services.FSScanService', 'fabscan.services.FSMessageHandlerService', function($log, $scope, $rootScope, ngProgress, $http, Configuration, FSEnumService, FSScanService, FSMessageHandlerService) {
       $scope.showSettings = false;
       $scope.scanListLoaded = false;
       $scope.loadDialog = false;
@@ -2061,14 +1639,14 @@
       $scope.m_filters = [];
       $scope.loadFilters = function() {
         var filter_promise;
+
         filter_promise = $http.get(Configuration.installation.apiurl + 'api/v1/filters/');
         return filter_promise.then(function(payload) {
           $log.info(payload);
           $scope.m_filters = payload.data.filters;
-          $scope.m_filters.sort(function(a,
-    b) {
-            var x,
-    y;
+          $scope.m_filters.sort(function(a, b) {
+            var x, y;
+
             x = a.file_name.toLowerCase();
             y = b.file_name.toLowerCase();
             if (x < y) {
@@ -2121,6 +1699,7 @@
       };
       $scope.toggleLoadDialog = function() {
         var promise;
+
         $scope.displayNews(false);
         if (!$scope.loadDialog) {
           promise = $http.get(Configuration.installation.apiurl + 'api/v1/scans/');
@@ -2139,7 +1718,6 @@
       $scope.exitScanSettings = function() {
         $scope.stopStream();
         $scope.showSettings = false;
-        //window.stop()
         return FSScanService.exitScan();
       };
       $scope.newScan = function() {
@@ -2177,27 +1755,9 @@
   name = "fabscan.controller.FSSettingsController";
 
   angular.module(name, []).controller(name, [
-    '$log',
-    '$scope',
-    '$timeout',
-    '$swipe',
-    '$http',
-    'common.services.Configuration',
-    'fabscan.services.FSEnumService',
-    'fabscan.services.FSMessageHandlerService',
-    'fabscan.services.FSScanService',
-    function($log,
-    $scope,
-    $timeout,
-    $swipe,
-    $http,
-    Configuration,
-    FSEnumService,
-    FSMessageHandlerService,
-    FSScanService) {
-      var devices_promise,
-    updateSettings;
-      //if FSScanService.getScannerState() == FSEnumService.states.UPDATING_SETTINGS
+    '$log', '$scope', '$timeout', '$swipe', '$http', 'common.services.Configuration', 'fabscan.services.FSEnumService', 'fabscan.services.FSMessageHandlerService', 'fabscan.services.FSScanService', function($log, $scope, $timeout, $swipe, $http, Configuration, FSEnumService, FSMessageHandlerService, FSScanService) {
+      var devices_promise, updateSettings;
+
       $scope.streamUrl = Configuration.installation.apiurl + 'api/v1/streams/?type=laser';
       $scope.previewMode = "laser";
       $scope.selectedTab = 'general';
@@ -2206,17 +1766,9 @@
         $log.info(payload);
         return $scope.devices = payload.data;
       });
-      //$scope.logResize = ()->
-      //  element = angular.element(document.querySelector('#settingsWindow'));
-      //  height = element[0].offsetHeight;
-      //  width = element[0].offsetWidth;
-      //  console.log(width)
-      //  #height = window.innerHeight
-      //  document.getElementById('settings-preview').setAttribute("style","height:" + height + "px");
-      //  #console.log(height)
-      $scope.sendDeviceCommand = function(device,
-    f_name) {
+      $scope.sendDeviceCommand = function(device, f_name) {
         var message;
+
         message = {};
         message = {
           event: FSEnumService.events.COMMAND,
@@ -2224,7 +1776,7 @@
             command: FSEnumService.commands.HARDWARE_TEST_FUNCTION,
             device: {
               name: device,
-              function: f_name
+              "function": f_name
             }
           }
         };
@@ -2233,9 +1785,9 @@
       $scope.timeout = null;
       updateSettings = function() {
         var _settings;
+
         _settings = {};
-        angular.copy($scope.settings,
-    _settings);
+        angular.copy($scope.settings, _settings);
         _settings.resolution *= -1;
         return FSScanService.updateSettings(_settings);
       };
@@ -2266,12 +1818,10 @@
         $scope.streamUrl = Configuration.installation.apiurl + 'api/v1/streams/?type=texture';
         return $scope.previewMode = "calibration";
       };
-      //$scope.$apply()
       $scope.showLaserPreview = function() {
         $scope.streamUrl = Configuration.installation.apiurl + 'api/v1/streams/?type=laser';
         return $scope.previewMode = "laser";
       };
-      //$scope.$apply()
       $scope.calibrationPatternSelected = function() {
         if ($scope.settings.show_calibration_pattern) {
           return true;
@@ -2312,132 +1862,96 @@
           return false;
         }
       };
-      $scope.$watch('settings.resolution',
-    function(newVal,
-    oldVal) {
+      $scope.$watch('settings.resolution', function(newVal, oldVal) {
         if (newVal !== oldVal) {
           updateSettings();
           $timeout.cancel($scope.timeout);
           $scope.showResolutionValue = true;
           return $scope.timeout = $timeout((function() {
             $scope.showResolutionValue = false;
-          }),
-    600);
+          }), 600);
         }
-      },
-    true);
-      $scope.$watch('settings.laser_positions',
-    function(newVal,
-    oldVal) {
+      }, true);
+      $scope.$watch('settings.laser_positions', function(newVal, oldVal) {
         if (newVal !== oldVal) {
           updateSettings();
           $timeout.cancel($scope.timeout);
           $scope.showPositionValue = true;
           return $scope.timeout = $timeout((function() {
             $scope.showPositionValue = false;
-          }),
-    600);
+          }), 600);
         }
-      },
-    true);
-      $scope.$watch('settings.threshold',
-    function(newVal,
-    oldVal) {
+      }, true);
+      $scope.$watch('settings.threshold', function(newVal, oldVal) {
         if (newVal !== oldVal) {
           updateSettings();
           $timeout.cancel($scope.timeout);
           $scope.showThresholdValue = true;
           return $scope.timeout = $timeout((function() {
             $scope.showThresholdValue = false;
-          }),
-    200);
+          }), 200);
         }
-      },
-    true);
-      $scope.$watch('settings.camera.saturation',
-    function(newVal,
-    oldVal) {
+      }, true);
+      $scope.$watch('settings.camera.saturation', function(newVal, oldVal) {
         if (newVal !== oldVal) {
           updateSettings();
           $timeout.cancel($scope.timeout);
           $scope.showSaturationValue = true;
           return $scope.timeout = $timeout((function() {
             $scope.showSaturationValue = false;
-          }),
-    200);
+          }), 200);
         }
-      },
-    true);
-      $scope.$watch('settings.camera.contrast',
-    function(newVal,
-    oldVal) {
+      }, true);
+      $scope.$watch('settings.camera.contrast', function(newVal, oldVal) {
         if (newVal !== oldVal) {
           updateSettings();
           $timeout.cancel($scope.timeout);
           $scope.showContrastValue = true;
           return $scope.timeout = $timeout((function() {
             $scope.showContrastValue = false;
-          }),
-    200);
+          }), 200);
         }
-      },
-    true);
-      $scope.$watch('settings.camera.brightness',
-    function(newVal,
-    oldVal) {
+      }, true);
+      $scope.$watch('settings.camera.brightness', function(newVal, oldVal) {
         if (newVal !== oldVal) {
           updateSettings();
           $timeout.cancel($scope.timeout);
           $scope.showBrightnessValue = true;
           return $scope.timeout = $timeout((function() {
             $scope.showBrightnessValue = false;
-          }),
-    200);
+          }), 200);
         }
-      },
-    true);
-      $scope.$watch('settings.led.red',
-    function(newVal,
-    oldVal) {
+      }, true);
+      $scope.$watch('settings.led.red', function(newVal, oldVal) {
         if (newVal !== oldVal) {
           updateSettings();
           $timeout.cancel($scope.timeout);
           $scope.showLedRedValue = true;
           return $scope.timeout = $timeout((function() {
             $scope.showLedRedValue = false;
-          }),
-    200);
+          }), 200);
         }
-      },
-    true);
-      $scope.$watch('settings.led.green',
-    function(newVal,
-    oldVal) {
+      }, true);
+      $scope.$watch('settings.led.green', function(newVal, oldVal) {
         if (newVal !== oldVal) {
           updateSettings();
           $timeout.cancel($scope.timeout);
           $scope.showLedGreenValue = true;
           return $scope.timeout = $timeout((function() {
             $scope.showLedGreenValue = false;
-          }),
-    200);
+          }), 200);
         }
-      },
-    true);
-      return $scope.$watch('settings.led.blue',
-    function(newVal,
-    oldVal) {
+      }, true);
+      return $scope.$watch('settings.led.blue', function(newVal, oldVal) {
         if (newVal !== oldVal) {
           updateSettings();
           $timeout.cancel($scope.timeout);
           $scope.showLedBlueValue = true;
           return $scope.timeout = $timeout((function() {
             $scope.showLedBlueValue = false;
-          }),
-    200);
+          }), 200);
         }
-      },
-    true);
+      }, true);
     }
   ]);
 
@@ -2449,41 +1963,19 @@
   name = "fabscan.controller.FSShareController";
 
   angular.module(name, []).controller(name, [
-    '$log',
-    '$scope',
-    '$rootScope',
-    '$http',
-    'common.services.toastrWrapperSvc',
-    'common.services.Configuration',
-    'fabscan.services.FSScanService',
-    function($log,
-    $scope,
-    $rootScope,
-    $http,
-    toaster,
-    Configuration,
-    FSScanService) {
+    '$log', '$scope', '$rootScope', '$http', 'common.services.toastrWrapperSvc', 'common.services.Configuration', 'fabscan.services.FSScanService', function($log, $scope, $rootScope, $http, toaster, Configuration, FSScanService) {
       var getFileExtension;
+
       $scope.settings = null;
       $scope.id = FSScanService.getScanId();
       $scope.selectedTab = 'download';
-      $scope.selectedFile = null;
       $scope.raw_scans = [];
       $scope.meshes = [];
-      // used for debugging...
-      //$scope.raw_scans = [{type:'ply',name:'raw_scan_0.ply',file_name:'raw_scan_0.ply',url:'http://irgendwas'},{type:'ply',name:'raw_scan_0.ply',file_name:'raw_scan_0.ply',url:'http://irgendwas'},{type:'ply',name:'raw_scan_0.ply',filter_name:'raw_scan_0',url:'http://irgendwas'},{type:'ply',name:'raw_scan_0.ply',filter_name:'raw_scan_0.ply',url:'http://irgendwas'},{type:'ply',name:'raw_scan_0.ply',filter_name:'raw_scan_0.ply',url:'http://irgendwas'}]
-      //$scope.meshes = [{type:'ply',name:'raw_scan_0.ply',filter_name:'raw_scan_0',url:'http://irgendwas'},{type:'ply',name:'raw_scan_0.ply',filter_name:'raw_scan_0',url:'http://irgendwas'},{type:'ply',name:'raw_scan_0.ply',filter_name:'raw_scan_0',url:'http://irgendwas'},{type:'ply',name:'raw_scan_0.ply',filter_name:'raw_scan_0',url:'http://irgendwas'},{type:'ply',name:'raw_scan_0.ply',filter_name:'raw_scan_0',url:'http://irgendwas'}]
-      //$scope.m_filters = [{file_name:'filter_1.mlx',name:'filter_1'},{file_name:'filter_2.mlx',name:'filter_2'},{file_name:'filter_3.mlx',name:'filter_3'}]
-      $scope.file_formats = ['ply',
-    'stl',
-    'obj',
-    'off',
-    'xyz',
-    'x3d',
-    '3ds'];
+      $scope.file_formats = ['ply', 'stl', 'obj', 'off', 'xyz', 'x3d', '3ds'];
       $scope.selectedFormat = $scope.file_formats[0];
       $scope.getScans = function() {
         var scan_promise;
+
         scan_promise = $http.get(Configuration.installation.apiurl + 'api/v1/scans/' + FSScanService.getScanId());
         return scan_promise.then(function(payload) {
           $log.debug(payload);
@@ -2501,10 +1993,7 @@
         slidesToShow: 1,
         method: {},
         event: {
-          afterChange: function(event,
-    slick,
-    currentSlide,
-    nextSlide) {
+          afterChange: function(event, slick, currentSlide, nextSlide) {
             return $scope.selectedFormat = $(slick.$slides.get(currentSlide)).data('value');
           }
         }
@@ -2517,37 +2006,25 @@
         slidesToShow: 1,
         method: {},
         event: {
-          afterChange: function(event,
-    slick,
-    currentSlide,
-    nextSlide) {
+          afterChange: function(event, slick, currentSlide, nextSlide) {
             return $scope.selectedFilter = $(slick.$slides.get(currentSlide)).data('value');
           }
         }
       };
       $scope.appendFormatListener = function() {
-        $('.f_format').on('afterChange',
-    function(event,
-    slick,
-    currentSlide,
-    nextSlide) {
+        $('.f_format').on('afterChange', function(event, slick, currentSlide, nextSlide) {
           return $scope.selectedFormat = $(slick.$slides.get(currentSlide)).data('value');
         });
       };
       $scope.appendFilterListener = function() {
-        $('.m_filter').on('afterChange',
-    function(event,
-    slick,
-    currentSlide,
-    nextSlide) {
+        $('.m_filter').on('afterChange', function(event, slick, currentSlide, nextSlide) {
           return $scope.selectedFilter = $(slick.$slides.get(currentSlide)).data('value');
         });
       };
       $scope.selectTab = function(tab) {
         return $scope.selectedTab = tab;
       };
-      $scope.nextSubSelection = function(id) {
-        $scope.selectedFile = id;
+      $scope.nextSubSelection = function() {
         $('.filter-container').slick('slickNext');
         return false;
       };
@@ -2557,8 +2034,9 @@
       };
       $scope.deleteFile = function(filename) {
         var promise;
+
         $scope.toggleShareDialog();
-        promise = $http.delete(Configuration.installation.apiurl + 'api/v1/scans/' + FSScanService.getScanId() + '/files?filename=' + filename);
+        promise = $http["delete"](Configuration.installation.apiurl + 'api/v1/scans/' + FSScanService.getScanId() + '/files?filename=' + filename);
         return promise.then(function(payload) {
           $log.info(payload.data);
           $scope.getScans();
@@ -2569,14 +2047,15 @@
             $rootScope.$broadcast('clearView');
           }
           return {
-            else: toaster.info('File "' + filename + '" deleted')
+            "else": toaster.info('File "' + filename + '" deleted')
           };
         });
       };
       $scope.deleteScan = function() {
         var promise;
+
         $scope.toggleShareDialog();
-        promise = $http.delete(Configuration.installation.apiurl + 'api/v1/scans/' + FSScanService.getScanId());
+        promise = $http["delete"](Configuration.installation.apiurl + 'api/v1/scans/' + FSScanService.getScanId());
         return promise.then(function(payload) {
           $log.info(payload.data);
           toaster.info('Scan ' + FSScanService.getScanId() + ' deleted');
@@ -2601,6 +2080,7 @@
       };
       $scope.loadMesh = function(mesh) {
         var extension;
+
         extension = getFileExtension(mesh);
         if (extension === 'stl') {
           $scope.loadSTLMesh(mesh);
@@ -2609,14 +2089,11 @@
           return $scope.loadPLY(mesh);
         }
       };
-      return $scope.runMeshing = function(file) {
+      return $scope.runMeshing = function() {
         $scope.toggleShareDialog();
         $log.info($scope.selectedFilter);
         $log.info($scope.selectedFormat);
-        return FSScanService.runMeshing(FSScanService.getScanId(),
-    $scope.selectedFilter,
-    $scope.selectedFormat,
-    $scope.selectedFile);
+        return FSScanService.runMeshing(FSScanService.getScanId(), $scope.selectedFilter, $scope.selectedFormat);
       };
     }
   ]);

@@ -1,4 +1,4 @@
-import urlparse, os
+import urllib.parse, os
 import datetime
 import time
 import email

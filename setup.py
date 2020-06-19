@@ -68,10 +68,10 @@ def params():
         "Intended Audience :: End Users/Desktop",
         "Intended Audience :: Manufacturing",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: GNU Affero General Public License v3",
+        "License :: OSI Approved :: GNU GENERAL PUBLIC LICENSE v2",
         "Natural Language :: English",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
         "Programming Language :: JavaScript",
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
@@ -81,8 +81,8 @@ def params():
     ]
     author = "Mario Lukas"
     author_email = "info@mariolukas.de"
-    url = "http://www.fabscan.org"
-    license = "AGPLv3"
+    url = "https://www.fabscan.org"
+    license = "GPLv2"
 
 
     packages = find_packages(where="src")

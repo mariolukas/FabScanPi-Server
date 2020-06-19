@@ -45,8 +45,8 @@ class FSMeshlabTask(threading.Thread):
                     if param.attributes['name'].value == "SampleNum":
                         param.setAttribute('value', str(int(pointcloud_size/3)))
 
-            except xml.parsers.expat.ExpatError, ex:
-                print ex
+            except xml.parsers.expat.ExpatError as ex:
+                print(ex)
 
             with open(file, "wb") as fh:
                 xmldoc.writexml(fh)
@@ -63,8 +63,8 @@ class FSMeshlabTask(threading.Thread):
             basedir = os.path.dirname(os.path.dirname(__file__))
             mlx_script_path = basedir+"/mlx/"+self.filter
 
-            input = self.config.folders.scans+str(self.scan_id)+"/"+str(self.file)
-            output = self.config.folders.scans+str(self.scan_id)+"/mesh_"+str(self.file[:-3])+"_"+str(self.filter).split(".")[0]+"."+self.format
+            input = self.config.file.folders.scans+str(self.scan_id)+"/"+str(self.file)
+            output = self.config.file.folders.scans+str(self.scan_id)+"/mesh_"+str(self.file[:-3])+"_"+str(self.filter).split(".")[0]+"."+self.format
             self._logger.info(output)
 
             pointcloud_size = self.get_poitcloud_value_by_line(pointcloud_file=input, lookup="element vertex")

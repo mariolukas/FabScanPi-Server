@@ -12,7 +12,7 @@ import zipfile
 from collections import namedtuple
 from fabscan.FSConfig import ConfigInterface
 from fabscan.lib.util.FSInject import inject
-
+from fabscan.lib.util.FSJson import YAMLobj
 
 class FSSystemExit(object):
 
@@ -45,16 +45,18 @@ class FSSystem(object):
                 process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                 output, _ = process.communicate()
                 if output:
-                   logging.getLogger(__name__).info(output.rstrip("\n"))
+                   logging.getLogger(__name__).info(output.rstrip(b"\n"))
                 rc = process.returncode
             else:
                 process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE,  stderr=subprocess.PIPE, shell=False)
                 while True:
+
                     output = process.stdout.readline()
-                    if output == '' and process.poll() is not None:
+
+                    if output == b'' and process.poll() is not None:
                         break
                     if output:
-                        logging.getLogger(__name__).info(output.rstrip("\n"))
+                        logging.getLogger(__name__).info(output.rstrip(b"\n"))
                 process.poll()
 
                 rc = process.returncode
@@ -75,36 +77,34 @@ class FSSystem(object):
 
 
     def delete_image_folders(self,scan_id):
-        folder = self.config.folders.scans+scan_id+"/color_raw/"
+        folder = self.config.file.folders.scans+scan_id+"/color_raw/"
         self.delete_folder(folder)
 
-        folder = self.config.folders.scans+scan_id+"/laser_raw/"
+        folder = self.config.file.folders.scans+scan_id+"/laser_raw/"
         self.delete_folder(folder)
 
 
     def delete_scan(self, scan_id, ignore_errors=True):
 
         #basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        folder = self.config.folders.scans+scan_id+"/"
+        folder = self.config.file.folders.scans+scan_id+"/"
 
-        mask = self.config.folders.scans+scan_id+"/"'*.[pso][ltb][lyj]'
+        mask = self.config.file.folders.scans+scan_id+"/"'*.[pso][ltb][lyj]'
         number_of_files = len(glob.glob(mask))
 
     def zipdir(self, scan_id):
         # ziph is zipfile handle
-        zipf = zipfile.ZipFile(self.config.folders.scans+scan_id+'/'+str(scan_id)+'.zip', 'w', zipfile.ZIP_DEFLATED)
+        zipf = zipfile.ZipFile(self.config.file.folders.scans+scan_id+'/'+str(scan_id)+'.zip', 'w', zipfile.ZIP_DEFLATED)
 
-        for root, dirs, files in os.walk(self.config.folders.scans+scan_id+"/color_raw/"):
+        for root, dirs, files in os.walk(self.config.file.folders.scans+scan_id+"/color_raw/"):
             for file in files:
                 zipf.write(os.path.join(root, file))
 
         zipf.close()
 
-def _json_object_hook(d):
-    return namedtuple('X', d.keys())(*d.values())
-
 def json2obj(data):
-    return json.loads(data, object_hook=_json_object_hook)
+    _jsonDict = json.loads(data)
+    return YAMLobj(_jsonDict)
 
 def new_message():
         message = dict()

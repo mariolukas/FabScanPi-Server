@@ -1,6 +1,5 @@
 import unittest
-from urllib2 import URLError
-
+import  urllib.error
 from mock import patch
 
 from fabscan.util.FSUpdate import get_latest_version_tag, upgrade_is_available, do_upgrade
@@ -13,7 +12,7 @@ class FSUpdateTestCase(unittest.TestCase):
 		result = get_latest_version_tag()
 		self.assertEqual(result, "0.3.1")
 
-	@patch('urllib2.urlopen', side_effect=URLError("Connection error"))
+	@patch('urllib2.urlopen', side_effect=urllib.error("Connection error"))
 	def test_get_latest_version_exception(self, urlopen_mock):
 		result = get_latest_version_tag()
 		self.assertEqual(result, "0.0.0")

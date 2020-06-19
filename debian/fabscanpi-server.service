@@ -1,0 +1,13 @@
+[Unit]
+Description=FabScan Pi - Open Source 3D Scanner
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Restart=always
+EnvironmentFile=-/etc/default/fabscanpi-server
+ExecStart=/usr/bin/fabscanpi-server --config=${CONFIG} --settings=${SETTINGS} --logfile=${LOG}
+
+[Install]
+WantedBy=multi-user.target

@@ -9,6 +9,7 @@ import base64
 import shutil
 import logging
 import glob
+import json
 from PIL import Image
 
 from fabscan.lib.util.FSUtil import json2obj
@@ -31,13 +32,13 @@ class FSScans():
 
 
     def get_scan_files(self, scan_id):
-        scan_dir = self.config.folders.scans + scan_id
+        scan_dir = self.config.file.folders.scans + scan_id
         files = glob.glob(scan_dir + '/scan_*.[p][l][y]')
         return files
 
 
     def get_list_of_scans(self, host):
-        basedir = self.config.folders.scans
+        basedir = self.config.file.folders.scans
 
         subdirectories = sorted(os.listdir(str(basedir)), reverse=True)
         response = dict()
@@ -60,7 +61,7 @@ class FSScans():
 
 
     def get_scan_by_id(self, host, id):
-        basedir = self.config.folders.scans
+        basedir = self.config.file.folders.scans
 
         scan = dict()
         scan['id'] = id
@@ -97,7 +98,7 @@ class FSScans():
 
 
     def delete_file(self, scan_id, file_name):
-        file = self.config.folders.scans + scan_id + "/" + file_name
+        file = self.config.file.folders.scans + scan_id + "/" + file_name
 
         os.unlink(file)
 
@@ -113,7 +114,7 @@ class FSScans():
 
 
     def delete_scan(self, id):
-        dir_name = self.config.folders.scans + id
+        dir_name = self.config.file.folders.scans + id
         shutil.rmtree(dir_name, ignore_errors=True)
 
         response = dict()
@@ -123,12 +124,12 @@ class FSScans():
         return response
 
 
-    def create_preview_image(self, data, scan_id):
-        object = json2obj(str(data))
+    def create_preview_image(self, base_64_image, scan_id):
 
-        dir_name = self.config.folders.scans
-        png = base64.decodestring(object.image[22:])
-        image_file = open(dir_name + scan_id + "/" + scan_id + ".png", "w")
+        dir_name = self.config.file.folders.scans
+
+        png = base64.decodebytes(base_64_image[22:])
+        image_file = open(dir_name + scan_id + "/" + scan_id + ".png", "wb")
         image_file.write(png)
 
         preview_image = dir_name + scan_id + "/" + scan_id + ".png"
@@ -146,26 +147,3 @@ class FSScans():
 
         return response
 
-    def create_preview_image(self, data, scan_id):
-
-        object = json2obj(str(data))
-
-        dir_name =  self.config.folders.scans
-        png = base64.decodestring(object.image[22:])
-        image_file = open(dir_name+scan_id+"/"+scan_id+".png", "w")
-        image_file.write(png)
-
-        preview_image = dir_name+scan_id+"/"+scan_id+".png"
-        thumbnail_image = dir_name+scan_id+"/thumbnail_"+scan_id+".png"
-
-        image_file.close()
-        image_file = Image.open(preview_image)
-        image_file.thumbnail((160,120),Image.ANTIALIAS)
-        image_file.save(thumbnail_image)
-
-        response = dict()
-        response['preview_image'] = preview_image
-        response['thumbnail_image'] = thumbnail_image
-        response['response'] = "PREVIEW_IMAGE_SAVED"
-
-        return response

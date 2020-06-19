@@ -4,20 +4,63 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [0.9.0] - unreleased
+## [0.x.x] - tbd
+### TODO
+- implement a plugin system
+
+## [0.12.0] - tbd
+### TODO
+- add a more precise camera calibration (remove distortion)
+- make calibration more robust
+- split camera calibration for combo and seperate camera calibration
+- add independent chooseable settings for texture and object scan
+  saturation, contrast, brightness, lights etc..
+
+## [0.11.0] - tbd
+### TODO
+- introduce new user interface
+
+## [0.10.0] - tbd
 
 ### TODO
-- migrate python 2 to python 3
 - refactor serial driver make it more abstract to general connector interface
 - add connector for GPIO's
-- add support for cricket board
+- add connector for adafruit crickit board
+
+## [0.9.0] - unreleased
 
 ### Added
+- new firmware version
+- new frontend version (meshlab options are removed within this version)
+- check for TBB support and fallback if multiprocessing is not available in  opencv
 
 ### Changed
+- migrated form python2 to python3 
+- refactored image worker and worker pool
+- refactored serial communication parts of firmware
+- serial connection speedup
+- general processing speedup
+- removed ugly event handler from main scanner handler ( task queue is handled by actor now)
+- scan data is saved to a file during the scan process
+- free more memory by resetting unused image space
+- added process and thread number to logger formatter 
+- fixed mjpeg stream no data in stream issue
+- removed old firmware versions
 
 ### Fixed
+- put websocket callbacks to tornado ioloop
+- bugfixes in firmware
+- fixed camera image rotation bug
 
+## [0.8.2] - 2020-01-01
+
+### Fixed
+- serial connection issues
+- fixed init.d start script
+- fixed sudo users
+- fxed serial deadlock
+
+## [0.8.1] - 2019-12-31
 
 ## [0.8.2] - unreleased
 

@@ -158,7 +158,7 @@ class Injectable(type):
     "Metaclass to implements dependency injection"
 
     def __call__(cls, *args, **kwargs):
-        for k, c in cls.__dependencies__.items():
+        for k, c in list(cls.__dependencies__.items()):
             if not k in kwargs:
                 kwargs[k] = injector.get_instance(c)
         r = super(Injectable, type(cls)).__call__(cls, *args, **kwargs)

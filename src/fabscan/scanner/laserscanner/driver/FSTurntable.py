@@ -17,7 +17,7 @@ class Turntable(object):
         self.serial_connection = serial_object
         # Number of steps for the turntable to do a full rotation
         # DEFAULT Value for FS Shield is 1/16 Step
-        self.steps_for_full_rotation = self.config.turntable.steps
+        self.steps_for_full_rotation = self.config.file.turntable.steps
         # scaler for silent step sticks was in firmware before.
         self.scaler = 4
 
@@ -28,7 +28,9 @@ class Turntable(object):
         steps *= self.scaler
 
         if self.serial_connection != None:
-            command = "G04 T"+str(steps)+" F"+str(speed)+";"
+            command = "G01 T"+str(steps)+" F"+str(speed)
+            #if steps < 0:
+            #    command = command.replace('\U00002013', '-')
             self.serial_connection.send_and_receive(command)
             time.sleep(0.8)
 
@@ -36,29 +38,32 @@ class Turntable(object):
         steps *= self.scaler
 
         if self.serial_connection != None:
-            command = "G02 T"+str(steps)+" F"+str(speed)+";"
+
+            command = "G01 T"+str(steps)+" F"+str(speed)
+
+            #    command = command.replace('\U00002013', '-')
             self.serial_connection.send_and_receive(command)
 
 
     def enable_motors(self):
         if self.serial_connection != None:
-            command = "M17;"
+            command = "M17"
             self.serial_connection.send_and_receive(command)
 
     def disable_motors(self):
         if self.serial_connection != None:
-            command = "M18;"
+            command = "M18"
             self.serial_connection.send_and_receive(command)
 
     def start_turning(self):
         if self.serial_connection != None:
             self.enable_motors()
-            command = "G06;"
+            command = "G06"
             self.serial_connection.send_and_receive(command)
 
     def stop_turning(self):
         if self.serial_connection != None:
             self.disable_motors()
-            command = "G07;"
+            command = "G07"
             self.serial_connection.send_and_receive(command)
 

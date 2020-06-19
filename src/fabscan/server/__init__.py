@@ -4,4 +4,4 @@ __license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
-from FSScanServer import FSScanServer
+from .FSScanServer import FSScanServer

@@ -13,9 +13,9 @@ class Laser:
     def on(self, laser=0):
         if (laser != None) and (self.serial_connection != None) and not self.is_on[laser]:
             if laser == 0:
-                command = "M21;"
+                command = "M21"
             else:
-                command = "M19;"
+                command = "M19"
 
             self.serial_connection.send_and_receive(command)
             # some time until the laser is on.
@@ -27,13 +27,13 @@ class Laser:
     def off(self, laser=0):
         if (laser != None) and (self.serial_connection != None) and self.is_on[laser]:
             if laser == 0:
-                command = "M22;"
+                command = "M22"
             else:
-                command = "M20;"
+                command = "M20"
 
             self.serial_connection.send_and_receive(command)
             self.is_on[laser] = False
 
     def turn(self, steps):
-        command = "G04 L"+str(steps)+" F200;"
+        command = "G04 L"+str(steps)+" F200"
         self.serial_connection.send_and_receive(command)

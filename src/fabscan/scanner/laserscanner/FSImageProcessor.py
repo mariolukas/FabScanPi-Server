@@ -54,7 +54,7 @@ class ImageProcessor(ImageProcessorInterface):
         self.settings = settings
         self.config = config
         self._logger = logging.getLogger(__name__)
-        self.laser_color_channel = self.config.laser.color
+        self.laser_color_channel = self.config.file.laser.color
         self.threshold_enable = False
         self.threshold_value = 0
         self.blur_enable = True
@@ -63,28 +63,35 @@ class ImageProcessor(ImageProcessorInterface):
         self.window_value = 0
         self.color = (255, 255, 255)
         self.refinement_method = 'SGF' #possible  RANSAC, SGF
-        self.image_height = self.config.camera.resolution.width
-        self.image_width = self.config.camera.resolution.height
+        self.image_height = self.config.file.camera.resolution.width
+        self.image_width = self.config.file.camera.resolution.height
         self._weight_matrix = self._compute_weight_matrix()
         self._criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
         self.object_pattern_points = self.create_object_pattern_points()
 
     def init(self, resolution):
-        self.image_height = resolution[0]
-        self.image_width = resolution[1]
+
+        if self.config.file.camera.rotate == "True":
+            self.image_height = resolution[0]
+            self.image_width = resolution[1]
+        else:
+            self.image_height = resolution[1]
+            self.image_width = resolution[0]
+
         self._weight_matrix = self._compute_weight_matrix()
 
     def _compute_weight_matrix(self):
+
         _weight_matrix = np.array(
             (np.matrix(np.linspace(0, self.image_width - 1, self.image_width)).T *
              np.matrix(np.ones(self.image_height))).T)
         return _weight_matrix
 
     def create_object_pattern_points(self):
-        objp = np.zeros((self.config.calibration.pattern.rows * self.config.calibration.pattern.columns, 3), np.float32)
-        objp[:, :2] = np.mgrid[0:self.config.calibration.pattern.columns,
-                      0:self.config.calibration.pattern.rows].T.reshape(-1, 2)
-        objp = np.multiply(objp, self.config.calibration.pattern.square_size)
+        objp = np.zeros((self.config.file.calibration.pattern.rows * self.config.file.calibration.pattern.columns, 3), np.float32)
+        objp[:, :2] = np.mgrid[0:self.config.file.calibration.pattern.columns,
+                      0:self.config.file.calibration.pattern.rows].T.reshape(-1, 2)
+        objp = np.multiply(objp, self.config.file.calibration.pattern.square_size)
         return objp
 
     def ransac(self, data, model_class, min_samples, threshold, max_trials=100):
@@ -114,7 +121,7 @@ class ImageProcessor(ImageProcessorInterface):
         best_inlier_num = 0
         best_inliers = None
         data_idx = np.arange(data.shape[0])
-        for _ in xrange(max_trials):
+        for _ in range(max_trials):
             sample = data[np.random.randint(0, data.shape[0], 2)]
             if model_class.is_degenerate(sample):
                 continue
@@ -131,6 +138,7 @@ class ImageProcessor(ImageProcessorInterface):
 
     def _window_mask(self, image, window_enable=True):
 
+        height, width = image.shape
         window_value = 3
         mask = 0
         if window_enable:
@@ -138,7 +146,7 @@ class ImageProcessor(ImageProcessorInterface):
             _min = peak - window_value
             _max = peak + window_value + 1
             mask = np.zeros_like(image)
-            for i in xrange(self.image_height):
+            for i in range(height):
                 mask[i, _min[i]:_max[i]] = 255
                 # Apply mask
         image = cv2.bitwise_and(image, mask)
@@ -147,11 +155,11 @@ class ImageProcessor(ImageProcessorInterface):
 
     def _threshold_image(self, image, blur_enable=True):
 
-        if self.settings.auto_threshold == True:
+        if self.settings.file.auto_threshold == True:
             threshold_value = 0
             threshold_settings = cv2.THRESH_TOZERO+cv2.THRESH_OTSU
         else:
-            threshold_value = self.settings.threshold
+            threshold_value = self.settings.file.threshold
             threshold_settings = cv2.THRESH_TOZERO
 
 
@@ -256,44 +264,64 @@ class ImageProcessor(ImageProcessorInterface):
             return (u, v), image
 
     def get_texture_stream_frame(self, cam_image):
+        cam_image = self.decode_image(cam_image)
+        return cam_image
+
+    def get_settings_stream_frame(self, cam_image):
+        # cam_image = self.decode_image(cam_image)
         return cam_image
 
     def get_calibration_stream_frame(self, cam_image):
+        cam_image = self.decode_image(cam_image)
         cam_image = self.drawCorners(cam_image)
         return cam_image
 
     def get_adjustment_stream_frame(self, cam_image):
-        cv2.resize(cam_image, (self.config.camera.preview_resolution.width, self.config.camera.preview_resolution.height))
+        cam_image = self.decode_image(cam_image)
+        cv2.resize(cam_image, (self.config.file.camera.preview_resolution.width, self.config.file.camera.preview_resolution.height))
         cv2.line(cam_image, (int(0.5*cam_image.shape[1]),0), (int(0.5*cam_image.shape[1]), cam_image.shape[0]), (0,255,0), thickness=3, lineType=8, shift=0)
         return cam_image
 
     def drawCorners(self, image):
         corners = self.detect_corners(image)
         cv2.drawChessboardCorners(
-            image, (self.config.calibration.pattern.columns, self.config.calibration.pattern.rows), corners, True)
+            image, (self.config.file.calibration.pattern.columns, self.config.file.calibration.pattern.rows), corners, True)
         return image
 
     def get_laser_stream_frame(self, image, type='CAMERA'):
-
-        if bool(self.settings.show_laser_overlay):
+        image = self.decode_image(image)
+        if bool(self.settings.file.show_laser_overlay):
             points, ret_img = self.compute_2d_points(image, roi_mask=False)
             u, v = points
-            c = zip(u, v)
+            c = list(zip(u, v))
 
             for t in c:
                 cv2.line(image, (int(t[0]) - 1, int(t[1])), (int(t[0]) + 1, int(t[1])), (255, 0, 0), thickness=1,
                          lineType=8, shift=0)
 
-        if bool(self.settings.show_calibration_pattern):
+        if bool(self.settings.file.show_calibration_pattern):
             cv2.line(image, (int(0.5*image.shape[1]), 0), (int(0.5*image.shape[1]), image.shape[0]), (0, 255, 0), thickness=1, lineType=8, shift=0)
-            cv2.line(image, (0,int(0.5*image.shape[0])), (image.shape[1], int(0.5*image.shape[0])), (0, 255, 0), thickness=1, lineType=8, shift=0)
+            cv2.line(image, (0, int(0.5*image.shape[0])), (image.shape[1], int(0.5*image.shape[0])), (0, 255, 0), thickness=1, lineType=8, shift=0)
 
+
+        return image
+
+    def decode_image(self, image):
+        image = cv2.imdecode(image, 1)
+        if self.config.file.camera.rotate == "True":
+            image = cv2.transpose(image)
+        if self.config.file.camera.hflip == "True":
+            image = cv2.flip(image, 1)
+        if self.config.file.camera.vflip == "True":
+            image = cv2.flip(image, 0)
 
         return image
 
     #FIXME: rename color_image into texture_image
     def process_image(self, angle, laser_image, color_image=None, index=0):
         ''' Takes picture and angle (in degrees).  Adds to point cloud '''
+
+        #laser_image = self.decode_image(laser_image)
 
         try:
             _theta = np.deg2rad(-angle)
@@ -326,10 +354,10 @@ class ImageProcessor(ImageProcessorInterface):
     def mask_image(self, image, index):
             if index == 0:
                 mask = np.zeros(image.shape, np.uint8)
-                mask[0:self.image_height, (self.image_width/2):self.image_width] = image[0:self.image_height, (self.image_width/2):self.image_width]
+                mask[0:self.image_height, (self.image_width // 2):self.image_width] = image[0:self.image_height, (self.image_width // 2):self.image_width]
             else:
                 mask = np.zeros(image.shape, np.uint8)
-                mask[0:self.image_height, 0:(self.image_width/2)] = image[0:self.image_height, 0:(self.image_width/2)]
+                mask[0:self.image_height, 0:(self.image_width // 2)] = image[0:self.image_height, 0:(self.image_width // 2)]
 
             return mask
 
@@ -338,16 +366,15 @@ class ImageProcessor(ImageProcessorInterface):
             rho = np.sqrt(np.square(point_cloud[0, :]) + np.square(point_cloud[1, :]))
 
             z = point_cloud[2, :]
-            turntable_radius = int(self.config.turntable.radius)
+            turntable_radius = int(self.config.file.turntable.radius)
             idx = np.where(z >= 0 &
                            (z <= 120) &
-                           (rho >= -self.config.calibration.platform_translation[2]) &
-                           (rho <= self.config.calibration.platform_translation[2]))[0]
+                           (rho >= -self.config.file.calibration.platform_translation[2]) &
+                           (rho <= self.config.file.calibration.platform_translation[2]))[0]
 
 
             return point_cloud[:, idx]
         else:
-            self._logger.debug('No points in cloud... masking not possible.')
             return point_cloud
 
 
@@ -357,8 +384,8 @@ class ImageProcessor(ImageProcessorInterface):
              return None
 
         # Load calibration values
-        R = np.matrix(self.config.calibration.platform_rotation)
-        t = np.matrix(self.config.calibration.platform_translation).T
+        R = np.matrix(self.config.file.calibration.platform_rotation)
+        t = np.matrix(self.config.file.calibration.platform_translation).T
         # Compute platform transformation
         Xwo = self.compute_platform_point_cloud(points_2d, R, t, index)
         # Rotate to world coordinates
@@ -375,8 +402,8 @@ class ImageProcessor(ImageProcessorInterface):
 
     def compute_platform_point_cloud(self, points_2d, R, t, index):
         # Load calibration values
-        n = self.config.calibration.laser_planes[index]['normal']
-        d = self.config.calibration.laser_planes[index]['distance']
+        n = self.config.file.calibration.laser_planes[index]['normal']
+        d = self.config.file.calibration.laser_planes[index]['distance']
         # Camera system
         Xc = self.compute_camera_point_cloud(points_2d, d, n)
         # Compute platform transformation
@@ -385,10 +412,10 @@ class ImageProcessor(ImageProcessorInterface):
     def compute_camera_point_cloud(self, points_2d, d, n):
         # Load calibration values
 
-        fx = self.config.calibration.camera_matrix[0][0]
-        fy = self.config.calibration.camera_matrix[1][1]
-        cx = self.config.calibration.camera_matrix[0][2]
-        cy = self.config.calibration.camera_matrix[1][2]
+        fx = self.config.file.calibration.camera_matrix[0][0]
+        fy = self.config.file.calibration.camera_matrix[1][1]
+        cx = self.config.file.calibration.camera_matrix[0][2]
+        cy = self.config.file.calibration.camera_matrix[1][2]
 
         ## if points_2d[0].size == 0 or points_2d[1].size == 0:
         ##     return np.array([]).reshape(3, 0)
@@ -409,7 +436,7 @@ class ImageProcessor(ImageProcessorInterface):
         if corners is not None:
             ret, rvecs, tvecs = cv2.solvePnP(
                 self.object_pattern_points, corners,
-                self.config.calibration.camera_matrix, self.config.calibration.distortion_vector)
+                self.config.file.calibration.camera_matrix, self.config.file.calibration.distortion_vector)
             if ret:
                 return (cv2.Rodrigues(rvecs)[0], tvecs, corners)
 
@@ -429,9 +456,9 @@ class ImageProcessor(ImageProcessorInterface):
             if corners is not None:
                 corners = corners.astype(np.int)
                 p1 = corners[0][0]
-                p2 = corners[self.config.calibration.pattern.columns - 1][0]
-                p3 = corners[self.config.calibration.pattern.columns * (self.config.calibration.pattern.rows - 1)][0]
-                p4 = corners[self.config.calibration.pattern.columns * self.config.calibration.pattern.rows - 1][0]
+                p2 = corners[self.config.file.calibration.pattern.columns - 1][0]
+                p3 = corners[self.config.file.calibration.pattern.columns * (self.config.file.calibration.pattern.rows - 1)][0]
+                p4 = corners[self.config.file.calibration.pattern.columns * self.config.file.calibration.pattern.rows - 1][0]
                 mask = np.zeros((h, w), np.uint8)
                 points = np.array([p1, p2, p4, p3])
                 cv2.fillConvexPoly(mask, points, 255)
@@ -441,15 +468,15 @@ class ImageProcessor(ImageProcessorInterface):
     def _detect_chessboard(self, image, flags=None):
 
         if image is not None:
-            if self.config.calibration.pattern.rows > 2 and self.config.calibration.pattern.columns > 2:
+            if self.config.file.calibration.pattern.rows > 2 and self.config.file.calibration.pattern.columns > 2:
 
                 gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
                 if flags is None:
-                    ret, corners = cv2.findChessboardCorners(gray, (self.config.calibration.pattern.columns, self.config.calibration.pattern.rows), None)
+                    ret, corners = cv2.findChessboardCorners(gray, (self.config.file.calibration.pattern.columns, self.config.file.calibration.pattern.rows), None)
                 else:
-                    ret, corners = cv2.findChessboardCorners(gray, (self.config.calibration.pattern.columns, self.config.calibration.pattern.rows), flags=flags)
+                    ret, corners = cv2.findChessboardCorners(gray, (self.config.file.calibration.pattern.columns, self.config.file.calibration.pattern.rows), flags=flags)
 
                 if ret:
-                    cv2.cornerSubPix(gray, corners, (11,11), (-1, -1), self._criteria)
+                    cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), self._criteria)
                     return corners

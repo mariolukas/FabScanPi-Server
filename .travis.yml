@@ -1,16 +1,20 @@
-dist: trusty
-group: edge
+dist: xenial
 language: python
 python:
-- 2.7.15
+    - "3.7"
+# We need to install python3.6 and python3.7 packages from a third party
+# repo as they are not available on standard Ubuntu Xenial.
 before_install:
 - openssl aes-256-cbc -K $encrypted_f5913d2a38b3_key -iv $encrypted_f5913d2a38b3_iv -in fabscan.key.enc -out fabscan.key -d
+- sudo add-apt-repository -y ppa:deadsnakes/ppa
 - sudo apt-get -qq update
-- sudo apt-get install -y libcurl3 build-essential python-setuptools debhelper dh-systemd cdbs
-  dh-python fakeroot python-pip rsync
+- sudo apt-get install -y python3.7 python3.7-dev libcurl3 build-essential python3-tornado python3-setuptools debhelper dh-systemd cdbs
+  dh-python fakeroot python3-pip rsync locales
+- virtualenv -p /usr/bin/python3.7 hotspot-env
+- source hotspot-env/bin/activate
+
 before_script:
 - CURRENT_DATE=$(date +%Y%m%d%H%M)
-- pip install mkdocs
 - VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}')
 - if [ -z ${TRAVIS_TAG} ]; then sed -i -e 's/'"$VERSION"'/'"$VERSION"'+'"$CURRENT_DATE"'/g'
   debian/changelog; fi
@@ -20,7 +24,7 @@ after_success:
 - FILE_NAME=$(ls -a ../*.deb)
 #- travis_wait curl -T $FILE_NAME -u $FTPUSER:$FTPPASSWORD ftp://mariolukas.de/release/
 - chmod 600 fabscan.key
-- scp -o  StrictHostKeyChecking=no -i fabscan.key $FILE_NAME $DEPLOY_USER@mariolukas.de:/var/deploy/release/.
+- LC_ALL=C scp -o  StrictHostKeyChecking=no -i fabscan.key $FILE_NAME $DEPLOY_USER@mariolukas.de:/var/deploy/release/.
 env:
   global:
   - secure: k0Ms4zQL6KTWInxaS2G578OxmG2aJSicezcGESsDHg3RLI7zgyx4jn+3IdoGfZucXmMxjwPFpBvoVBYfJ4GY5ZrgV8ftvnReO7xn8obADtOmSupTy5eUX5S/K+b8VdjD/QQRO9Bn9lz7ekTauMqtv2usw93X3RTDFtEAtLwtBEuGMU4dhU1lHC/1HDxa0BGfhuEOsp9eedA641dwq3kVpw/6WRlpdyNLEL6l7HJ2ednOH+DXb5hTwSF+Wbg/Oe/pobn8xpFvYc8ZmlRVpiE0kL3lA4HZ5gdBCHAs9HuNsK8e3pKn9l71zqEFdZdbUylp/fFeN5uLYMnZSMKBOg03lRhtsICm6IN7d91Hazcd+vox5Jh0EBgKsEgrAoDSMjiMRj1ROnZXWgs/DYZh8nV+y23hY3BlvyD2AjwyxCHRLG4sIkGmhxe3EoaW1vBwZ4/QUp7AL6x9povUsJM4kU6sBu0+QaoKk1NKs+2xW4mpktS5i2WHuR/sJcmf8AWDkuTejSKBzmKJoSb2dluRYKHa7EpobA7hiCz+6Und13sGJDvF46QprCkuVmDeQc1wImpVj2Evn0KLRRq4z33mEtoMMbROJ1Pg7pXdaTvl9AxDHn60NIbfr7lWjcYIvaOpPSax5vCD6w2lDToDbwj/4K5mh80/bhOyWVCrfcJxQOYqxxQ=

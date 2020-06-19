@@ -5,9 +5,11 @@ __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
 import threading
-
+import sys
 import tornado.ioloop
 import tornado.web
+import tornado.httpserver
+import asyncio
 import os
 import logging
 from fabscan.server.services.websocket.FSWebSocketHandler import FSWebSocketHandler
@@ -23,7 +25,7 @@ from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.FSConfig import ConfigSingleton, ConfigInterface
 from fabscan.lib.util.FSInject import inject
-
+from tornado.platform.asyncio import AnyThreadEventLoopPolicy
 @inject(
     config=ConfigInterface,
     scanprocessor=FSScanProcessorInterface,
@@ -34,16 +36,18 @@ class FSWebServer(threading.Thread):
 
     def __init__(self, config, scanprocessor, eventmanager, hardwarecontroller):
         threading.Thread.__init__(self)
+        asyncio.set_event_loop_policy(AnyThreadEventLoopPolicy())
         self.config = config
         self.exit = False
         self.server_port = 8080
         self.scanprocessor = scanprocessor
         self.eventmanager = eventmanager
         self.hardwarecontroller = hardwarecontroller
-        self.www_folder = os.path.join(os.path.dirname(__file__), self.config.folders.www)
-        self.scan_folder = os.path.join(os.path.dirname(__file__), self.config.folders.scans)
+        self.www_folder = os.path.join(os.path.dirname(__file__), self.config.file.folders.www)
+        self.scan_folder = os.path.join(os.path.dirname(__file__), self.config.file.folders.scans)
         self._logger = logging.getLogger(__name__)
         self._logger.debug(self.www_folder)
+
 
     def routes(self):
         return tornado.web.Application([
@@ -63,9 +67,15 @@ class FSWebServer(threading.Thread):
         ])
 
     def run(self):
+
+        self._logger.debug("Server listening on port %d", self.server_port)
         webserver = self.routes()
-        webserver.listen(self.server_port)
-        tornado.ioloop.IOLoop.current().start()
+        try:
+            webserver.listen(self.server_port)
+            tornado.ioloop.IOLoop.instance().start()
+        except Exception as e:
+            self._logger.error(e)
+            sys.exit(0)
 
     def kill(self):
         tornado.ioloop.IOLoop.instance().stop()

@@ -8,9 +8,10 @@ import time
 import logging
 import sys
 import os
+import json
 
 
-from FSWebServer import FSWebServer
+from .FSWebServer import FSWebServer
 from fabscan.FSVersion import __version__
 from fabscan.lib.util.FSInject import injector
 from fabscan.lib.util.FSUtil import FSSystem, FSSystemExit
@@ -84,14 +85,14 @@ class FSScanServer(object):
         self.scanner.join()
 
     def create_services(self):
+
         injector.provide(FSEventManagerInterface, FSEventManagerSingleton)
-        injector.provide_instance(ConfigInterface, Config(self.config_file, True))
-        injector.provide_instance(SettingsInterface, Settings(self.settings_file, True))
+        injector.provide_instance(ConfigInterface, Config(self.config_file))
+        injector.provide_instance(SettingsInterface, Settings(self.settings_file))
 
         # inject "dynamic" classes
         self.config = injector.get_instance(ConfigInterface)
-
-        FSScannerFactory.injectScannerType(self.config.scanner_type)
+        FSScannerFactory.injectScannerType(self.config.file.scanner_type)
 
         self.webserver = FSWebServer()
         self.webserver.start()
@@ -104,24 +105,22 @@ class FSScanServer(object):
     def update_server(self):
        try:
          return do_upgrade()
-       except StandardError, e:
+       except Exception as e:
          self._logger.error(e)
 
     def run(self):
-        self._logger.info("FabScanPi-Server "+str(__version__))
+        self._logger.info("FabScanPi-Server " + str(__version__))
 
         try:
 
             self.create_services()
 
             while not self.system_exit.kill:
-                time.sleep(0.3)
+                time.sleep(0.1)
 
             self.exit_services()
-
-            self._logger.info("FabScan Server Exit. Bye!")
-            os._exit(1)
+            os._exit(os.EX_OK)
 
         except (KeyboardInterrupt, SystemExit):
             self._logger.info("FabScan Server Exit. Bye!")
-            sys.exit(0)
+            os._exit(os.EX_OK)

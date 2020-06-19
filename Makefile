@@ -1,7 +1,7 @@
 # $Id: Makefile,v 1.6 2014/10/29 01:01:35 Mario Lukas Exp $
 #
 
-PYTHON=`which python`
+PYTHON=/usr/bin/python3
 DESTDIR=/
 BUILDIR=$(CURDIR)/debian/fabscanpi-server
 PROJECT=fabscanpi-server
@@ -28,7 +28,7 @@ deb:
 	#$(PYTHON) setup.py sdist $(COMPILE) --dist-dir=../
 	#rename -f 's/$(PROJECT)-(.*)\.tar\.gz/$(PROJECT)_$$1\.orig\.tar\.gz/' ../*
 	# build the package
-	dpkg-buildpackage -b -uc -us -i -I -rfakeroot
+	dpkg-buildpackage -b -uc -us -i -I
 
 clean:
 	$(PYTHON) setup.py clean
