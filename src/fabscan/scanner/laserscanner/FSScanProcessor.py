@@ -315,7 +315,7 @@ class FSScanProcessor(FSScanProcessorInterface):
             self.point_clouds.append(FSPointCloud(config=self.config, color=self._is_color_scan, filename=self._prefix, postfix=laser_index, binary=False))
 
         if self.config.file.laser.numbers > 1:
-            self.both_cloud = FSPointCloud(color=self._is_color_scan, filename=self._prefix, postfix='both')
+            self.both_cloud = FSPointCloud(config=self.config, color=self._is_color_scan, filename=self._prefix, postfix='both', binary=False)
 
         if not (self.config.file.calibration.laser_planes[0]['normal'] == []) and self.actor_ref.is_alive():
             if self._is_color_scan:
@@ -504,6 +504,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         if self._prefix:
             self.utils.delete_scan(self._prefix)
+
         self.reset_scanner_state()
         self._logger.info("Scan stoped")
         self.hardwareController.stop_camera_stream()
