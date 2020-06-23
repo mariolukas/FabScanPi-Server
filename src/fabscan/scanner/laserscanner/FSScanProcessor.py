@@ -503,7 +503,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.finishFiles()
 
         if self._prefix:
-            self.utils.delete_scan(self._prefix)
+            self.utils.delete_folder(str(self.config.file.folders.scans)+'/'+str(self._prefix))
 
         self.reset_scanner_state()
         self._logger.info("Scan stoped")
