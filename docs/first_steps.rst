@@ -48,5 +48,9 @@ It is also possible to join the web-enabled FabScanPi user interface by pointing
 
     http://fabscanpi.local
 
-.. note:: Calling fabscanpi.local requires zeroconf. This is povided by default on Apple devices. For Windows you will needto install the `Bonjour printer driver <https://support.apple.com/kb/DL999>`_ to access your FabScanPi over thelocal address.
+.. note:: Calling fabscanpi.local requires zeroconf. This is povided by default on Apple devices. For Windows you will need to install the `Bonjour printer driver <https://support.apple.com/kb/DL999>`_ to access your FabScanPi over the local address.
 
+Further Steps
+-------------
+
+Congratulations you made it. Your Hardware is up and running. You can now proceed with the calibration: :ref:_scanner_calibration.

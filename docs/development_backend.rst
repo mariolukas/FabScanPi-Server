@@ -120,3 +120,39 @@ The server will start up. You can see the progress in the Run section in the bot
 The Symbols on the left side can be used to stop, start, restart the process. Point your browser to the ip address of your
 FabScan and you are ready to use your local code.
 
+Building the Debian Package
+---------------------------
+
+Building the FabScan PI software depends on some python libraries. You need to install pyserial, pykka, opencv with tbb support
+and picamera. The easiest way to install all dependencies is to use debians package manager apt. You need to add the
+fabscan repository to your apt source list because FabScanPi brings its own build of the opencv library. The reason ist that the
+official builds do not support the usage of multicore.
+
+Build Debian package
+Install dependencies
+
+.. code:: bash
+
+    sudo apt-get install build-essential dpkg-dev debhelper devscripts fakeroot cdbs python3-setuptools dh-python3 python3-support
+
+Clone Repistory
+
+.. code:: Bash
+
+   git clone https://github.com/mariolukas/FabScanPi-Server.git
+   cd FabScanPi-Server
+
+The package is built by calling
+
+.. code:: bash
+
+    make deb
+
+The best way to build the package is using a raspbian operating system. So do it within a Raspbian installation.
+Crosscompilers or Docker containers should also work.
+
+Afterwards the package can be installed by
+
+.. code:: bash
+
+    dpkg -i fabscabpi-server<package-version>.deb

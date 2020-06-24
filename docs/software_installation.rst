@@ -62,16 +62,35 @@ Now your SD-Card is ready to be put into the card slot of your FabScanPi.
 After the image is flashed and the Raspberry Pi is up and running follow the instructions in the [Usage section](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage)
 
 
-Installing from deb packages
-----------------------------
+Installing from deb packages (Start with Raspbian Lite)
+-------------------------------------------------------
 
-This description assumes that you have a SD card with a fresh Raspbian image on it.
+This description assumes that you have a SD card with a fresh Raspbian image on it. Keep in mind that the ready to
+use image is made out of Raspbian Lite. The following instructions might cause in errors. Think twice about not using
+the image. The following steps are more for users with linux experience.
 
-First add the fabscan repository to your source list.
+The following guide assumes that you have activated the raspberry pi camera module and that the file system is already
+expanded to the maximum of your sd-card. You can use the tool raspi-config to archive that.
+
+You need to do some tweaks on boot.txt
+.. code:: bash
+
+    echo "start_x=1" >> /boot/config.txt
+    # more gpu memory
+    echo "gpu_mem=192" >> /boot/config.txt
+    #disable camera led
+    echo "disable_camera_led=1" >> /boot/config.txt
+
+    # max usb power
+    #echo "max_usb_current=1" >> /boot/config.txt
+
+    # disabale bt on raspberry pi3 to prevent serial port problems..
+    echo "dtoverlay=pi3-disable-bt" >> /boot/config.txt
+
 
 .. code:: bash
 
-    echo "deb http://archive.fabscan.org/ jessie main" >> /etc/apt/sources.list
+    echo "deb http://archive.fabscan.org/ stable main" > /etc/apt/sources.list.d/fabscanpi.list
 
 
 Then add the FabScan PI repository key to your key chain.
@@ -91,18 +110,31 @@ Finish the installation with the needed packages.
 
 .. code:: bash
 
-    apt-get install fabscanpi-server python-opencv-tbb libtbb2  python-pil python-serial python-pykka python-picamera avrdude python-semver python-scipy
+    apt-get install fabscanpi-server python3-opencv, python3-funcsigs, python3-apscheduler, python3-tornado, libtbb2, python3-pil, python3-serial, python3-pykka, python3-picamera, python3-requests, python3-rpi.gpio, python3-semver, xvfb, strace, avrdude, python3-scipy
+
+.. code:: bash
+
+    echo "KERNEL==\"ttyACM0\", MODE=\"0666\" " > ${ROOTFS_DIR}/etc/udev/rules.d/20-serial-device-permissions.rules
+    echo "KERNEL==\"ttyAMA0\", MODE=\"0666\" " >> ${ROOTFS_DIR}/etc/udev/rules.d/20-serial-device-permissions.rules
+
+Set the  user permissions.
+
+.. code:: bash
+
+    usermod -a -G tty ${FIRST_USER_NAME}
 
 
 The FabScan PI server can be started with
 
 .. code:: bash
 
-    sudo /etc/init.d/fabscanpi-server start
+    sudo systemctl start fabscanpi-server
 
+Congratulations you did the basic setup. If you need more you should have a look to the repository of the [image build
+scrip](https://github.com/mariolukas/FabScanPi-Build-Raspbian). It provides a lot more tweaks like a proxy server which
+forwards the port to 80 and 443 etc.
 
 Read [Usage](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage) section for the next steps.
-
 
 
 Building a custom image
@@ -112,44 +144,6 @@ The image can be build with the FabScanPi Image build script. You will find more
 
 information [here](developing.md#Building FabScanPi Images)
 
-
-
-Installing from Source
-----------------------
-
-Dependencies
-
-FabScan PI software depends on some python libraries. You need to install pyserial, pykka, opencv with tbb support
-and picamera. The easiest way to install all dependencies is to use debians package manager apt. Some of the packages,
-like opencv with tbb support and libtbb are not provided by the official raspbian mirrors. You need to add the
-fabscan repository to your apt source list.
-
-
-Build Debian package
-Install dependencies
-
-.. code:: bash
-
-    sudo apt-get install build-essential dpkg-dev debhelper devscripts fakeroot cdbs python-setuptools dh-python python-support
-
-Clone Repistory
-
-.. code:: Bash
-
-   git clone https://github.com/mariolukas/FabScanPi-Server.git
-   cd FabScanPi-Server
-
-The package is built by calling
-
-.. code:: bash
-
-    make deb
-
-Afterwards the package can be installed by
-
-.. code:: bash
-
-    dpkg -i fabscabpi-server<package-version>.deb
 
 
 

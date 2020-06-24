@@ -293,10 +293,12 @@ class PiCam(threading.Thread):
                 # time.sleep(2)
                 # # Now fix the values
                 # self.camera.shutter_speed = self.camera.exposure_speed
-                # self.camera.exposure_mode = 'off'
+                #self.camera.exposure_mode = 'spotlight'
                 # g = self.camera.awb_gains
-                #self.camera.awb_mode = 'auto'
+                self.camera.awb_mode = 'flash'
                 # self.camera.awb_gains = g
+                self.camera.shutter_speed = 60000
+                self.camera.iso = 130
 
                 self.idle = False
                 self.camera.start_recording(self.output, format='mjpeg')

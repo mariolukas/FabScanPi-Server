@@ -290,6 +290,10 @@ class FSScanProcessor(FSScanProcessorInterface):
         if self._worker_pool is None or not self._worker_pool.is_alive():
             self._worker_pool = FSImageWorkerPool.start(scanprocessor=self.actor_ref)
 
+            self._worker_pool.tell(
+                {FSEvents.COMMAND: FSSWorkerPoolCommand.CREATE, 'NUMBER_OF_WORKERS': self.config.file.process_numbers}
+            )
+
         self.hardwareController.turntable.enable_motors()
         for i in range(int(self.config.file.laser.numbers)):
             self.hardwareController.laser.off(0)
@@ -347,13 +351,6 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
-        if self._worker_pool.is_alive():
-            self._worker_pool.tell(
-                {FSEvents.COMMAND: FSSWorkerPoolCommand.CREATE, 'NUMBER_OF_WORKERS': self.config.file.process_numbers}
-            )
-        else:
-            self.stop_scan()
-
         self._scan_brightness = self.settings.file.camera.brightness
         self._scan_contrast = self.settings.file.camera.contrast
         self._scan_saturation = self.settings.file.camera.saturation
@@ -389,19 +386,21 @@ class FSScanProcessor(FSScanProcessorInterface):
 
                 if self.actor_ref.is_alive():
                     self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
+                else:
+                    self._logger.error("Worker Pool died.")
+                    self.stop_scan()
             else:
                self.finish_texture_scan()
                if self.actor_ref.is_alive():
                   self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
+               else:
+                  self._logger.error("Worker Pool died.")
+                  self.stop_scan()
 
 
     def finish_texture_scan(self):
         self._logger.info("Finishing texture scan.")
         self.current_position = 0
-
-        self._worker_pool.tell(
-            {FSEvents.COMMAND: FSSWorkerPoolCommand.KILL}
-        )
 
         self.hardwareController.led.off()
 
@@ -429,17 +428,7 @@ class FSScanProcessor(FSScanProcessorInterface):
             #self.hardwareController.laser.on()
             self.hardwareController.led.off()
 
-
         self.hardwareController.camera.device.flush_stream()
-
-        worker_poll_is_active = self._worker_pool.ask(
-            {FSEvents.COMMAND: FSSWorkerPoolCommand.IS_ACTIVE}
-        )
-
-        if not worker_poll_is_active:
-            self._worker_pool.tell(
-                {FSEvents.COMMAND: FSSWorkerPoolCommand.CREATE, 'NUMBER_OF_WORKERS': self.config.file.process_numbers}
-            )
 
 
 
@@ -464,6 +453,10 @@ class FSScanProcessor(FSScanProcessorInterface):
 
                 if self.actor_ref.is_alive():
                     self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
+                else:
+                    self._logger.error("Worker Pool died.")
+                    self.stop_scan()
+
                 self._logger.debug('End creating Task.')
 
 
@@ -498,7 +491,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._stop_scan = True
 
 
-        self.clear_and_stop_worker_pool()
+        #self.clear_and_stop_worker_pool()
         self._starttime = 0
         self.finishFiles()
 
@@ -518,7 +511,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     def clear_and_stop_worker_pool(self):
 
         # clear queue
-        if self._worker_pool.is_alive():
+        if self._worker_pool is not None and self._worker_pool.is_alive():
 
             self._worker_pool.tell(
                 {FSEvents.COMMAND: FSSWorkerPoolCommand.CLEAR_QUEUE}
@@ -670,6 +663,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     def reset_scanner_state(self):
         self._logger.info("Reseting scanner states ... ")
         #self.hardwareController.camera.device.flush_stream()
+        self.clear_and_stop_worker_pool()
 
         for i in range(self.config.file.laser.numbers):
             self.hardwareController.laser.off()
