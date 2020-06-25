@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.12.0] - tbd
 ### TODO
-- add a more precise camera calibration (remove distortion)
+- add a more precise camera calibration (lens distortion)
 - make calibration more robust
 - split camera calibration for combo and seperate camera calibration
 - add independent chooseable settings for texture and object scan
@@ -48,9 +48,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - removed old firmware versions
 
 ### Fixed
-- put websocket callbacks to tornado ioloop
+- moved websocket callbacks to tornado ioloop
 - bugfixes in firmware
 - fixed camera image rotation bug
+- minor fixes in ui
+- minor scan processor fixes
 
 ## [0.8.2] - 2020-01-01
 
