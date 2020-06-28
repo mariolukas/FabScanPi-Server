@@ -290,16 +290,7 @@ class PiCam(threading.Thread):
 
             if self.camera:
                 self.camera.resolution = self.resolution
-                # time.sleep(2)
-                # # Now fix the values
-                # self.camera.shutter_speed = self.camera.exposure_speed
-                #self.camera.exposure_mode = 'spotlight'
-                # g = self.camera.awb_gains
                 self.camera.awb_mode = 'auto'
-                # self.camera.awb_gains = g
-               # self.camera.shutter_speed = 60000
-               # self.camera.iso = 130
-
                 self.idle = False
                 self.camera.start_recording(self.output, format='mjpeg')
                 self._logger.debug("Cam Stream with Resolution " + str(self.resolution) + " started")
