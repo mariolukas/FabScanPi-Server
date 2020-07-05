@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - add connector for GPIO's
 - add connector for adafruit crickit board
 
-## [0.9.0] - unreleased
+## [0.9.0] - 2020-06-28
 
 ### Added
 - new firmware version
