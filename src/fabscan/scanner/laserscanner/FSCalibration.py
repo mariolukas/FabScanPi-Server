@@ -391,9 +391,9 @@ class FSCalibration(FSCalibrationInterface):
             result = False
 
         response_laser_triangulation = []
-        if self.std[0] < 1.0 and self.normal[0] is not None:
+        if self.std[0] is not None and self.std[0] < 1.0 and self.normal[0] is not None:
             response_laser_triangulation = [{"distance": self.distance[0], "normal":self.normal[0], "deviation":self.std[0]}]
-            if self.std[1] < 1.0 and self.normal[1] is not None:
+            if self.std[1] is not None and self.std[1] < 1.0 and self.normal[1] is not None:
                 response_laser_triangulation.append({"distance": self.distance[1], "normal": self.normal[1], "deviation": self.std[1]})
         else:
             result = False
