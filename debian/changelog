@@ -1,3 +1,9 @@
+fabscanpi-server (0.9.1) UNRELEASED; urgency=medium
+  * fixed issue with corrupted ply files after scan (not able to open with thirdparty software)
+  * fixed calibration error when using just one laser
+
+ -- Mario Lukas <info@fabscan.org>  Sun, 5 Jul 2020 21:55:00 +0100
+
 fabscanpi-server (0.9.0) UNRELEASED; urgency=medium
   * migrated form python2 to python3
   * refactored image worker and worker pool
