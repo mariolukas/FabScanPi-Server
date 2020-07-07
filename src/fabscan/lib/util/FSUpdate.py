@@ -72,10 +72,10 @@ def is_online(host="8.8.8.8", port=53, timeout=1):
     return False
 
 def upgrade_is_available(current_version, online_lookup_ip):
-    #if is_online(host=online_lookup_ip):
-    latest_version = get_latest_version_tag()
-    #else:
-    #    return __version__
+    if is_online(host=online_lookup_ip):
+        latest_version = get_latest_version_tag()
+    else:
+        return __version__
 
     return semver.compare(latest_version, current_version) == 1, latest_version
 
@@ -83,8 +83,9 @@ def upgrade_is_available(current_version, online_lookup_ip):
 def do_upgrade():
     try:
         rc_update = FSSystem.run_command("sudo apt-get update")
-        rc_upgrade = FSSystem.run_command("sudo apt-get install -y -o Dpkg::Options::='--force-confnew' fabscanpi-server")
-        return (rc_update == 0 and rc_upgrade == 0)
+        #rc_upgrade = FSSystem.run_command("nohup bash -c \"sudo apt-get install -y --only-upgrade -o Dpkg::Options::='--force-confnew' fabscanpi-server\"")
+        os.system('nohup bash -c "sudo apt-get install -y --only-upgrade -o Dpkg::Options::=\'--force-confnew\' fabscanpi-server > /var/log/fabscanpi/upgrade.log"')
+        return (rc_update)
 
     except Exception as e:
         logging.error("Error while updte" + str(e))

@@ -40,13 +40,13 @@ before_deploy:
 #- echo "https://${GH_TOKEN}:@github.com" > .git/credentials
 #- git tag v.${NOW} -m "new release ${RELEASE_FILE_NAME}"
 #- git push origin --tags
-deploy:
-  provider: releases
-  skip_cleanup: true
-  file_glob: true
-  api_key:
-    secure: k0Ms4zQL6KTWInxaS2G578OxmG2aJSicezcGESsDHg3RLI7zgyx4jn+3IdoGfZucXmMxjwPFpBvoVBYfJ4GY5ZrgV8ftvnReO7xn8obADtOmSupTy5eUX5S/K+b8VdjD/QQRO9Bn9lz7ekTauMqtv2usw93X3RTDFtEAtLwtBEuGMU4dhU1lHC/1HDxa0BGfhuEOsp9eedA641dwq3kVpw/6WRlpdyNLEL6l7HJ2ednOH+DXb5hTwSF+Wbg/Oe/pobn8xpFvYc8ZmlRVpiE0kL3lA4HZ5gdBCHAs9HuNsK8e3pKn9l71zqEFdZdbUylp/fFeN5uLYMnZSMKBOg03lRhtsICm6IN7d91Hazcd+vox5Jh0EBgKsEgrAoDSMjiMRj1ROnZXWgs/DYZh8nV+y23hY3BlvyD2AjwyxCHRLG4sIkGmhxe3EoaW1vBwZ4/QUp7AL6x9povUsJM4kU6sBu0+QaoKk1NKs+2xW4mpktS5i2WHuR/sJcmf8AWDkuTejSKBzmKJoSb2dluRYKHa7EpobA7hiCz+6Und13sGJDvF46QprCkuVmDeQc1wImpVj2Evn0KLRRq4z33mEtoMMbROJ1Pg7pXdaTvl9AxDHn60NIbfr7lWjcYIvaOpPSax5vCD6w2lDToDbwj/4K5mh80/bhOyWVCrfcJxQOYqxxQ=
-  file: "${RELEASE_FILE_NAME}"
-  on:
-    tags: true
-    repo: mariolukas/FabScanPi-Server
+#deploy:
+#  provider: releases
+#  skip_cleanup: true
+#  file_glob: true
+#  api_key:
+#    secure: k0Ms4zQL6KTWInxaS2G578OxmG2aJSicezcGESsDHg3RLI7zgyx4jn+3IdoGfZucXmMxjwPFpBvoVBYfJ4GY5ZrgV8ftvnReO7xn8obADtOmSupTy5eUX5S/K+b8VdjD/QQRO9Bn9lz7ekTauMqtv2usw93X3RTDFtEAtLwtBEuGMU4dhU1lHC/1HDxa0BGfhuEOsp9eedA641dwq3kVpw/6WRlpdyNLEL6l7HJ2ednOH+DXb5hTwSF+Wbg/Oe/pobn8xpFvYc8ZmlRVpiE0kL3lA4HZ5gdBCHAs9HuNsK8e3pKn9l71zqEFdZdbUylp/fFeN5uLYMnZSMKBOg03lRhtsICm6IN7d91Hazcd+vox5Jh0EBgKsEgrAoDSMjiMRj1ROnZXWgs/DYZh8nV+y23hY3BlvyD2AjwyxCHRLG4sIkGmhxe3EoaW1vBwZ4/QUp7AL6x9povUsJM4kU6sBu0+QaoKk1NKs+2xW4mpktS5i2WHuR/sJcmf8AWDkuTejSKBzmKJoSb2dluRYKHa7EpobA7hiCz+6Und13sGJDvF46QprCkuVmDeQc1wImpVj2Evn0KLRRq4z33mEtoMMbROJ1Pg7pXdaTvl9AxDHn60NIbfr7lWjcYIvaOpPSax5vCD6w2lDToDbwj/4K5mh80/bhOyWVCrfcJxQOYqxxQ=
+#  file: "${RELEASE_FILE_NAME}"
+#  on:
+#    tags: true
+#    repo: mariolukas/FabScanPi-Server

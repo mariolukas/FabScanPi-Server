@@ -34,6 +34,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - fixed issue with corrupted ply files after scan (not able to open with thirdparty software) 
 - fixed calibration error when using just one laser
 
+
+## [0.9.1] - 2020-07-05
+
+### Fixed
+- fixed issue with corrupted ply files after scan (not able to open with thirdparty software) 
+- fixed calibration error when using just one laser
+
 ## [0.9.0] - 2020-06-28
 
 ### Added
