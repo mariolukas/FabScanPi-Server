@@ -156,3 +156,30 @@ Afterwards the package can be installed by
 .. code:: bash
 
     dpkg -i fabscabpi-server<package-version>.deb
+
+Using the current testing branch
+--------------------------------
+
+It is possible to use the latest released testing release of the FabScanPi-Server. All you need to do is switching the
+source list to the testing repository.
+
+.. code:: bash
+
+    sudo nano /etc/apt/source.list.d/fabscanpi.list
+
+Then change the stable entry to testing and save the file.
+
+.. code:: bash
+
+    deb http://archive.fabscan.org/ testing main
+
+Now you need to update the packages and upgrade to the latest testing version.
+
+.. code:: bash
+
+    sudo apt-get update && sudo apt-get dist-upgrade
+
+The FabScanPi-Server user interface will show a version number with a postfix which is introduced by '+'.
+The plus indicates that you are using a testing build. The numbers behind the plus is the build date
+( e.g. v.0.9.2+202007072120 )
+
