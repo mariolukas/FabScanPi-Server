@@ -1,5 +1,5 @@
 import unittest
-import  urllib.error
+import urllib.error
 from mock import patch
 
 from fabscan.util.FSUpdate import get_latest_version_tag, upgrade_is_available, do_upgrade

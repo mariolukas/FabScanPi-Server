@@ -1,6 +1,7 @@
+opencv-python~=3.2
 pyserial
 pillow
-Pykka
+Pykka~=1.2
 numpy
 semver
 tornado

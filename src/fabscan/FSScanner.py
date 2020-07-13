@@ -19,7 +19,7 @@ from fabscan.FSSettings import SettingsInterface
 from fabscan.FSConfig import ConfigInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
 from fabscan.lib.util.FSInject import inject
-from fabscan.lib.util.FSUpdate import upgrade_is_available
+from fabscan.lib.util.FSUpdate import upgrade_is_available, do_upgrade
 from fabscan.lib.util.FSDiscovery import register_to_discovery
 from fabscan.lib.util.FSSystemWatch import get_cpu_temperature
 
@@ -217,6 +217,8 @@ class FSScanner(threading.Thread):
 
                 self.eventManager.publish(FSCommand.UPGRADE_SERVER, dict())
                 self.set_state(FSState.UPGRADING)
+                do_upgrade()
+
                 return
 
         elif command == FSCommand.GET_CONFIG:
@@ -234,6 +236,7 @@ class FSScanner(threading.Thread):
             }
             self.eventManager.send_client_message(FSEvents.ON_GET_SETTINGS, message)
             return
+
 
     def on_client_connected(self, eventManager, event):
         try:

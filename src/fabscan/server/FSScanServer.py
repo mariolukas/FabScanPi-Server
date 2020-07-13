@@ -40,31 +40,6 @@ class FSScanServer(object):
     def on_server_command(self, mgr, event):
         command = event.command
 
-        if command == FSCommand.UPGRADE_SERVER:
-            self.upgrade = True
-            message = {
-                "message": "UPGRADE_STARTED",
-                "level": "info"
-            }
-            self.eventManager.instance.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-
-
-            if self.update_server():
-                message = {
-                    "message": "UPGRADE_SUCCESS",
-                    "level": "success"
-                }
-                self.eventManager.instance.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-                self._logger.info('Update finished, restarting server.')
-                self.restart()
-            else:
-                message = {
-                    "message": "UPGRADE_FAILED",
-                    "level": "error"
-                }
-                self.eventManager.instance.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-                self._logger.error('Update failed.')
-
     def restart(self, override_sys=False):
         message = {
             "message": "RESTARTING_SERVER",
@@ -101,12 +76,6 @@ class FSScanServer(object):
         self.scanner.start()
         self.eventManager = FSEventManagerSingleton()
         self.eventManager.instance.subscribe(FSEvents.COMMAND, self.on_server_command)
-
-    def update_server(self):
-       try:
-         return do_upgrade()
-       except Exception as e:
-         self._logger.error(e)
 
     def run(self):
         self._logger.info("FabScanPi-Server " + str(__version__))
