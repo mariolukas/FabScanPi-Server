@@ -20,7 +20,6 @@ from fabscan.FSEvents import FSEventManagerSingleton, FSEventManagerInterface, F
 from fabscan.FSConfig import ConfigInterface, ConfigSingleton, Config
 from fabscan.FSSettings import SettingsInterface, SettingsSingleton, Settings
 from fabscan.scanner.interfaces import FSScannerFactory
-from fabscan.lib.util.FSUpdate import do_upgrade
 
 
 class FSScanServer(object):
