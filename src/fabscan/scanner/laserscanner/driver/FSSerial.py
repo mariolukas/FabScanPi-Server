@@ -10,11 +10,9 @@ import serial
 import time
 import sys
 import logging
-import threading
 from fabscan.lib.util.FSUtil import FSSystem
 from fabscan.lib.util.FSInject import inject
 from fabscan.FSConfig import ConfigInterface
-
 
 
 @inject(

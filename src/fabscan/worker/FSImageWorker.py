@@ -9,7 +9,6 @@ import multiprocessing
 import logging
 import time
 
-
 from fabscan.worker.FSImageTask import ImageTask, FSTaskType
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
 from fabscan.FSConfig import ConfigInterface
