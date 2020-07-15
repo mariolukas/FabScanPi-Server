@@ -490,8 +490,6 @@ class FSScanProcessor(FSScanProcessorInterface):
     def stop_scan(self):
         self._stop_scan = True
 
-
-        #self.clear_and_stop_worker_pool()
         self._starttime = 0
         self.finishFiles()
 
