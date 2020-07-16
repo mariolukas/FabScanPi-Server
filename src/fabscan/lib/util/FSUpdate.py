@@ -25,7 +25,10 @@ def get_build(version):
 
     verinfo = match.groupdict()
 
-    return int(verinfo['build'])
+    if verinfo['build']:
+        return verinfo['build']
+    else:
+        return "0"
 
 def get_stage(version):
     if "+" in version:
@@ -37,7 +40,9 @@ def is_testing(version):
     return get_stage(version) == 'testing'
 
 def new_build_available(latest_version, package_version):
-    return int(get_build(latest_version)) < int(get_build(package_version))
+
+    new_version = int(get_build(latest_version)) < int(get_build(package_version))
+    return new_version
 
 def get_latest_version_tag():
 
@@ -66,19 +71,19 @@ def get_latest_version_tag():
 
                                 if semver.compare(latest_version, package_version) == -1:
                                     latest_version = package_version
-
-                                    if is_testing(build_version) and new_build_available(build_version, package_version):
-                                        latest_version = package_version
+                                elif is_testing(build_version) and new_build_available(build_version, package_version):
+                                    latest_version = package_version
 
                             except ValueError as e:
                                 #_logger.debug(e)
                                 # ignore invalid version number
                                 pass
                             break
-
+            _logger.debug(latest_version)
             return latest_version
         except (Exception, urllib.error.URLError) as e:
-            _logger.error("Error while getting latest version tag: " + str(e))
+            #_logger.error( + str(e))
+            _logger.exception("Error while getting latest version tag: ")
             return __version__
 
 
@@ -102,8 +107,7 @@ def is_upgradeable(latest_version, current_version):
     _new_build_available = False
 
     if is_testing(current_version):
-        _new_build_available = (semver.compare(latest_version, current_version) == 0) and new_build_available(
-            current_version, latest_version)
+        _new_build_available = new_build_available(current_version, latest_version)
 
     return _new_version_available or _new_build_available
 

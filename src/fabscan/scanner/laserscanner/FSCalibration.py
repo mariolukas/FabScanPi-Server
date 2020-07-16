@@ -202,8 +202,7 @@ class FSCalibration(FSCalibrationInterface):
                 self._hardwarecontroller.move_to_next_position(steps=self.quater_turn, speed=5000)
                 _calibrate()
         except Exception as e:
-            self._logger.debug("Calibration Error")
-            self._logger.error(e)
+            self._logger.exception("Calibration Error")
 
 
     def _calculate_camera_calibration(self):
@@ -404,7 +403,7 @@ class FSCalibration(FSCalibrationInterface):
             self.config.file.calibration.laser_planes = copy.deepcopy(response_laser_triangulation)
             response = (True, (response_platform_extrinsics, response_laser_triangulation))
         else:
-            self._logger.error("Calibration process was not able to estimate laser planes.")
+            self._logger.exception("Calibration process was not able to estimate laser planes.")
 
             message = {
                     "message": "SCANNER_CALIBRATION_FAILED",
