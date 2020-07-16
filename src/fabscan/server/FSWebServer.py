@@ -74,7 +74,7 @@ class FSWebServer(threading.Thread):
             webserver.listen(self.server_port)
             tornado.ioloop.IOLoop.instance().start()
         except Exception as e:
-            self._logger.error(e)
+            self._logger.exception(e)
             sys.exit(0)
 
     def kill(self):

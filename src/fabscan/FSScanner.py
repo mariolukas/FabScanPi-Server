@@ -265,7 +265,7 @@ class FSScanner(threading.Thread):
             self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
 
         except Exception as e:
-            self._logger.error("Client Connection Error: " + str(e))
+            self._logger.exception("Client Connection Error: " + str(e))
 
     def set_state(self, state):
         self._state = state

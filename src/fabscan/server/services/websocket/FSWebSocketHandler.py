@@ -49,7 +49,7 @@ class FSWebSocketHandler(tornado.websocket.WebSocketHandler):
 
         except Exception as e:
             traceback.print_exc(file=sys.stdout)
-            self._logger.debug("Runtime error in Websocket message handler: " + str(e))
+            self._logger.exception("Runtime error in Websocket message handler: " + str(e))
 
     def on_close(self):
         """
@@ -68,7 +68,7 @@ class FSWebSocketHandler(tornado.websocket.WebSocketHandler):
 
         except Exception as e:
             traceback.print_exc(file=sys.stdout)
-            self._logger.debug("Runtime error in Websocket message handler:" + str(e))
+            self._logger.exception("Runtime error in Websocket message handler:" + str(e))
 
 
     def on_socket_send(self, events, message):

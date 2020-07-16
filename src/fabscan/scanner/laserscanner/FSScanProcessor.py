@@ -239,7 +239,7 @@ class FSScanProcessor(FSScanProcessorInterface):
             #FIXME: Only change Color Settings when values changed.
             self.hardwareController.led.on(self.settings.file.led.red, self.settings.file.led.green, self.settings.file.led.blue)
         except Exception as e:
-            self._logger.error('Updating Settings failed: ' + str(e))
+            self._logger.exception('Updating Settings failed: ' + str(e))
             pass
 
     def update_config(self, config):
@@ -635,7 +635,7 @@ class FSScanProcessor(FSScanProcessorInterface):
                     self.both_cloud = None
         except IOError:
             #TODO: Call stop scan function if this fails to release the scan process
-            self._logger.error("Closing PointCloud files failed.")
+            self._logger.exception("Closing PointCloud files failed.")
             self.scan_failed()
 
 

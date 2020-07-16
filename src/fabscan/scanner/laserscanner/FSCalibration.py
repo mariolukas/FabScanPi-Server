@@ -8,14 +8,12 @@ from fabscan.lib.util.FSInject import singleton
 from fabscan.lib.util.FSUtil import FSSystem
 from fabscan.lib.file.FSImage import FSImage
 import cv2
-import traceback
 import sys
 import copy
 import math
 
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
-from fabscan.FSEvents import FSEventManagerSingleton
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
@@ -153,7 +151,7 @@ class FSCalibration(FSCalibrationInterface):
             self.reset_calibration_values()
             return
         except Exception as e:
-            self._logger.error(e)
+            self._logger.exception(e)
             message = {
                     "message": "SCANNER_CALIBRATION_FAILED",
                     "level": "warn"

@@ -348,7 +348,7 @@ class ImageProcessor(ImageProcessorInterface):
 
             return masked_point_cloud, texture
         except Exception as e:
-            self._logger.error("Process Error:"+str(e))
+            self._logger.exception("Process Error:"+str(e))
             return [], []
 
     def mask_image(self, image, index):
