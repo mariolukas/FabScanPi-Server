@@ -1,4 +1,3 @@
-import os
 
 def get_cpu_temperature():
     with open("/sys/class/thermal/thermal_zone0/temp") as tmpFile:

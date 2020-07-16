@@ -128,4 +128,3 @@ def do_upgrade():
 
     except Exception as e:
         logging.error("Error while update" + str(e))
-
