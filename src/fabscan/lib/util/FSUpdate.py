@@ -3,6 +3,7 @@ import re
 import urllib.request, urllib.error, urllib.parse
 import ssl
 import socket
+import subprocess
 
 REMOTE_SERVER = "archive.fabscan.org"
 
@@ -123,8 +124,20 @@ def upgrade_is_available(current_version, online_lookup_ip):
 
 def do_upgrade():
     try:
-        os.system("sudo apt-get update")
-        os.system("nohup sudo apt-get install -y --only-upgrade -o Dpkg::Options::=--force-confnew fabscanpi-server > /var/log/fabscanpi/upgrade.log")
+
+        update_pid = subprocess.Popen(['sudo', 'apt-get', 'update'],
+              shell=True, stdout=None, stderr=None, preexec_fn=os.setpgrp).pid
+
+        _logger.info("Started update process with pid "+str(update_pid))
+
+        upgrade_pid = subprocess.Popen(['nohup', 'apt-get', 'install', '-y', '--only-upgrade', '-o Dpkg::Options::="--force-confnew"', 'fabscanpi-server', '> /var/log/fabscanpi/upgrade.log'],
+              shell=True, stdout=None, stderr=None, preexec_fn=os.setpgrp)
+        _logger.info("Started server upgrade process with pid "+str(upgrade_pid))
+
+        _logger.info("Server is going down for upgrade soon")
+
+        #os.system("sudo apt-get install -y --only-upgrade -o Dpkg::Options::='--force-confnew' fabscanpi-server > /var/log/fabscanpi/upgrade.log")
+
 
     except Exception as e:
-        logging.error("Error while update" + str(e))
+        logging.exception("Error while update" + str(e))
