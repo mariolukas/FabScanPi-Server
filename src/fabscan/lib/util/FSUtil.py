@@ -8,8 +8,6 @@ import logging
 import glob
 import signal
 import zipfile
-
-from collections import namedtuple
 from fabscan.FSConfig import ConfigInterface
 from fabscan.lib.util.FSInject import inject
 from fabscan.lib.util.FSJson import YAMLobj
@@ -112,11 +110,3 @@ def new_message():
         message['data'] = dict()
 
         return message
-
-
-
-    #if os.path.isdir(folder):
-    #    shutil.rmtree(folder, ignore_errors=True)
-    #else:
-    #     print "Nothing to delete..."
-
