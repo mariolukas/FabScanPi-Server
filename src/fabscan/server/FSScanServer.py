@@ -20,6 +20,7 @@ from fabscan.FSEvents import FSEventManagerSingleton, FSEventManagerInterface, F
 from fabscan.FSConfig import ConfigInterface, ConfigSingleton, Config
 from fabscan.FSSettings import SettingsInterface, SettingsSingleton, Settings
 from fabscan.scanner.interfaces import FSScannerFactory
+from fabscan.lib.util.FSUpdate import do_upgrade
 
 
 class FSScanServer(object):
@@ -30,6 +31,7 @@ class FSScanServer(object):
         self.args = args
         self.exit = False
         self.reboot = False
+        self.upgrade = False
         self.shutdown = False
         self.scanner = None
         self.webserver = None
@@ -38,6 +40,10 @@ class FSScanServer(object):
 
     def on_server_command(self, mgr, event):
         command = event.command
+
+        if command == FSCommand.UPGRADE_SERVER:
+            self.upgrade = True
+            self.system_exit.kill()
 
     def restart(self, override_sys=False):
         message = {
@@ -76,6 +82,12 @@ class FSScanServer(object):
         self.eventManager = FSEventManagerSingleton()
         self.eventManager.instance.subscribe(FSEvents.COMMAND, self.on_server_command)
 
+    def upgrade_server(self):
+       try:
+         do_upgrade()
+       except Exception as e:
+         self._logger.error(e)
+
     def run(self):
         self._logger.info("FabScanPi-Server " + str(__version__))
 
@@ -84,6 +96,16 @@ class FSScanServer(object):
             self.create_services()
 
             while not self.system_exit.kill:
+
+                if self.upgrade:
+                    self._logger.info("Upgrading FabScanPi Server")
+                    self.update_server()
+                    break
+
+                if self.restart:
+                    self._logger.info("Restarting FabScanPi Server")
+                    self.restart_server()
+
                 time.sleep(0.1)
 
             self.exit_services()

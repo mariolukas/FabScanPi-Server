@@ -214,11 +214,7 @@ class FSScanner(threading.Thread):
         elif command == FSCommand.UPGRADE_SERVER:
             if self._upgrade_available:
                 self._logger.info("Started Server upgrade...")
-
-                self.eventManager.publish(FSCommand.UPGRADE_SERVER, dict())
                 self.set_state(FSState.UPGRADING)
-                do_upgrade()
-
                 return
 
         elif command == FSCommand.GET_CONFIG:
