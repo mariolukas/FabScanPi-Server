@@ -1,7 +1,5 @@
 import os
 import json
-import glob
-import shutil
 import logging
 import tornado.web
 from fabscan.lib.file.FSScans import FSScans
@@ -13,7 +11,7 @@ class FSScanHandler(BaseHandler):
         self._logger = logging.getLogger(__name__)
         self.config = kwargs.get('config')
         self.scanlib = FSScans()
-        #self._logger.debug(kwargs)
+
 
     def delete(self, *args, **kwargs):
         scan_id = kwargs.get('scan_id')

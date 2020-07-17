@@ -1,10 +1,5 @@
-import os
 import json
-import glob
-import shutil
 import logging
-import tornado.web
-from fabscan.lib.file.FSScans import FSScans
 from fabscan.server.services.api.FSBaseHandler import BaseHandler
 
 class FSDeviceHandler(BaseHandler):

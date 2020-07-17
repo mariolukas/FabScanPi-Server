@@ -1,4 +1,3 @@
-import os
 import json
 from fabscan.lib.file.FSMeshlabFilter import FSMeshlabFilter
 from fabscan.server.services.api.FSBaseHandler import BaseHandler

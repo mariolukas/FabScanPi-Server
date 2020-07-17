@@ -1,9 +1,6 @@
 import urllib.parse, os
-import json
 import logging
-from fabscan.server.services.api.FSStaticFileHandler import FSStaticFileHandler
 from fabscan.server.services.api.FSBaseHandler import BaseHandler
-from tornado.httpclient import AsyncHTTPClient
 import tornado.gen
 from tornado.web import HTTPError
 
