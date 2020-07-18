@@ -43,7 +43,7 @@ class FSScanServer(object):
 
         if command == FSCommand.UPGRADE_SERVER:
             self.upgrade = True
-            self.system_exit.kill()
+            self.upgrade_server()
 
     def restart(self, override_sys=False):
         message = {
@@ -85,8 +85,12 @@ class FSScanServer(object):
     def upgrade_server(self):
        try:
          do_upgrade()
+
        except Exception as e:
          self._logger.error(e)
+
+       os._exit(os.EX_OK)
+
 
     def run(self):
         self._logger.info("FabScanPi-Server " + str(__version__))
@@ -96,16 +100,6 @@ class FSScanServer(object):
             self.create_services()
 
             while not self.system_exit.kill:
-
-                if self.upgrade:
-                    self._logger.info("Upgrading FabScanPi Server")
-                    self.update_server()
-                    break
-
-                if self.restart:
-                    self._logger.info("Restarting FabScanPi Server")
-                    self.restart_server()
-
                 time.sleep(0.1)
 
             self.exit_services()

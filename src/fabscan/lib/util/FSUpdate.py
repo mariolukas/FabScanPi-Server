@@ -126,7 +126,17 @@ def upgrade_is_available(current_version, online_lookup_ip):
 def do_upgrade():
     try:
 
-        os.system('nohup bash -c "sudo apt-get update -y && sudo apt-get dist-upgrade -y" > /var/log/fabscanpi/upgrade.log')
+        subprocess.Popen('sudo apt-get update -y',
+                         shell=True,
+                         stdout=open('/var/log/fabscanpi/upgrade.log', 'a'),
+                         stderr=subprocess.STDOUT
+                         )
+
+        subprocess.Popen('nohup sudo apt-get install -y --only-upgrade -o Dpkg::Options::="--force-confnew" fabscanpi-server &',
+                         shell=True,
+                         stdout=open('/var/log/fabscanpi/upgrade.log', 'a'),
+                         stderr=subprocess.STDOUT
+                         )
 
     except Exception as e:
         logging.exception("Error while update" + str(e))
