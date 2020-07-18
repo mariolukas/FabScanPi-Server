@@ -84,7 +84,13 @@ class FSScanServer(object):
 
     def upgrade_server(self):
        try:
-         do_upgrade()
+           message = {
+               "message": "Server is restarting for Upgrade now.",
+               "level": "info"
+           }
+           self.eventManager.instance.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+
+           do_upgrade()
 
        except Exception as e:
          self._logger.error(e)
