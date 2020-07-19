@@ -135,7 +135,8 @@ def do_upgrade():
         proc = subprocess.Popen('nohup sudo apt-get install -y --only-upgrade -o Dpkg::Options::="--force-confnew" fabscanpi-server & disown',
                          shell=True,
                          stdout=open('/var/log/fabscanpi/upgrade.log', 'a'),
-                         stderr=subprocess.STDOUT
+                         stderr=subprocess.STDOUT,
+                         creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
                          )
         proc.wait()
 
