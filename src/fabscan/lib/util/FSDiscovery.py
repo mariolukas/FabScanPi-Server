@@ -46,3 +46,4 @@ def register_to_discovery(server_version, firmware_version):
         _logger.info('Successfully registered to find.fabscan.org')
     else:
         _logger.warn('Not able to register to find.fabscan.org')
+
