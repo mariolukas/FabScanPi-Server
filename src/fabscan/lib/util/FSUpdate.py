@@ -130,7 +130,7 @@ def do_upgrade():
                          stderr=subprocess.STDOUT
                          )
 
-        proc = subprocess.Popen('sudo apt-get install -y --only-upgrade -o Dpkg::Options::="--force-confnew" fabscanpi-server & disown',
+        proc = subprocess.Popen('nohup sudo apt-get install -y --only-upgrade -o Dpkg::Options::="--force-confnew" fabscanpi-server & disown',
                          shell=True,
                          stdout=open('/var/log/fabscanpi/upgrade.log', 'a'),
                          stderr=subprocess.STDOUT,
