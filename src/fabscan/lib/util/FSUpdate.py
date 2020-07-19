@@ -77,14 +77,12 @@ def get_latest_version_tag():
                                     latest_version = package_version
 
                             except ValueError as e:
-                                #_logger.debug(e)
                                 # ignore invalid version number
                                 pass
                             break
             _logger.debug(latest_version)
             return latest_version
         except (Exception, urllib.error.URLError) as e:
-            #_logger.error( + str(e))
             _logger.exception("Error while getting latest version tag: ")
             return __version__
 
