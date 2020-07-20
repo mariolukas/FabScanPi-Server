@@ -27,13 +27,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - add connector for GPIO's
 - add connector for adafruit crickit board
 
-
-## [0.9.1] - unreleased
+## [0.9.2] - 2020-07-20
 
 ### Fixed
-- fixed issue with corrupted ply files after scan (not able to open with thirdparty software) 
-- fixed calibration error when using just one laser
-
+- fixed startup bug, caused by the upgrade process
+- general fix for the uprgade procedure
+- fixed systemd related upgrade issues
 
 ## [0.9.1] - 2020-07-05
 
