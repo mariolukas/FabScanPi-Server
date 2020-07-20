@@ -7,7 +7,6 @@ from fabscan.server.services.api.FSBaseHandler import BaseHandler
 import tornado.gen
 from tornado.web import HTTPError
 
-
 class FSDownloadHandler(BaseHandler):
 
     def initialize(self, *args, **kwargs):
@@ -21,7 +20,6 @@ class FSDownloadHandler(BaseHandler):
         scan_id = kwargs.get('scan_id')
         scan_folder = os.path.join(os.path.join(os.path.dirname(__file__), self.config.file.folders.scans))
         self._logger.debug(file_name)
-
 
         _file_dir = "%s/%s" % (scan_folder, scan_id)
         _file_path = "%s/%s" % (_file_dir, file_name)
