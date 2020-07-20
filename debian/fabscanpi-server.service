@@ -8,6 +8,7 @@ Type=simple
 Restart=always
 EnvironmentFile=-/etc/default/fabscanpi-server
 ExecStart=/usr/bin/fabscanpi-server --config=${CONFIG} --settings=${SETTINGS} --logfile=${LOG}
+KillMode=process
 
 [Install]
 WantedBy=multi-user.target
