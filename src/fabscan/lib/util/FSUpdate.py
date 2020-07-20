@@ -130,12 +130,13 @@ def do_upgrade():
                          stderr=subprocess.STDOUT
         )
 
-        subprocess.Popen('nohup bash -c \'sudo apt-get install -y --only-upgrade -o Dpkg::Options::="--force-confnew" fabscanpi-server &\' >> /var/log/fabscanpi/upgrade.log 2>&1',
-                         shell=True,
-                         stdout=subprocess.STDOUT,
-                         stderr=subprocess.STDOUT,
-                         creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
-        )
+        os.system('nohup bash -c "sudo apt-get dist-upgrade -y --only-upgrade -o Dpkg::Options::=\"--force-confnew\" fabscanpi-server" >> /var/log/fabscanpi/upgrade.log')
+#        subprocess.Popen('nohup sudo apt-get install -y --only-upgrade -o Dpkg::Options::="--force-confnew" fabscanpi-server >> /var/log/fabscanpi/upgrade.log 2>&1 &',
+#                         shell=True,
+#                         stdout=subprocess.STDOUT,
+#                         stderr=subprocess.STDOUT,
+#                         creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
+#        )
 
 
     except Exception as e:

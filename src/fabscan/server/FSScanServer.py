@@ -95,7 +95,7 @@ class FSScanServer(object):
        except Exception as e:
          self._logger.error(e)
 
-       os._exit(os.EX_OK)
+       #os._exit(os.EX_OK)
 
 
     def run(self):
