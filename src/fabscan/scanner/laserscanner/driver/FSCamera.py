@@ -11,9 +11,10 @@ import io
 import os
 import time
 import sys, threading, collections
+import gc
 
 
-from fabscan.lib.util.FSInject import inject
+from fabscan.lib.util.FSInject import inject, singleton
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
@@ -106,6 +107,7 @@ class CamProcessor(threading.Thread):
 
     def run(self):
         # This method runs in a separate thread
+        self._logger.debug("Cam Processor Thread started.")
         while not self.terminated:
             # Wait for an image to be written to the stream
             if self.event.wait(1):
@@ -133,20 +135,20 @@ class CamProcessor(threading.Thread):
                     # Return ourselves to the available pool
                     with self.owner.lock:
                         self.owner.pool.append(self)
+        self._logger.debug("Cam Processor Thread killed.")
 
-class ProcessCamOutput(object):
+
+class ProcessCamOutput():
     def __init__(self, fs_ring_buffer, resolution, mode="default"):
         self.done = False
         # Construct a pool of 4 image processors along with a lock
         # to control access between threads
         self.lock = threading.Lock()
         self.pool = [CamProcessor(self, fs_ring_buffer, resolution, mode) for i in range(4)]
+
         self.processor = None
         self._logger = logging.getLogger(__name__)
         self.format_is_mjpeg = True
-
-    def set_no_mjepeg(self):
-        self.format_is_mjpeg = False
 
     def write(self, buf):
         try:
@@ -173,26 +175,22 @@ class ProcessCamOutput(object):
         # When told to flush (this indicates end of recording), shut
         # down in an orderly fashion. First, add the current processor
         # back to the pool
+        for process in self.pool:
+            process.terminated = True
+        time.sleep(0.2)
+
+
         if self.processor:
             with self.lock:
                 self.pool.append(self.processor)
-                self.processor = None
-        # Now, empty the pool, joining each thread as we go
-        while True:
-            with self.lock:
-                try:
-                    proc = self.pool.pop()
-                except IndexError:
-                    pass  # pool is empty
-            try:
-                proc.terminated = True
-                proc.join()
-            except Exception as e:
-                pass
-            if self.pool.empty:
-                break
 
-@inject(
+        for proc in self.pool:
+            proc.terminated = True
+
+        for proc in self.pool:
+            proc.join()
+
+@singleton(
     config=ConfigInterface,
     settings=SettingsInterface
 )
@@ -303,6 +301,10 @@ class PiCam(threading.Thread):
         try:
             if self.camera.recording:
                 self.camera.stop_recording()
+                self.output.flush()
+                self.output = None
+                gc.collect()
+
             while self.camera.recording:
                 time.sleep(0.05)
 
@@ -454,7 +456,7 @@ class USBCam(threading.Thread):
         try:
             if self.camera and self.camera.isOpened():
                 self.camera.release()
-
+            
             self.camera = None
             self.idle = True
             self._logger.debug("Cam Stream with Resolution " + str(self.resolution) + " stopped")

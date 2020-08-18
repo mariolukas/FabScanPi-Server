@@ -27,6 +27,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - add connector for GPIO's
 - add connector for adafruit crickit board
 
+## [0.9.3] - unreleased
+
+### Fixed
+- fixes ply file saving bug
+- fixed texture scanning bug (scanner hangs after several minutes)
+
 ## [0.9.2] - 2020-07-20
 
 ### Fixed

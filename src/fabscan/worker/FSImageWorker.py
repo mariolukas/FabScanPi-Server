@@ -49,7 +49,7 @@ class FSImageWorkerPool(ThreadingActor):
         self._output_count = 0
 
         self.workers = []
-        self._number_of_workers = config.file.process_numbers
+        self._number_of_workers = 0
         self._workers_active = False
         self._logger.info("Worker Pool Actor initilized")
 
@@ -99,7 +99,7 @@ class FSImageWorkerPool(ThreadingActor):
         self.set_number_of_workers(number_of_workers)
         self._logger.info("Creating %i image worker processes." % number_of_workers)
 
-        for _ in range(self._number_of_workers):
+        for _ in range(number_of_workers):
             worker = FSImageWorkerProcess(image_task_q=self._task_q, output_q=self._output_q, config=self.config, settings=self.settings, scanprocessor=self.scanprocessor)
             worker.daemon = True
             worker.start()
@@ -145,7 +145,7 @@ class FSImageWorkerPool(ThreadingActor):
         return self._workers_active
 
     def set_number_of_workers(self, number):
-        self._number_of_workers = number
+        self._number_of_workers += number
 
 @inject (
     imageprocessor=ImageProcessorInterface,
@@ -221,15 +221,16 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             except Exception as e:
                                 self._logger.debug(e)
 
-
-                            self.output_q.put(data)
                             color_image = None
                             point_cloud = None
                             texture = None
+                            self.output_q.put(data)
+
 
                             self._logger.debug('Image Processing finished.')
 
                         image_task = None
+
 
                 except Empty:
                     time.sleep(0.1)

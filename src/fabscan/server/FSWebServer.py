@@ -34,6 +34,8 @@ from tornado.platform.asyncio import AnyThreadEventLoopPolicy
 )
 class FSWebServer(threading.Thread):
 
+    #__slots__ = ['server_port', 'www_folder', 'scan_folder', '_logger']
+
     def __init__(self, config, scanprocessor, eventmanager, hardwarecontroller):
         threading.Thread.__init__(self)
         asyncio.set_event_loop_policy(AnyThreadEventLoopPolicy())

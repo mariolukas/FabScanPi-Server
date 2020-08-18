@@ -9,7 +9,6 @@ import time
 import cv2
 import copy
 import threading
-import copy
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.lib.util.FSInject import singleton

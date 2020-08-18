@@ -49,6 +49,7 @@ class LinearLeastSquares2D(object):
     settings=SettingsInterface
 )
 class ImageProcessor(ImageProcessorInterface):
+
     def __init__(self, config, settings):
 
         self.settings = settings

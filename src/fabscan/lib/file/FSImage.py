@@ -16,7 +16,7 @@ from fabscan.lib.util.FSInject import inject
 class FSImage(object):
 
     def __init__(self, config):
-        self.config=config
+        self.config = config
 
     def save_images(self, imgs, prefix, dir_name="scans"):
 

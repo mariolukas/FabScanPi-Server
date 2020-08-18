@@ -10,7 +10,9 @@ class FSTaskType(object):
     PROCESS_PREVIEW_IMAGE = "PROCESS_PREVIEW_IMAGE"
     KILL = "KILL"
 
-class ImageTask(object):
+class ImageTask():
+
+    #__slots__ = ["image", "raw_dir", "resolution", "task_type", "prefix", "index", "progress", "settings"]
 
     color_image = None
     laser_image = None

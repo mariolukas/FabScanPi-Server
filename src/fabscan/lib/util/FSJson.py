@@ -1,5 +1,6 @@
 import json
 import numpy as np
+import gc
 
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -38,3 +39,4 @@ class YAMLobj(dict):
     def __delitem__(self, key):
         super(YAMLobj, self).__delitem__(key)
         del self.__dict__[key]
+        gc.collect()

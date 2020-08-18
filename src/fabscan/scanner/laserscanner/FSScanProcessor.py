@@ -7,7 +7,9 @@ __email__ = "info@mariolukas.de"
 import cv2
 import time
 import logging
+import threading
 from datetime import datetime
+
 
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
@@ -53,8 +55,8 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._prefix = None
         self._resolution = 16
         self._number_of_pictures = 0
-        self._total = 0
-        self._progress = 0
+        self._total = 1
+        self._progress = 1
         self._is_color_scan = True
         self.point_clouds = []
         self.both_cloud = []
@@ -63,6 +65,10 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._stop_scan = False
         self._current_laser_position = 1
         self._starttime = 0
+        self._additional_worker_number = 1
+
+        self.texture_lock_event = threading.Event()
+        self.texture_lock_event.set()
 
         self.utils = FSSystem()
 
@@ -287,18 +293,9 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._logger.info("Scan started")
         self._stop_scan = False
 
-        if self._worker_pool is None or not self._worker_pool.is_alive():
-            self._worker_pool = FSImageWorkerPool.start(scanprocessor=self.actor_ref)
-
-            self._worker_pool.tell(
-                {FSEvents.COMMAND: FSSWorkerPoolCommand.CREATE, 'NUMBER_OF_WORKERS': self.config.file.process_numbers}
-            )
-
         self.hardwareController.turntable.enable_motors()
         for i in range(int(self.config.file.laser.numbers)):
-            self.hardwareController.laser.off(0)
-            self.hardwareController.laser.off(1)
-
+            self.hardwareController.laser.off(i)
 
         self._resolution = int(self.settings.file.resolution)
         self._is_color_scan = bool(self.settings.file.color)
@@ -306,7 +303,6 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._number_of_pictures = int(self.config.file.turntable.steps // self.settings.file.resolution)
         self.current_position = 0
         self._starttime = self.get_time_stamp()
-
 
         # TODO: rename prefix to scan_id
         self._prefix = datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
@@ -349,6 +345,13 @@ class FSScanProcessor(FSScanProcessorInterface):
             "level": "info"
         }
 
+        if self._worker_pool is None or not self._worker_pool.is_alive():
+            self._worker_pool = FSImageWorkerPool.start(scanprocessor=self.actor_ref)
+
+            self._worker_pool.tell(
+                {FSEvents.COMMAND: FSSWorkerPoolCommand.CREATE, 'NUMBER_OF_WORKERS': self._additional_worker_number}
+            )
+
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
         self._scan_brightness = self.settings.file.camera.brightness
@@ -364,39 +367,45 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def scan_next_texture_position(self):
         if not self._stop_scan:
-            if self.current_position < self._number_of_pictures and self.actor_ref.is_alive():
 
-                flush = False
+            try:
+                if self.current_position < self._number_of_pictures and self.actor_ref.is_alive():
 
-                if self.current_position == 0:
-                    flush = True
-                    self.init_texture_scan()
+                    flush = False
 
-                color_image = self.hardwareController.get_picture(flush=flush)
-                color_image = self.image_processor.decode_image(color_image)
-                self.hardwareController.move_to_next_position(steps=self._resolution, speed=800)
+                    if self.current_position == 0:
+                        flush = True
+                        self.init_texture_scan()
 
-                task = ImageTask(color_image, self._prefix, self.current_position, self._number_of_pictures, task_type="PROCESS_COLOR_IMAGE")
+                    color_image = self.hardwareController.get_picture(flush=flush)
+                    color_image = self.image_processor.decode_image(color_image)
+                    self.hardwareController.move_to_next_position(steps=self._resolution, speed=800)
 
-                self._worker_pool.tell(
-                    {FSEvents.COMMAND: FSSWorkerPoolCommand.ADD_TASK, 'TASK': task}
-                )
-                color_image = None
-                self.current_position += 1
+                    task = ImageTask(color_image, self._prefix, self.current_position, self._number_of_pictures, task_type="PROCESS_COLOR_IMAGE")
 
-                if self.actor_ref.is_alive():
-                    self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
+                    self._worker_pool.tell(
+                        {FSEvents.COMMAND: FSSWorkerPoolCommand.ADD_TASK, 'TASK': task}
+                    )
+                    color_image = None
+                    self.current_position += 1
+
+                    if self.actor_ref.is_alive():
+                        time.sleep(0.1)
+                        #self.self.texture_lock_event.clear()
+                        self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
+
+                    else:
+                        self._logger.error("Worker Pool died.")
+                        self.stop_scan()
                 else:
-                    self._logger.error("Worker Pool died.")
-                    self.stop_scan()
-            else:
-               self.finish_texture_scan()
-               if self.actor_ref.is_alive():
-                  self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
-               else:
-                  self._logger.error("Worker Pool died.")
-                  self.stop_scan()
-
+                   self.finish_texture_scan()
+                   if self.actor_ref.is_alive():
+                      self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
+                   else:
+                      self._logger.error("Worker Pool died.")
+                      self.stop_scan()
+            except Exception as e:
+                self._logger.exception("Scan Processor Error:" + str(e))
 
     def finish_texture_scan(self):
         self._logger.info("Finishing texture scan.")
@@ -410,6 +419,18 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     ## object scan callbacks
     def init_object_scan(self):
+
+        if self._worker_pool is None or not self._worker_pool.is_alive():
+            self._worker_pool = FSImageWorkerPool.start(scanprocessor=self.actor_ref)
+
+        if self._is_color_scan:
+            self._additional_worker_number = 3
+        else:
+            self._additional_worker_number = 4
+
+        self._worker_pool.tell(
+            {FSEvents.COMMAND: FSSWorkerPoolCommand.CREATE, 'NUMBER_OF_WORKERS': self._additional_worker_number}
+        )
 
         self.hardwareController.start_camera_stream()
 
@@ -544,6 +565,8 @@ class FSScanProcessor(FSScanProcessorInterface):
 
                             self.append_points((x, y, z, r, g, b,), result['laser_index'])
 
+                        result = None
+
                 except Exception as err:
                     self._logger.warning('Image processing Failure:' + str(err))
 
@@ -567,7 +590,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
                 self._progress += 1
 
-                if self._progress == self._total:
+                if self._progress-1 == self._total:
                     self.scan_complete()
 
 
@@ -584,7 +607,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         if len(self.point_clouds) == self.config.file.laser.numbers:
 
             self._logger.info("Scan complete writing pointcloud.")
-            self._logger.debug('Number of PointClouds (for each laser one) : ' +str(len(self.point_clouds)))
+            self._logger.debug('Number of PointClouds (for each laser one) : ' + str(len(self.point_clouds)))
 
             self.finishFiles()
 
@@ -633,10 +656,11 @@ class FSScanProcessor(FSScanProcessorInterface):
                 if self.both_cloud:
                     self.both_cloud.closeFile()
                     self.both_cloud = None
-        except IOError:
+
+        except IOError as e:
             #TODO: Call stop scan function if this fails to release the scan process
-            self._logger.exception("Closing PointCloud files failed.")
-            self.scan_failed()
+            self._logger.exception("Closing PointCloud files failed." + str(e))
+            #self.scan_failed()
 
 
     def scan_failed(self):
@@ -664,11 +688,11 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.clear_and_stop_worker_pool()
 
         for i in range(self.config.file.laser.numbers):
-            self.hardwareController.laser.off()
+            self.hardwareController.laser.off(i)
 
         self.hardwareController.led.off()
         self.hardwareController.turntable.disable_motors()
-        self._progress = 0
+        self._progress = 1
         self.current_position = 0
         self._number_of_pictures = 0
         self._total = 0

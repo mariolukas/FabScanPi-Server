@@ -5,7 +5,7 @@
     },
     "laser": {
         "interleaved": "False",
-        "numbers": 1,
+        "numbers": 2,
         "color": "R (RGB)"
     },
     "scanner_type": "laserscanner",
@@ -38,7 +38,7 @@
     "meshlab": {
         "path": "/usr/bin/"
     },
-    "process_numbers": 3,
+    "process_numbers": 4,
     "turntable": {
         "steps": 6400,
         "radius": 70,

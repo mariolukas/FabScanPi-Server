@@ -10,6 +10,7 @@ import fileinput
 import logging
 import struct
 import numpy as np
+import gc
 from fabscan.FSConfig import ConfigInterface
 from fabscan.lib.util.FSInject import inject
 from fabscan.FSVersion import __version__
@@ -24,6 +25,7 @@ class PointCloudError(Exception):
     config=ConfigInterface
 )
 class FSPointCloud():
+    #__slots__ = ['points', 'file_name', 'dir_name', 'color', 'config', '_logger', 'file_handler', 'binary', 'file_path', 'line_count']
 
     def __init__(self, config, filename, postfix, color=True, binary=False):
         self.points = []
@@ -147,7 +149,9 @@ class FSPointCloud():
             self._logger.error(e)
 
         del self.points[:]
-        self.points = []
+        self.points = None
+        self.texture = None
+        gc.collect()
 
     def save_scene_stream(self, stream, binary=False):
 

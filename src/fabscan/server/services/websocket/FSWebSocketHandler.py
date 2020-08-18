@@ -4,6 +4,7 @@ import json
 import sys
 import logging
 import traceback
+import gc
 from fabscan.FSEvents import FSEvents
 from fabscan.lib.util.FSUtil import json2obj
 import asyncio
@@ -76,6 +77,7 @@ class FSWebSocketHandler(tornado.websocket.WebSocketHandler):
         client = message['data']['client']
         if client and (client == self.request):
             del message['data']['client']
+            gc.collect()
 
             json_encoded_message = json.dumps(message)
             self.io_loop.add_callback_from_signal(self.write_message, json_encoded_message)
