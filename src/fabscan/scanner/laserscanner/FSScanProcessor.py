@@ -182,7 +182,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         is_calibrated = correct_plane_number and distance_is_set
 
-        self._logger.debug("FabScan is calibrated: " + str(is_calibrated))
+        self._logger.debug("FabScan is calibrated: {0}".format(is_calibrated))
 
         if not is_calibrated:
             message = {
@@ -231,7 +231,6 @@ class FSScanProcessor(FSScanProcessorInterface):
         try:
 
             image = self.hardwareController.get_picture()
-            #image = self.image_processor.get_texture_stream_frame(image)
             return image
         except Exception as e:
             #self._logger.error("Error while grabbing laser Frame: " + str(e))
@@ -245,7 +244,7 @@ class FSScanProcessor(FSScanProcessorInterface):
             #FIXME: Only change Color Settings when values changed.
             self.hardwareController.led.on(self.settings.file.led.red, self.settings.file.led.green, self.settings.file.led.blue)
         except Exception as e:
-            self._logger.exception('Updating Settings failed: ' + str(e))
+            self._logger.exception("Updating Settings failed: {0}".format(e))
             pass
 
     def update_config(self, config):
@@ -344,10 +343,11 @@ class FSScanProcessor(FSScanProcessorInterface):
             "message": "SCANNING_TEXTURE",
             "level": "info"
         }
-
         if self._worker_pool is None or not self._worker_pool.is_alive():
             self._worker_pool = FSImageWorkerPool.start(scanprocessor=self.actor_ref)
 
+        if self._worker_pool.is_alive():
+            self._logger.debug("Adding some workers to Pool.")
             self._worker_pool.tell(
                 {FSEvents.COMMAND: FSSWorkerPoolCommand.CREATE, 'NUMBER_OF_WORKERS': self._additional_worker_number}
             )
@@ -405,7 +405,7 @@ class FSScanProcessor(FSScanProcessorInterface):
                       self._logger.error("Worker Pool died.")
                       self.stop_scan()
             except Exception as e:
-                self._logger.exception("Scan Processor Error:" + str(e))
+                self._logger.exception("Scan Processor Error: {0}".format(e))
 
     def finish_texture_scan(self):
         self._logger.info("Finishing texture scan.")
@@ -419,34 +419,28 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     ## object scan callbacks
     def init_object_scan(self):
-
+        self.hardwareController.start_camera_stream()
         if self._worker_pool is None or not self._worker_pool.is_alive():
             self._worker_pool = FSImageWorkerPool.start(scanprocessor=self.actor_ref)
-
+        self._logger.info("Started object scan initialisation")
         if self._is_color_scan:
             self._additional_worker_number = 3
         else:
             self._additional_worker_number = 4
 
+        self._logger.debug("Adding some workers to pool.")
         self._worker_pool.tell(
             {FSEvents.COMMAND: FSSWorkerPoolCommand.CREATE, 'NUMBER_OF_WORKERS': self._additional_worker_number}
         )
-
-        self.hardwareController.start_camera_stream()
-
-        self._logger.info("Started object scan initialisation")
 
         message = {
             "message": "SCANNING_OBJECT",
             "level": "info"
         }
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-
         self.current_position = 0
-        # wait for ending of texture stream
 
         if self.config.file.laser.interleaved == "False":
-            #self.hardwareController.laser.on()
             self.hardwareController.led.off()
 
         self.hardwareController.camera.device.flush_stream()
@@ -494,12 +488,9 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     # pykka actor stop event
     def on_stop(self):
-
-
         self.stop_scan()
 
         self.hardwareController.destroy_camera_device()
-
         self.finishFiles()
 
         self.hardwareController.turntable.stop_turning()
@@ -565,11 +556,10 @@ class FSScanProcessor(FSScanProcessorInterface):
 
                             self.append_points((x, y, z, r, g, b,), result['laser_index'])
 
-                        result = None
+                       # result = None
 
                 except Exception as err:
-                    self._logger.warning('Image processing Failure:' + str(err))
-
+                    self._logger.warning("Image processing Failure: {0}".format(err))
 
 
                 message = {
@@ -585,8 +575,9 @@ class FSScanProcessor(FSScanProcessorInterface):
                 self.eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
 
                 message = None
+                result = None
 
-                self._logger.debug("Step " + str(self._progress) + " of " + str(self._total))
+                self._logger.debug("Step {0} of {1}".format(self._progress, self._total))
 
                 self._progress += 1
 
@@ -602,12 +593,12 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         end_time = self.get_time_stamp()
         duration = int((end_time - self._starttime)//1000)
-        self._logger.debug("Time Total: %i sec." % (duration,))
+        self._logger.debug("Time Total: {0} sec.".format(duration))
 
         if len(self.point_clouds) == self.config.file.laser.numbers:
 
             self._logger.info("Scan complete writing pointcloud.")
-            self._logger.debug('Number of PointClouds (for each laser one) : ' + str(len(self.point_clouds)))
+            self._logger.debug("Number of PointClouds (for each laser one): {0}".format(len(self.point_clouds)))
 
             self.finishFiles()
 
@@ -659,7 +650,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         except IOError as e:
             #TODO: Call stop scan function if this fails to release the scan process
-            self._logger.exception("Closing PointCloud files failed." + str(e))
+            self._logger.exception("Closing PointCloud files failed: {0}".format(e))
             #self.scan_failed()
 
 

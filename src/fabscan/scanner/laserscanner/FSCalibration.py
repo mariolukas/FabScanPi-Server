@@ -275,7 +275,7 @@ class FSCalibration(FSCalibrationInterface):
                 #Laser Calibration
                 alpha = np.rad2deg(math.acos(normal[2] / np.linalg.norm((normal[0], normal[2])))) * math.copysign(1, normal[0])
 
-                self._logger.debug("Current Angle is:" + str(alpha))
+                self._logger.debug("Current Angle is: {0}".format(alpha))
                 if ((abs(alpha) <= self.LASER_PLANE_CALIBRATION_START_POS_DEGREE) and (position > 0)):
 
                     self._hardwarecontroller.led.off()
@@ -309,7 +309,7 @@ class FSCalibration(FSCalibrationInterface):
 
             except Exception as e:
                 self._logger.exception(e)
-                self._logger.error("Laser Capture Error: "+str(e))
+                self._logger.error("Laser Capture Error: {0}".format(e))
                 message = {
                     "message": "LASER_CALIBRATION_ERROR",
                     "level": "error"
@@ -344,7 +344,7 @@ class FSCalibration(FSCalibrationInterface):
         # Laser triangulation
         # Save point clouds
         for i in range(self.config.file.laser.numbers):
-            self.save_point_cloud('CALIBRATION_' + str(i) + '.ply', self._point_cloud[i])
+            self.save_point_cloud("CALIBRATION_{0}.ply".format(i), self._point_cloud[i])
 
         self.distance = [None, None]
         self.normal = [None, None]
@@ -373,10 +373,10 @@ class FSCalibration(FSCalibrationInterface):
             self.t = center - self.config.file.calibration.pattern.origin_distance * np.array(normal)
 
             self._logger.info("Platform calibration ")
-            self._logger.info(" Center Point: "+str(center))
-            self._logger.info(" Translation: " + str(self.t))
-            self._logger.info(" Rotation: " + str(self.R).replace('\n', ''))
-            self._logger.info(" Normal: " + str(normal))
+            self._logger.info(" Center Point: {0}".format(center))
+            self._logger.info(" Translation: {0}".format(self.t))
+            self._logger.info(" Rotation: {0}".format(str(self.R).replace('\n', '')))
+            self._logger.info(" Normal: {0}".format(normal))
 
         # Return response
         result = True
@@ -421,11 +421,11 @@ class FSCalibration(FSCalibrationInterface):
             distance, normal, M = model
             std = np.dot(M.T, normal).std()
 
-            self._logger.info("Laser calibration " + str(index))
-            self._logger.info(" Distance: " + str(distance))
-            self._logger.info(" Normal: " + str(normal))
-            self._logger.info(" Standard deviation: " + str(std))
-            self._logger.info(" Point cloud size: " + str(len(inliers)))
+            self._logger.info("Laser calibration {0}".format(index))
+            self._logger.info(" Distance: {0}".format(distance))
+            self._logger.info(" Normal: {0}".format(normal))
+            self._logger.info(" Standard deviation: {0}".format(std))
+            self._logger.info(" Point cloud size: {0}".format(len(inliers)))
 
             return distance, normal, std
         else:

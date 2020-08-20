@@ -1,6 +1,10 @@
 fabscanpi-server (0.9.3) UNRELEASED; urgency=medium
-  * fixed file finishing bug
-  * fixed texture scanning bug
+  * fixes ply file saving bug
+  * fixed texture scanning bug (scanner hangs after several minutes)
+  * fixed camera thread cleanup
+  * fixed mjpeg stream bug
+  * changed number of texture scan processors
+  * switched to more memory friendly log outputs
 
  -- Mario Lukas <info@fabscan.org>  Wed, 23 Jul 2020 01:38:00 +0100
 

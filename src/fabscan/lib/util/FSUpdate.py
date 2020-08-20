@@ -54,7 +54,7 @@ def get_latest_version_tag():
             if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
                 ssl._create_default_https_context = ssl._create_unverified_context
 
-            response = urllib.request.urlopen("https://"+REMOTE_SERVER+"/dists/" + str(stage) + "/main/binary-armhf/Packages", timeout=1)
+            response = urllib.request.urlopen("https://{0}/dists/{1}/main/binary-armhf/Packages".format(REMOTE_SERVER, stage), timeout=1)
 
             latest_version = __version__
             line = 'START'
@@ -80,7 +80,6 @@ def get_latest_version_tag():
                                 # ignore invalid version number
                                 pass
                             break
-            _logger.debug(latest_version)
             return latest_version
         except (Exception, urllib.error.URLError) as e:
             _logger.exception("Error while getting latest version tag: ")
@@ -98,7 +97,7 @@ def is_online(host="8.8.8.8", port=53, timeout=1):
       socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
       return True
   except socket.error as ex:
-      _logger.debug('There is no internet Connection: ' + str(ex))
+      _logger.debug("There is no internet Connection: {0}".format(ex))
       return False
 
 

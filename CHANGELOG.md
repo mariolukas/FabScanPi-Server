@@ -29,9 +29,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.9.3] - unreleased
 
+### Changed
+- number of texture scan processors
+- switched to more memory friendly log outputs
+
 ### Fixed
 - fixes ply file saving bug
 - fixed texture scanning bug (scanner hangs after several minutes)
+- fixed camera thread cleanup
+- fixed mjpeg stream bug
+- fixed memory leak
 
 ## [0.9.2] - 2020-07-20
 

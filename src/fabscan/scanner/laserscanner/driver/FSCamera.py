@@ -65,14 +65,11 @@ class FSRingBuffer(threading.Thread):
 
     # Retrieve the newest element in the buffer.
     def get(self):
-        #with self._lock:
-            if len(self.data) >= 1:
-                image = self.data[-1]
-                #self._logger.debug("Image is not none...")
-            else:
-                #self._logger.debug("Image is none.")
-                image = None
-            return image
+        if len(self.data) >= 1:
+            image = self.data[-1]
+        else:
+            image = None
+        return image
 
     def isSync(self):
         return self._sync
@@ -107,7 +104,7 @@ class CamProcessor(threading.Thread):
 
     def run(self):
         # This method runs in a separate thread
-        self._logger.debug("Cam Processor Thread started.")
+        self._logger.debug("Cam Processor Thread with id {0} started.".format(threading.get_ident()))
         while not self.terminated:
             # Wait for an image to be written to the stream
             if self.event.wait(1):
@@ -135,7 +132,7 @@ class CamProcessor(threading.Thread):
                     # Return ourselves to the available pool
                     with self.owner.lock:
                         self.owner.pool.append(self)
-        self._logger.debug("Cam Processor Thread killed.")
+        self._logger.debug("Cam Processor Thread with id {0} killed.".format(threading.get_ident()))
 
 
 class ProcessCamOutput():
@@ -179,7 +176,6 @@ class ProcessCamOutput():
             process.terminated = True
         time.sleep(0.2)
 
-
         if self.processor:
             with self.lock:
                 self.pool.append(self.processor)
@@ -209,7 +205,6 @@ class PiCam(threading.Thread):
         self.output = None
 
         self.capture_stream = io.BytesIO()
-
         self.camera_buffer = cam_ring_buffer
 
         self.idle = True
@@ -233,7 +228,7 @@ class PiCam(threading.Thread):
                     self.camera.saturation = self.settings.file.camera.saturation
 
                 except Exception as err:
-                    self._logger.error("Error while camera is recording: " + str(err))
+                    self._logger.error("Error while camera is recording: {0}".format(err))
                     pass
 
             else:
@@ -291,9 +286,9 @@ class PiCam(threading.Thread):
                 self.camera.awb_mode = 'auto'
                 self.idle = False
                 self.camera.start_recording(self.output, format='mjpeg')
-                self._logger.debug("Cam Stream with Resolution " + str(self.resolution) + " started")
+                self._logger.debug("Cam Stream with Resolution {0} started".format(self.resolution))
         except Exception as e:
-            self._logger.error("Not able to initialize Raspberry Pi Camera." + str(e))
+            self._logger.error("Not able to initialize Raspberry Pi Camera. {0}".format(e))
             self._logger.error(e)
 
     def stop_stream(self):
@@ -309,10 +304,10 @@ class PiCam(threading.Thread):
                 time.sleep(0.05)
 
             self.idle = True
-            self._logger.debug("Cam Stream with Resolution " + str(self.resolution) + " stopped")
+            self._logger.debug("Cam Stream with Resolution {0} stopped".format(self.resolution))
 
         except Exception as e:
-            self._logger.error("Not able to stop camera." + str(e))
+            self._logger.error("Not able to stop camera: {0}".format(e))
             self._logger.error(e)
 
     def destroy_camera(self):
@@ -446,7 +441,7 @@ class USBCam(threading.Thread):
 
             self.idle = False
 
-            self._logger.debug("Cam Stream with Resolution " + str(self.resolution) + " started")
+            self._logger.debug("Cam Stream with Resolution {0} started".format(self.resolution))
         except Exception as e:
             self._logger.error("Not able to initialize USB Camera.")
             self._logger.error(e)
@@ -459,7 +454,7 @@ class USBCam(threading.Thread):
             
             self.camera = None
             self.idle = True
-            self._logger.debug("Cam Stream with Resolution " + str(self.resolution) + " stopped")
+            self._logger.debug("Cam Stream with Resolution {0} stopped".format(self.resolution))
 
         except Exception as e:
             self._logger.error("Not able to stop camera.")

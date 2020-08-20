@@ -14,7 +14,6 @@ from fabscan.lib.util.FSUtil import FSSystem
 from fabscan.lib.util.FSInject import inject
 from fabscan.FSConfig import ConfigInterface
 
-
 @inject(
     config=ConfigInterface
 )
@@ -45,24 +44,24 @@ class FSSerialCom():
         self._connected = False
         self._firmware_version = None
         self._openSerial()
-        self._logger.debug("Connection baudrate is: "+str(self._baudrate))
-        self._logger.debug("Firmware flashing baudrate is: "+str(self.flash_baudrate))
+        self._logger.debug("Connection baudrate is: {0}".format(self._baudrate))
+        self._logger.debug("Firmware flashing baudrate is: {0}".format(self.flash_baudrate))
 
         self._stop = False
 
     def avr_device_is_available(self):
-        status = FSSystem.run_command("sudo avrdude-autoreset -p m328p -b "+str(self.flash_baudrate)+" -carduino -P" + str(self._port))
+        status = FSSystem.run_command("sudo avrdude-autoreset -p m328p -b {0} -carduino -P{1}".format(self.flash_baudrate, self._port))
         return status == 0
 
     def avr_flash(self, fname):
-        FSSystem.run_command("wc -l "+str(fname))
-        status = FSSystem.run_command("sudo avrdude-autoreset -D -V -U flash:w:"+str(fname)+":i -b "+str(self.flash_baudrate)+" -carduino -pm328p -P"+str(self._port))
+        FSSystem.run_command("wc -l {0}".format(fname))
+        status = FSSystem.run_command("sudo avrdude-autoreset -D -V -U flash:w:{0}:i -b {1} -carduino -pm328p -P{2}".format(fname, self.flash_baudrate, self._port))
         if status != 0:
             self._logger.error("Failed to flash firmware")
         return status == 0
 
     def _connect(self):
-        self._logger.debug("Trying to connect Arduino on port: " + str(self._port))
+        self._logger.debug("Trying to connect Arduino on port: {0}".format(self._port))
         # open serial port
         try:
             self._serial = serial.Serial(str(self._port), int(self._baudrate), timeout=3)
@@ -79,7 +78,7 @@ class FSSerialCom():
 
         flash_version_number = os.path.basename(os.path.normpath(os.path.splitext(flash_file_version.split('_', 1)[-1])[0]))
 
-        self._logger.debug("Latest available firmware version is: "+flash_version_number)
+        self._logger.debug("Latest available firmware version is: {0}".format(flash_version_number))
 
         try:
            # check if device is available
@@ -91,7 +90,7 @@ class FSSerialCom():
                    # if connection is opened successfully
                    if self._serial.isOpen():
                            current_version = self.checkVersion()
-                           self._logger.debug("Installed firmware version: " + str(current_version))
+                           self._logger.debug("Installed firmware version: {0}".format(current_version))
                            # check if autoflash is active
                            if self.config.file.serial.autoflash == "True":
                                ## check if firmware is up to date, if not flash new firmware
@@ -102,7 +101,7 @@ class FSSerialCom():
                                         time.sleep(0.5)
                                         self._connect()
                                         current_version = self.checkVersion()
-                                        self._logger.info("Successfully flashed new Firmware Version: " + str(current_version))
+                                        self._logger.info("Successfully flashed new Firmware Version: {0}".format(current_version))
 
 
                    # no firmware is installed, flash firmware
@@ -114,14 +113,14 @@ class FSSerialCom():
                                         time.sleep(0.5)
                                         self._connect()
                                         current_version = self.checkVersion()
-                                        self._logger.info("Successfully flashed Firmware Version: " + str(current_version))
+                                        self._logger.info("Successfully flashed Firmware Version: {0}".format(current_version))
            else:
-                    self._logger.error("Communication error on port " + str(self._port) + " try other flashing baudrate than " + str(self.flash_baudrate) + ". Maybe corrupted bootloader.")
+                    self._logger.error("Communication error on port {0} try other flashing baudrate than {1}. Maybe corrupted bootloader.".format(self._port, self.flash_baudrate))
 
 
            # set connection states and version
            if self._serial.isOpen() and (current_version != "None"):
-                  self._logger.info("FabScanPi is connected to FabScanPi HAT or compatible on port: " + str(self._port))
+                  self._logger.info("FabScanPi is connected to FabScanPi HAT or compatible on port: {0}".format(self._port))
                   current_version = self.checkVersion()
                   self._firmware_version = current_version
                   self._connected = True
@@ -131,7 +130,7 @@ class FSSerialCom():
                   sys.exit(1)
 
         except Exception as e:
-            self._logger.error("Fatal FabScanPi HAT or compatible connection error...." + str(e))
+            self._logger.error("Fatal FabScanPi HAT or compatible connection error: {0}".format(e))
             sys.exit(1)
 
     def checkVersion(self):
@@ -152,7 +151,7 @@ class FSSerialCom():
                 else:
                     return "None"
             except Exception as e:
-                self._logger.error("Check Version Error: " + str(e))
+                self._logger.error("Check Version Error: {0}".format(e))
         else:
             return "None"
 
@@ -165,7 +164,7 @@ class FSSerialCom():
                 command = self.readline()
                 return command.decode()
             except Exception as e:
-                self._logger.debug("Send/Receive Error: " + str(e))
+                self._logger.debug("Send/Receive Error: {0}".format(e))
                 break
 
 
@@ -185,7 +184,7 @@ class FSSerialCom():
                     read_timeout = True
                     self._serial.flushInput()
                     self._serial.flushOutput()
-                    self._logger.debug('Serial read timeout occured, skipping current and waiting for next command.')
+                    self._logger.debug("Serial read timeout occured, skipping current and waiting for next command.")
 
                 i = data.find(b"\n")
                 if i >= 0:
@@ -195,7 +194,7 @@ class FSSerialCom():
                 else:
                     self.buf.extend(data)
         except Exception as err:
-            self._logger.error('Serial Error occured: ' + str(err))
+            self._logger.error("Serial Error occured: {0}".format(err))
 
 
     def flush(self):
@@ -205,12 +204,9 @@ class FSSerialCom():
     def send(self, message):
         try:
             message = message + "\n"
-            # als alternative wegen der - zeichen.
-            #message = bytes(message, encoding="ascii")
-
             self._serial.write(message.encode())
         except Exception as e:
-            self._logger.error("Error while sending: " + str(e))
+            self._logger.error("Error while sending: {0}".format(e))
 
 
     def is_connected(self):

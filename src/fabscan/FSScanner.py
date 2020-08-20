@@ -85,7 +85,7 @@ class FSScanner(threading.Thread):
         self._logger.info("Job scheduler started.")
 
         self._logger.info("Scanner initialized...")
-        self._logger.info("Number of cpu cores: " + str(multiprocessing.cpu_count()))
+        self._logger.info("Number of cpu cores: {0}".format(multiprocessing.cpu_count()))
         self.config = config
 
         if bool(self.config.file.discoverable):
@@ -164,6 +164,7 @@ class FSScanner(threading.Thread):
             if self._state is FSState.SETTINGS:
                 self._logger.debug("Close Settings")
                 self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.SETTINGS_MODE_OFF})
+                self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_IT")
                 self.set_state(FSState.IDLE)
                 return
 
@@ -242,7 +243,7 @@ class FSScanner(threading.Thread):
                 hardware_info = "undefined"
 
             self._upgrade_available, self._upgrade_version = upgrade_is_available(__version__, self.config.file.online_lookup_ip)
-            self._logger.debug("Upgrade available: " + str(self._upgrade_available)+" "+self._upgrade_version)
+            self._logger.debug("Upgrade available: {0} {1}".format(self._upgrade_available, self._upgrade_version))
 
             #FIXME: todict leads to too many recursion problems. refactor settings class
             message = {
@@ -261,7 +262,7 @@ class FSScanner(threading.Thread):
             self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
 
         except Exception as e:
-            self._logger.exception("Client Connection Error: " + str(e))
+            self._logger.exception("Client Connection Error: {0}".format(e))
 
     def set_state(self, state):
         self._state = state
@@ -275,15 +276,15 @@ class FSScanner(threading.Thread):
     def run_temperature_watch_service(self):
         cpu_temp = get_cpu_temperature()
         if cpu_temp > 82:
-            self._logger.warning('High CPU Temperature: ' + str(cpu_temp) + " C")
+            self._logger.warning("High CPU Temperature: {0} C".format(cpu_temp))
             message = {
-                "message": "CPU Temp:  " + str(cpu_temp) + " C! Maybe thermally throttle active.",
+                "message": "CPU Temp: {0} C! Maybe thermally throttle active.".format(cpu_temp),
                 "level": "warn"
             }
 
             self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
         else:
-            self._logger.debug("CPU Temperature: " + str(cpu_temp) + " C")
+            self._logger.debug("CPU Temperature: {0} C".format(cpu_temp))
 
     def run_discovery_service(self):
         try:

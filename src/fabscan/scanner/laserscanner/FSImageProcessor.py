@@ -349,7 +349,7 @@ class ImageProcessor(ImageProcessorInterface):
 
             return masked_point_cloud, texture
         except Exception as e:
-            self._logger.exception("Process Error:"+str(e))
+            self._logger.exception("Process Error: {0}".format(e))
             return [], []
 
     def mask_image(self, image, index):
@@ -417,9 +417,6 @@ class ImageProcessor(ImageProcessorInterface):
         fy = self.config.file.calibration.camera_matrix[1][1]
         cx = self.config.file.calibration.camera_matrix[0][2]
         cy = self.config.file.calibration.camera_matrix[1][2]
-
-        ## if points_2d[0].size == 0 or points_2d[1].size == 0:
-        ##     return np.array([]).reshape(3, 0)
 
         # Compute projection point
         u, v = points_2d

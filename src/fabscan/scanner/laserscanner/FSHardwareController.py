@@ -99,8 +99,6 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
     def flush(self):
         self.camera.camera_buffer.flush()
-        #self.serial_connection.flush()
-
 
     def get_devices_as_json(self):
 
@@ -136,7 +134,6 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.laser.off(laser=0)
         self.laser.off(laser=1)
         self.camera.device.stop_stream()
-        #self.camera.device.flush_stream()
         self._settings_mode_is_off = True
 
     def get_picture(self, flush=False):
@@ -145,7 +142,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         try:
             img = self.camera.device.get_frame()
         except Exception as e:
-            self._logger.error("Error while get_picture: " + str(e))
+            self._logger.error("Error while get_picture: {0}".format(e))
         return img
 
     def capture(self):

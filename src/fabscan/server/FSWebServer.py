@@ -54,7 +54,7 @@ class FSWebServer(threading.Thread):
     def routes(self):
         return tornado.web.Application([
             (r"/api/v1/filters/", FSFilterHandler),
-            (r"/api/v1/streams/", FSStreamHandler, dict(scanprocessor=self.scanprocessor)),
+            (r"/api/v1/streams/", FSStreamHandler, dict(scanprocessor=self.scanprocessor, eventmanager=self.eventmanager)),
             (r"/api/v1/log/show", FSLogHandler, dict(config=self.config)),
             (r"/api/v1/log/download", FSLogHandler, dict(config=self.config)),
             (r"/api/v1/scans/", FSScanHandler, dict(config=self.config)),

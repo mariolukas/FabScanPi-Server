@@ -97,7 +97,7 @@ class FSImageWorkerPool(ThreadingActor):
         '''
 
         self.set_number_of_workers(number_of_workers)
-        self._logger.info("Creating %i image worker processes." % number_of_workers)
+        self._logger.info("Creating {} image worker processes.".format(number_of_workers))
 
         for _ in range(number_of_workers):
             worker = FSImageWorkerProcess(image_task_q=self._task_q, output_q=self._output_q, config=self.config, settings=self.settings, scanprocessor=self.scanprocessor)
@@ -167,13 +167,12 @@ class FSImageWorkerProcess(multiprocessing.Process):
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
 
-
     def run(self):
         '''
             Image Process runner
         '''
 
-        self._logger.debug("process "+str(self.pid)+" started")
+        self._logger.debug("process {} started".format(self.pid))
 
         while not self.exit:
             if not self.image_task_q.empty():

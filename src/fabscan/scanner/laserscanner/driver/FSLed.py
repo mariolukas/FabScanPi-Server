@@ -11,7 +11,7 @@ class Led:
 
     def on(self, red, green, blue):
         if not self.is_on:
-            command = "M05 R"+str(red)+" G"+str(green)+" B"+str(blue)
+            command = "M05 R{0} G{1} B{2}".format(red, green, blue)
             self.serial_connection.send_and_receive(command)
             # wait for camera to settle
             self.is_on = True

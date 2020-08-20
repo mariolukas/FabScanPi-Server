@@ -35,6 +35,7 @@ class FSEvents(object):
     ON_NET_CONNECT = "ON_NET_CONNECT"
     ON_GET_SETTINGS = "ON_GET_SETTINGS"
     ON_GET_CONFIG = "ON_GET_CONFIG"
+    ON_STOP_MJPEG_STREAM = "ON_STOP_MJPEG_STREAM"
 
 
 class FSEventManagerInterface(object):

@@ -35,5 +35,5 @@ class Laser:
             self.is_on[laser] = False
 
     def turn(self, steps):
-        command = "G04 L"+str(steps)+" F200"
+        command = "G04 L{0} F200".format(steps)
         self.serial_connection.send_and_receive(command)

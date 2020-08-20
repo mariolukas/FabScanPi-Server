@@ -6,7 +6,6 @@ __email__ = "info@mariolukas.de"
 
 from pykka import ThreadingActor
 
-
 class FSScanProcessorCommand(object):
     START = "START"
     STOP = "STOP"
