@@ -34,22 +34,19 @@ from tornado.platform.asyncio import AnyThreadEventLoopPolicy
 )
 class FSWebServer(threading.Thread):
 
-    #__slots__ = ['server_port', 'www_folder', 'scan_folder', '_logger']
-
     def __init__(self, config, scanprocessor, eventmanager, hardwarecontroller):
         threading.Thread.__init__(self)
         asyncio.set_event_loop_policy(AnyThreadEventLoopPolicy())
         self.config = config
         self.exit = False
         self.server_port = 8080
-        self.scanprocessor = scanprocessor
+        self.scanprocessor = scanprocessor.start()
         self.eventmanager = eventmanager
         self.hardwarecontroller = hardwarecontroller
         self.www_folder = os.path.join(os.path.dirname(__file__), self.config.file.folders.www)
         self.scan_folder = os.path.join(os.path.dirname(__file__), self.config.file.folders.scans)
         self._logger = logging.getLogger(__name__)
         self._logger.debug(self.www_folder)
-
 
     def routes(self):
         return tornado.web.Application([
@@ -77,7 +74,9 @@ class FSWebServer(threading.Thread):
             tornado.ioloop.IOLoop.instance().start()
         except Exception as e:
             self._logger.exception(e)
+            self.scanprocessor.stop()
             sys.exit(0)
 
     def kill(self):
+        self.scanprocessor.stop()
         tornado.ioloop.IOLoop.instance().stop()

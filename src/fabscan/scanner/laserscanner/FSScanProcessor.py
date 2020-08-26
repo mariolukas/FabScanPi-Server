@@ -29,7 +29,7 @@ from fabscan.worker.FSImageWorker import FSImageWorkerPool, FSSWorkerPoolCommand
 
 import asyncio
 
-@singleton(
+@inject(
     config=ConfigInterface,
     settings=SettingsInterface,
     eventmanager=FSEventManagerSingleton,
@@ -41,7 +41,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration):
         super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration)
 
-        asyncio.set_event_loop(asyncio.new_event_loop())
+        #asyncio.set_event_loop(asyncio.new_event_loop())
         self.settings = settings
         self.config = config
         self._logger = logging.getLogger(__name__)
@@ -445,8 +445,6 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         self.hardwareController.camera.device.flush_stream()
 
-
-
     def scan_next_object_position(self):
         if not self._stop_scan:
             if self.current_position <= self._number_of_pictures and self.actor_ref.is_alive():
@@ -521,16 +519,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     def clear_and_stop_worker_pool(self):
 
         # clear queue
-        if self._worker_pool is not None and self._worker_pool.is_alive():
-
-            self._worker_pool.tell(
-                {FSEvents.COMMAND: FSSWorkerPoolCommand.CLEAR_QUEUE}
-            )
-
-            self._worker_pool.tell(
-                {FSEvents.COMMAND: FSSWorkerPoolCommand.KILL}
-            )
-
+        if self._worker_pool and self._worker_pool.is_alive():
             self._worker_pool.stop()
 
     def image_processed(self, result):
@@ -675,14 +664,15 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def reset_scanner_state(self):
         self._logger.info("Reseting scanner states ... ")
-        #self.hardwareController.camera.device.flush_stream()
         self.clear_and_stop_worker_pool()
 
+        self.hardwareController.stop_camera_stream()
         for i in range(self.config.file.laser.numbers):
             self.hardwareController.laser.off(i)
-
         self.hardwareController.led.off()
         self.hardwareController.turntable.disable_motors()
+
+
         self._progress = 1
         self.current_position = 0
         self._number_of_pictures = 0

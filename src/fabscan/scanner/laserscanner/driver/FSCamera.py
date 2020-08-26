@@ -277,38 +277,38 @@ class PiCam(threading.Thread):
 
     def start_stream(self, mode="default"):
 
-        try:
+        if self.is_idle():
+            try:
+                self.set_mode(mode)
 
-            self.set_mode(mode)
-
-            if self.camera:
-                self.camera.resolution = self.resolution
-                self.camera.awb_mode = 'auto'
-                self.idle = False
-                self.camera.start_recording(self.output, format='mjpeg')
-                self._logger.debug("Cam Stream with Resolution {0} started".format(self.resolution))
-        except Exception as e:
-            self._logger.error("Not able to initialize Raspberry Pi Camera. {0}".format(e))
-            self._logger.error(e)
+                if self.camera:
+                    self.camera.resolution = self.resolution
+                    self.camera.awb_mode = 'auto'
+                    self.idle = False
+                    self.camera.start_recording(self.output, format='mjpeg')
+                    self._logger.debug("Cam Stream with Resolution {0} started".format(self.resolution))
+            except Exception as e:
+                self._logger.error("Not able to initialize Raspberry Pi Camera. {0}".format(e))
+                self._logger.error(e)
 
     def stop_stream(self):
+        if not self.idle():
+            try:
+                if self.camera.recording:
+                    self.camera.stop_recording()
+                    self.output.flush()
+                    self.output = None
+                    gc.collect()
 
-        try:
-            if self.camera.recording:
-                self.camera.stop_recording()
-                self.output.flush()
-                self.output = None
-                gc.collect()
+                while self.camera.recording:
+                    time.sleep(0.05)
 
-            while self.camera.recording:
-                time.sleep(0.05)
+                self.idle = True
+                self._logger.debug("Cam Stream with Resolution {0} stopped".format(self.resolution))
 
-            self.idle = True
-            self._logger.debug("Cam Stream with Resolution {0} stopped".format(self.resolution))
-
-        except Exception as e:
-            self._logger.error("Not able to stop camera: {0}".format(e))
-            self._logger.error(e)
+            except Exception as e:
+                self._logger.error("Not able to stop camera: {0}".format(e))
+                self._logger.error(e)
 
     def destroy_camera(self):
         self.camera.close()

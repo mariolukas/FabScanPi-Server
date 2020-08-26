@@ -201,8 +201,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
        return self.camera.is_connected()
 
     def start_camera_stream(self, mode="default"):
-        if self.camera.device.is_idle():
-           self.camera.device.start_stream(mode)
+        self.camera.device.start_stream(mode)
 
     def stop_camera_stream(self):
         self.camera.device.stop_stream()

@@ -53,6 +53,9 @@ class FSImageWorkerPool(ThreadingActor):
         self._workers_active = False
         self._logger.info("Worker Pool Actor initilized")
 
+    def on_stop(self):
+        self.kill()
+
     def on_receive(self, event):
         if event[FSEvents.COMMAND] == FSSWorkerPoolCommand.CREATE:
             self.create(event['NUMBER_OF_WORKERS'])
@@ -89,7 +92,6 @@ class FSImageWorkerPool(ThreadingActor):
                 self.actor_ref.tell(
                     {FSEvents.COMMAND: FSSWorkerPoolCommand.HANLDE_OUTPUT}
                 )
-
 
     def create(self, number_of_workers):
         '''
@@ -218,7 +220,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                                 data['laser_index'] = image_task.index
 
                             except Exception as e:
-                                self._logger.debug(e)
+                                self._logger.exception(e)
 
                             color_image = None
                             point_cloud = None

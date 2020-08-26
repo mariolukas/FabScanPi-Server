@@ -158,6 +158,7 @@ class FSScanner(threading.Thread):
 
             if self._state is FSState.SCANNING:
                 self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.STOP})
+                self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_IT")
                 self.set_state(FSState.IDLE)
                 return
 
@@ -170,6 +171,7 @@ class FSScanner(threading.Thread):
 
             if self._state is FSState.CALIBRATING:
                 self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.STOP_CALIBRATION})
+                self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_IT")
                 self.set_state(FSState.IDLE)
                 return
 
