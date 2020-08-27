@@ -14,6 +14,7 @@ class FSStreamHandler(tornado.web.RequestHandler):
         self._logger = logging.getLogger(__name__)
         self.scanprocessor = scanprocessor
         self.eventmanager = eventmanager.get_instance()
+        self.served_image_timestamp = 0
         self.stop_mjpeg = False
 
         self.types = {

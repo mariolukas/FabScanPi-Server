@@ -292,7 +292,7 @@ class PiCam(threading.Thread):
                 self._logger.error(e)
 
     def stop_stream(self):
-        if not self.idle():
+        if not self.idle:
             try:
                 if self.camera.recording:
                     self.camera.stop_recording()

@@ -85,7 +85,7 @@ class FSScanner(threading.Thread):
             'default': ThreadPoolExecutor(4),
             'processpool': ProcessPoolExecutor(2)
         }
-        self.scheduler = BackgroundScheduler(executors=executors)
+        self.scheduler = BackgroundScheduler()
         self.scheduler.start()
 
 

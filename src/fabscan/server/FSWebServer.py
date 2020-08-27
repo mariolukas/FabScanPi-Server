@@ -36,8 +36,7 @@ class FSWebServer(threading.Thread):
 
     def __init__(self, config, scanprocessor, eventmanager, hardwarecontroller):
         threading.Thread.__init__(self)
-       # asyncio.set_event_loop_policy(AnyThreadEventLoopPolicy())
-
+        asyncio.set_event_loop_policy(AnyThreadEventLoopPolicy())
         self.config = config
         self.exit = False
         self.server_port = 8080
@@ -72,12 +71,11 @@ class FSWebServer(threading.Thread):
         webserver = self.routes()
         try:
             webserver.listen(self.server_port)
-            tornado.ioloop.IOLoop.current().start()
+            tornado.ioloop.IOLoop.instance().start()
         except Exception as e:
             self._logger.exception(e)
             self.scanprocessor.stop()
             sys.exit(0)
 
     def kill(self):
-        self.scanprocessor.stop()
-        tornado.ioloop.IOLoop.current().stop()
+        tornado.ioloop.IOLoop.instance().stop()

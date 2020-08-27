@@ -53,10 +53,6 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self._logger.debug("Reset FabScanPi HAT...")
         self.reset_devices()
 
-        self.laser.off(laser=0)
-        #self.laser.off(laser=1)
-        self.led.off()
-        self.turntable.stop_turning()
         self._logger.debug("Hardware controller initialized...")
 
         self.hardware_test_functions = {

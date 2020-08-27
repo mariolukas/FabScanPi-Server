@@ -8,6 +8,7 @@ from queue import Empty
 import multiprocessing
 import logging
 import time
+import threading
 
 from fabscan.worker.FSImageTask import ImageTask, FSTaskType
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
@@ -35,7 +36,7 @@ class FSImageWorkerPool(ThreadingActor):
 
     def __init__(self, config, settings, scanprocessor):
         super(FSImageWorkerPool, self).__init__(self, config, settings, scanprocessor)
-
+        self.input_muted = False
         self.scanprocessor = scanprocessor
         self.config = config
         self.settings = settings
@@ -72,8 +73,7 @@ class FSImageWorkerPool(ThreadingActor):
 
     def handle_input(self, task):
 
-
-        if self.actor_ref.is_alive():
+        if self.actor_ref.is_alive() and not self.input_muted:
             self._task_q.put(task)
             self._input_count += 1
 
@@ -133,17 +133,19 @@ class FSImageWorkerPool(ThreadingActor):
             '''
                 Kill Processes in Pool
             '''
-            for _ in range(self._number_of_workers):
+            self.input_muted = True
+            self.clear_task_queue()
+
+            for worker in self.workers:
                 task = ImageTask(None, None, None, task_type="KILL")
                 self._task_q.put(task, True)
-
-            self.clear_task_queue()
 
             for worker in self.workers:
                 self.workers.remove(worker)
                 worker.join()
 
             self._workers_active = False
+            self.input_muted = False
 
     def workers_active(self):
         return self._workers_active
@@ -194,7 +196,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                         if image_task.task_type == "KILL":
                             self._logger.debug("Killed Worker Process with PID "+str(self.pid))
                             self.exit = True
-
+                            break
 
                         if (image_task.task_type == "PROCESS_COLOR_IMAGE"):
 
