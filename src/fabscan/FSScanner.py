@@ -10,6 +10,7 @@ import logging
 import os
 import multiprocessing
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 
 from fabscan.FSVersion import __version__
 
@@ -80,8 +81,14 @@ class FSScanner(threading.Thread):
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self.on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self.on_command)
 
-        self.scheduler = BackgroundScheduler()
+        executors = {
+            'default': ThreadPoolExecutor(4),
+            'processpool': ProcessPoolExecutor(2)
+        }
+        self.scheduler = BackgroundScheduler(executors=executors)
         self.scheduler.start()
+
+
         self._logger.info("Job scheduler started.")
 
         self._logger.info("Scanner initialized...")
@@ -276,6 +283,7 @@ class FSScanner(threading.Thread):
 
     ## Scheduled functions see init function!!
     def run_temperature_watch_service(self):
+      try:
         cpu_temp = get_cpu_temperature()
         if cpu_temp > 82:
             self._logger.warning("High CPU Temperature: {0} C".format(cpu_temp))
@@ -287,6 +295,8 @@ class FSScanner(threading.Thread):
             self.eventManager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
         else:
             self._logger.debug("CPU Temperature: {0} C".format(cpu_temp))
+      except Exception as err:
+            self._logger.exception(err)
 
     def run_discovery_service(self):
         try:

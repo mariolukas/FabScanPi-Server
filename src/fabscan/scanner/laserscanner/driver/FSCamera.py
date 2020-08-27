@@ -311,8 +311,9 @@ class PiCam(threading.Thread):
                 self._logger.error(e)
 
     def destroy_camera(self):
-        self.camera.close()
-        self.camera = None
+        if self.camera:
+            self.camera.close()
+            self.camera = None
 
     def is_idle(self):
         return self.idle

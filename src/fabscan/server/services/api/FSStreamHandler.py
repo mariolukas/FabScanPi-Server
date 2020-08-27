@@ -5,8 +5,6 @@ import time
 import logging
 import cv2
 import numpy as np
-import io
-from PIL import Image
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand
 from fabscan.FSEvents import FSEvents, FSEventManagerSingleton
 
@@ -55,6 +53,7 @@ class FSStreamHandler(tornado.web.RequestHandler):
         input: None
         :return: yields mjpeg stream with http header
         """
+        ioloop = tornado.ioloop.IOLoop.current()
         self._logger.debug("mjpeg stream started.")
         stream_type = self.get_argument('type', True)
         # Set http header fields
@@ -66,6 +65,8 @@ class FSStreamHandler(tornado.web.RequestHandler):
 
         while not self.stop_mjpeg:
             try:
+              interval = 1.0
+              if self.served_image_timestamp + interval < time.time():
                 # Generating images for mjpeg stream and wraps them into http resp
                 img = self.getFrame(stream_type)
                 self.write("--boundarydonotcross\n")
@@ -73,6 +74,8 @@ class FSStreamHandler(tornado.web.RequestHandler):
                 self.write("Content-length: {0}\r\n\r\n".format(img))
                 self.write(img)
                 yield tornado.gen.Task(self.flush)
+              else:
+                yield tornado.gen.Task(ioloop.add_timeout, ioloop.time() + interval)
             except Exception as e:
                 self._logger.warning("mjpeg stream stopped: {0}".format(e))
 

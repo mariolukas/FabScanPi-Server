@@ -517,9 +517,9 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
     def clear_and_stop_worker_pool(self):
-
         # clear queue
         if self._worker_pool and self._worker_pool.is_alive():
+            self._logger.debug("Stopping worker Pool.")
             self._worker_pool.stop()
 
     def image_processed(self, result):
@@ -664,14 +664,15 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def reset_scanner_state(self):
         self._logger.info("Reseting scanner states ... ")
-        self.clear_and_stop_worker_pool()
 
         self.hardwareController.stop_camera_stream()
         for i in range(self.config.file.laser.numbers):
             self.hardwareController.laser.off(i)
+
         self.hardwareController.led.off()
         self.hardwareController.turntable.disable_motors()
 
+        self.clear_and_stop_worker_pool()
 
         self._progress = 1
         self.current_position = 0

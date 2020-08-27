@@ -72,6 +72,7 @@ class FSImageWorkerPool(ThreadingActor):
 
     def handle_input(self, task):
 
+
         if self.actor_ref.is_alive():
             self._task_q.put(task)
             self._input_count += 1
@@ -103,7 +104,7 @@ class FSImageWorkerPool(ThreadingActor):
 
         for _ in range(number_of_workers):
             worker = FSImageWorkerProcess(image_task_q=self._task_q, output_q=self._output_q, config=self.config, settings=self.settings, scanprocessor=self.scanprocessor)
-            worker.daemon = True
+            #worker.daemon = True
             worker.start()
             self.workers.append(worker)
 
@@ -140,6 +141,7 @@ class FSImageWorkerPool(ThreadingActor):
 
             for worker in self.workers:
                 self.workers.remove(worker)
+                worker.join()
 
             self._workers_active = False
 
@@ -168,6 +170,10 @@ class FSImageWorkerProcess(multiprocessing.Process):
         self.image_processor = imageprocessor
         self._logger = logging.getLogger(__name__)
         self._logger.setLevel(logging.DEBUG)
+
+    def kill(self):
+        self.exit = True
+
 
     def run(self):
         '''
