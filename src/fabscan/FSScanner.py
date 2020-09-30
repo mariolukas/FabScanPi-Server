@@ -85,10 +85,9 @@ class FSScanner(threading.Thread):
             'default': ThreadPoolExecutor(4),
             'processpool': ProcessPoolExecutor(2)
         }
+
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
-
-
         self._logger.info("Job scheduler started.")
 
         self._logger.info("Scanner initialized...")
@@ -164,21 +163,21 @@ class FSScanner(threading.Thread):
                 return
 
             if self._state is FSState.SCANNING:
-                self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.STOP})
-                self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_IT")
+                self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.STOP})
+                self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
                 self.set_state(FSState.IDLE)
                 return
 
             if self._state is FSState.SETTINGS:
                 self._logger.debug("Close Settings")
                 self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.SETTINGS_MODE_OFF})
-                self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_IT")
+                self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
                 self.set_state(FSState.IDLE)
                 return
 
             if self._state is FSState.CALIBRATING:
                 self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.STOP_CALIBRATION})
-                self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_IT")
+                self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
                 self.set_state(FSState.IDLE)
                 return
 

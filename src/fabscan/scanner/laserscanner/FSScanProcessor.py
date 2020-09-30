@@ -169,28 +169,43 @@ class FSScanProcessor(FSScanProcessorInterface):
     def call_hardware_test_function(self, function):
         self.hardwareController.call_test_function(function)
 
-    def notify_if_is_not_calibrated(self):
-        self._logger.debug(self.config.file.calibration.camera_matrix)
+    def scanner_is_calibrated(self):
         correct_plane_number = len(self.config.file.calibration.laser_planes) == self.config.file.laser.numbers
 
         distance_is_set = True
-        for i in range(self.config.file.laser.numbers-1):
+        for i in range(self.config.file.laser.numbers - 1):
             if (self.config.file.calibration.laser_planes[i].distance == 0) or \
-               (self.config.file.calibration.laser_planes[i].distance is None):
+                    (self.config.file.calibration.laser_planes[i].distance is None):
                 distance_is_set = False
                 break
 
         is_calibrated = correct_plane_number and distance_is_set
+        return is_calibrated
 
-        self._logger.debug("FabScan is calibrated: {0}".format(is_calibrated))
+    def notify_if_is_not_calibrated(self):
+        try:
+            self._logger.debug(self.config.file.calibration.camera_matrix)
 
-        if not is_calibrated:
-            message = {
-                "message": "SCANNER_NOT_CALIBRATED",
-                "level": "warn"
-            }
+            is_calibrated = self.scanner_is_calibrated()
+            self._logger.debug("FabScan is calibrated: {0}".format(is_calibrated))
 
-            self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+            if not is_calibrated:
+                message = {
+                    "message": "SCANNER_NOT_CALIBRATED",
+                    "level": "warn"
+                }
+
+                self._logger.debug("Clients informaed")
+
+                event = FSEvent()
+                event.command = "STOP"
+                self.eventmanager.publish(FSEvents.COMMAND, event)
+                self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+
+            return
+
+        except Exception as e:
+            self._logger.exception(e)
 
     def create_texture_stream(self):
         try:
@@ -299,7 +314,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self._resolution = int(self.settings.file.resolution)
         self._is_color_scan = bool(self.settings.file.color)
 
-        self._number_of_pictures = int(self.config.file.turntable.steps // self.settings.file.resolution)
+        self._number_of_pictures = int(self.config.file.turntable.steps // self._resolution)
         self.current_position = 0
         self._starttime = self.get_time_stamp()
 
@@ -316,7 +331,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         if self.config.file.laser.numbers > 1:
             self.both_cloud = FSPointCloud(config=self.config, color=self._is_color_scan, filename=self._prefix, postfix='both', binary=False)
 
-        if not (self.config.file.calibration.laser_planes[0]['normal'] == []) and self.actor_ref.is_alive():
+        if self.scanner_is_calibrated() and self.actor_ref.is_alive():
             if self._is_color_scan:
                 self._total = (self._number_of_pictures * self.config.file.laser.numbers) + self._number_of_pictures
                 self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
@@ -325,17 +340,8 @@ class FSScanProcessor(FSScanProcessorInterface):
                 self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
         else:
             self._logger.debug("FabScan is not calibrated scan canceled")
+            self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_IF_NOT_CALIBRATED})
 
-            message = {
-                "message": "SCANNER_NOT_CALIBRATED",
-                "level": "warn"
-            }
-
-            self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-
-            event = FSEvent()
-            event.command = 'STOP'
-            self.eventmanager.publish(FSEvents.COMMAND, event)
 
     ## texture callbacks
     def init_texture_scan(self):
@@ -654,7 +660,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.stop_scan()
 
     def get_resolution(self):
-        return self.settings.file.resolution
+        return self._resolution
 
     def get_number_of_pictures(self):
         return self._number_of_pictures

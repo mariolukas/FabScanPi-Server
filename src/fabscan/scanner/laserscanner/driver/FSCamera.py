@@ -31,7 +31,7 @@ class FSCamera():
 
     def __init__(self, config):
 
-        self.camera_buffer = FSRingBuffer(5)
+        self.camera_buffer = FSRingBuffer(8)
         config = config
 
         if config.file.camera.type == 'PICAM':
@@ -283,7 +283,14 @@ class PiCam(threading.Thread):
 
                 if self.camera:
                     self.camera.resolution = self.resolution
-                    self.camera.awb_mode = 'auto'
+                    # self.camera.awb_mode = 'auto'
+                    #self.camera.iso = 200
+                    #self.camera.shutter_speed = 10000
+                    #time.sleep(1)
+                    #g = self.camera.awb_gains
+                    #self.camera.awb_mode = 'off'
+                    #self.camera.awb_gains = g
+
                     self.idle = False
                     self.camera.start_recording(self.output, format='mjpeg')
                     self._logger.debug("Cam Stream with Resolution {0} started".format(self.resolution))

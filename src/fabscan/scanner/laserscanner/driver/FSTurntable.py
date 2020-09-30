@@ -25,7 +25,7 @@ class Turntable(object):
         '''
         Accepts number of steps to take
         '''
-        steps *= self.scaler
+        steps *= self.scaler 
 
         if self.serial_connection != None:
             command = "G01 T"+str(steps)+" F"+str(speed)

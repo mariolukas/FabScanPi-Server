@@ -5,6 +5,7 @@ fabscanpi-server (0.9.3) UNRELEASED; urgency=medium
   * fixed mjpeg stream bug
   * changed number of texture scan processors
   * switched to more memory friendly log outputs
+  * fixed memory leak
 
  -- Mario Lukas <info@fabscan.org>  Wed, 23 Jul 2020 01:38:00 +0100
 
