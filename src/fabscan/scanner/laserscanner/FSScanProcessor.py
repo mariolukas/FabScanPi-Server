@@ -175,7 +175,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         distance_is_set = True
         for i in range(self.config.file.laser.numbers - 1):
             plane = self.config.file.calibration.laser_planes[i]
-            if (plane['distance'] == 0) or (plane['distance'] is None):
+            if (plane['distance'] is None) or (plane['distance'] == 0):
                 distance_is_set = False
                 break
 
