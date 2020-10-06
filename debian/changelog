@@ -1,3 +1,9 @@
+fabscanpi-server (0.9.4) UNRELEASED; urgency=medium
+  * fixed user interface connection issue when scanner is offline
+  * fixed error while scanner is connecting to discovery service when scanner is offline
+
+ -- Mario Lukas <info@fabscan.org>  Wed, 23 Jul 2020 01:38:00 +0100
+
 fabscanpi-server (0.9.3) UNRELEASED; urgency=medium
   * fixes ply file saving bug
   * fixed texture scanning bug (scanner hangs after several minutes)

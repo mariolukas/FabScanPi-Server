@@ -27,7 +27,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - add connector for GPIO's
 - add connector for adafruit crickit board
 
-## [0.9.3] - unreleased
+## [0.9.4] - 2020-10-06
+
+### Fixed
+- fixed user interface connection issue when scanner is offline
+- fixed error while scanner is connecting to discovery service when scanner is offline
+
+## [0.9.3] - 2020-10-02
 
 ### Changed
 - number of texture scan processors

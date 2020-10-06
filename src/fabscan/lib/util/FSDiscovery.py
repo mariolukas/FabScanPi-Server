@@ -27,7 +27,7 @@ def get_ip():
 
 
 def register_to_discovery(server_version, firmware_version):
-    _logger.info("Registering ip "+get_ip()+" to discovery service.")
+    _logger.info("Trying to register ip "+get_ip()+" to discovery service.")
 
     headers = {
         'Content-Type': 'application/json'
@@ -38,12 +38,14 @@ def register_to_discovery(server_version, firmware_version):
         'server_version': str(server_version),
         'firmware_version': str(firmware_version)
     }
+    try:
+        response = requests.post(DISCOVERY_URL, headers=headers, data=json.dumps(payload))
 
-    response = requests.post(DISCOVERY_URL, headers=headers, data=json.dumps(payload))
+        response.raise_for_status()
+        if response.status_code == 200:
+            _logger.info('Successfully registered to find.fabscan.org')
+        else:
+            _logger.warn('Not able to register to find.fabscan.org')
 
-    response.raise_for_status()
-    if response.status_code == 200:
-        _logger.info('Successfully registered to find.fabscan.org')
-    else:
-        _logger.warn('Not able to register to find.fabscan.org')
-
+    except requests.ConnectionError:
+        _logger.warn('Can not register to FabScan Discovery Service, Device seems to be offline.')

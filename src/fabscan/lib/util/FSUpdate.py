@@ -97,7 +97,7 @@ def is_online(host="8.8.8.8", port=53, timeout=1):
       socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
       return True
   except socket.error as ex:
-      _logger.debug("There is no internet Connection: {0}".format(ex))
+      _logger.warn("Scanner is offline, update checks are not possible: {0}".format(ex))
       return False
 
 
@@ -115,16 +115,14 @@ def upgrade_is_available(current_version, online_lookup_ip):
     if is_online(host=online_lookup_ip):
         latest_version = get_latest_version_tag()
     else:
-        return __version__
+        return False, str(__version__)
 
     return is_upgradeable(latest_version, current_version), latest_version
 
 
 def do_upgrade():
     try:
-
         os.system('nohup bash -c "sudo apt-get update -y && sudo apt-get dist-upgrade -y --only-upgrade -o Dpkg::Options::=\"--force-confnew\" fabscanpi-server" >> /var/log/fabscanpi/upgrade.log')
-
 
     except Exception as e:
         logging.exception("Error while update" + str(e))
