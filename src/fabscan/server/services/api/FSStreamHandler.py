@@ -30,7 +30,7 @@ class FSStreamHandler(tornado.web.RequestHandler):
 
     def getFrame(self, stream_type):
         try:
-            if not self.stop_mjpeg and self.scanprocessor.is_alive():
+            if self.scanprocessor.is_alive():
                 if stream_type == "laser":
                     img = self.scanprocessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_SETTINGS_STREAM})
                 else:
@@ -40,7 +40,10 @@ class FSStreamHandler(tornado.web.RequestHandler):
                     img = np.zeros((1, 1, 3), np.uint8)
 
                 ret, jpeg = cv2.imencode('.jpg', img)
-            return jpeg.tostring()
+
+                return jpeg.tobytes() #jpeg.tostring()
+            else:
+                return np.zeros((1, 1, 3), np.uint8)
 
         except Exception as e:
            self._logger.warning("Error while trying to trigger the scan processor: {0}".format(e))
@@ -58,10 +61,9 @@ class FSStreamHandler(tornado.web.RequestHandler):
         self._logger.debug("mjpeg stream started.")
         stream_type = self.get_argument('type', True)
         # Set http header fields
-        self.set_header('Cache-Control',
-                         'no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0')
-        self.set_header('Connection', 'close')
-        self.set_header('Content-Type', 'multipart/x-mixed-replace;boundary=--boundarydonotcross')
+        self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0')
+        self.set_header('Pragma', 'no-cache')
+        self.set_header('Content-Type', 'multipart/x-mixed-replace;boundary=--jpgboundary')
         self.set_header('Connection', 'close')
 
         while not self.stop_mjpeg:
@@ -70,10 +72,13 @@ class FSStreamHandler(tornado.web.RequestHandler):
               if self.served_image_timestamp + interval < time.time():
                 # Generating images for mjpeg stream and wraps them into http resp
                 img = self.getFrame(stream_type)
-                self.write("--boundarydonotcross\n")
+                if img is None:
+                    continue
+                self.write("--jpgboundary\r\n")
                 self.write("Content-type: image/jpeg\r\n")
-                self.write("Content-length: {0}\r\n\r\n".format(img))
+                self.write("Content-length: {0}\r\n\r\n".format(len(img)))
                 self.write(img)
+                self.served_image_timestamp = time.time()
                 yield tornado.gen.Task(self.flush)
               else:
                 yield tornado.gen.Task(ioloop.add_timeout, ioloop.time() + interval)
