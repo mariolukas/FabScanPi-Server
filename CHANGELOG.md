@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - fixed user interface connection issue when scanner is offline
 - fixed error while scanner is connecting to discovery service when scanner is offline
+- fixed mjpeg live stream bug for settings dialog and texture preview (mainly firefox)
 
 ## [0.9.3] - 2020-10-02
 
