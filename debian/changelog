@@ -1,8 +1,9 @@
 fabscanpi-server (0.9.4) UNRELEASED; urgency=medium
   * fixed user interface connection issue when scanner is offline
   * fixed error while scanner is connecting to discovery service when scanner is offline
+  * fixed live stream issue for different browsers (mainly known from firefox)
 
- -- Mario Lukas <info@fabscan.org>  Wed, 23 Jul 2020 01:38:00 +0100
+ -- Mario Lukas <info@fabscan.org>  Tue, 13 Oct 2020 21:16:00 +0100
 
 fabscanpi-server (0.9.3) UNRELEASED; urgency=medium
   * fixes ply file saving bug
