@@ -11,14 +11,12 @@ from fabscan.server.services.api.FSBaseHandler import BaseHandler
 
 class FSLogHandler(BaseHandler):
 
-
     def initialize(self, *args, **kwargs):
         self._logger = logging.getLogger(__name__)
         self.config = kwargs.get('config')
         self.scanlib = FSScans()
 
 
-    @tornado.web.asynchronous
     def get(self):
         try:
             log_file = self._logger.handlers[0].baseFilename

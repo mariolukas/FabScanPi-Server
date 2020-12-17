@@ -40,7 +40,7 @@ class FSWebSocketHandler(tornado.websocket.WebSocketHandler):
         """
             handles incoming messages from browser and sends it to the bus
          """
-
+        self._logger.debug(message)
         message = json2obj(str(message))
         try:
             # self._logger.debug("Websocket Message received %s" % message.event)

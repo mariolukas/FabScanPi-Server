@@ -7,8 +7,13 @@ import cv2
 import numpy as np
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand
 from fabscan.FSEvents import FSEvents, FSEventManagerSingleton
+from tornado.concurrent import run_on_executor
+from concurrent.futures import ThreadPoolExecutor   # `pip install futures` for python2
+
+MAX_WORKERS = 16
 
 class FSStreamHandler(tornado.web.RequestHandler):
+    executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
 
     def initialize(self, scanprocessor, eventmanager):
         self._logger = logging.getLogger(__name__)
@@ -28,6 +33,7 @@ class FSStreamHandler(tornado.web.RequestHandler):
     def on_mjpeg_stop(self, mgr, event):
         self.stop_mjpeg = True
 
+    @run_on_executor
     def getFrame(self, stream_type):
         try:
             if self.scanprocessor.is_alive():
@@ -48,8 +54,6 @@ class FSStreamHandler(tornado.web.RequestHandler):
         except Exception as e:
            self._logger.warning("Error while trying to trigger the scan processor: {0}".format(e))
 
-
-    @tornado.web.asynchronous
     @tornado.gen.coroutine
     def get(self):
         """
@@ -60,6 +64,7 @@ class FSStreamHandler(tornado.web.RequestHandler):
         ioloop = tornado.ioloop.IOLoop.current()
         self._logger.debug("mjpeg stream started.")
         stream_type = self.get_argument('type', True)
+
         # Set http header fields
         self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0')
         self.set_header('Pragma', 'no-cache')
@@ -68,10 +73,8 @@ class FSStreamHandler(tornado.web.RequestHandler):
 
         while not self.stop_mjpeg:
             try:
-              interval = 1.0
-              if self.served_image_timestamp + interval < time.time():
-                # Generating images for mjpeg stream and wraps them into http resp
-                img = self.getFrame(stream_type)
+
+                img = yield self.getFrame(stream_type)
                 if img is None:
                     continue
                 self.write("--jpgboundary\r\n")
@@ -79,9 +82,8 @@ class FSStreamHandler(tornado.web.RequestHandler):
                 self.write("Content-length: {0}\r\n\r\n".format(len(img)))
                 self.write(img)
                 self.served_image_timestamp = time.time()
-                yield tornado.gen.Task(self.flush)
-              else:
-                yield tornado.gen.Task(ioloop.add_timeout, ioloop.time() + interval)
+                self.flush()
+
             except Exception as e:
                 self._logger.warning("mjpeg stream stopped: {0}".format(e))
 
