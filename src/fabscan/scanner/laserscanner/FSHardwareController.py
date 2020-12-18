@@ -21,6 +21,7 @@ from fabscan.scanner.laserscanner.driver.FSCamera import FSCamera
 from fabscan.scanner.laserscanner.driver.FSSerial import FSSerialCom
 from fabscan.scanner.laserscanner.driver.FSLaser import Laser
 from fabscan.scanner.laserscanner.driver.FSLed import Led
+from fabscan.scanner.interfaces.FSHardwareConnectorFactory import FSHardwareConnectorFactory
 
 @singleton(
     config=ConfigInterface,
@@ -47,9 +48,11 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.camera = FSCamera()
         self.serial_connection = FSSerialCom()
 
-        self.turntable = Turntable(serial_object=self.serial_connection)
-        self.laser = Laser(self.serial_connection)
-        self.led = Led(self.serial_connection)
+        self.hardware_connector = FSHardwareConnectorFactory.create(self.config.file.connector.type)
+
+        self.turntable = Turntable(hardware_connector=self.hardware_connector)
+        self.laser = Laser(self.hardware_connector)
+        self.led = Led(self.hardware_connector)
         self._logger.debug("Reset FabScanPi HAT...")
         self.reset_devices()
 
@@ -183,15 +186,14 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
         return laser_image
 
-    def move_to_next_position(self, steps=180, speed=800):
-        self.turntable.step_blocking(steps, speed)
+    def move_to_next_position(self, steps=180, speed=800, blocking=True):
+        self.turntable.step(steps, speed, blocking)
 
-
-    def arduino_is_connected(self):
-        return self.serial_connection.is_connected()
+    def hardware_connector_available(self):
+        return self.hardware_connector.is_connected()
 
     def get_firmware_version(self):
-        return self.serial_connection.get_firmware_version()
+        return self.hardware_connector.get_firmware_version()
 
     def camera_is_connected(self):
        return self.camera.is_connected()

@@ -59,8 +59,9 @@
         "type": "PICAM",
         "undistort": "False"
     },
-    "serial": {
-        "plattform_type": "fabscanpi",
+    "connector": {
+        "type": "serial",
+        "firmware": "fabscanpi",
         "baudrate": 115200,
         "autoflash": "True",
         "flash_baudrate": 115200,

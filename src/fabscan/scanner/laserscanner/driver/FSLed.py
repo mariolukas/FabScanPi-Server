@@ -5,20 +5,16 @@ __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
 class Led:
-    def __init__(self, serial_object):
-        self.serial_connection = serial_object
+    def __init__(self, hardware_connector):
+        self.hardware_connector = hardware_connector
         self.is_on = False
 
     def on(self, red, green, blue):
-        if not self.is_on:
-            command = "M05 R{0} G{1} B{2}".format(red, green, blue)
-            self.serial_connection.send_and_receive(command)
-            # wait for camera to settle
+
+            self.hardware_connector.light_on(red, green, blue)
             self.is_on = True
 
     def off(self):
-        if self.is_on:
-            command = "M05 R0 G0 B0"
-            self.serial_connection.send_and_receive(command)
+            self.hardware_connector.light_off()
             self.is_on = False
 

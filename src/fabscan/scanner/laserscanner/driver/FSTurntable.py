@@ -12,9 +12,9 @@ from fabscan.FSConfig import ConfigInterface
     config=ConfigInterface
 )
 class Turntable(object):
-    def __init__(self, serial_object, config):
-        self.config=config
-        self.serial_connection = serial_object
+    def __init__(self, hardware_connector, config):
+        self.config = config
+        self.hardware_connector = hardware_connector
         # Number of steps for the turntable to do a full rotation
         # DEFAULT Value for FS Shield is 1/16 Step
         self.steps_for_full_rotation = self.config.file.turntable.steps
@@ -27,43 +27,34 @@ class Turntable(object):
         '''
         steps *= self.scaler 
 
-        if self.serial_connection != None:
+        if self.hardware_connector:
             command = "G01 T"+str(steps)+" F"+str(speed)
-            #if steps < 0:
-            #    command = command.replace('\U00002013', '-')
-            self.serial_connection.send_and_receive(command)
-            time.sleep(0.8)
+            self.hardware_connector.send_and_receive(command)
 
     def step_blocking(self, steps, speed):
         steps *= self.scaler
-
-        if self.serial_connection != None:
-
-            command = "G01 T"+str(steps)+" F"+str(speed)
-
-            #    command = command.replace('\U00002013', '-')
-            self.serial_connection.send_and_receive(command)
-
+        if self.hardware_connector:
+            self.hardware_connector.move_turntable(steps, speed)
 
     def enable_motors(self):
-        if self.serial_connection != None:
+        if self.hardware_connector:
             command = "M17"
-            self.serial_connection.send_and_receive(command)
+            self.hardware_connector.send_and_receive(command)
 
     def disable_motors(self):
-        if self.serial_connection != None:
+        if self.hardware_connector:
             command = "M18"
-            self.serial_connection.send_and_receive(command)
+            self.hardware_connector.send_and_receive(command)
 
     def start_turning(self):
-        if self.serial_connection != None:
+        if self.hardware_connector:
             self.enable_motors()
             command = "G06"
-            self.serial_connection.send_and_receive(command)
+            self.hardware_connector.send_and_receive(command)
 
     def stop_turning(self):
-        if self.serial_connection != None:
+        if self.hardware_connector:
             self.disable_motors()
             command = "G07"
-            self.serial_connection.send_and_receive(command)
+            self.hardware_connector.send_and_receive(command)
 

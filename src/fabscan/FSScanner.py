@@ -182,7 +182,6 @@ class FSScanner(threading.Thread):
                 return
 
         elif command == FSCommand.HARDWARE_TEST_FUNCTION:
-            self._logger.debug("Hardware Device Function called...")
             self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.CALL_HARDWARE_TEST_FUNCTION, 'DEVICE_TEST': event.device})
             return
 

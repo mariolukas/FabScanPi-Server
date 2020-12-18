@@ -13,33 +13,31 @@ import logging
 from fabscan.lib.util.FSUtil import FSSystem
 from fabscan.lib.util.FSInject import inject
 from fabscan.FSConfig import ConfigInterface
+from fabscan.scanner.interfaces.FSHardwareConnector import FSHardwareConnectorInterface
 
 @inject(
     config=ConfigInterface
 )
-class FSSerialCom():
+class FSSerialCom(FSHardwareConnectorInterface):
     def __init__(self, config):
 
         self.config = config
-
-        # run avr as system command for waking up arduino
-
         self._logger = logging.getLogger(__name__)
 
-        if hasattr(self.config.file.serial, 'port'):
-            self._port = self.config.file.serial.port
+        if hasattr(self.config.file.connector, 'port'):
+            self._port = self.config.file.connector.port
             self._logger.debug("Port in Config found")
         else:
             self._port = "/dev/ttyAMA0"
 
-        if hasattr(self.config.file.serial, 'flash_baudrate'):
-            self.flash_baudrate = self.config.file.serial.flash_baudrate
+        if hasattr(self.config.file.connector, 'flash_baudrate'):
+            self.flash_baudrate = self.config.file.connector.flash_baudrate
         else:
             self.flash_baudrate = 57600
 
         self.buf = bytearray()
 
-        self._baudrate = self.config.file.serial.baudrate
+        self._baudrate = self.config.file.connector.baudrate
         self._serial = None
         self._connected = False
         self._firmware_version = None
@@ -74,7 +72,7 @@ class FSSerialCom():
 
     def _openSerial(self):
         basedir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-        flash_file_version = max(sorted(glob.iglob(basedir+'/firmware/'+str(self.config.file.serial.plattform_type)+'_*.hex'),  key=os.path.getctime, reverse=True))
+        flash_file_version = max(sorted(glob.iglob(basedir+'/firmware/'+str(self.config.file.connector.firmware)+'_*.hex'),  key=os.path.getctime, reverse=True))
 
         flash_version_number = os.path.basename(os.path.normpath(os.path.splitext(flash_file_version.split('_', 1)[-1])[0]))
 
@@ -92,7 +90,7 @@ class FSSerialCom():
                            current_version = self.checkVersion()
                            self._logger.debug("Installed firmware version: {0}".format(current_version))
                            # check if autoflash is active
-                           if self.config.file.serial.autoflash == "True":
+                           if self.config.file.connector.autoflash == "True":
                                ## check if firmware is up to date, if not flash new firmware
                                if not current_version == flash_version_number:
                                    self._close()
@@ -107,7 +105,7 @@ class FSSerialCom():
                    # no firmware is installed, flash firmware
                    else:
                             # if auto flash is activated
-                            if self.config.file.serial.autoflash == "True":
+                            if self.config.file.connector.autoflash == "True":
                                     self._logger.info("No firmware detected trying to flash firmware...")
                                     if self.avr_flash(flash_file_version):
                                         time.sleep(0.5)
@@ -208,9 +206,36 @@ class FSSerialCom():
         except Exception as e:
             self._logger.error("Error while sending: {0}".format(e))
 
-
     def is_connected(self):
         return self._connected
 
     def get_firmware_version(self):
         return self._firmware_version
+
+    def move_turntable(self, steps, speed, blocking=True):
+        command = "G01 T{0}  F{1}".format(steps, speed)
+        self.send_and_receive(command)
+
+    def laser_on(self, laser):
+        if laser == 0:
+            command = "M21"
+        else:
+            command = "M19"
+        self._logger.debug("Laser {0} Switched on".format(laser))
+        self.send_and_receive(command)
+
+    def laser_off(self, laser):
+        if laser == 0:
+            command = "M22"
+        else:
+            command = "M20"
+        self._logger.debug("Laser {0} Switched off".format(laser))
+        self.send_and_receive(command)
+
+    def light_on(self, red, green, blue):
+        command = "M05 R{0} G{1} B{2}".format(red, green, blue)
+        self.send_and_receive(command)
+
+    def light_off(self):
+        command = "M05 R0 G0 B0"
+        self.send_and_receive(command)

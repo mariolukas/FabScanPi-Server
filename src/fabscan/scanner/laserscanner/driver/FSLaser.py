@@ -6,34 +6,17 @@ __email__ = "info@mariolukas.de"
 import time
 
 class Laser:
-    def __init__(self, serial_object):
-        self.serial_connection = serial_object
+    def __init__(self, hardware_connector):
+        self.hardware_connector = hardware_connector
         self.is_on = [False, False]
 
     def on(self, laser=0):
-        if (laser != None) and (self.serial_connection != None) and not self.is_on[laser]:
-            if laser == 0:
-                command = "M21"
-            else:
-                command = "M19"
-
-            self.serial_connection.send_and_receive(command)
-            # some time until the laser is on.
-            # FIXME: The serial needs some time until the laser is turned on.
+        if (laser != None) and (self.hardware_connector != None) and not self.is_on[laser]:
+            self.hardware_connector.laser_on(laser)
             time.sleep(0.2)
             self.is_on[laser] = True
 
-
     def off(self, laser=0):
-        if (laser != None) and (self.serial_connection != None) and self.is_on[laser]:
-            if laser == 0:
-                command = "M22"
-            else:
-                command = "M20"
-
-            self.serial_connection.send_and_receive(command)
+        if (laser != None) and (self.hardware_connector != None) and self.is_on[laser]:
+            self.hardware_connector.laser_off(laser)
             self.is_on[laser] = False
-
-    def turn(self, steps):
-        command = "G04 L{0} F200".format(steps)
-        self.serial_connection.send_and_receive(command)

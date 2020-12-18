@@ -278,7 +278,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     def send_hardware_state_notification(self):
         self._logger.debug("Checking Hardware connections")
 
-        if not self.hardwareController.arduino_is_connected():
+        if not self.hardwareController.hardware_connector_available():
             message = {
                 "message": "NO_SERIAL_CONNECTION",
                 "level": "error"
