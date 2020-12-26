@@ -75,7 +75,7 @@ class FSStreamHandler(tornado.web.RequestHandler):
             try:
 
                 img = yield self.getFrame(stream_type)
-                if img is None:
+                 if img is None:
                     continue
                 self.write("--jpgboundary\r\n")
                 self.write("Content-type: image/jpeg\r\n")

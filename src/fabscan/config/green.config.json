@@ -58,10 +58,12 @@
         "type": "PICAM",
         "undistort": "False"
     },
-    "serial": {
-        "plattform_type": "fabscanpi",
-        "baudrate": 57600,
+    "connector": {
+        "type": "serial",
+        "firmware": "fabscanpi",
+        "baudrate": 115200,
         "autoflash": "True",
+        "flash_baudrate": 115200,
         "port": "/dev/ttyAMA0"
     },
     "texture_illumination": 140,

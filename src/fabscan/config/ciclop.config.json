@@ -58,7 +58,8 @@
         "type": "PICAM",
         "undistort": "False"
     },
-    "serial": {
+    "connector": {
+        "type": "ciclop",
         "plattform_type": "ciclop",
         "baudrate": 14400,
         "autoflash": "True",
