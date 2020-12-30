@@ -219,7 +219,7 @@ class FSScanProcessor(FSScanProcessorInterface):
     def create_settings_stream(self):
         try:
             image = self.hardwareController.get_picture()
-            image = self.image_processor.get_settings_stream_frame(image)
+            image = self.image_processor.get_laser_stream_frame(image)
             return image
         except Exception as e:
             #self._logger.error(e)
@@ -244,8 +244,8 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def create_laser_stream(self):
         try:
-
             image = self.hardwareController.get_picture()
+            image = self.image_processor.get_laser_stream_frame(image)
             return image
         except Exception as e:
             #self._logger.error("Error while grabbing laser Frame: " + str(e))
@@ -313,8 +313,8 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         self._resolution = int(self.settings.file.resolution)
         self._is_color_scan = bool(self.settings.file.color)
-
         self._number_of_pictures = int(self.config.file.turntable.steps // self._resolution)
+
         self.current_position = 0
         self._starttime = self.get_time_stamp()
 
@@ -449,7 +449,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         if self.config.file.laser.interleaved == "False":
             self.hardwareController.led.off()
 
-        self.hardwareController.camera.device.flush_stream()
+        self.hardwareController.camera.flush_stream()
 
     def scan_next_object_position(self):
         if not self._stop_scan:

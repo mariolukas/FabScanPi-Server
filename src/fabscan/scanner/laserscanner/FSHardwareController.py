@@ -17,7 +17,7 @@ from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from fabscan.lib.file.FSImage import FSImage
 
 from fabscan.scanner.laserscanner.driver.FSTurntable import Turntable
-from fabscan.scanner.laserscanner.driver.FSCamera import FSCamera
+from fabscan.scanner.laserscanner.driver.FSCameraPi import FSCamera
 from fabscan.scanner.laserscanner.driver.FSSerial import FSSerialCom
 from fabscan.scanner.laserscanner.driver.FSLaser import Laser
 from fabscan.scanner.laserscanner.driver.FSLed import Led
@@ -94,7 +94,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
             self.laser.off(laser_index)
         self.led.off()
         self.turntable.stop_turning()
-        self.camera.device.stop_stream()
+        self.camera.stop_stream()
 
     def flush(self):
         self.camera.camera_buffer.flush()
@@ -119,11 +119,11 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
 
     def settings_mode_on(self):
-        while not self.camera.device.is_idle():
-            time.sleep(0.1)
-        self.camera.device.start_stream(mode="settings")
+        #while not self.camera.is_idle():
+        #    time.sleep(0.1)
+        self.camera.start_stream(mode="settings")
         self._settings_mode_is_off = False
-        self.camera.device.flush_stream()
+        self.camera.flush_stream()
         self.laser.on(laser=0)
         #self.turntable.start_turning()
 
@@ -132,27 +132,22 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.led.off()
         self.laser.off(laser=0)
         self.laser.off(laser=1)
-        self.camera.device.stop_stream()
+        self.camera.stop_stream()
         self._settings_mode_is_off = True
 
     def get_picture(self, flush=False):
         if flush:
-            self.camera.device.flush_stream()
+            self.camera.flush_stream()
         try:
-            img = self.camera.device.get_frame()
+            img = self.camera.get_frame()
         except Exception as e:
             self._logger.error("Error while get_picture: {0}".format(e))
         return img
 
-    def capture(self):
-        img = self.camera.device.capture_frame()
-        return img
-
-
     def get_pattern_image(self):
 
             self.led.on(110, 110, 110)
-            #self.camera.device.contrast = 40
+            #self.camera.contrast = 40
             pattern_image = self.get_picture()
             self.led.off()
             return pattern_image
@@ -187,7 +182,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         return laser_image
 
     def move_to_next_position(self, steps=180, speed=800, blocking=True):
-        self.turntable.step(steps, speed, blocking)
+        self.turntable.step(steps, speed)
 
     def hardware_connector_available(self):
         return self.hardware_connector.is_connected()
@@ -196,14 +191,16 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         return self.hardware_connector.get_firmware_version()
 
     def camera_is_connected(self):
-       return self.camera.is_connected()
+       return True
+       #TODO: implement this
+       #return self.camera.is_connected()
 
     def start_camera_stream(self, mode="default"):
-        self.camera.device.start_stream(mode)
+        self.camera.start_stream(mode)
 
     def stop_camera_stream(self):
-        self.camera.device.stop_stream()
+        self.camera.stop_stream()
 
     def destroy_camera_device(self):
-        self.camera.device.destroy_camera()
+        self.camera.destroy_camera()
 

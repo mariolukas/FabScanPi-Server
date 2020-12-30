@@ -43,8 +43,8 @@ class FSImageWorkerPool(ThreadingActor):
 
         self._logger = logging.getLogger(__name__)
 
-        self._task_q = multiprocessing.Queue(self.config.file.process_numbers)
-        self._output_q = multiprocessing.Queue(self.config.file.process_numbers)
+        self._task_q = multiprocessing.Queue(self.config.file.process_numbers*4)
+        self._output_q = multiprocessing.Queue(self.config.file.process_numbers*4)
 
         self._input_count = 0
         self._output_count = 0

@@ -1,24 +1,3 @@
-__author__ = "Mario Lukas"
-__copyright__ = "Copyright 2017"
-__license__ = "GPL v2"
-__maintainer__ = "Mario Lukas"
-__email__ = "info@mariolukas.de"
-
-import copy
-import cv2
-import logging
-import numpy as np
-import io
-import os
-import time
-import sys, threading, collections
-import gc
-
-
-from fabscan.lib.util.FSInject import inject, singleton
-from fabscan.FSConfig import ConfigInterface
-from fabscan.FSSettings import SettingsInterface
-from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 
 try:
     import picamera

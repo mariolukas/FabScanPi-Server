@@ -269,7 +269,7 @@ class ImageProcessor(ImageProcessorInterface):
         return cam_image
 
     def get_settings_stream_frame(self, cam_image):
-        # cam_image = self.decode_image(cam_image)
+        cam_image = self.decode_image(cam_image)
         return cam_image
 
     def get_calibration_stream_frame(self, cam_image):
@@ -290,32 +290,33 @@ class ImageProcessor(ImageProcessorInterface):
         return image
 
     def get_laser_stream_frame(self, image, type='CAMERA'):
-        image = self.decode_image(image)
-        if bool(self.settings.file.show_laser_overlay):
-            points, ret_img = self.compute_2d_points(image, roi_mask=False)
-            u, v = points
-            c = list(zip(u, v))
+        try:
+            image = self.decode_image(image)
+            if bool(self.settings.file.show_laser_overlay):
+                points, ret_img = self.compute_2d_points(image, roi_mask=False)
+                u, v = points
+                c = list(zip(u, v))
 
-            for t in c:
-                cv2.line(image, (int(t[0]) - 1, int(t[1])), (int(t[0]) + 1, int(t[1])), (255, 0, 0), thickness=1,
-                         lineType=8, shift=0)
+                for t in c:
+                    cv2.line(image, (int(t[0]) - 1, int(t[1])), (int(t[0]) + 1, int(t[1])), (255, 0, 0), thickness=1,
+                             lineType=8, shift=0)
 
-        if bool(self.settings.file.show_calibration_pattern):
-            cv2.line(image, (int(0.5*image.shape[1]), 0), (int(0.5*image.shape[1]), image.shape[0]), (0, 255, 0), thickness=1, lineType=8, shift=0)
-            cv2.line(image, (0, int(0.5*image.shape[0])), (image.shape[1], int(0.5*image.shape[0])), (0, 255, 0), thickness=1, lineType=8, shift=0)
-
+            if bool(self.settings.file.show_calibration_pattern):
+                cv2.line(image, (int(0.5*image.shape[1]), 0), (int(0.5*image.shape[1]), image.shape[0]), (0, 255, 0), thickness=1, lineType=8, shift=0)
+                cv2.line(image, (0, int(0.5*image.shape[0])), (image.shape[1], int(0.5*image.shape[0])), (0, 255, 0), thickness=1, lineType=8, shift=0)
+        except Exception as e:
+            self._logger.exception(e)
 
         return image
 
     def decode_image(self, image):
-        image = cv2.imdecode(image, 1)
+        #image = cv2.imdecode(image, 1)
         if self.config.file.camera.rotate == "True":
             image = cv2.transpose(image)
         if self.config.file.camera.hflip == "True":
             image = cv2.flip(image, 1)
         if self.config.file.camera.vflip == "True":
             image = cv2.flip(image, 0)
-
         return image
 
     #FIXME: rename color_image into texture_image
