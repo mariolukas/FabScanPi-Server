@@ -215,7 +215,6 @@ class PiCam(threading.Thread):
         self.camera.framerate = 30
         # Wait for the automatic gain control to settle
 
-
         self.start()
 
     def run(self):

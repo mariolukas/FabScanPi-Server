@@ -213,7 +213,13 @@ class FSSerialCom(FSHardwareConnectorInterface):
         return self._firmware_version
 
     def move_turntable(self, steps, speed, blocking=True):
-        command = "G01 T{0}  F{1}".format(steps, speed)
+
+        gcode = "01"
+
+        if blocking:
+            gcode = "02"
+
+        command = "G{0} T{1} F{2}".format(gcode, steps, speed)
         self.send_and_receive(command)
 
     def laser_on(self, laser):

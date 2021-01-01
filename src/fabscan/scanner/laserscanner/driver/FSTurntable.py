@@ -28,13 +28,12 @@ class Turntable(object):
         steps *= self.scaler 
 
         if self.hardware_connector:
-            command = "G01 T"+str(steps)+" F"+str(speed)
-            self.hardware_connector.send_and_receive(command)
+            self.hardware_connector.move_turntable(steps, speed, blocking=False)
 
     def step_blocking(self, steps, speed):
         steps *= self.scaler
         if self.hardware_connector:
-            self.hardware_connector.move_turntable(steps, speed)
+            self.hardware_connector.move_turntable(steps, speed, blocking=True)
 
     def enable_motors(self):
         if self.hardware_connector:
