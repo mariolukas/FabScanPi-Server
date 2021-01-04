@@ -25,10 +25,12 @@ class FSRingBuffer(threading.Thread):
 
     # Initialize the buffer.
     def __init__(self, size_max):
+        threading.Thread.__init__(self)
         self._logger = logging.getLogger(__name__)
         self.max = size_max
         self.data = collections.deque(maxlen=size_max)
         self.sync = threading.Event()
+        self.start()
         #self._lock = threading.RLock()
 
     # Append an element to the ring buffer.

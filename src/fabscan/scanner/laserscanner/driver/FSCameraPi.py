@@ -22,6 +22,7 @@ from fabscan.scanner.interfaces.driver.FSCamera import FSRingBuffer
 )
 class FSCamera(threading.Thread):
     def __init__(self, config, settings):
+        threading.Thread.__init__(self)
         self._logger = logging.getLogger(__name__)
 
         self.config = config
@@ -41,6 +42,7 @@ class FSCamera(threading.Thread):
         self._stop_event = threading.Event()
         self.idle = True
         self.update_thread = None
+        self.start()
 
     def update(self, stop_event, camera, highres_frame):
         t = threading.currentThread()

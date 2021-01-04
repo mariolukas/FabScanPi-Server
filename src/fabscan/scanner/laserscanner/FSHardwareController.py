@@ -181,7 +181,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
         return laser_image
 
-    def move_to_next_position(self, steps=180, speed=800, blocking=True):
+    def move_to_next_position(self, steps=180, speed=2000, blocking=True):
         self.turntable.step(steps, speed)
 
     def hardware_connector_available(self):

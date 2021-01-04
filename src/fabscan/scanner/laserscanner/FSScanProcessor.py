@@ -313,7 +313,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
         self._resolution = int(self.settings.file.resolution)
         self._is_color_scan = bool(self.settings.file.color)
-        self._number_of_pictures = int(self.config.file.turntable.steps // self._resolution)
+        self._number_of_pictures = int((self.config.file.turntable.steps // self._resolution) // 2 )
 
         self.current_position = 0
         self._starttime = self.get_time_stamp()
