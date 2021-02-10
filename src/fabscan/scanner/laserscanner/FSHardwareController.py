@@ -7,8 +7,7 @@ __email__ = "info@mariolukas.de"
 import logging
 import time
 import cv2
-import copy
-import threading
+import numpy as np
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.lib.util.FSInject import singleton
@@ -17,11 +16,10 @@ from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from fabscan.lib.file.FSImage import FSImage
 
 from fabscan.scanner.laserscanner.driver.FSTurntable import Turntable
-from fabscan.scanner.laserscanner.driver.FSCameraPi import FSCamera
-from fabscan.scanner.laserscanner.driver.FSSerial import FSSerialCom
 from fabscan.scanner.laserscanner.driver.FSLaser import Laser
 from fabscan.scanner.laserscanner.driver.FSLed import Led
 from fabscan.scanner.interfaces.FSHardwareConnectorFactory import FSHardwareConnectorFactory
+from fabscan.scanner.interfaces.FSCameraFactory import FSCameraFactory
 
 @singleton(
     config=ConfigInterface,
@@ -45,8 +43,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self._settings_mode_is_off = True
         self.camera = None
         self._image_processor = imageprocessor
-        self.camera = FSCamera()
-        self.serial_connection = FSSerialCom()
+        self.camera = FSCameraFactory.create(self.config.file.camera.type)
 
         self.hardware_connector = FSHardwareConnectorFactory.create(self.config.file.connector.type)
 
@@ -97,7 +94,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.camera.stop_stream()
 
     def flush(self):
-        self.camera.camera_buffer.flush()
+        self.camera.high_res_buffer.flush()
 
     def get_devices_as_json(self):
 
@@ -135,11 +132,12 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.camera.stop_stream()
         self._settings_mode_is_off = True
 
-    def get_picture(self, flush=False):
+    def get_picture(self, flush=False, preview=False):
         if flush:
             self.camera.flush_stream()
+            time.sleep(0.4)
         try:
-            img = self.camera.get_frame()
+            img = self.camera.get_frame(preview=preview)
         except Exception as e:
             self._logger.error("Error while get_picture: {0}".format(e))
         return img
@@ -177,12 +175,12 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
         if self.config.file.laser.interleaved == "True":
             backrgound_image = self.get_picture(flush=True)
-            laser_image = cv2.subtract(laser_image, backrgound_image)
+            laser_image = cv2.absdiff(backrgound_image, laser_image)
 
         return laser_image
 
     def move_to_next_position(self, steps=180, speed=2000, blocking=True):
-        self.turntable.step(steps, speed)
+        self.turntable.step_blocking(steps, speed)
 
     def hardware_connector_available(self):
         return self.hardware_connector.is_connected()

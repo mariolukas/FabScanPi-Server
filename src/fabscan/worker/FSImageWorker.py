@@ -43,8 +43,8 @@ class FSImageWorkerPool(ThreadingActor):
 
         self._logger = logging.getLogger(__name__)
 
-        self._task_q = multiprocessing.Queue(self.config.file.process_numbers*4)
-        self._output_q = multiprocessing.Queue(self.config.file.process_numbers*4)
+        self._task_q = multiprocessing.Queue(self.config.file.process_numbers)
+        self._output_q = multiprocessing.Queue(self.config.file.process_numbers)
 
         self._input_count = 0
         self._output_count = 0
@@ -114,9 +114,9 @@ class FSImageWorkerPool(ThreadingActor):
     def clear_queue(self, q):
         while not q.empty():
             try:
-                q.get(False)
+                q.get_nowait()
             except Empty:
-                continue
+                pass
 
     def clear_task_queue(self):
         try:
@@ -185,6 +185,8 @@ class FSImageWorkerProcess(multiprocessing.Process):
         self._logger.debug("process {} started".format(self.pid))
 
         while not self.exit:
+
+
             if not self.image_task_q.empty():
 
                 data = dict()
@@ -209,13 +211,11 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
                             self.output_q.put(data)
 
-
                         if (image_task.task_type == "PROCESS_DEPTH_IMAGE"):
-                            self._logger.debug('Image Processing starts.')
+                            #self._logger.debug('Image Processing starts.')
                             try:
-
-                                #self.image.save_image(image_task.image, image_task.progress, image_task.prefix,
-                                #                      dir_name=image_task.prefix + '/raw_' + image_task.raw_dir)
+                                self.image.save_image(image_task.image, image_task.progress, image_task.prefix,
+                                                      dir_name=image_task.prefix + '/raw_' + image_task.raw_dir)
 
                                 image_task.image = self.image_processor.decode_image(image_task.image)
                                 angle = float(image_task.progress * 360) / float(image_task.resolution)
@@ -234,9 +234,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             point_cloud = None
                             texture = None
                             self.output_q.put(data)
-
-
-                            self._logger.debug('Image Processing finished.')
+                            #self._logger.debug('Image Processing finished.')
 
                         image_task = None
 

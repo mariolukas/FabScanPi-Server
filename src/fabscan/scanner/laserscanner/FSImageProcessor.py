@@ -66,26 +66,21 @@ class ImageProcessor(ImageProcessorInterface):
         self.refinement_method = 'SGF' #possible  RANSAC, SGF
         self.image_height = self.config.file.camera.resolution.width
         self.image_width = self.config.file.camera.resolution.height
-        self._weight_matrix = self._compute_weight_matrix()
+        self.high_resolution = (self.config.file.camera.resolution.height, self.config.file.camera.resolution.width)
+        self.preview_resolution = (self.config.file.camera.preview_resolution.height, self.config.file.camera.preview_resolution.width)
+
+        self._full_res_weight_matrix = self._compute_weight_matrix(resolution=self.high_resolution)
+        self._preview_res_weight_matrix = self._compute_weight_matrix(resolution=self.preview_resolution)
+
         self._criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
         self.object_pattern_points = self.create_object_pattern_points()
 
-    def init(self, resolution):
 
-        if self.config.file.camera.rotate == "True":
-            self.image_height = resolution[0]
-            self.image_width = resolution[1]
-        else:
-            self.image_height = resolution[1]
-            self.image_width = resolution[0]
-
-        self._weight_matrix = self._compute_weight_matrix()
-
-    def _compute_weight_matrix(self):
+    def _compute_weight_matrix(self, resolution):
 
         _weight_matrix = np.array(
-            (np.matrix(np.linspace(0, self.image_width - 1, self.image_width)).T *
-             np.matrix(np.ones(self.image_height))).T)
+            (np.matrix(np.linspace(0, resolution[0] - 1, resolution[0])).T *
+             np.matrix(np.ones(resolution[1]))).T)
         return _weight_matrix
 
     def create_object_pattern_points(self):
@@ -186,24 +181,15 @@ class ImageProcessor(ImageProcessorInterface):
         elif self.laser_color_channel == 'U (YUV)':
             ret = cv2.split(cv2.cvtColor(image, cv2.COLOR_RGB2YUV))[1]
 
-        elif self.laser_color_detector == 'R (HSV)':
-            ret = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-            # lower mask (0-10)
-            # TODO: Use separate threshold value or 0 for 'V'
-            lower_red = np.array([0,50,self.threshold_value])
-            upper_red = np.array([10,255,255])
-            mask0 = cv2.inRange(ret, lower_red, upper_red)
+        elif self.laser_color_channel == 'R (HSV)':
+            hsv_frame = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-            # upper mask (170-180)
-            lower_red = np.array([160,50,self.threshold_value])
-            upper_red = np.array([180,255,255])
-            mask1 = cv2.inRange(ret, lower_red, upper_red)
-
-            # join masks
-            mask = mask0+mask1
-
-            ret = cv2.split(ret)[2]
-            ret[np.where(mask==0)] = 0
+            redHueArea = 30
+            redRange = ((hsv_frame[:, :, 0] + 360 + redHueArea) % 360)
+            hsv_frame[np.where((2 * redHueArea) > redRange)] = [0, 0, 0]
+            hsv_frame[np.where(hsv_frame[:, :, 1] < 95)] = [0, 0, 0]
+            rgb = cv2.cvtColor(hsv_frame, cv2.COLOR_HSV2RGB)
+            ret = cv2.split(rgb)[2]
 
         return ret
 
@@ -246,15 +232,21 @@ class ImageProcessor(ImageProcessorInterface):
             u = (dr - v * math.sin(thetar)) / math.cos(thetar)
         return u, v
 
-    def compute_2d_points(self, image, index=0, roi_mask=True, refinement_method='SGF'):
-        if image is not None:
+    def compute_2d_points(self, image, index=0, roi_mask=True, preview=False, refinement_method='SGF'):
 
+        if preview:
+            _weight_matrix = self._preview_res_weight_matrix
+        else:
+            _weight_matrix = self._full_res_weight_matrix
+
+        if image is not None:
+            image = cv2.GaussianBlur(image, (11,11), 0)
             image = self.compute_line_segmentation(image, index, roi_mask=roi_mask)
 
             # Peak detection: center of mass
             s = image.sum(axis=1)
             v = np.where(s > 0)[0]
-            u = (self._weight_matrix * image).sum(axis=1)[v] / s[v]
+            u = (_weight_matrix * image).sum(axis=1)[v] / s[v]
 
             if refinement_method == 'SGF':
                 # Segmented gaussian filter
@@ -291,9 +283,11 @@ class ImageProcessor(ImageProcessorInterface):
 
     def get_laser_stream_frame(self, image, type='CAMERA'):
         try:
-            image = self.decode_image(image)
+
+            image = self.decode_image(image, decode=False)
+
             if bool(self.settings.file.show_laser_overlay):
-                points, ret_img = self.compute_2d_points(image, roi_mask=False)
+                points, ret_img = self.compute_2d_points(image, roi_mask=False, preview=True)
                 u, v = points
                 c = list(zip(u, v))
 
@@ -309,8 +303,9 @@ class ImageProcessor(ImageProcessorInterface):
 
         return image
 
-    def decode_image(self, image):
-        #image = cv2.imdecode(image, 1)
+    def decode_image(self, image, decode=True):
+        #if decode:
+        #    image = cv2.imdecode(image, 1)
         if self.config.file.camera.rotate == "True":
             image = cv2.transpose(image)
         if self.config.file.camera.hflip == "True":
@@ -322,6 +317,7 @@ class ImageProcessor(ImageProcessorInterface):
     #FIXME: rename color_image into texture_image
     def process_image(self, angle, laser_image, color_image=None, index=0):
         ''' Takes picture and angle (in degrees).  Adds to point cloud '''
+
 
         #laser_image = self.decode_image(laser_image)
 

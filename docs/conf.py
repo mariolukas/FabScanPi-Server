@@ -32,6 +32,9 @@ latex_toplevel_sectioning = 'section'
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
+def setup (app):
+    app.add_stylesheet('css/custom.css')
+
 if not on_rtd:  # only import and set the theme if we're building docs locally
     import sphinx_rtd_theme
     html_theme = 'sphinx_rtd_theme'

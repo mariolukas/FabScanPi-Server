@@ -99,7 +99,7 @@ class FSScanner(threading.Thread):
             self.scheduler.add_job(self.run_discovery_service, 'interval', minutes=30, id='register_discovery_service')
             self._logger.info("Added discovery scheduling job.")
 
-        self.scheduler.add_job(self.run_temperature_watch_service, 'interval', minutes=1, id='cpu_temperature_service')
+        #self.scheduler.add_job(self.run_temperature_watch_service, 'interval', minutes=1, id='cpu_temperature_service')
 
     def run(self):
         while not self.exit:

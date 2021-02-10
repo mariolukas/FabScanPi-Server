@@ -27,8 +27,6 @@ from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand
 from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
 from fabscan.worker.FSImageWorker import FSImageWorkerPool, FSSWorkerPoolCommand
 
-import asyncio
-
 @inject(
     config=ConfigInterface,
     settings=SettingsInterface,
@@ -41,7 +39,6 @@ class FSScanProcessor(FSScanProcessorInterface):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration):
         super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration)
 
-        #asyncio.set_event_loop(asyncio.new_event_loop())
         self.settings = settings
         self.config = config
         self._logger = logging.getLogger(__name__)
@@ -85,6 +82,23 @@ class FSScanProcessor(FSScanProcessorInterface):
         if not "TBB" in cv_build_info:
             self._logger.warning("OpenCV does not support TBB. Falling back to single processing.")
             self.config.file.process_numbers = 1
+
+    def get_steps_for_resolution(self, resolution_degree):
+
+        degrees = 3.6
+
+        if resolution_degree == 1:
+            degrees = 0.5
+        if resolution_degree == 4:
+            degrees = 0.6
+        if resolution_degree == 8:
+            degrees = 1.8
+        if resolution_degree == 16:
+            degrees = 3.6
+
+        self.steps_for_degree = int(degrees / (360 / self.config.file.turntable.steps))
+
+        return self.steps_for_degree
 
     def on_receive(self, event):
         if event[FSEvents.COMMAND] == FSScanProcessorCommand.START:
@@ -170,7 +184,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.hardwareController.call_test_function(function)
 
     def scanner_is_calibrated(self):
-        correct_plane_number = len(self.config.file.calibration.laser_planes) == self.config.file.laser.numbers
+        correct_plane_number = len(self.config.file.calibration.laser_planes) >= self.config.file.laser.numbers
 
         distance_is_set = True
         for i in range(self.config.file.laser.numbers - 1):
@@ -209,7 +223,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def create_texture_stream(self):
         try:
-            image = self.hardwareController.get_picture()
+            image = self.hardwareController.get_picture(preview=False)
             image = self.image_processor.get_texture_stream_frame(image)
             return image
         except Exception as e:
@@ -218,9 +232,10 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def create_settings_stream(self):
         try:
-            image = self.hardwareController.get_picture()
+            image = self.hardwareController.get_picture(preview=True)
             image = self.image_processor.get_laser_stream_frame(image)
             return image
+
         except Exception as e:
             #self._logger.error(e)
             pass
@@ -236,16 +251,18 @@ class FSScanProcessor(FSScanProcessorInterface):
     def create_calibration_stream(self):
         try:
             image = self.hardwareController.get_picture()
-            image = self.image_processor.get_calibration_stream_frame(image)
+            #image = self.image_processor.get_calibration_stream_frame(image)
             return image
         except Exception as e:
             # images are dropped this cateched exception.. no error hanlder needed here.
             pass
 
+
     def create_laser_stream(self):
         try:
             image = self.hardwareController.get_picture()
-            image = self.image_processor.get_laser_stream_frame(image)
+
+            #image = self.image_processor.get_laser_stream_frame(image)
             return image
         except Exception as e:
             #self._logger.error("Error while grabbing laser Frame: " + str(e))
@@ -311,9 +328,12 @@ class FSScanProcessor(FSScanProcessorInterface):
         for i in range(int(self.config.file.laser.numbers)):
             self.hardwareController.laser.off(i)
 
-        self._resolution = int(self.settings.file.resolution)
+        self._logger.debug("Resolution " + str(self._resolution) + " Calculated Steps: " + str(self.get_steps_for_resolution(self.settings.file.resolution)))
         self._is_color_scan = bool(self.settings.file.color)
-        self._number_of_pictures = int((self.config.file.turntable.steps // self._resolution) // 2 )
+
+        self._resolution = self.get_steps_for_resolution(self._resolution)
+
+        self._number_of_pictures = int((self.config.file.turntable.steps // self._resolution))
 
         self.current_position = 0
         self._starttime = self.get_time_stamp()
@@ -367,7 +387,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.hardwareController.start_camera_stream(mode="default")
         # wait until camera is settled
         time.sleep(1)
-        self.hardwareController.camera.device.flush_stream()
+        self.hardwareController.camera.flush_stream()
 
 
 
@@ -385,7 +405,7 @@ class FSScanProcessor(FSScanProcessorInterface):
 
                     color_image = self.hardwareController.get_picture(flush=flush)
                     color_image = self.image_processor.decode_image(color_image)
-                    self.hardwareController.move_to_next_position(steps=self._resolution, speed=800)
+                    self.hardwareController.move_to_next_position(steps=self._resolution, speed=1200)
 
                     task = ImageTask(color_image, self._prefix, self.current_position, self._number_of_pictures, task_type="PROCESS_COLOR_IMAGE")
 
@@ -457,9 +477,10 @@ class FSScanProcessor(FSScanProcessorInterface):
                 if self.current_position == 0:
                     self.init_object_scan()
 
-                self._logger.debug('Start creating Task.')
+                #self._logger.debug('Start creating Task.')
                 for laser_index in range(self.config.file.laser.numbers):
                     laser_image = self.hardwareController.get_image_at_position(index=laser_index)
+
                     task = ImageTask(laser_image, self._prefix, self.current_position, self._number_of_pictures, index=laser_index)
 
                     self._worker_pool.tell(
@@ -467,8 +488,8 @@ class FSScanProcessor(FSScanProcessorInterface):
                     )
 
                 self.current_position += 1
-                self.hardwareController.move_to_next_position(steps=self._resolution, speed=800)
-                self._logger.debug('New Image Task created.')
+                self.hardwareController.move_to_next_position(steps=self._resolution, speed=1200)
+                #self._logger.debug('New Image Task created.')
 
                 if self.actor_ref.is_alive():
                     self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
@@ -476,7 +497,7 @@ class FSScanProcessor(FSScanProcessorInterface):
                     self._logger.error("Worker Pool died.")
                     self.stop_scan()
 
-                self._logger.debug('End creating Task.')
+                #self._logger.debug('End creating Task.')
 
 
     def on_laser_detection_failed(self):

@@ -38,7 +38,7 @@
     "meshlab": {
         "path": "/usr/bin/"
     },
-    "process_numbers": 8,
+    "process_numbers": 3,
     "turntable": {
         "steps": 6400,
         "radius": 70,

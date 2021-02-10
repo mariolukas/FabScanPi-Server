@@ -14,11 +14,43 @@ import time
 import sys, threading, collections
 import gc
 
-
 from fabscan.lib.util.FSInject import inject, singleton
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
+import datetime
+
+
+class FPS:
+    def __init__(self):
+        # store the start time, end time, and total number of frames
+        # that were examined between the start and end intervals
+        self._start = None
+        self._end = None
+        self._numFrames = 0
+
+    def start(self):
+        # start the timer
+        self._start = datetime.datetime.now()
+        return self
+
+    def stop(self):
+        # stop the timer
+        self._end = datetime.datetime.now()
+
+    def update(self):
+        # increment the total number of frames examined during the
+        # start and end intervals
+        self._numFrames += 1
+
+    def elapsed(self):
+        # return the total number of seconds between the start and
+        # end interval
+        return (self._end - self._start).total_seconds()
+
+    def fps(self):
+        # compute the (approximate) frames per second
+        return self._numFrames / self.elapsed()
 
 
 class FSRingBuffer(threading.Thread):
@@ -31,14 +63,14 @@ class FSRingBuffer(threading.Thread):
         self.data = collections.deque(maxlen=size_max)
         self.sync = threading.Event()
         self.start()
-        #self._lock = threading.RLock()
+        # self._lock = threading.RLock()
 
     # Append an element to the ring buffer.
     def append(self, x):
-        #with self._lock:
-            if len(self.data) == self.max:
-                self.data.pop()
-            self.data.append(x)
+        # with self._lock:
+        if len(self.data) == self.max:
+            self.data.pop()
+        self.data.append(x)
 
     # Retrieve the newest element in the buffer.
     def get(self):
@@ -56,6 +88,7 @@ class FSRingBuffer(threading.Thread):
         self.sync.set()
         self.data.clear()
         self.sync.clear()
+
 
 class FSCamera:
 

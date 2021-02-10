@@ -46,11 +46,12 @@ class FSCalibration(FSCalibrationInterface):
         self.calibration_brightness = [100, 100, 100]
         self.quater_turn = int(self.config.file.turntable.steps / 4)
 
+
+
         self.motor_move_degree = 3.6 # 1.8,  2.7 , 3.6, 5.0
         self.steps_five_degree = int(self.motor_move_degree / (360 / self.config.file.turntable.steps))
         self.laser_calib_start = self.LASER_PLANE_CALIBRATION_START_POS_DEGREE * self.steps_five_degree / 5
         self.laser_calib_end = self.LASER_PLANE_CALIBRATION_END_POS_DEGREE * self.steps_five_degree / 5
-
 
         self.motorsteps_per_calibration_step = int(self.motor_move_degree / (360 / self.config.file.turntable.steps))
         self.total_positions = int(((self.quater_turn / self.motorsteps_per_calibration_step) * 4) + 2)

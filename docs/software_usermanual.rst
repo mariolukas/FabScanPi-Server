@@ -144,60 +144,61 @@ When the scan is completed / file is saved a notification will be displayed.
 
 - You can now check, download or delete the scan-data.
 
-Generate Mesh
--------------
+..
+    Generate Mesh
+    -------------
 
-The FabScanPi software includes a feature to convert a scan into a mesh-file. This mesh-file can be used for 3D-printing.
+    The FabScanPi software includes a feature to convert a scan into a mesh-file. This mesh-file can be used for 3D-printing.
 
-.. note:: To generate a mesh-file a scan must have been performed. It is also possible to load a scan-file which has been saved previously.
+    .. note:: To generate a mesh-file a scan must have been performed. It is also possible to load a scan-file which has been saved previously.
 
-- Click on the options icon to open the options menu.
+    - Click on the options icon to open the options menu.
 
-.. image:: images/Manual_CreateMash_1.jpg
-
-
-
-- The options menu will open and you can see the index card of the loaded file.
-
-.. image:: images/Manual_CreateMash_1.jpg
+    .. image:: images/Manual_CreateMash_1.jpg
 
 
 
-- Click on the magic wand icon to open the menu for the MeshLab filter.
+    - The options menu will open and you can see the index card of the loaded file.
 
-.. image:: images/Manual_CreateMash_3.jpg
-
-
-
-- Now select one of the Meshlab filters and the file format for the future mesh file.
-
-- Click on "Start Meshing" to activate the conversion process.
-
-.. image:: images/Manual_CreateMash_4.jpg
+    .. image:: images/Manual_CreateMash_1.jpg
 
 
 
-The conversion starts and the main menu appears. A notification is displayed as well.
+    - Click on the magic wand icon to open the menu for the MeshLab filter.
 
-.. note:: Depending on the size and complexity of the scan file as well as the type of selected filter the conversion process may take some time.
-
-.. image:: images/Manual_CreateMash_5.jpg
+    .. image:: images/Manual_CreateMash_3.jpg
 
 
 
-When the mesh-file is available a notification is displayed.
+    - Now select one of the Meshlab filters and the file format for the future mesh file.
 
-.. image:: images/Manual_CreateMash_6.jpg
+    - Click on "Start Meshing" to activate the conversion process.
+
+    .. image:: images/Manual_CreateMash_4.jpg
 
 
 
-- Again open the options menu. Another index card for the mesh-file has been added.
+    The conversion starts and the main menu appears. A notification is displayed as well.
 
-- Click on the mesh-file index card.
+    .. note:: Depending on the size and complexity of the scan file as well as the type of selected filter the conversion process may take some time.
 
-- You can now click on the download-icon to download the mesh-file to your computer or click on the trashbasket icon to delete the mesh-file.
+    .. image:: images/Manual_CreateMash_5.jpg
 
-.. image:: images/Manual_CreateMash_8.jpg
+
+
+    When the mesh-file is available a notification is displayed.
+
+    .. image:: images/Manual_CreateMash_6.jpg
+
+
+
+    - Again open the options menu. Another index card for the mesh-file has been added.
+
+    - Click on the mesh-file index card.
+
+    - You can now click on the download-icon to download the mesh-file to your computer or click on the trashbasket icon to delete the mesh-file.
+
+    .. image:: images/Manual_CreateMash_8.jpg
 
 
 File Operations

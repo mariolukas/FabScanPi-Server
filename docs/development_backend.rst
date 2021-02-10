@@ -14,6 +14,7 @@ Before you can start developing the FabscanPi-Server some basic configurations a
         * `Python 3.7 <https://python.org>`_
         * `Git <https://git-scm.com>`_
 
+
 Obtaining the code
 ------------------
 

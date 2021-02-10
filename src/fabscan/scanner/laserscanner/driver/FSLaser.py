@@ -13,7 +13,7 @@ class Laser:
     def on(self, laser=0):
         if (laser != None) and (self.hardware_connector != None) and not self.is_on[laser]:
             self.hardware_connector.laser_on(laser)
-            time.sleep(0.3)
+            time.sleep(0.2)
             self.is_on[laser] = True
 
     def off(self, laser=0):

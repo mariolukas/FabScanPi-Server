@@ -59,7 +59,7 @@
         "undistort": "False"
     },
     "connector": {
-        "type": "ciclop",
+        "type": "serial",
         "plattform_type": "ciclop",
         "baudrate": 14400,
         "autoflash": "True",
