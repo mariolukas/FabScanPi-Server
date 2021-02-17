@@ -29,6 +29,7 @@ class FSCameraDummy(threading.Thread):
         self.timestamp = int(round(time.time() * 1000))
         self.frame_count = 0
         self.idle = True
+        self.resolution = self.settings.file.resolution
 
         self.start()
 
@@ -40,11 +41,11 @@ class FSCameraDummy(threading.Thread):
         if self.frame_count == 200:
             self.frame_count = 0
 
-        resolution = self.settings.file.resolution
+        self.resolution = self.settings.file.resolution
         if preview:
-            resolution = 16
+            self.resolution = 3
 
-        for filename in glob.glob(self.config.file.camera.image_path + str(resolution) + "/*_{:03d}.jpg".format(self.frame_count)):
+        for filename in glob.glob(self.config.file.camera.image_path + str(self.resolution) + "_" + str(self.config.file.laser.numbers) + "/*_{:03d}.jpg".format(self.frame_count)):
             self._logger.debug(filename)
             img = cv2.imread(filename, 1)
 
@@ -53,6 +54,7 @@ class FSCameraDummy(threading.Thread):
             img = cv2.resize(img, low_res_size)
 
         self.frame_count += 1
+        time.sleep(0.1)
         return img
 
 

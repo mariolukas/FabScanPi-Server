@@ -152,7 +152,59 @@ Connecting the Stepper Motor(s)
 
 **The Motor drivers**
 
-TODO
+There are different kind of motor drivers.
+
+- TMC2100
+- TMC2208
+- TMC2209
+- A4988
+
+All drivers do work with the FabScan HAT but the HAT needs to be configured for some
+drivers. Only the TMC2100 works out of the box without any soldering. Current kits are
+delivered with TMC2209 or TMC2208. First versions of the FabScan project used the A4988
+drivers. A4988 do work but they are not recommended anymore because the TMC based drivers
+run much more smooth, which prevents the object from slipping on the table. You can find
+detailed information about the TMC drivers on https://learn.watterott.com/silentstepstick/
+
+The drivers need to run in 1/16 Microstepping mode. The following instructions what you
+need to do for the different divers:
+
+**A4988**
+
++------------+------------+-----------+-----------+
+|     MS1    |    MS2     |   MS3     |   Mode    |
++============+============+===========+===========+
+|     VCC    |    VCC     |   VCC     |   1/16    |
++------------+------------+-----------+-----------+
+
+**TMC2100 (No HAT soldering needed)**
+
++------------+------------+-----------+
+|  CFG2/MS2  |  CFG1/MS1  |   Mode    |
++============+============+===========+
+|     OPEN   |    OPEN    |   1/16    |
++------------+------------+-----------+
+
+**TMC2208**
+
++------------+------------+-----------+
+|  CFG2/MS2  | CFG1/MS1   |   Mode    |
++============+============+===========+
+|     VCC    |    VCC     |   1/16    |
++------------+------------+-----------+
+
+**TMC2209**
+
++------------+------------+------------+-----------+
+|  CFG2/MS2  | CFG1/MS1   | SPREAD/MS3 |  Mode     |
++============+============+============+===========+
+|     VCC    |    VCC     |    GND     |   1/16    |
++------------+------------+------------+-----------+
+
+
+
+
+
 
 **Wiring of the Motors**
 

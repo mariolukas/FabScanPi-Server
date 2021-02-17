@@ -60,7 +60,7 @@
     },
     "connector": {
         "type": "serial",
-        "plattform_type": "ciclop",
+        "firmware": "ciclop",
         "baudrate": 14400,
         "autoflash": "True",
         "port": "/dev/ttyUSB0",

@@ -1,7 +1,7 @@
 .. _development_firmware:
 
 ************************
-Firmware: Arduino (C++)
+Firmware (C++)
 ************************
 
 TODO

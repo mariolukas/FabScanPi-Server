@@ -81,11 +81,6 @@ class FSScanner(threading.Thread):
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self.on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self.on_command)
 
-        executors = {
-            'default': ThreadPoolExecutor(4),
-            'processpool': ProcessPoolExecutor(2)
-        }
-
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
         self._logger.info("Job scheduler started.")
@@ -141,6 +136,8 @@ class FSScanner(threading.Thread):
         ## Start Scan Process
         elif command == FSCommand.START:
             if self._state is FSState.SETTINGS:
+                #if self.config.file.camera.type == 'dummy':
+                self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
                 self._logger.info("Start command received...")
                 self.set_state(FSState.SCANNING)
                 self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START})
@@ -193,12 +190,14 @@ class FSScanner(threading.Thread):
 
         elif command == FSCommand.CALIBRATION_COMPLETE:
             self.set_state(FSState.IDLE)
+            self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
             return
 
         # Scan is complete
         elif command == FSCommand.COMPLETE:
             self.set_state(FSState.IDLE)
             self._logger.info("Scan complete")
+            self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
             return
 
         # Internal error occured

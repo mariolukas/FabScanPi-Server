@@ -1,7 +1,7 @@
 {
     "folders": {
-        "www": "/home/pi/fabscan/src/www/",
-        "scans": "/home/pi/scans/"
+        "www": "/fabscan/src/www/",
+        "scans": "/fabscan/scans/"
     },
     "laser": {
         "interleaved": "False",
@@ -103,7 +103,7 @@
             "width": 800,
             "height": 600
         },
-        "image_path": "/home/pi/scans/dummy/",
+        "image_path": "/fabscan/dummy/",
         "rotate": "True",
         "hflip": "True",
         "vflip": "False",

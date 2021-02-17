@@ -50,7 +50,7 @@ class FSScanProcessor(FSScanProcessorInterface):
         self.image_processor = imageprocessor
 
         self._prefix = None
-        self._resolution = 16
+        self._resolution = 2
         self._number_of_pictures = 0
         self._total = 1
         self._progress = 1
@@ -88,13 +88,11 @@ class FSScanProcessor(FSScanProcessorInterface):
         degrees = 3.6
 
         if resolution_degree == 1:
-            degrees = 0.5
-        if resolution_degree == 4:
-            degrees = 0.6
-        if resolution_degree == 8:
-            degrees = 1.8
-        if resolution_degree == 16:
             degrees = 3.6
+        if resolution_degree == 2:
+            degrees = 1.8
+        if resolution_degree == 3:
+            degrees = 0.8
 
         self.steps_for_degree = int(degrees / (360 / self.config.file.turntable.steps))
 
@@ -328,13 +326,14 @@ class FSScanProcessor(FSScanProcessorInterface):
         for i in range(int(self.config.file.laser.numbers)):
             self.hardwareController.laser.off(i)
 
-        self._logger.debug("Resolution " + str(self._resolution) + " Calculated Steps: " + str(self.get_steps_for_resolution(self.settings.file.resolution)))
-        self._is_color_scan = bool(self.settings.file.color)
-
-        self._resolution = self.get_steps_for_resolution(self._resolution)
+        self._logger.debug("Resolution " + str(self.settings.file.resolution) + " Calculated Steps: " + str(self.get_steps_for_resolution(self.settings.file.resolution)))
+        if self.config.file.camera.type == 'dummy':
+            self._is_color_scan = False
+        else:
+            self._is_color_scan = bool(self.settings.file.color)
+        self._resolution = self.get_steps_for_resolution(self.settings.file.resolution)
 
         self._number_of_pictures = int((self.config.file.turntable.steps // self._resolution))
-
         self.current_position = 0
         self._starttime = self.get_time_stamp()
 

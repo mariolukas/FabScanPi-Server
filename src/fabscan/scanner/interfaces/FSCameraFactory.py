@@ -1,5 +1,8 @@
-from fabscan.scanner.laserscanner.driver.FSCameraPi import FSCameraPi
 from fabscan.scanner.laserscanner.driver.FSCameraDummy import FSCameraDummy
+try:
+    from fabscan.scanner.laserscanner.driver.FSCameraPi import FSCameraPi
+except ImportError:
+    from fabscan.scanner.laserscanner.driver.FSCameraDummy import FSCameraDummy as FSCameraPi
 
 class FSCameraFactory:
 

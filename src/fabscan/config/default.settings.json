@@ -12,7 +12,7 @@
        "contrast": 10,
        "saturation": 0
      },
-     "resolution": 4,
+     "resolution": 2,
      "color" : "True",
      "show_laser_overlay": "True",
      "show_calibration_pattern": "True"

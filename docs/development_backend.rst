@@ -1,11 +1,63 @@
 .. _development_backend:
 
-****************
-FabScanPi-Server
-****************
+*********************************
+Backend (Python)
+*********************************
 
-Setting up a Development environment
-------------------------------------
+Obtaining the code
+------------------
+
+Checkout the FabScanPi-Server sources from their Git repository. The default branch is already the development branch.
+
+.. code-block:: bash
+
+    git clone https://github.com/mariolukas/FabScanPi-Server.git
+
+Afterwards you can change into the directory FabScanPi-Server. If you need to work on an other branch you can checkout
+that specific branch.
+
+.. code-block:: bash
+
+    git checkout master
+
+Development with Docker (without Hardware)
+------------------------------------------
+
+This way describes how to develop the FabScanPi-Server application without the usage of
+hardware. All hardware components will be simulated. The camera simulation will deliver
+some images from a local mounted folder.
+
+You will need to install and run docker on your development machine. Just download and
+install it from https://docs.docker.com/get-docker/
+
+Then you need to install docker-compose. https://docs.docker.com/compose/install/
+
+After you installed docker and docker-compose you can build the FabScanPi-Server image. You need to go
+to the FabScanPi-Server folder which you just checked out from GitHub.
+
+Then use the following command to build the image.
+
+.. code-block:: bash
+
+  docker-compose build
+
+When the build is finished you can startup the server by using
+
+.. code-block:: bash
+
+  docker-compose up
+
+Afterwards you are ready to use the FabScanPi-Server from your local machine.
+Just try to connect to http://127.0.0.1:8080
+
+
+Remote Development (with Hardware)
+----------------------------------
+
+This way describes how to develop remotely on the Raspberry Pi. The code is on the developing
+machine, while the you are able to execute the code and debugger remotely. This guide describes
+how to use PyCharm Professional. Maybe there are other ways for example using visual studio code
+with some sftp and ssh modules. But the PyCharm way is the most convenient way to do it.
 
 Before you can start developing the FabscanPi-Server some basic configurations are needed.
 
@@ -14,25 +66,6 @@ Before you can start developing the FabscanPi-Server some basic configurations a
         * `Python 3.7 <https://python.org>`_
         * `Git <https://git-scm.com>`_
 
-
-Obtaining the code
-------------------
-
-  Checkout the FabScanPi-Server sources from their Git repository. The default branch is already the development branch.
-
-  .. code-block:: bash
-
-      git clone https://github.com/mariolukas/FabScanPi-Server.git
-
-  Afterwards you can change into the directory FabScanPi-Server. If you need to work on an other branch you can checkout
-  that specific branch.
-
-  .. code-block:: bash
-
-    git checkout master
-
-IDE Setup
----------
 
 The most convenient way to start developing on FabScanPi-Server is by using `Jetbrains PyCharm <https://www.jetbrains.com/pycharm>`_ .
 PyCharm comes in two versions one is the Community Edition the other is the Professional one. We recommend to use the Professional,
@@ -121,6 +154,8 @@ The server will start up. You can see the progress in the Run section in the bot
 The Symbols on the left side can be used to stop, start, restart the process. Point your browser to the ip address of your
 FabScan and you are ready to use your local code.
 
+
+
 Building the Debian Package
 ---------------------------
 
@@ -184,3 +219,8 @@ The FabScanPi-Server user interface will show a version number with a postfix wh
 The plus indicates that you are using a testing build. The numbers behind the plus is the build date
 ( e.g. v.0.9.2+202007072120 )
 
+Websocket API
+-------------
+
+REST API
+-------------
