@@ -431,7 +431,7 @@ class ImageProcessor(ImageProcessorInterface):
         if corners is not None:
             ret, rvecs, tvecs = cv2.solvePnP(
                 self.object_pattern_points, corners,
-                self.config.file.calibration.camera_matrix, self.config.file.calibration.distortion_vector)
+                np.array(self.config.file.calibration.camera_matrix), np.array(self.config.file.calibration.distortion_vector))
             if ret:
                 return (cv2.Rodrigues(rvecs)[0], tvecs, corners)
 

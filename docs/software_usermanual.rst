@@ -1,29 +1,8 @@
 .. _software_usermanual:
 
-******************
-Using the Software
-******************
-
-**Getting Started**
-
-- By default the FabScanPi server binds to all interfaces on port 8080. Pointing your browser to http://ip-of-your-raspberry-pi:8080 will open the user interface.
-
-  If your FabScanPi has access to the internet an information window with the latest project news will pop-up. You can close it by left-clicking on the black x in the upper right corner of the grey info window. If there is a new software version available you will see a note in the upper left corner:
-
-.. image:: images/Manual_UpdateAvailable_1.jpg
-
-
-First start-up
---------------
-
-Before you proceed with the calibration and your first scan please check a few things to ensure your FabScanPi is working properly:
-
-- Click on the duck icon (New Scan) to enter the scan menu.
-- Now the turntable should turn clockwise in a constant smooth manner.
-- The laser must be on and needs to be adjusted vertically and to cross the center of the turntable. You will have to do the adjustment by hand because the servo / stepper support for the laser has not been implemented yet.
-- Check if you can see a small video preview in the lower left corner of the scan menu. Maybe there is only a turning hour glass visible. That is a known problem of some browsers but will have not effect the scanner's function.
-- Click on the X (Cancel) to get back to the main menu.
-
+********************
+Software User Manual
+********************
 
 Settings
 --------
@@ -204,7 +183,8 @@ When the scan is completed / file is saved a notification will be displayed.
 File Operations
 ---------------
 
-- Load files
+Load Scans
+~~~~~~~~~~
 
 A scan result which has been saved to the FabScanPi memory previously can be reloaded. Go to the main menu and click on the folder-icon at the left side of the menu bar.
 
@@ -221,8 +201,8 @@ Now the selected file will be loaded which may need some time. After the loading
 .. image:: images/Manual_LoadScan_3.jpg
 
 
-Delete a Scan
--------------
+Delete Scans
+~~~~~~~~~~~~
 
 - Delete files
 
@@ -252,8 +232,8 @@ By selecting the mesh slide and clicking on the wastebasket-icon the mesh-file c
 - Download Files
   It is possible to download generated files (either scan- or mesh-files) from the FabScanPi via the web-based user interface.
 
-Download Results
-----------------
+Download Scans
+~~~~~~~~~~~~~~
 
 **Download a scan-file**
 

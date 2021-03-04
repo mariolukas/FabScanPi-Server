@@ -24,7 +24,7 @@ from fabscan.scanner.interfaces.FSHardwareController import FSHardwareController
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand
-from fabscan.scanner.interfaces.FSCalibration import FSCalibrationInterface
+from fabscan.scanner.interfaces.FSCalibrationActor import FSCalibrationActorInterface
 from fabscan.worker.FSImageWorker import FSImageWorkerPool, FSSWorkerPoolCommand
 
 @inject(
@@ -33,18 +33,17 @@ from fabscan.worker.FSImageWorker import FSImageWorkerPool, FSSWorkerPoolCommand
     eventmanager=FSEventManagerSingleton,
     imageprocessor=ImageProcessorInterface,
     hardwarecontroller=FSHardwareControllerInterface,
-    calibration=FSCalibrationInterface,
+
 )
 class FSScanProcessor(FSScanProcessorInterface):
-    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration):
-        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration)
+    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
+        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
 
         self.settings = settings
         self.config = config
         self._logger = logging.getLogger(__name__)
 
         self.eventmanager = eventmanager.instance
-        self.calibration = calibration
         self._worker_pool = None
         self.hardwareController = hardwarecontroller
         self.image_processor = imageprocessor
@@ -144,11 +143,15 @@ class FSScanProcessor(FSScanProcessorInterface):
         if event[FSEvents.COMMAND] == FSScanProcessorCommand.GET_CALIBRATION_STREAM:
             return self.create_calibration_stream()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.START_CALIBRATION:
-            return self.start_calibration()
-
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.STOP_CALIBRATION:
-            return self.stop_calibration()
+        # if event[FSEvents.COMMAND] == FSScanProcessorCommand.START_CALIBRATION:
+        #     self._logger.debug("Calibration Mode: {0}".format(event['mode']))
+        #     return self.start_calibration(event['mode'])
+        #
+        # if event[FSEvents.COMMAND] == FSScanProcessorCommand.STOP_CALIBRATION:
+        #     return self.stop_calibration()
+        #
+        # if event[FSEvents.COMMAND] == FSScanProcessorCommand.NEXT_CALIBTATION_STEP:
+        #     return self.next_calibtation_step()
 
         if event[FSEvents.COMMAND] == FSScanProcessorCommand.NOTIFY_IF_NOT_CALIBRATED:
             return self.notify_if_is_not_calibrated()
@@ -283,12 +286,16 @@ class FSScanProcessor(FSScanProcessorInterface):
         except Exception as e:
             pass
 
-    def start_calibration(self):
-        self.hardwareController.settings_mode_off()
-        self.calibration.start()
+    # def start_calibration(self, mode):
+    #     self.hardwareController.settings_mode_off()
+    #     self.calibration.start(mode)
+    #
+    # def stop_calibration(self):
+    #     self.calibration.stop()
 
-    def stop_calibration(self):
-        self.calibration.stop()
+    # def next_calibtation_step(self):
+    #     self._logger.debug("Next Calibration Step called... ")
+    #     self.calibration.trigger_next_manual_calibraiton_step()
 
     def send_hardware_state_notification(self):
         self._logger.debug("Checking Hardware connections")

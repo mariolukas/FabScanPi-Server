@@ -13,9 +13,9 @@
         "weight_matrix": [],
         "dist_camera_matrix": [],
         "pattern": {
-            "square_size": 10,
-            "rows": 7,
-            "columns": 10,
+            "square_size": 6.15,
+            "rows": 12,
+            "columns": 18,
             "origin_distance": 47.2
         },
         "camera_matrix": [],

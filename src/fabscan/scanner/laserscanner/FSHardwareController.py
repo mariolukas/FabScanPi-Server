@@ -160,6 +160,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
     def get_laser_image(self, index):
             self.laser.on(laser=index)
+            time.sleep(0.2)
             laser_image = self.get_picture(flush=True)
             self.laser.off(laser=index)
             return laser_image

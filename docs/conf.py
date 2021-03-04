@@ -18,7 +18,7 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = 'FabScanPi'
-copyright = '2019, Mario Lukas'
+copyright = '2021, Mario Lukas'
 author = 'Mario Lukas'
 
 master_doc = 'index'

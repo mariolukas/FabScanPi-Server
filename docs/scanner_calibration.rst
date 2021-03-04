@@ -1,8 +1,11 @@
 .. _scanner_calibration:
 
+************************
+Calibrating the Software
+************************
 
-Prepare for Calibration
------------------------
+1. Prepare for Calibration
+--------------------------
 
 Before you can start with your first scans you must perform a calibration. That is necessary because every Scanner housing is a bit different.  By calibrating your scanner the software will get the exact parameters of your FabScanPi. You will have to do the calibration only once, the gathered data will be stored. But we recommend to do a calibration every time when the FabScanPi has been shipped, modified or when the scan results look distorted.
 
@@ -65,8 +68,8 @@ Turn the focus ring on the laser until you get a the sharpes possible line. If y
 
 
 
-Start Scanner Calibration
--------------------------
+2. Perform a Calibration
+------------------------
 
 The calibration will be done by scanning an calibration sheet with a specific pattern which must be placed on the turntable. The pattern must face the camera:
 

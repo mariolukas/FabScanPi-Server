@@ -41,7 +41,7 @@ class FSStreamHandler(tornado.web.RequestHandler):
                     img = self.scanprocessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_SETTINGS_STREAM})
                 else:
                     img = self.scanprocessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_TEXTURE_STREAM})
-                self._logger.debug("Get Stream Frame")
+                #self._logger.debug("Get Stream Frame")
                 if img is None:
                     img = np.zeros((1, 1, 3), np.uint8)
 

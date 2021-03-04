@@ -15,7 +15,7 @@ Welcome to FabScanPi's documentation!
 About the Project
 --------------------
 
-FabScan is an open source 3D laser scanner. The `project <http://hci.rwth-aachen.de/fabscan>`_ started in 2010 at
+FabScan is an open source 3D laser scanner. The `project <https://fabscan.org>`_ started in 2010 at
 `Germany's first FabLab in Aachen <http://hci.rwth-aachen.de/fablab>`_. The FabScan PI is the next generation of the FabScan 3D Laser Scanner
 and since 2015 Mario Lukas took over as the lead developer of the project. The project is a community and spare time driven project.
 
@@ -34,15 +34,8 @@ Contents
    :maxdepth: 2
    :caption: Getting Started
 
-   first_steps
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Hardware
-
-   hardware_mechanics
-   hardware_electronics
-   hardware_troubleshoot
+   steps_fabscanpi
+   steps_ciclop
 
 .. toctree::
    :maxdepth: 2
@@ -50,15 +43,15 @@ Contents
 
    software_installation
    software_updates
-   software_configuration
+   software_first_steps
+   scanner_calibration
    software_usermanual
+   software_configuration
    software_troubleshoot
 
 .. toctree::
    :maxdepth: 2
    :caption: Calibration
-
-   scanner_calibration
 
 .. toctree::
    :maxdepth: 2

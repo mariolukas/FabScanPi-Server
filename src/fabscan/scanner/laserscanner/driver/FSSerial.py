@@ -216,7 +216,7 @@ class FSSerialCom(FSHardwareConnectorInterface):
 
         gcode = "01"
 
-        if blocking:
+        if bool(blocking) is True:
             gcode = "02"
 
         command = "G{0} T{1} F{2}".format(gcode, steps, speed)

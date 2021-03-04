@@ -11,6 +11,7 @@ class FSScanProcessorCommand(object):
     STOP = "STOP"
     STOP_CALIBRATION = "STOP_CALIBRATION"
     START_CALIBRATION = "START_CALIBRATION"
+    NEXT_CALIBTATION_STEP = "NEXT_CALIBTATION_STEP"
     SETTINGS_MODE_OFF = "SETTINGS_MODE_OFF"
     SETTINGS_MODE_ON = "SETTINGS_MODE_ON"
     NOTIFY_HARDWARE_STATE = "NOTIFY_HARDWARE_STATE"
@@ -32,6 +33,6 @@ class FSScanProcessorCommand(object):
 
 
 class FSScanProcessorInterface(ThreadingActor):
-    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration, workerpool):
-        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, calibration, workerpool)
+    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, workerpool):
+        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, workerpool)
         pass

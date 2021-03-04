@@ -19,6 +19,7 @@ from fabscan.worker.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import SettingsInterface
 from fabscan.FSConfig import ConfigInterface
 from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
+from fabscan.scanner.interfaces.FSCalibrationActor import FSCalibrationActorInterface
 from fabscan.lib.util.FSInject import inject
 from fabscan.lib.util.FSUpdate import upgrade_is_available, do_upgrade
 from fabscan.lib.util.FSDiscovery import register_to_discovery
@@ -38,6 +39,7 @@ class FSCommand(object):
     STOP = "STOP"
     CONFIG_MODE_ON = "CONFIG_MODE_ON"
     CALIBRATE = "CALIBRATE"
+    NEXT_CALIBRATION_STEP = "NEXT_CALIBRATION_STEP"
     HARDWARE_TEST_FUNCTION = "HARDWARE_TEST_FUNCTION"
     MESHING = "MESHING"
     COMPLETE = "COMPLETE"
@@ -59,9 +61,10 @@ class FSCommand(object):
         config=ConfigInterface,
         eventmanager=FSEventManagerInterface,
         scanprocessor=FSScanProcessorInterface,
+        calibrationActor=FSCalibrationActorInterface
 )
 class FSScanner(threading.Thread):
-    def __init__(self, settings, config, eventmanager, scanprocessor):
+    def __init__(self, settings, config, eventmanager, scanprocessor, calibrationActor):
         threading.Thread.__init__(self)
 
         self._logger = logging.getLogger(__name__)
@@ -70,6 +73,7 @@ class FSScanner(threading.Thread):
         self.eventManager = eventmanager.instance
 
         self.scanProcessor = scanprocessor.start()
+        self.calibrationActor = calibrationActor.start()
 
         self._state = FSState.IDLE
         self.exit = False
@@ -173,7 +177,8 @@ class FSScanner(threading.Thread):
                 return
 
             if self._state is FSState.CALIBRATING:
-                self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.STOP_CALIBRATION})
+                self.calibrationActor.tell({FSEvents.COMMAND: FSScanProcessorCommand.STOP_CALIBRATION})
+
                 self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
                 self.set_state(FSState.IDLE)
                 return
@@ -185,11 +190,20 @@ class FSScanner(threading.Thread):
         # Start calibration
         elif command == FSCommand.CALIBRATE:
             self.set_state(FSState.CALIBRATING)
-            self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START_CALIBRATION})
+
+            #self.calibrationActor = self.calibrationActor.start()
+            self.calibrationActor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START_CALIBRATION, 'mode': event.mode})
+            #self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START_CALIBRATION, 'mode': event.mode})
             return
+
+        elif command == FSCommand.NEXT_CALIBRATION_STEP:
+            if self._state is FSState.CALIBRATING:
+                #self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.NEXT_CALIBTATION_STEP})
+                return
 
         elif command == FSCommand.CALIBRATION_COMPLETE:
             self.set_state(FSState.IDLE)
+            #self.calibrationActorRef.tell({FSEvents.COMMAND: FSScanProcessorCommand.STOP_CALIBRATION})
             self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
             return
 

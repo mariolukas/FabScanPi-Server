@@ -45,7 +45,6 @@ class FSWebSocketHandler(tornado.websocket.WebSocketHandler):
             # self._logger.debug("Websocket Message received %s" % message.event)
             self.eventManager.publish(message.event, message.data)
 
-
         except Exception as e:
             traceback.print_exc(file=sys.stdout)
             self._logger.exception("Runtime error in Websocket message handler: " + str(e))
