@@ -21,10 +21,9 @@ from fabscan.worker.FSImageTask import ImageTask
 from fabscan.lib.util.FSInject import inject, singleton
 
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
-from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
+from fabscan.scanner.interfaces.FSScanActor import FSScanActorInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
-from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand
-from fabscan.scanner.interfaces.FSCalibrationActor import FSCalibrationActorInterface
+from fabscan.scanner.interfaces.FSScanActor import FSScanActorCommand
 from fabscan.worker.FSImageWorker import FSImageWorkerPool, FSSWorkerPoolCommand
 
 @inject(
@@ -35,9 +34,9 @@ from fabscan.worker.FSImageWorker import FSImageWorkerPool, FSSWorkerPoolCommand
     hardwarecontroller=FSHardwareControllerInterface,
 
 )
-class FSScanProcessor(FSScanProcessorInterface):
+class FSScanActor(FSScanActorInterface):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
-        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
+        super(FSScanActorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
 
         self.settings = settings
         self.config = config
@@ -98,75 +97,75 @@ class FSScanProcessor(FSScanProcessorInterface):
         return self.steps_for_degree
 
     def on_receive(self, event):
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.START:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.START:
             self.start_scan()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.STOP:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.STOP:
             self.stop_scan()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.SETTINGS_MODE_ON:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.SETTINGS_MODE_ON:
             self.settings_mode_on()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.SETTINGS_MODE_OFF:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.SETTINGS_MODE_OFF:
             self.settings_mode_off()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION:
+        if event[FSEvents.COMMAND] == FSScanActorCommand._SCAN_NEXT_TEXTURE_POSITION:
             self.scan_next_texture_position()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION:
+        if event[FSEvents.COMMAND] == FSScanActorCommand._SCAN_NEXT_OBJECT_POSITION:
             self.scan_next_object_position()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.NOTIFY_HARDWARE_STATE:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.NOTIFY_HARDWARE_STATE:
             self.send_hardware_state_notification()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.UPDATE_SETTINGS:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.UPDATE_SETTINGS:
             self.update_settings(event['SETTINGS'])
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.UPDATE_CONFIG:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.UPDATE_CONFIG:
             self.update_settings(event['CONFIG'])
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.GET_HARDWARE_INFO:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.GET_HARDWARE_INFO:
             return self.hardwareController.get_firmware_version()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.GET_ADJUSTMENT_STREAM:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.GET_ADJUSTMENT_STREAM:
             return self.create_adjustment_stream()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.GET_LASER_STREAM:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.GET_LASER_STREAM:
             return self.create_laser_stream()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.GET_TEXTURE_STREAM:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.GET_TEXTURE_STREAM:
             return self.create_texture_stream()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.GET_SETTINGS_STREAM:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.GET_SETTINGS_STREAM:
             return self.create_settings_stream()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.GET_CALIBRATION_STREAM:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.GET_CALIBRATION_STREAM:
             return self.create_calibration_stream()
 
-        # if event[FSEvents.COMMAND] == FSScanProcessorCommand.START_CALIBRATION:
+        # if event[FSEvents.COMMAND] == FSScanActorCommand.START_CALIBRATION:
         #     self._logger.debug("Calibration Mode: {0}".format(event['mode']))
         #     return self.start_calibration(event['mode'])
         #
-        # if event[FSEvents.COMMAND] == FSScanProcessorCommand.STOP_CALIBRATION:
+        # if event[FSEvents.COMMAND] == FSScanActorCommand.STOP_CALIBRATION:
         #     return self.stop_calibration()
         #
-        # if event[FSEvents.COMMAND] == FSScanProcessorCommand.NEXT_CALIBTATION_STEP:
+        # if event[FSEvents.COMMAND] == FSScanActorCommand.NEXT_CALIBTATION_STEP:
         #     return self.next_calibtation_step()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.NOTIFY_IF_NOT_CALIBRATED:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.NOTIFY_IF_NOT_CALIBRATED:
             return self.notify_if_is_not_calibrated()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.CALL_HARDWARE_TEST_FUNCTION:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.CALL_HARDWARE_TEST_FUNCTION:
             device = event['DEVICE_TEST']
             self.hardwareController.call_test_function(device)
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.CONFIG_MODE_ON:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.CONFIG_MODE_ON:
             self.config_mode_on()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.CONFIG_MODE_OFF:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.CONFIG_MODE_OFF:
             self.config_mode_off()
 
-        if event[FSEvents.COMMAND] == FSScanProcessorCommand.IMAGE_PROCESSED:
+        if event[FSEvents.COMMAND] == FSScanActorCommand.IMAGE_PROCESSED:
             self.image_processed(event['RESULT'])
 
     def config_mode_on(self):
@@ -251,8 +250,8 @@ class FSScanProcessor(FSScanProcessorInterface):
 
     def create_calibration_stream(self):
         try:
-            image = self.hardwareController.get_picture()
-            #image = self.image_processor.get_calibration_stream_frame(image)
+            image = self.hardwareController.get_picture(preview=True)
+            image = self.image_processor.get_calibration_stream_frame(image)
             return image
         except Exception as e:
             # images are dropped this cateched exception.. no error hanlder needed here.

@@ -21,26 +21,26 @@ from fabscan.server.services.api.FSDownloadHandler import FSDownloadHandler
 from fabscan.server.services.api.FSLogHandler import FSLogHandler
 from fabscan.server.services.api.FSDeviceHandler import FSDeviceHandler
 from fabscan.FSEvents import FSEvents, FSEventManagerSingleton
-from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorInterface
+from fabscan.scanner.interfaces.FSScanActor import FSScanActorInterface
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.FSConfig import ConfigSingleton, ConfigInterface
 from fabscan.lib.util.FSInject import inject
 from tornado.platform.asyncio import AnyThreadEventLoopPolicy
 @inject(
     config=ConfigInterface,
-    scanprocessor=FSScanProcessorInterface,
+    scanActor=FSScanActorInterface,
     eventmanager=FSEventManagerSingleton,
     hardwarecontroller=FSHardwareControllerInterface
 )
 class FSWebServer(threading.Thread):
 
-    def __init__(self, config, scanprocessor, eventmanager, hardwarecontroller):
+    def __init__(self, config, scanActor, eventmanager, hardwarecontroller):
         threading.Thread.__init__(self)
         asyncio.set_event_loop_policy(AnyThreadEventLoopPolicy())
         self.config = config
         self.exit = False
         self.server_port = 8080
-        self.scanprocessor = scanprocessor.start()
+        self.scanActor = scanActor.start()
         self.eventmanager = eventmanager
         self.hardwarecontroller = hardwarecontroller
         self.www_folder = os.path.join(os.path.dirname(__file__), self.config.file.folders.www)
@@ -51,7 +51,7 @@ class FSWebServer(threading.Thread):
     def routes(self):
         return tornado.web.Application([
             (r"/api/v1/filters/", FSFilterHandler),
-            (r"/api/v1/streams/", FSStreamHandler, dict(scanprocessor=self.scanprocessor, eventmanager=self.eventmanager)),
+            (r"/api/v1/streams/", FSStreamHandler, dict(scanActor=self.scanActor, eventmanager=self.eventmanager)),
             (r"/api/v1/log/show", FSLogHandler, dict(config=self.config)),
             (r"/api/v1/log/download", FSLogHandler, dict(config=self.config)),
             (r"/api/v1/scans/", FSScanHandler, dict(config=self.config)),
@@ -74,7 +74,7 @@ class FSWebServer(threading.Thread):
             tornado.ioloop.IOLoop.instance().start()
         except Exception as e:
             self._logger.exception(e)
-            self.scanprocessor.stop()
+            self.scanActor.stop()
             sys.exit(0)
 
     def kill(self):

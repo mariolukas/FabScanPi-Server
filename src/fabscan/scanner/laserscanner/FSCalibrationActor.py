@@ -86,6 +86,7 @@ class FSCalibrationActor(FSCalibrationActorInterface):
             self._logger.debug("Stopping Calibration")
 
         if event[FSEvents.COMMAND] == "TRIGGER_MANUAL_CAMERA_CALIBRATION_STEP":
+            self.current_calibration_step += 1
             self.on_manual_calibration_trigger()
 
         if event[FSEvents.COMMAND] == "TRIGGER_AUTO_LASER_CALIBRATION_STEP":
@@ -203,14 +204,19 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         self.reset_calibration_values()
 
     def on_manual_calibration_trigger(self):
-        #self.current_calibration_step += 1
 
-        if self.current_calibration_step < 4 and not self._stop_calibration:
-            self._logger.debug("Next Step... ")
+        self._logger.debug("Manual Calibration triggered...")
 
-        if not self._stop_calibration:
-            self.actor_ref.tell({FSEvents.COMMAND: "TRIGGER_MANUAL_CAMERA_CALIBRATION_STEP"})
-            self._stop_calibration = False
+        if self.current_calibration_step > 0 and self.current_calibration_step < 4 and not self._stop_calibration:
+            self._capture_camera_calibration(self.current_calibration_step)
+
+        if self.current_calibration_step == 4:
+            self._calculate_camera_calibration()
+            self.actor_ref.tell({FSEvents.COMMAND: "CALIBRATION_COMPLETE"})
+
+        #if not self._stop_calibration:
+            #self.actor_ref.tell({FSEvents.COMMAND: "TRIGGER_MANUAL_CAMERA_CALIBRATION_STEP"})
+        #    self._stop_calibration = False
 
     def on_auto_calibration_trigger(self, _capture, _calibrate):
 
@@ -282,7 +288,7 @@ class FSCalibrationActor(FSCalibrationActorInterface):
 
         return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
 
-    def _capture_combined_camera_calibration(self, position):
+    def _capture_camera_calibration(self, position):
         image = self._capture_pattern()
         self.shape = image[:, :, 0].shape
 

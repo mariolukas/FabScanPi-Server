@@ -6,7 +6,7 @@ __email__ = "info@mariolukas.de"
 
 from pykka import ThreadingActor
 
-class FSScanProcessorCommand(object):
+class FSScanActorCommand(object):
     START = "START"
     STOP = "STOP"
     STOP_CALIBRATION = "STOP_CALIBRATION"
@@ -32,7 +32,7 @@ class FSScanProcessorCommand(object):
     IMAGE_PROCESSED = "IMAGE_PROCESSED"
 
 
-class FSScanProcessorInterface(ThreadingActor):
+class FSScanActorInterface(ThreadingActor):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, workerpool):
-        super(FSScanProcessorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, workerpool)
+        super(FSScanActorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, workerpool)
         pass

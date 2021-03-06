@@ -266,7 +266,13 @@ class ImageProcessor(ImageProcessorInterface):
 
     def get_calibration_stream_frame(self, cam_image):
         cam_image = self.decode_image(cam_image)
-        cam_image = self.drawCorners(cam_image)
+        gray_image = cv2.cvtColor(cam_image, cv2.COLOR_RGB2GRAY)
+        corners = cv2.goodFeaturesToTrack(gray_image, self.config.file.calibration.pattern.columns*self.config.file.calibration.pattern.rows, 0.01, 10)
+        corners = np.int0(corners)
+        for i in corners:
+            x, y = i.ravel()
+            cv2.circle(cam_image, (x, y), 3, (0, 0, 255), -1)
+
         return cam_image
 
     def get_adjustment_stream_frame(self, cam_image):
@@ -423,7 +429,7 @@ class ImageProcessor(ImageProcessorInterface):
 
 
     def detect_corners(self, image, flags=None):
-        corners = self._detect_chessboard(image, flags)
+        ret, corners = self._detect_chessboard(image, flags)
         return corners
 
     def detect_pose(self, image, flags=None):
@@ -474,4 +480,6 @@ class ImageProcessor(ImageProcessorInterface):
 
                 if ret:
                     cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), self._criteria)
-                    return corners
+                    return ret, corners
+                else:
+                    return None, None
