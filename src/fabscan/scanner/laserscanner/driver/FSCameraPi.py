@@ -60,9 +60,9 @@ class CamProcessor(threading.Thread):
                     image = cv2.imdecode(image, 1)
 
                     resolution = image.shape[:2]
-                    #newcameramtx, roi = cv2.getOptimalNewCameraMatrix(np.matrix(self.config.file.calibration.camera_matrix), np.matrix(self.config.file.calibration.distortion_vector), resolution, 0, resolution)
+#                    newcameramtx, roi = cv2.getOptimalNewCameraMatrix(np.matrix(self.config.file.calibration.camera_matrix), np.matrix(self.config.file.calibration.distortion_vector), resolution, 0, resolution)
 
-                    #image = cv2.undistort(image, np.matrix(self.config.file.calibration.camera_matrix), np.matrix(self.config.file.calibration.distortion_vector), None, np.matrix(newcameramtx))
+ #                   image = cv2.undistort(image, np.matrix(self.config.file.calibration.camera_matrix), np.matrix(self.config.file.calibration.distortion_vector), None, np.matrix(newcameramtx))
                     #mapx, mapy = cv2.initUndistortRectifyMap(np.matrix(self.config.file.calibration.camera_matrix), np.matrix(self.config.file.calibration.distortion_vector), None, np.matrix(self.config.file.calibration.camera_matrix), resolution, 5)
                     #img = cv2.remap(image, mapx, mapy, cv2.INTER_LINEAR)
 

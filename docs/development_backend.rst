@@ -20,8 +20,8 @@ that specific branch.
 
     git checkout master
 
-Development with Docker (without Hardware)
-------------------------------------------
+Development with Docker (with Hardware eumulation)
+--------------------------------------------------
 
 This way describes how to develop the FabScanPi-Server application without the usage of
 hardware. All hardware components will be simulated. The camera simulation will deliver
@@ -51,8 +51,8 @@ Afterwards you are ready to use the FabScanPi-Server from your local machine.
 Just try to connect to http://127.0.0.1:8080
 
 
-Remote Development (with Hardware)
-----------------------------------
+Remote Development (with real Hardware)
+---------------------------------------
 
 This way describes how to develop remotely on the Raspberry Pi. The code is on the developing
 machine, while the you are able to execute the code and debugger remotely. This guide describes
@@ -222,5 +222,401 @@ The plus indicates that you are using a testing build. The numbers behind the pl
 Websocket API
 -------------
 
+Start Scan
+~~~~~~~~~~
+
+Payload
+
+
+============ ============ =============================
+Name          Type          Description
+------------ ------------ -----------------------------
+event         string       subscribe
+------------ ------------ -----------------------------
+data          object
+------------ ------------ -----------------------------
+↳ command    string
+------------ ------------ -----------------------------
+↳ startTime  string        scan start time as timestamp
+============ ============ =============================
+
+Example of payload
+
+.. code-block:: javascript
+
+   {
+      event: "COMMAND"
+      data: {
+         command: "CALIBRATE",
+         mode: "auto",
+         startTime: "20210323232"
+      }
+   }
+
+Start Calibration
+~~~~~~~~~~~~~~~~~
+
+============ ============ =============================
+Name          Type          Description
+------------ ------------ -----------------------------
+event         string       COMMAND
+------------ ------------ -----------------------------
+data          object
+------------ ------------ -----------------------------
+↳ command    string        CALIBRATE
+------------ ------------ -----------------------------
+↳ mode       string        calibratiom mode
+------------ ------------ -----------------------------
+↳ startTime  string        scan start time as timestamp
+============ ============ =============================
+
+Example of payload
+
+.. code-block:: javascript
+
+   {
+      event: "COMMAND"
+      data: {
+         command: "CALIBRATE",
+         mode: "auto",
+         startTime: "20210323232"
+      }
+   }
+
+Stop current process
+~~~~~~~~~~~~~~~~~~~~
+
+============ ============ =============================
+Name          Type          Description
+------------ ------------ -----------------------------
+event         string       subscribe
+------------ ------------ -----------------------------
+data          object
+------------ ------------ -----------------------------
+↳ command    string
+------------ ------------ -----------------------------
+↳ startTime  string        scan start time as timestamp
+============ ============ =============================
+
+Example of payload
+
+.. code-block:: javascript
+
+   {
+      event: "COMMAND"
+      data: {
+         command: "CALIBRATE",
+         mode: "auto",
+         startTime: "20210323232"
+      }
+   }
+
+Start settings Mode
+~~~~~~~~~~~~~~~~~~~~
+
+============ ============ =============================
+Name          Type          Description
+------------ ------------ -----------------------------
+event         string       subscribe
+------------ ------------ -----------------------------
+data          object
+------------ ------------ -----------------------------
+↳ command    string
+------------ ------------ -----------------------------
+↳ startTime  string        scan start time as timestamp
+============ ============ =============================
+
+Example of payload
+
+.. code-block:: javascript
+
+   {
+      event: "COMMAND"
+      data: {
+         command: "CALIBRATE",
+         mode: "auto",
+         startTime: "20210323232"
+      }
+   }
+
+Update settings Mode
+~~~~~~~~~~~~~~~~~~~~
+
+============ ============ =============================
+Name          Type          Description
+------------ ------------ -----------------------------
+event         string       subscribe
+------------ ------------ -----------------------------
+data          object
+------------ ------------ -----------------------------
+↳ command    string
+------------ ------------ -----------------------------
+↳ startTime  string        scan start time as timestamp
+============ ============ =============================
+
+Example of payload
+
+.. code-block:: javascript
+
+   {
+      event: "COMMAND"
+      data: {
+         command: "CALIBRATE",
+         mode: "auto",
+         startTime: "20210323232"
+      }
+   }
+
+Upgrade Server
+~~~~~~~~~~~~~~
+
+============ ============ =============================
+Name          Type          Description
+------------ ------------ -----------------------------
+event         string       subscribe
+------------ ------------ -----------------------------
+data          object
+------------ ------------ -----------------------------
+↳ command    string
+------------ ------------ -----------------------------
+↳ startTime  string        scan start time as timestamp
+============ ============ =============================
+
+Example of payload
+
+.. code-block:: javascript
+
+   {
+      event: "COMMAND"
+      data: {
+         command: "CALIBRATE",
+         mode: "auto",
+         startTime: "20210323232"
+      }
+   }
+
+Restart Server
+~~~~~~~~~~~~~~
+
+============ ============ =============================
+Name          Type          Description
+------------ ------------ -----------------------------
+event         string       subscribe
+------------ ------------ -----------------------------
+data          object
+------------ ------------ -----------------------------
+↳ command    string
+------------ ------------ -----------------------------
+↳ startTime  string        scan start time as timestamp
+============ ============ =============================
+
+Example of payload
+
+.. code-block:: javascript
+
+   {
+      event: "COMMAND"
+      data: {
+         command: "CALIBRATE",
+         mode: "auto",
+         startTime: "20210323232"
+      }
+   }
+
 REST API
 -------------
+
+Get List of Scans
+~~~~~~~~~~~~~~~~~
+**URL:**
+
+  /scans/
+
+**Method:**
+
+  GET
+
+**URL Parmas:**
+
+  None
+
+**Success Response:**
+
+  * Code 200
+
+    Content: { id : 12, name : "Michael Bloom" }
+
+**Error Response:**
+
+  * Code 404
+
+**Sample Call:**
+
+.. code-block:: javascript
+
+      $.ajax({
+        url: "/users/1",
+        dataType: "json",
+        type : "GET",
+        success : function(r) {
+          console.log(r);
+        }
+      });
+
+
+Get Scan by ID
+~~~~~~~~~~~~~~
+
+**URL:**
+
+  /scans/
+
+**Method:**
+
+  GET
+
+**URL Parmas:**
+
+  None
+
+**Success Response:**
+
+  * Code 200
+
+    Content: { id : 12, name : "Michael Bloom" }
+
+**Error Response:**
+
+  * Code 404
+
+**Sample Call:**
+
+.. code-block:: javascript
+
+      $.ajax({
+        url: "/users/1",
+        dataType: "json",
+        type : "GET",
+        success : function(r) {
+          console.log(r);
+        }
+      });
+
+
+Get Files of Scan
+~~~~~~~~~~~~~~~~~
+
+**URL:**
+
+  /scans/
+
+**Method:**
+
+  GET
+
+**URL Parmas:**
+
+  None
+
+**Success Response:**
+
+  * Code 200
+
+    Content: { id : 12, name : "Michael Bloom" }
+
+**Error Response:**
+
+  * Code 404
+
+**Sample Call:**
+
+.. code-block:: javascript
+
+      $.ajax({
+        url: "/users/1",
+        dataType: "json",
+        type : "GET",
+        success : function(r) {
+          console.log(r);
+        }
+      });
+
+
+Download a File of Scan
+~~~~~~~~~~~~~~~~~~~~~~~
+
+**URL:**
+
+  /scans/
+
+**Method:**
+
+  GET
+
+**URL Parmas:**
+
+  None
+
+**Success Response:**
+
+  * Code 200
+
+    Content: { id : 12, name : "Michael Bloom" }
+
+**Error Response:**
+
+  * Code 404
+
+**Sample Call:**
+
+.. code-block:: javascript
+
+      $.ajax({
+        url: "/users/1",
+        dataType: "json",
+        type : "GET",
+        success : function(r) {
+          console.log(r);
+        }
+      });
+
+
+Get Thumbnail of Scan
+~~~~~~~~~~~~~~~~~~~~~
+
+**URL:**
+
+  /scans/
+
+**Method:**
+
+  GET
+
+**URL Parmas:**
+
+  None
+
+**Success Response:**
+
+  * Code 200
+
+    Content: { id : 12, name : "Michael Bloom" }
+
+**Error Response:**
+
+  * Code 404
+
+**Sample Call:**
+
+.. code-block:: javascript
+
+      $.ajax({
+        url: "/users/1",
+        dataType: "json",
+        type : "GET",
+        success : function(r) {
+          console.log(r);
+        }
+      });
+
+

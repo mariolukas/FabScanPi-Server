@@ -359,13 +359,13 @@ class FSScanActor(FSScanActorInterface):
         if self.scanner_is_calibrated() and self.actor_ref.is_alive():
             if self._is_color_scan:
                 self._total = (self._number_of_pictures * self.config.file.laser.numbers) + self._number_of_pictures
-                self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
+                self.actor_ref.tell({FSEvents.COMMAND: FSScanActorCommand._SCAN_NEXT_TEXTURE_POSITION})
             else:
                 self._total = self._number_of_pictures * self.config.file.laser.numbers
-                self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
+                self.actor_ref.tell({FSEvents.COMMAND: FSScanActorCommand._SCAN_NEXT_OBJECT_POSITION})
         else:
             self._logger.debug("FabScan is not calibrated scan canceled")
-            self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_IF_NOT_CALIBRATED})
+            self.actor_ref.tell({FSEvents.COMMAND: FSScanActorCommand.NOTIFY_IF_NOT_CALIBRATED})
 
 
     ## texture callbacks
@@ -375,7 +375,7 @@ class FSScanActor(FSScanActorInterface):
             "level": "info"
         }
         if self._worker_pool is None or not self._worker_pool.is_alive():
-            self._worker_pool = FSImageWorkerPool.start(scanprocessor=self.actor_ref)
+            self._worker_pool = FSImageWorkerPool.start(scanActor=self.actor_ref)
 
         if self._worker_pool.is_alive():
             self._logger.debug("Adding some workers to Pool.")
@@ -423,7 +423,7 @@ class FSScanActor(FSScanActorInterface):
                     if self.actor_ref.is_alive():
                         time.sleep(0.1)
                         #self.self.texture_lock_event.clear()
-                        self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_TEXTURE_POSITION})
+                        self.actor_ref.tell({FSEvents.COMMAND: FSScanActorCommand._SCAN_NEXT_TEXTURE_POSITION})
 
                     else:
                         self._logger.error("Worker Pool died.")
@@ -431,7 +431,7 @@ class FSScanActor(FSScanActorInterface):
                 else:
                    self.finish_texture_scan()
                    if self.actor_ref.is_alive():
-                      self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
+                      self.actor_ref.tell({FSEvents.COMMAND: FSScanActorCommand._SCAN_NEXT_OBJECT_POSITION})
                    else:
                       self._logger.error("Worker Pool died.")
                       self.stop_scan()
@@ -452,7 +452,7 @@ class FSScanActor(FSScanActorInterface):
     def init_object_scan(self):
         self.hardwareController.start_camera_stream()
         if self._worker_pool is None or not self._worker_pool.is_alive():
-            self._worker_pool = FSImageWorkerPool.start(scanprocessor=self.actor_ref)
+            self._worker_pool = FSImageWorkerPool.start(scanActor=self.actor_ref)
         self._logger.info("Started object scan initialisation")
         if self._is_color_scan:
             self._additional_worker_number = 3
@@ -497,7 +497,7 @@ class FSScanActor(FSScanActorInterface):
                 #self._logger.debug('New Image Task created.')
 
                 if self.actor_ref.is_alive():
-                    self.actor_ref.tell({FSEvents.COMMAND: FSScanProcessorCommand._SCAN_NEXT_OBJECT_POSITION})
+                    self.actor_ref.tell({FSEvents.COMMAND: FSScanActorCommand._SCAN_NEXT_OBJECT_POSITION})
                 else:
                     self._logger.error("Worker Pool died.")
                     self.stop_scan()

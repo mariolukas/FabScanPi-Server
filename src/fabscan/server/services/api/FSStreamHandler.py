@@ -40,7 +40,7 @@ class FSStreamHandler(tornado.web.RequestHandler):
                 if stream_type == "laser":
                     img = self.scanActor.ask({FSEvents.COMMAND: FSScanActorCommand.GET_SETTINGS_STREAM})
                 else:
-                    img = self.scanActor.ask({FSEvents.COMMAND: FSScanActorCommand.GET_CALIBRATION_STREAM})
+                    img = self.scanActor.ask({FSEvents.COMMAND: FSScanActorCommand.GET_TEXTURE_STREAM})
 
                 #self._logger.debug("Get Stream Frame")
                 if img is None:

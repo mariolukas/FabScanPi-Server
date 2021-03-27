@@ -5,7 +5,12 @@ __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
 from pykka import ThreadingActor
-import logging
+
+class FSCalibrationMode(object):
+    MODE_AUTO_CALIBRATION = "MODE_AUTO_CALIBRATION"
+    MODE_AUTO_CAMERA_CALIBRATION = "MODE_AUTO_CAMERA_CALIBRATION"
+    MODE_CAMERA_CALIBRATION = "MODE_CAMERA_CALIBRATION"
+    MODE_SCANNER_CALIBRATION = "MODE_SCANNER_CALIBRATION"
 
 class FSCalibrationActorInterface(ThreadingActor):
     def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):

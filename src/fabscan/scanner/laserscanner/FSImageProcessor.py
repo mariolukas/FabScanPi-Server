@@ -69,12 +69,23 @@ class ImageProcessor(ImageProcessorInterface):
         self.high_resolution = (self.config.file.camera.resolution.height, self.config.file.camera.resolution.width)
         self.preview_resolution = (self.config.file.camera.preview_resolution.height, self.config.file.camera.preview_resolution.width)
 
+        #aruco.DICT_5X5_250
+        # Note: Pattern generated using the following link
+        # https://calib.io/pages/camera-calibration-pattern-generator
+        self.aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_100)
+        self.charuco_board = cv2.aruco.CharucoBoard_create(11, 9, 1, 0.5, self.aruco_dict)
+
         self._full_res_weight_matrix = self._compute_weight_matrix(resolution=self.high_resolution)
         self._preview_res_weight_matrix = self._compute_weight_matrix(resolution=self.preview_resolution)
 
         self._criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
         self.object_pattern_points = self.create_object_pattern_points()
 
+    def get_aruco_board(self):
+        return self.charuco_board
+
+    def get_aruco_dict(self):
+        return self.aruco_dict
 
     def _compute_weight_matrix(self, resolution):
 
@@ -428,12 +439,22 @@ class ImageProcessor(ImageProcessorInterface):
         return d / np.dot(n, x) * x
 
 
-    def detect_corners(self, image, flags=None):
-        ret, corners = self._detect_chessboard(image, flags)
-        return corners
+    def detect_corners(self, image, flags=None, type="chessboard"):
+        ret = None
+        corners = None
+        ids = None
+        imsize = None
+
+        if type == "chessboard":
+            ret, corners = self._detect_chessboard(image, flags)
+        elif type == "charucoboard":
+            ret, corners, ids, imsize = self._detect_charucoboard(image)
+
+        return ret, corners, ids, imsize
 
     def detect_pose(self, image, flags=None):
-        corners = self._detect_chessboard(image, flags)
+
+        _, corners, ids, imsize = self.detect_corners(image, flags=flags, type=self.config.file.calibration.pattern.type )
         if corners is not None:
             ret, rvecs, tvecs = cv2.solvePnP(
                 self.object_pattern_points, corners,
@@ -442,13 +463,16 @@ class ImageProcessor(ImageProcessorInterface):
                 return (cv2.Rodrigues(rvecs)[0], tvecs, corners)
 
     def detect_pattern_plane(self, pose):
-        if pose is not None:
-            R = pose[0]
-            t = pose[1].T[0]
-            c = pose[2]
-            n = R.T[2]
-            d = np.dot(n, t)
-            return (d, n, c)
+            if pose is not None:
+                R = pose[0]
+                t = pose[1].T[0]
+                c = pose[2]
+                n = R.T[2]
+                d = np.dot(n, t)
+                return (d, n, c)
+            else:
+                return None
+
 
 
     def pattern_mask(self, image, corners):
@@ -466,7 +490,28 @@ class ImageProcessor(ImageProcessorInterface):
                 image = cv2.bitwise_and(image, image, mask=mask)
         return image
 
+    def _detect_charucoboard(self, image):
+        """
+        Charuco base pose estimation.
+        """
+
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        corners, ids, _ = cv2.aruco.detectMarkers(gray, self.aruco_dict)
+
+        if len(corners) > 0:
+            ret, c_corners, c_ids = cv2.aruco.interpolateCornersCharuco(markerCorners=corners, markerIds=ids, image=gray, board=self.charuco_board, minMarkers=0)
+            # ret is the number of detected corners
+            if ret > 0:
+                imsize = gray.shape
+                return ret, c_corners, c_ids, imsize
+        else:
+            self._logger.debug('Charuco detection Failed!')
+            return None, None
+
+
+
     def _detect_chessboard(self, image, flags=None):
+
 
         if image is not None:
             if self.config.file.calibration.pattern.rows > 2 and self.config.file.calibration.pattern.columns > 2:

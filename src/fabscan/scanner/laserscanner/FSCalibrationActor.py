@@ -9,7 +9,6 @@ import sys
 import copy
 import math
 
-
 from fabscan.lib.util.FSInject import singleton
 from fabscan.lib.util.FSUtil import FSSystem
 from fabscan.lib.file.FSImage import FSImage
@@ -17,7 +16,7 @@ from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.scanner.interfaces.FSHardwareController import FSHardwareControllerInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
-from fabscan.scanner.interfaces.FSCalibrationActor import FSCalibrationActorInterface
+from fabscan.scanner.interfaces.FSCalibrationActor import FSCalibrationActorInterface, FSCalibrationMode
 from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
 
 @singleton(
@@ -43,8 +42,11 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         self.shape = None
         self.camera_matrix = None
         self.distortion_vector = None
+
         self.image_points = []
         self.object_points = []
+        self.aruco_ids = []
+
         self.calibration_brightness = [100, 100, 100]
         self.quater_turn = int(self.config.file.turntable.steps / 4)
 
@@ -59,7 +61,9 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         self._starttime = 0
         self.position = 0
         self._stop_calibration = False
-        self.mode = None
+        self.current_calibtation_mode = "IDLE"
+
+        self.finish_camera_calibration = False
         self.estimated_t = [-5, 90, 320]
 
         self._point_cloud = [None, None]
@@ -79,7 +83,9 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         if event[FSEvents.COMMAND] == "START_CALIBRATION":
             self._logger.debug("Calibration Mode: {0}".format(event['mode']))
             self.reset_calibration_values()
-            self.on_calbration_start(event['mode'])
+
+            self.current_calibtation_mode = event['mode']
+            self.on_calbration_start()
 
         if event[FSEvents.COMMAND] == "STOP_CALIBRATION":
             self.on_calibtation_stop()
@@ -92,10 +98,18 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         if event[FSEvents.COMMAND] == "TRIGGER_AUTO_LASER_CALIBRATION_STEP":
             self.on_auto_calibration_trigger(self._capture_scanner_calibration, self._calculate_scanner_calibration)
 
+        if event[FSEvents.COMMAND] == "TRIGGER_AUTO_CAMERA_CALIBRATION_STEP":
+            self.on_auto_calibration_trigger(self._capture_camera_calibration, self._calculate_camera_calibration)
+
+        if event[FSEvents.COMMAND] == "FINISH_MANUAL_CAMERA_CALIBRATION":
+            self.finish_camera_calibration = True
+            self.on_manual_calibration_trigger()
+
         if event[FSEvents.COMMAND] == "CALIBRATION_COMPLETE":
             self.on_calbration_complete()
 
     def reset_calibration_values(self):
+        self.current_calibtation_mode = "IDLE"
         self._point_cloud = [None, None]
         self.x = []
         self.y = []
@@ -106,19 +120,19 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         self.distortion_vector = None
         self.image_points = []
         self.object_points = []
+        self.aruco_ids = []
         self._starttime = 0
         self.current_calibration_step = 0
         self._stop_calibration = False
+        self.finish_camera_calibration = False
         self.position = 0
-        self.mode = None
 
-    def on_calbration_start(self, mode):
+    def on_calbration_start(self):
+
         tools = FSSystem()
-        self._logger.debug("Camera Calibration in {0} Mode started".format(mode))
+        self._logger.debug("Camera Calibration in {0} Mode started".format(self.current_calibtation_mode))
         tools.delete_folder(self.config.file.folders.scans+'calibration')
-        self.mode = mode
         self.current_calibration_step = 0
-        self.reset_calibration_values()
         self.settings.threshold = 25
         self._starttime = self.get_time_stamp()
 
@@ -132,18 +146,10 @@ class FSCalibrationActor(FSCalibrationActorInterface):
 
             self.start_hardware_components()
 
-            if (mode == "CAMERA"):
+            if ( self.current_calibtation_mode == FSCalibrationMode.MODE_AUTO_CALIBRATION ):
+                self.on_auto_calibration_trigger(self._capture_camera_calibration, self._calculate_camera_calibration)
 
-                ####
-                # Manual Camera Calibration
-                ##
-                self.on_manual_calibration_trigger()
-            else:
-
-                #self._do_calibration(self._capture_combined_camera_calibration, self._calculate_camera_calibration)
-                ####
-                # Auto Laser and Platform Calibration
-                ##
+            if ( self.current_calibtation_mode == FSCalibrationMode.MODE_SCANNER_CALIBRATION ):
                 self.on_auto_calibration_trigger(self._capture_scanner_calibration, self._calculate_scanner_calibration)
 
         except Exception as e:
@@ -205,30 +211,27 @@ class FSCalibrationActor(FSCalibrationActorInterface):
 
     def on_manual_calibration_trigger(self):
 
-        self._logger.debug("Manual Calibration triggered...")
-
-        if self.current_calibration_step > 0 and self.current_calibration_step < 4 and not self._stop_calibration:
+        if not self.finish_camera_calibration and not self._stop_calibration:
+            self._logger.debug("Manual Calibration triggered...")
             self._capture_camera_calibration(self.current_calibration_step)
 
-        if self.current_calibration_step == 4:
+        if self.finish_camera_calibration:
             self._calculate_camera_calibration()
+            self.finish_camera_calibration = False
             self.actor_ref.tell({FSEvents.COMMAND: "CALIBRATION_COMPLETE"})
 
-        #if not self._stop_calibration:
-            #self.actor_ref.tell({FSEvents.COMMAND: "TRIGGER_MANUAL_CAMERA_CALIBRATION_STEP"})
-        #    self._stop_calibration = False
 
     def on_auto_calibration_trigger(self, _capture, _calibrate):
 
         # 90 degree turn
         try:
+            # the calibration was stopped or just started.
             if not self._stop_calibration and self.position == 0:
                 self._hardwarecontroller.move_to_next_position(steps=self.quater_turn, speed=5000)
 
-
             if abs(self.position) < self.quater_turn * 2:
+                self._logger.debug("Step {0} of {1} in {2}.".format(self.current_position, self.total_positions, self.current_calibtation_mode))
 
-                self._logger.debug("Next calibration Step")
                 if not self._stop_calibration:
 
                     _capture(self.position)
@@ -245,18 +248,30 @@ class FSCalibrationActor(FSCalibrationActorInterface):
                     self._eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
                     self.current_position += 1
 
+            # the calibration is done, go over to the next calibration step or just exit.
             if not self._stop_calibration and abs(self.position) == self.quater_turn * 2:
                 self._hardwarecontroller.move_to_next_position(steps=self.quater_turn, speed=5000)
                 _calibrate()
-                self.actor_ref.tell({FSEvents.COMMAND: "CALIBRATION_COMPLETE"})
+                #  if mode is auto calibration, we just finished the auto camera calibration, now move over to
+                #  scanner calibration, if we are not in auto calibration mode (anymore) we are done with the calibration
+                if ( self.current_calibtation_mode == FSCalibrationMode.MODE_AUTO_CAMERA_CALIBRATION or
+                     self.current_calibtation_mode == FSCalibrationMode.MODE_AUTO_CALIBRATION):
+                    self.actor_ref.tell({FSEvents.COMMAND: "START_CALIBRATION", 'mode': FSCalibrationMode.MODE_SCANNER_CALIBRATION})
+                else:
+                    self.actor_ref.tell({FSEvents.COMMAND: "CALIBRATION_COMPLETE"})
 
-            if abs(self.position) < self.quater_turn * 2:
-                self._logger.debug("Trigger next Step")
-                self.actor_ref.tell({FSEvents.COMMAND: "TRIGGER_AUTO_LASER_CALIBRATION_STEP"})
+            # we are not done here, trigger the actor itself for the next step
+            if abs(self.position) < self.quater_turn * 2 and not self._stop_calibration:
+                # we are still in auto camera calibraion mode.
+                if ( self.current_calibtation_mode == FSCalibrationMode.MODE_AUTO_CALIBRATION ):
+                    self.actor_ref.tell({FSEvents.COMMAND: "TRIGGER_AUTO_CAMERA_CALIBRATION_STEP"})
 
+                # we are still in laser calibration mode.
+                if (self.current_calibtation_mode == FSCalibrationMode.MODE_SCANNER_CALIBRATION):
+                    self.actor_ref.tell({FSEvents.COMMAND: "TRIGGER_AUTO_LASER_CALIBRATION_STEP"})
 
         except Exception as e:
-            self._logger.exception("Calibration Error")
+            self._logger.exception("Calibration Error: {0}".format(e))
 
 
     def _calculate_camera_calibration(self):
@@ -265,16 +280,46 @@ class FSCalibrationActor(FSCalibrationActorInterface):
             if len(self.object_points) == 0 or len(self.image_points) == 0:
                 raise Exception('Calibration Failed')
 
-            ret, cmat, dvec, rvecs, tvecs = cv2.calibrateCamera(
-                self.object_points, self.image_points, self.shape, None, None)
+            if self.config.file.calibration.pattern.type == "chessboard":
+                try:
+                    ret, cmat, dvec, rvecs, tvecs = cv2.calibrateCamera(self.object_points, self.image_points, self.shape, None, None)
+                except Exception as e:
+                    self._logger.error(e)
+
+            elif self.config.file.calibration.pattern.type == "charucoboard":
+                ret, cmat, dvec, rvecs, tvecs = cv2.aruco.calibrateCameraCharuco(
+                    charucoCorners=self.image_points,
+                    charucoIds=self.aruco_ids,
+                    board=self._imageprocessor.get_aruco_board(),
+                    imageSize=self.shape,
+                    cameraMatrix=None,
+                    distCoeffs=None
+                )
+
+            else:
+                raise Exception('Calibration Failed: Unknown Calibration Pattern Type in Config.')
+
+            self._logger.debug("Rep Error: {0}".format(ret))
 
             if ret:
                 # Compute calibration error
-                for i in range(len(self.object_points)):
-                    imgpoints2, _ = cv2.projectPoints(
-                        self.object_points[i], rvecs[i], tvecs[i], cmat, dvec)
-                    error += cv2.norm(self.image_points[i], imgpoints2, cv2.NORM_L2) / len(imgpoints2)
-                error /= len(self.object_points)
+                if self.config.file.calibration.pattern.type == "chessboard":
+                    for i in range(len(self.object_points)):
+                        imgpoints2, _ = cv2.projectPoints(
+                            self.object_points[i],
+                            rvecs[i],
+                            tvecs[i],
+                            cmat,
+                            dvec
+                        )
+                        error += cv2.norm(
+                            self.image_points[i],
+                            imgpoints2,
+                            cv2.NORM_L2
+                        ) / len(imgpoints2)
+
+                    error /= len(self.object_points)
+
 
                 self.config.file.calibration.camera_matrix = copy.deepcopy(np.round(cmat, 3))
                 self.config.file.calibration.distortion_vector = copy.deepcopy(np.round(dvec.ravel(), 3))
@@ -284,7 +329,7 @@ class FSCalibrationActor(FSCalibrationActorInterface):
                 self._logger.debug("Total Error {0}".format(error))
             return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
         except Exception as e:
-            self._logger.error(e)
+            self._logger.error("Error while laser calibration calculations: {0}".format(e))
 
         return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
 
@@ -298,15 +343,24 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         else:
            flags = cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE | cv2.CALIB_CB_FAST_CHECK
 
-        corners = self._imageprocessor.detect_corners(image, flags)
+        _, corners, ids, _ = self._imageprocessor.detect_corners(image, flags, type=self.config.file.calibration.pattern.type)
 
         if corners is not None:
             self._logger.debug("Corners detected...")
-           # if len(self.object_points) < 15:
-            self._logger.debug("Appending new points ...")
-            self.image_points.append(corners)
-            self.object_points.append(self._imageprocessor.object_pattern_points)
-            return image
+            if len(self.object_points) < 15:
+                self._logger.debug("Appending new points ...")
+                self.image_points.append(corners)
+                self.object_points.append(self._imageprocessor.object_pattern_points)
+
+                if ids is not None:
+                    self._logger.debug("Appending new charuco ids ...")
+                    self.aruco_ids.append(ids)
+
+                return image
+
+        else:
+            self._logger.debug("No corners detected moving on.")
+
 
 
     def _capture_scanner_calibration(self, position):
@@ -319,16 +373,19 @@ class FSCalibrationActor(FSCalibrationActorInterface):
             flags = cv2.CALIB_CB_FAST_CHECK
 
         try:
+            self._logger.debug("Trying to detect calibration pattern pose and plane.")
             pose = self._imageprocessor.detect_pose(pattern_image, flags)
             plane = self._imageprocessor.detect_pattern_plane(pose)
+            self._logger.debug("Detected Plane: {0}, Detected Pose: {1}.".format(bool(pose), bool(plane)))
+
         except Exception as e:
             plane = None
-            self._logger.error(e)
+            self._logger.error("Error while Scanner Calibration Capture: {0}".format(e))
 
         if plane is not None:
 
             distance, normal, corners = plane
-            self._logger.debug("Pose detected...  ")
+            self._logger.debug("Calibration Pattern plane detected.")
             # Laser triangulation ( Between 60 and 115 degree )
             # angel/(360/3200)
             try:
@@ -395,7 +452,7 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         return pattern_image
 
     def _capture_laser(self, index):
-        self._logger.debug("Starting laser capture...")
+        self._logger.debug("Capturing laser {0}".format(index))
         laser_image = self._hardwarecontroller.get_laser_image(index)
         laser_image = self._imageprocessor.decode_image(laser_image)
         return laser_image
@@ -442,7 +499,7 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         # Return response
         result = True
 
-        if self.t is not None and np.linalg.norm(self.t - self.estimated_t) < 180:
+        if self.t is not None and np.linalg.norm(self.t - self.estimated_t) < 190:
             response_platform_extrinsics = (
                 self.R, self.t, center, point, normal, [self.x, self.y, self.z], circle)
         else:

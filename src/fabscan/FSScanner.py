@@ -39,7 +39,8 @@ class FSCommand(object):
     STOP = "STOP"
     CONFIG_MODE_ON = "CONFIG_MODE_ON"
     CALIBRATE = "CALIBRATE"
-    NEXT_CALIBRATION_STEP = "NEXT_CALIBRATION_STEP"
+    TRIGGER_CAMERA_CALIBRATION_STEP = "TRIGGER_CAMERA_CALIBRATION_STEP"
+    FINISH_MANUAL_CAMERA_CALIBRATION = "FINISH_MANUAL_CAMERA_CALIBRATION"
     HARDWARE_TEST_FUNCTION = "HARDWARE_TEST_FUNCTION"
     MESHING = "MESHING"
     COMPLETE = "COMPLETE"
@@ -190,15 +191,20 @@ class FSScanner(threading.Thread):
         # Start calibration
         elif command == FSCommand.CALIBRATE:
             self.set_state(FSState.CALIBRATING)
-
             #self.calibrationActor = self.calibrationActor.start()
             self.calibrationActor.tell({FSEvents.COMMAND: FSScanActorCommand.START_CALIBRATION, 'mode': event.mode})
             #self.scanActor.tell({FSEvents.COMMAND: FSScanActorCommand.START_CALIBRATION, 'mode': event.mode})
             return
 
-        elif command == FSCommand.NEXT_CALIBRATION_STEP:
+        elif command == FSCommand.TRIGGER_CAMERA_CALIBRATION_STEP:
             if self._state is FSState.CALIBRATING:
                 self.calibrationActor.tell({FSEvents.COMMAND: "TRIGGER_MANUAL_CAMERA_CALIBRATION_STEP"})
+                #self.scanActor.ask({FSEvents.COMMAND: FSScanActorCommand.NEXT_CALIBTATION_STEP})
+                return
+
+        elif command == FSCommand.FINISH_MANUAL_CAMERA_CALIBRATION:
+            if self._state is FSState.CALIBRATING:
+                self.calibrationActor.tell({FSEvents.COMMAND: "FINISH_MANUAL_CAMERA_CALIBRATION"})
                 #self.scanActor.ask({FSEvents.COMMAND: FSScanActorCommand.NEXT_CALIBTATION_STEP})
                 return
 

@@ -1,8 +1,8 @@
 .. _steps_ciclop:
 
-**************
-Ciclop Scanner
-**************
+**************************
+Ciclop based Laser Scanner
+**************************
 
 1. About Ciclop
 ---------------
@@ -19,7 +19,7 @@ The following list shows what you need to modify the Ciclop scanner for using th
 **General components**
 
 - `12V to 5V switching regulator <https://shop.watterott.com/V7805-2000-Step-Down-Schaltregler-5V-2A_1>`_
-- `Raspberry Pi 3 B+ <https://shop.watterott.com/Raspberry-Pi-3-Model-B-64Bit-12GHz-Quad-Core-ARM-Cortex-A53>`_
+- `Raspberry Pi 3 B+ or higher <https://shop.watterott.com/Raspberry-Pi-3-Model-B-64Bit-12GHz-Quad-Core-ARM-Cortex-A53>`_
 - `Raspberry Pi camera V2 <https://shop.watterott.com/Raspberry-Pi-Camera-v2-8MP>`_
 - `Raspberry Pi Camera Connection Cable - 50cm <https://shop.watterott.com/Raspberry-Pi-Camera-Connection-Cable-50cm>`_
 - Micro SD Card ( >= 8GB)
@@ -90,6 +90,8 @@ The Power Management
 The fastest way is using two power supplies. One 5V supply for the Raspbbery Pi and a second one with 12V connected
 to the Arduino for the motors.
 
+.. warning:: Do not use the 5V supplied by the Arduino, because it does not supply enough current. The Arduino and even the Raspberry Pi may be demaged otherwise.
+
 But if you want a setup with less wires, you should add a Step-Down converter like on the picture below.
 
 .. image:: images/IMG_20190702_202402.jpg
@@ -98,6 +100,15 @@ But if you want a setup with less wires, you should add a Step-Down converter li
 The 5V output of the Step-Down converter is connected to the 5V and GND pin of the Raspberry Pi.
 
 .. image:: images/IMG_20190618_213807.jpg
+   :width: 400
+
+Connecting LEDs (WS2812)
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is recommended to connect a WS2812 LED-Ring or some WS2812 LED stripes for a better illumination
+of the object. You can use the 6 pin header on the original ciclop ZUM board.
+
+.. image:: images/ciclop_ws2812.png
    :width: 400
 
 5. Software Installation
