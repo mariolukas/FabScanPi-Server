@@ -445,9 +445,7 @@
             window.addEventListener("mousewheel",
     scope.onMouseWheel,
     false);
-            document.addEventListener("keydown",
-    scope.onKeyDown,
-    false);
+            //document.addEventListener "keydown", scope.onKeyDown, false
             element[0].addEventListener("mousemove",
     scope.onMouseMove,
     false);
@@ -1209,7 +1207,9 @@
       MESHING: 'MESHING',
       UPGRADE_SERVER: 'UPGRADE_SERVER',
       RESTART_SERVER: 'RESTART_SERVER',
-      HARDWARE_TEST_FUNCTION: 'HARDWARE_TEST_FUNCTION'
+      HARDWARE_TEST_FUNCTION: 'HARDWARE_TEST_FUNCTION',
+      TRIGGER_CAMERA_CALIBRATION_STEP: 'TRIGGER_CAMERA_CALIBRATION_STEP',
+      FINISH_MANUAL_CAMERA_CALIBRATION: "FINISH_MANUAL_CAMERA_CALIBRATION"
     };
     return FSEnumService;
   });
@@ -1428,7 +1428,7 @@
         FSMessageHandlerService.sendData(message);
         return $rootScope.$broadcast(FSEnumService.commands.STOP);
       };
-      service.startCalibration = function() {
+      service.startCalibration = function(mode) {
         var message;
         message = {};
         service.initStartTime();
@@ -1436,12 +1436,36 @@
           event: FSEnumService.events.COMMAND,
           data: {
             command: FSEnumService.commands.CALIBRATE,
+            mode: mode,
             startTime: service.getStartTime()
           }
         };
         FSMessageHandlerService.sendData(message);
         return $rootScope.$broadcast(FSEnumService.commands.CALIBRATE);
       };
+      service.finishCameraCalibration = function() {
+        var message;
+        message = {};
+        message = {
+          event: FSEnumService.events.COMMAND,
+          data: {
+            command: FSEnumService.commands.FINISH_MANUAL_CAMERA_CALIBRATION
+          }
+        };
+        return FSMessageHandlerService.sendData(message);
+      };
+      service.nextCameraCalibrationStep = function() {
+        var message;
+        message = {};
+        message = {
+          event: FSEnumService.events.COMMAND,
+          data: {
+            command: FSEnumService.commands.TRIGGER_CAMERA_CALIBRATION_STEP
+          }
+        };
+        return FSMessageHandlerService.sendData(message);
+      };
+      //$rootScope.$broadcast(FSEnumService.commands.NEXT_CALIBRATION_STEP)
       service.runMeshing = function(scan_id,
     filter,
     format,
@@ -1874,7 +1898,7 @@
         return $scope.$apply();
       };
       startStream = function() {
-        $scope.streamUrl = Configuration.installation.apiurl + 'api/v1/streams/?type=laser';
+        $scope.streamUrl = Configuration.installation.apiurl + 'api/v1/streams/?type=texture';
         $scope.showStream = true;
         return $scope.$apply();
       };
@@ -2090,9 +2114,33 @@
       $scope.restartServer = function() {
         return FSScanService.restartServer();
       };
-      $scope.startCalibration = function() {
-        return FSScanService.startCalibration();
+      $scope.startCalibration = function(mode) {
+        if (mode === "CAMERA") {
+          document.addEventListener('keyup',
+    $scope.stepCalibration,
+    false);
+        }
+        return FSScanService.startCalibration(mode);
       };
+      $scope.stepCalibration = function(e) {
+        console.log("Space Bard pressed. " + e.code);
+        if (e.code === "Space") {
+          return FSScanService.nextCameraCalibrationStep();
+        } else {
+          return FSScanService.finishCameraCalibration();
+        }
+      };
+      $scope.$on(FSEnumService.events.ON_INFO_MESSAGE,
+    function(event,
+    data) {
+        var ref;
+        if ((ref = data['message']) === 'SCANNER_CALIBRATION_FAILED' || ref === 'LASER_CALIBRATION_ERROR' || ref === 'FINISHED_CALIBRATION' || ref === 'STOP_CALIBRATION') {
+          console.log("Remove ");
+          return document.removeEventListener('keyup',
+    $scope.stepCalibration,
+    false);
+        }
+      });
       $scope.startScan = function() {
         $scope.stopStream();
         $scope.remainingTime = [];

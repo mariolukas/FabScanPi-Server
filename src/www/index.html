@@ -215,11 +215,14 @@
                                <div class="tab-content" ng-if="(selectedTab == 'calibration')">
                                    <div style="display:inline-block; width:100%; margin-top:1em; color:white; padding-left:1em;">
                                        <div style="margin-top:2em;">
-                                       <button class="fsButton" ng-click="startCalibration()">Start Calibration</button>
+                                           <button class="fsButton" ng-click="startCalibration('MODE_AUTO_CALIBRATION')">Start Calibration</button>
+                                           <br>
+                                           <br>
+                                           <!--<button class="fsButton" ng-click="startCalibration('MODE_CAMERA_CALIBRATION')">Camera Calibration</button>
+                                           <button class="fsButton" ng-click="startCalibration('MODE_SCANNER_CALIBTATION')">Scanner Calibration</button> -->
                                        </div>
                                    </div>
                                </div>
-
 
                            </div>
                    </div>
