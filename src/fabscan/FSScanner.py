@@ -18,7 +18,8 @@ from fabscan.FSEvents import FSEventManagerInterface, FSEvents
 from fabscan.worker.FSMeshlab import FSMeshlabTask
 from fabscan.FSSettings import SettingsInterface
 from fabscan.FSConfig import ConfigInterface
-from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
+from fabscan.scanner.interfaces.FSScanActor import FSScanActorCommand, FSScanActorInterface
+from fabscan.scanner.interfaces.FSCalibrationActor import FSCalibrationActorInterface
 from fabscan.lib.util.FSInject import inject
 from fabscan.lib.util.FSUpdate import upgrade_is_available, do_upgrade
 from fabscan.lib.util.FSDiscovery import register_to_discovery
@@ -38,6 +39,8 @@ class FSCommand(object):
     STOP = "STOP"
     CONFIG_MODE_ON = "CONFIG_MODE_ON"
     CALIBRATE = "CALIBRATE"
+    TRIGGER_CAMERA_CALIBRATION_STEP = "TRIGGER_CAMERA_CALIBRATION_STEP"
+    FINISH_MANUAL_CAMERA_CALIBRATION = "FINISH_MANUAL_CAMERA_CALIBRATION"
     HARDWARE_TEST_FUNCTION = "HARDWARE_TEST_FUNCTION"
     MESHING = "MESHING"
     COMPLETE = "COMPLETE"
@@ -58,10 +61,11 @@ class FSCommand(object):
         settings=SettingsInterface,
         config=ConfigInterface,
         eventmanager=FSEventManagerInterface,
-        scanprocessor=FSScanProcessorInterface,
+        scanActor=FSScanActorInterface,
+        calibrationActor=FSCalibrationActorInterface
 )
 class FSScanner(threading.Thread):
-    def __init__(self, settings, config, eventmanager, scanprocessor):
+    def __init__(self, settings, config, eventmanager, scanActor, calibrationActor):
         threading.Thread.__init__(self)
 
         self._logger = logging.getLogger(__name__)
@@ -69,7 +73,8 @@ class FSScanner(threading.Thread):
         self.config = config
         self.eventManager = eventmanager.instance
 
-        self.scanProcessor = scanprocessor.start()
+        self.scanActor = scanActor.start()
+        self.calibrationActor = calibrationActor.start()
 
         self._state = FSState.IDLE
         self.exit = False
@@ -80,11 +85,6 @@ class FSScanner(threading.Thread):
 
         self.eventManager.subscribe(FSEvents.ON_CLIENT_CONNECTED, self.on_client_connected)
         self.eventManager.subscribe(FSEvents.COMMAND, self.on_command)
-
-        executors = {
-            'default': ThreadPoolExecutor(4),
-            'processpool': ProcessPoolExecutor(2)
-        }
 
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
@@ -99,14 +99,14 @@ class FSScanner(threading.Thread):
             self.scheduler.add_job(self.run_discovery_service, 'interval', minutes=30, id='register_discovery_service')
             self._logger.info("Added discovery scheduling job.")
 
-        self.scheduler.add_job(self.run_temperature_watch_service, 'interval', minutes=1, id='cpu_temperature_service')
+        #self.scheduler.add_job(self.run_temperature_watch_service, 'interval', minutes=1, id='cpu_temperature_service')
 
     def run(self):
         while not self.exit:
             time.sleep(0.2)
 
     def kill(self):
-        self.scanProcessor.stop()
+        self.scanActor.stop()
         self.scheduler.shutdown()
         # wait some time for hardware shutdown
         time.sleep(1)
@@ -121,84 +121,104 @@ class FSScanner(threading.Thread):
         if command == FSCommand.SCAN:
             if self._state is FSState.IDLE:
                 self.set_state(FSState.SETTINGS)
-                self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.SETTINGS_MODE_ON})
+                self.scanActor.tell({FSEvents.COMMAND: FSScanActorCommand.SETTINGS_MODE_ON})
                 return
 
         ## Update Settings in Settings Mode
         elif command == FSCommand.UPDATE_SETTINGS:
             if self._state is FSState.SETTINGS:
-                self.scanProcessor.tell(
-                    {FSEvents.COMMAND: FSScanProcessorCommand.UPDATE_SETTINGS, 'SETTINGS': event.settings}
+                self.scanActor.tell(
+                    {FSEvents.COMMAND: FSScanActorCommand.UPDATE_SETTINGS, 'SETTINGS': event.settings}
                 )
                 return
 
         elif command == FSCommand.UPDATE_CONFIG:
-            self.scanProcessor.tell(
-                {FSEvents.COMMAND: FSScanProcessorCommand.UPDATE_CONFIG, 'CONFIG': event.config}
+            self.scanActor.tell(
+                {FSEvents.COMMAND: FSScanActorCommand.UPDATE_CONFIG, 'CONFIG': event.config}
             )
             return
 
         ## Start Scan Process
         elif command == FSCommand.START:
             if self._state is FSState.SETTINGS:
+                #if self.config.file.camera.type == 'dummy':
+                self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
                 self._logger.info("Start command received...")
                 self.set_state(FSState.SCANNING)
-                self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START})
+                self.scanActor.tell({FSEvents.COMMAND: FSScanActorCommand.START})
                 return
 
         elif command == FSCommand.CONFIG_MODE_ON:
             if self._state is FSState.IDLE:
                 self._logger.info("Config mode command received...")
                 self.set_state(FSState.CONFIG)
-                self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.CONFIG_MODE_ON})
+                self.scanActor.tell({FSEvents.COMMAND: FSScanActorCommand.CONFIG_MODE_ON})
                 return
 
         ## Stop Scan Process or Stop Settings Mode
         elif command == FSCommand.STOP:
 
             if self._state is FSState.CONFIG:
-                self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.CONFIG_MODE_OFF})
+                self.scanActor.tell({FSEvents.COMMAND: FSScanActorCommand.CONFIG_MODE_OFF})
                 if not (self._state is FSState.CALIBRATING):
                     self.set_state(FSState.IDLE)
                 return
 
             if self._state is FSState.SCANNING:
-                self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.STOP})
+                self.scanActor.tell({FSEvents.COMMAND: FSScanActorCommand.STOP})
                 self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
                 self.set_state(FSState.IDLE)
                 return
 
             if self._state is FSState.SETTINGS:
                 self._logger.debug("Close Settings")
-                self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.SETTINGS_MODE_OFF})
+                self.scanActor.tell({FSEvents.COMMAND: FSScanActorCommand.SETTINGS_MODE_OFF})
                 self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
                 self.set_state(FSState.IDLE)
                 return
 
             if self._state is FSState.CALIBRATING:
-                self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.STOP_CALIBRATION})
+                self.calibrationActor.tell({FSEvents.COMMAND: FSScanActorCommand.STOP_CALIBRATION})
+
                 self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
                 self.set_state(FSState.IDLE)
                 return
 
         elif command == FSCommand.HARDWARE_TEST_FUNCTION:
-            self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.CALL_HARDWARE_TEST_FUNCTION, 'DEVICE_TEST': event.device})
+            self.scanActor.ask({FSEvents.COMMAND: FSScanActorCommand.CALL_HARDWARE_TEST_FUNCTION, 'DEVICE_TEST': event.device})
             return
 
         # Start calibration
         elif command == FSCommand.CALIBRATE:
             self.set_state(FSState.CALIBRATING)
-            self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.START_CALIBRATION})
+            #self.calibrationActor = self.calibrationActor.start()
+            self.calibrationActor.tell({FSEvents.COMMAND: FSScanActorCommand.START_CALIBRATION, 'mode': event.mode})
+            #self.scanActor.tell({FSEvents.COMMAND: FSScanActorCommand.START_CALIBRATION, 'mode': event.mode})
             return
+
+        elif command == FSCommand.TRIGGER_CAMERA_CALIBRATION_STEP:
+            if self._state is FSState.CALIBRATING:
+                self.calibrationActor.tell({FSEvents.COMMAND: "TRIGGER_MANUAL_CAMERA_CALIBRATION_STEP"})
+                #self.scanActor.ask({FSEvents.COMMAND: FSScanActorCommand.NEXT_CALIBTATION_STEP})
+                return
+
+        elif command == FSCommand.FINISH_MANUAL_CAMERA_CALIBRATION:
+            if self._state is FSState.CALIBRATING:
+                self.calibrationActor.tell({FSEvents.COMMAND: "FINISH_MANUAL_CAMERA_CALIBRATION"})
+                #self.scanActor.ask({FSEvents.COMMAND: FSScanActorCommand.NEXT_CALIBTATION_STEP})
+                return
 
         elif command == FSCommand.CALIBRATION_COMPLETE:
             self.set_state(FSState.IDLE)
+            #self.calibrationActorRef.tell({FSEvents.COMMAND: FSScanActorCommand.STOP_CALIBRATION})
+            self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
             return
 
         # Scan is complete
         elif command == FSCommand.COMPLETE:
             self.set_state(FSState.IDLE)
             self._logger.info("Scan complete")
+            self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
             return
 
         # Internal error occured
@@ -215,7 +235,7 @@ class FSScanner(threading.Thread):
 
         elif command == FSCommand.HARDWARE_TEST_FUNCTION:
             self._logger.debug("Hardware Device Function called...")
-            self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.CALL_HARDWARE_TEST_FUNCTION, 'DEVICE_TEST': event.device})
+            self.scanActor.ask({FSEvents.COMMAND: FSScanActorCommand.CALL_HARDWARE_TEST_FUNCTION, 'DEVICE_TEST': event.device})
             return
 
         # Upgrade server
@@ -245,7 +265,7 @@ class FSScanner(threading.Thread):
     def on_client_connected(self, eventManager, event):
         try:
             try:
-                hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
+                hardware_info = self.scanActor.ask({FSEvents.COMMAND: FSScanActorCommand.GET_HARDWARE_INFO})
             except:
                 hardware_info = "undefined"
 
@@ -266,7 +286,7 @@ class FSScanner(threading.Thread):
             }
 
             eventManager.send_client_message(FSEvents.ON_CLIENT_INIT, message)
-            self.scanProcessor.tell({FSEvents.COMMAND: FSScanProcessorCommand.NOTIFY_HARDWARE_STATE})
+            self.scanActor.tell({FSEvents.COMMAND: FSScanActorCommand.NOTIFY_HARDWARE_STATE})
 
         except Exception as e:
             self._logger.exception("Client Connection Error: {0}".format(e))
@@ -298,7 +318,7 @@ class FSScanner(threading.Thread):
 
     def run_discovery_service(self):
         try:
-            hardware_info = self.scanProcessor.ask({FSEvents.COMMAND: FSScanProcessorCommand.GET_HARDWARE_INFO})
+            hardware_info = self.scanActor.ask({FSEvents.COMMAND: FSScanActorCommand.GET_HARDWARE_INFO})
         except:
             hardware_info = "undefined"
 

@@ -25,8 +25,7 @@ class Turntable(object):
         '''
         Accepts number of steps to take
         '''
-        steps *= self.scaler 
-
+        steps *= self.scaler
         if self.hardware_connector:
             self.hardware_connector.move_turntable(steps, speed, blocking=False)
 

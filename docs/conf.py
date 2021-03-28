@@ -18,7 +18,7 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = 'FabScanPi'
-copyright = '2019, Mario Lukas'
+copyright = '2021, Mario Lukas'
 author = 'Mario Lukas'
 
 master_doc = 'index'
@@ -31,6 +31,9 @@ latex_toplevel_sectioning = 'section'
 # ones.
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
+def setup (app):
+    app.add_css_file('css/custom.css')
 
 if not on_rtd:  # only import and set the theme if we're building docs locally
     import sphinx_rtd_theme

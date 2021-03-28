@@ -4,146 +4,82 @@
 Installing the Software
 ***********************
 
-There ist no need to flash the Arduino which is located on the FabScan PI HAT. It will be flashed automatically with the current firmware version after the server is started.
+Installing FabScan OS
+---------------------
 
-Using the Image (recommended)
------------------------------
-
-The fastest way to start working with FabScan PI is to use the FabScan PI Raspbian Image.
+The fastest way to start working with FabScan PI is to use the FabScan PI Raspberry OS Image.
 
 For the installation you will need the following things:
 
 - A computer with integrated or connected card reader
 - A Micro-SD card with at least capacity of 8 GB
-- A software to format the SD card (e.g. [SD-Formatter](https://www.sdcard.org/downloads/formatter_4/))
-- A software to install the image on the SD card (e.g. [Win32DiskImager](https://sourceforge.net/projects/win32diskimager/))
-- The latest [FabScan PI Raspbian image](https://github.com/mariolukas/FabScanPi-Build-Raspbian/releases/latest)
-
-Download the SD-Formatter an the Win32Disk image software and install them on your computer. Tip: During the installation takes place you can already download and unzip the latest FabScan PI image and save some time. In the end you should have a file with .img extension.
-
-Now insert the Micro-SD card into the card reader which is connected with your computer.
-
-.. image:: images/SD-Formatter_1.jpg
-   :alt: SD Formater
-
-Start the SD-Formatter software and select the correct device letter. Double-check that because otherwise there is a risk of formatting another drive.
-
-.. note:: The displayed size of the selected card my vary from the physical size. This is because of an old image which is already installed on the card.
-
-Click on the "Format" button to format the selected SD card.
-
-.. image:: images/SD-Formatter_2.jpg
-   :alt: SD Formater
 
 
-When the formatting process is completed an information window will pop-up. Leave the card in the reader.
+1. Download the latest Image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. image:: images/SD-Formatter_3.jpg
-   :alt: SD Formater
+You need to download the latest image of the FabScanPi Software.
 
-Exit the SD-Formatter and start the Win32DiskImager for transferring the image on the freshly formatted card.
+`<https://fabscan.org/downloads/>`_
 
-.. image:: images/Win32DiskImager_1.jpg
-   :alt: SD Formater
+2. Install Raspberry Pi Imager
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Select same device as before in the SD-Formatter software. Click on the folder icon and select the image file in your file system. Normally it should be in your browser's download folder. Make sure to unzip it first to get the image with .img extension.
+Download and install the latest version of Raspberry Pi Imager from
 
-.. image:: images/Win32DiskImager_2.jpg
-   :alt: SD Formater
+`<https://www.raspberrypi.org/software/>`_
 
-Click on the "Write" button and the installation process will begin to start. When it's finished you will be informed by a pop-up.  Click on the "exit" button to close Win32DiskImager.
+2. Writing the Image to SD
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+Now insert the Micro-SD card into the card reader which is connected with your computer and start
+the Raspberry Pi Imager software.
 
-.. image:: images/Win32DiskImager_3.jpg
-   :alt: SD Formater
+.. image:: images/Imager_start.png
+   :alt: Raspberry Pi Imager after start.
 
+First you need to choose the downloaded FabScanPi SD-Card image. Just click on the "CHOOSE OS"
+button which will open a dialog.
 
-Now your SD-Card is ready to be put into the card slot of your FabScanPi.
+.. image:: images/Imager_system_list.png
+   :alt: Raspberry Pi Imager choose Image
 
-After the image is flashed and the Raspberry Pi is up and running follow the instructions in the [Usage section](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage)
+Scroll to the end of the list until you can see the entry named "Use custom". A click on this
+entry opens a file dialog. Select the downloaded FabscanPi Image file. And confirm with "Ok".
 
+.. note:: Naming convention of a FabScanPi Release file.
 
-Installing from deb packages (Start with Raspbian Lite)
--------------------------------------------------------
+        **image_<release-year>-<release-month>-<release-day>-FabScanPi-lite.zip**
 
-This description assumes that you have a SD card with a fresh Raspbian image on it. Keep in mind that the ready to
-use image is made out of Raspbian Lite. The following instructions might cause in errors. Think twice about not using
-the image. The following steps are more for users with linux experience.
+The file name should be shown as label of the button which was previously labeld with "CHOOSE OS".
 
-The following guide assumes that you have activated the raspberry pi camera module and that the file system is already
-expanded to the maximum of your sd-card. You can use the tool raspi-config to archive that.
+.. image:: images/Imager_choose_sd.png
+   :alt: Raspberry Pi Imager SD card selection button
 
-You need to do some tweaks on boot.txt
-.. code:: bash
+Next you need to choose the SD-card where the image should be wirtten on. Click on the second button
+which is labled with "CHOOSE SD CARD". A dialog with available devices/sd-cards appears.
 
-    echo "start_x=1" >> /boot/config.txt
-    # more gpu memory
-    echo "gpu_mem=192" >> /boot/config.txt
-    #disable camera led
-    echo "disable_camera_led=1" >> /boot/config.txt
+.. image:: images/Imager_sd_card_list.png
+   :alt: Raspberry Pi Imager choose sd card from list
 
-    # max usb power
-    #echo "max_usb_current=1" >> /boot/config.txt
+Select your sd-card for the installation. Raspberry Pi Imager will return to the main view.
+Finally click on the button labeled with "WRITE".
 
-    # disabale bt on raspberry pi3 to prevent serial port problems..
-    echo "dtoverlay=pi3-disable-bt" >> /boot/config.txt
+.. image:: images/Imager_write.png
+   :alt: Raspberry Pi Imager choose sd card from list
 
+The writing process begins and it will show you a message when the process is finished.
 
-.. code:: bash
+.. image:: images/Imager_state.png
+   :alt: Raspberry Pi Imager choose sd card from list
 
-    echo "deb http://archive.fabscan.org/ stable main" > /etc/apt/sources.list.d/fabscanpi.list
+If you want to use Wifi follow the Wifi Installation Guide, otherwise you can
+remove the SD-Card form the SD-Card reader and insert it into the Raspberry Pi.
 
+Now you can proceed with the next steps:
 
-Then add the FabScan PI repository key to your key chain.
+For :ref:`FabScanPi <fabscanpi-software-configuration>` based scanners.
 
-.. code:: bash
-
-    wget http://archive.fabscan.org/fabscan.public.key -O - | sudo apt-key add -
-
-
-Update the package list.
-
-.. code:: bash
-
-    apt-get update
-
-Finish the installation with the needed packages.
-
-.. code:: bash
-
-    apt-get install fabscanpi-server python3-opencv, python3-funcsigs, python3-apscheduler, python3-tornado, libtbb2, python3-pil, python3-serial, python3-pykka, python3-picamera, python3-requests, python3-rpi.gpio, python3-semver, xvfb, strace, avrdude, python3-scipy
-
-.. code:: bash
-
-    echo "KERNEL==\"ttyACM0\", MODE=\"0666\" " > ${ROOTFS_DIR}/etc/udev/rules.d/20-serial-device-permissions.rules
-    echo "KERNEL==\"ttyAMA0\", MODE=\"0666\" " >> ${ROOTFS_DIR}/etc/udev/rules.d/20-serial-device-permissions.rules
-
-Set the  user permissions.
-
-.. code:: bash
-
-    usermod -a -G tty ${FIRST_USER_NAME}
-
-
-The FabScan PI server can be started with
-
-.. code:: bash
-
-    sudo systemctl start fabscanpi-server
-
-Congratulations you did the basic setup. If you need more you should have a look to the repository of the [image build
-scrip](https://github.com/mariolukas/FabScanPi-Build-Raspbian). It provides a lot more tweaks like a proxy server which
-forwards the port to 80 and 443 etc.
-
-Read [Usage](https://github.com/mariolukas/FabScanPi-Server/blob/master/README.md#useage) section for the next steps.
-
-
-Building a custom image
------------------------
-
-The image can be build with the FabScanPi Image build script. You will find more
-
-information [here](developing.md#Building FabScanPi Images)
-
+For :ref:`Ciclop <ciclop-software-configuration>` based scanners
 
 
 

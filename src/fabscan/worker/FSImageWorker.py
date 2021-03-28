@@ -11,7 +11,7 @@ import time
 import threading
 
 from fabscan.worker.FSImageTask import ImageTask, FSTaskType
-from fabscan.scanner.interfaces.FSScanProcessor import FSScanProcessorCommand, FSScanProcessorInterface
+from fabscan.scanner.interfaces.FSScanActor import FSScanActorCommand, FSScanActorInterface
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.lib.util.FSInject import inject
@@ -34,10 +34,10 @@ class FSSWorkerPoolCommand(object):
 )
 class FSImageWorkerPool(ThreadingActor):
 
-    def __init__(self, config, settings, scanprocessor):
-        super(FSImageWorkerPool, self).__init__(self, config, settings, scanprocessor)
+    def __init__(self, config, settings, scanActor):
+        super(FSImageWorkerPool, self).__init__(self, config, settings, scanActor)
         self.input_muted = False
-        self.scanprocessor = scanprocessor
+        self.scanActor = scanActor
         self.config = config
         self.settings = settings
 
@@ -84,9 +84,9 @@ class FSImageWorkerPool(ThreadingActor):
     def handle_output(self):
         if self._input_count > 0:
             self._input_count -= 1
-            if self.scanprocessor.is_alive():
-                self.scanprocessor.tell(
-                    {FSEvents.COMMAND: FSScanProcessorCommand.IMAGE_PROCESSED, 'RESULT': self._output_q.get()}
+            if self.scanActor.is_alive():
+                self.scanActor.tell(
+                    {FSEvents.COMMAND: FSScanActorCommand.IMAGE_PROCESSED, 'RESULT': self._output_q.get()}
                 )
 
             if self.actor_ref.is_alive():
@@ -103,7 +103,7 @@ class FSImageWorkerPool(ThreadingActor):
         self._logger.info("Creating {} image worker processes.".format(number_of_workers))
 
         for _ in range(number_of_workers):
-            worker = FSImageWorkerProcess(image_task_q=self._task_q, output_q=self._output_q, config=self.config, settings=self.settings, scanprocessor=self.scanprocessor)
+            worker = FSImageWorkerProcess(image_task_q=self._task_q, output_q=self._output_q, config=self.config, settings=self.settings, scanActor=self.scanActor)
             #worker.daemon = True
             worker.start()
             self.workers.append(worker)
@@ -114,9 +114,9 @@ class FSImageWorkerPool(ThreadingActor):
     def clear_queue(self, q):
         while not q.empty():
             try:
-                q.get(False)
+                q.get_nowait()
             except Empty:
-                continue
+                pass
 
     def clear_task_queue(self):
         try:
@@ -157,14 +157,14 @@ class FSImageWorkerPool(ThreadingActor):
     imageprocessor=ImageProcessorInterface,
 )
 class FSImageWorkerProcess(multiprocessing.Process):
-    def __init__(self, image_task_q, output_q,   config, settings, scanprocessor, imageprocessor):
+    def __init__(self, image_task_q, output_q,   config, settings, scanActor, imageprocessor):
         super(FSImageWorkerProcess, self).__init__(group=None)
         self.image_task_q = image_task_q
         self.output_q = output_q
         self.settings = settings
         self.config = config
         self.exit = False
-        self.scanprocessor = scanprocessor
+        self.scanActor = scanActor
         self.image = FSImage()
 
         self.log = logging.getLogger('IMAGE_PROCESSOR THREAD')
@@ -185,6 +185,8 @@ class FSImageWorkerProcess(multiprocessing.Process):
         self._logger.debug("process {} started".format(self.pid))
 
         while not self.exit:
+
+
             if not self.image_task_q.empty():
 
                 data = dict()
@@ -209,13 +211,11 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
                             self.output_q.put(data)
 
-
                         if (image_task.task_type == "PROCESS_DEPTH_IMAGE"):
-                            self._logger.debug('Image Processing starts.')
+                            #self._logger.debug('Image Processing starts.')
                             try:
-
-                                #self.image.save_image(image_task.image, image_task.progress, image_task.prefix,
-                                #                      dir_name=image_task.prefix + '/raw_' + image_task.raw_dir)
+                                self.image.save_image(image_task.image, image_task.progress, image_task.prefix,
+                                                      dir_name=image_task.prefix + '/raw_' + image_task.raw_dir)
 
                                 image_task.image = self.image_processor.decode_image(image_task.image)
                                 angle = float(image_task.progress * 360) / float(image_task.resolution)
@@ -234,9 +234,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             point_cloud = None
                             texture = None
                             self.output_q.put(data)
-
-
-                            self._logger.debug('Image Processing finished.')
+                            #self._logger.debug('Image Processing finished.')
 
                         image_task = None
 

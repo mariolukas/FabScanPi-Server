@@ -56,7 +56,7 @@ button:focus {outline:0;}
 }
 .control:hover input:not([disabled]):checked ~ .control_indicator,
 .control input:checked:focus ~ .control_indicator {
-    background: #e6647d;
+    background: #0e6647d;
 }
 .control input:disabled ~ .control_indicator {
     background: #e6e6e6;
@@ -206,7 +206,7 @@ ul {
     list-style: none;
     max-height: 100px;
     margin: 0;
-   /* overflow: auto;*/
+    overflow: auto;
     padding: 0;
     text-indent: 10px;
 }
@@ -450,7 +450,7 @@ a:active .icon {
 }
 
 .options-content {
-    height: 240px;
+    height: 100%;
 
 }
 
@@ -707,12 +707,11 @@ html, body {
 
 .thumbnail div {
     bottom: 2em;
+    position: absolute;
     text-align: center;
-    font-size: 1em;
-    overflow: hidden;
     width: 160px;
     background-color: rgba(163, 144, 144, 0.5);
-    color: rgba(239, 241, 244, 0.79);
+    color: grey;
 }
 
 .options div {
@@ -730,13 +729,6 @@ html, body {
 .options a {
     color: white;
     text-decoration: none;
-}
-
-.noPreview{
-    margin: 0 auto;
-    width: 80px;
-    color: grey;
-    opacity: 0.5;
 }
 
 slider {
@@ -871,7 +863,7 @@ and (max-device-width: 590px) {
 
     .preview-image {
         margin: 0 auto;
-        background-color: #999999;
+
     }
 
     .tab-content {

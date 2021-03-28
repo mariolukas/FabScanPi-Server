@@ -128,12 +128,13 @@
                                    <div ng-show="!autoThreshHoldIsSelected()" style="margin-right:20em;">
                                        <div ng-class="{'fadeOut':!showThresholdValue}" class="slider-value-label">{{settings.threshold}}</div>
                                        <div style="display:inline-block; width:5em; color:white; padding-left:1em;">Threshold</div>
-                                       <slider style="width:70%; margin-left:1em;" floor="0" ceiling="60" step="1" precision="1" ng-model="settings.threshold"></slider>
+                                       <slider style="width:70%; margin-left:1em;" floor="0" ceiling="250" step="1" precision="1" ng-model="settings.threshold"></slider>
                                    </div>
+
                                    <div style="margin-right:20em;">
                                        <div ng-class="{'longFadeOut':!showResolutionValue}" class="slider-value-label" >{{settings.resolution | toResolutionValue }}</div>
                                        <div  style="display:inline-block; width:5em; color:white; padding-left:1em;">Resolution</div>
-                                       <slider class="resolution" style="width:70%; margin-left:1em;"  show-steps="true" floor="-8" ceiling="-1" step="4" precision="1" ng-model="settings.resolution"></slider>
+                                       <slider class="resolution" style="width:70%; margin-left:1em;"  show-steps="true" floor="1" ceiling="3" step="1" precision="1" ng-model="settings.resolution"></slider>
                                    </div>
                                    <!--
                                    <div>
@@ -214,11 +215,14 @@
                                <div class="tab-content" ng-if="(selectedTab == 'calibration')">
                                    <div style="display:inline-block; width:100%; margin-top:1em; color:white; padding-left:1em;">
                                        <div style="margin-top:2em;">
-                                       <button class="fsButton" ng-click="startCalibration()">Start Calibration</button>
+                                           <button class="fsButton" ng-click="startCalibration('MODE_AUTO_CALIBRATION')">Start Calibration</button>
+                                           <br>
+                                           <br>
+                                           <!--<button class="fsButton" ng-click="startCalibration('MODE_CAMERA_CALIBRATION')">Camera Calibration</button>
+                                           <button class="fsButton" ng-click="startCalibration('MODE_SCANNER_CALIBTATION')">Scanner Calibration</button> -->
                                        </div>
                                    </div>
                                </div>
-
 
                            </div>
                    </div>
@@ -226,6 +230,7 @@
                </div>
                <!-- Scan View -->
                  <div  ng-controller="fabscan.controller.FSPreviewController"  style="margin: 0 auto; z-index:-100;">
+
 
                      <div style="z-index:100;" ng-if="showStream" class="texture-preview">
                          <mjpeg url="streamUrl"></mjpeg>
@@ -272,8 +277,9 @@
                              <div ng-repeat="scan in scans" style="text-align:center;margin:0 auto;  height:130px">
                                  <div style="display:block; border:1px solid grey; text-align:center; margin:0 auto;">
                                      <a class="thumbnail" ng-click="loadPointCloud('{{scan.pointcloud}}', '{{scan.id}}')">
-                                         <img  ng-src="{{ scan.thumbnail }}" err-src="icons/no-preview.png"/>
-                                         <div style="color:white">{{scan.id | toLabel}}</div>
+                                         <img ng-src="{{scan.thumbnail}}"/>
+                                         <div>{{scan.id | toLabel}}</div>
+                                     </a>
                                  </div>
                              </div>
                          </slick>
@@ -368,19 +374,19 @@
 
                                  <div class="tab-content " ng-show="(selectedTab == 'download')">
 
-                                       <slick class="filter-container" ng-if="shareDialog" arrows=false adaptiveHeight=true init-onload=false data="raw_scans" >
+                                    <slick class="filter-container" ng-if="shareDialog" arrows=false adaptiveHeight=true init-onload=false data="raw_scans" >
                                          <div class="meshlabfilter" style="outline:none; border:none; padding:1em 5em 0 5em; font-size:1.2em; color:white; height:100%">
-                                               <ul>
-                                                   <li ng-repeat="raw_scan in raw_scans track by $index" style="padding:0.2em;">
-                                                       <a href="#" ng-click="loadPointCloud(raw_scan.url)" style="text-decoration: none;">{{raw_scan.name}}</a>
-                                                       <a ng-if="meshes.length == 0" href="#"><i tooltips title="Delete Scan" class="hvr-grow fa fa-trash fa-1x" ng-click="deleteFile(raw_scan.name)" style="float:right;"></i></a>
-                                                      <!-- <a href="#"><i tooltips title="Select MeshLab Filter" tooltip-side="top" ng-click="nextSubSelection()" class="hvr-grow fa fa-magic fa-1x" style="float:right;"></i></a>-->
+                                             <ul>
+                                                 <li ng-repeat="raw_scan in raw_scans track by $index" style="padding:0.2em;">
+                                                     <a href="#" ng-click="loadPointCloud(raw_scan.url)" style="text-decoration: none;">{{raw_scan.name}}</a>
+                                                     <a ng-if="meshes.length == 0" href="#"><i tooltips title="Delete Scan" class="hvr-grow fa fa-trash fa-1x" ng-click="deleteFile(raw_scan.name)" style="float:right;"></i></a>
+                                                    <!-- <a href="#"><i tooltips title="Select MeshLab Filter" tooltip-side="top" ng-click="nextSubSelection(raw_scan.name)" class="hvr-grow fa fa-magic fa-1x" style="float:right;"></i></a>-->
                                                      <a href="{{raw_scan.url}}"><i tooltips title="Donwload Scan" tooltip-side="top" class="hvr-grow fa fa-download fa-1x" style="float:right;"></i></a>
                                                      <!--<i tooltips title="Open Scan" tooltip-side="top" class="fa fa-folder-open fa-1x" style="float:right;"></i>-->
                                                  </li>
                                              </ul>
                                          </div>
-                                         <!--<div class="meshlabfilter" style="outline:none;  border:none; padding:1em 5em 0 5em; font-size:1.2em; color:white; height:100%">
+                                         <div class="meshlabfilter" style="outline:none;  border:none; padding:1em 5em 0 5em; font-size:1.2em; color:white; height:100%">
                                              <div style="font-size:16px; margin-bottom:1em; font-weight: bold" >Meshlab Filter:</div>
                                              <slick settings="slickFilterConfig">
                                                  <div data-value="{{m_filter.file_name}}" ng-repeat="m_filter in m_filters" style="text-align:center;margin:0 auto; height:20px">
@@ -398,7 +404,7 @@
                                                 <i style="margin-right: 1em;" tooltips title="Back" tooltip-side="right" ng-click="previewsSubSelection()" class="hvr-grow fa fa-chevron-left fa-1x"></i>
                                                  <a class="hvr-grow" style="text-decoration:none; float:right; color:white;font-size:20px;" ng-click="runMeshing()" href="#">Start Meshing</a>
                                              </div>
-                                         </div>-->
+                                         </div>
                                      </slick>
 
                                  </div>

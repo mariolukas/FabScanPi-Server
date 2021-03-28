@@ -1,11 +1,13 @@
 .. _software_configuration:
 
-*************
-Configuration
-*************
+***********************
+Advanced Configurations
+***********************
 
 Setting up a WIFI connection
 ----------------------------
+
+.. _setting-up-wifi:
 
 This is the description for enabling wifi on the raspberry pi. Just create a file with the name
 wpa_supplicant.conf on the /boot folder. You can use nano and do it via a ssh connection to the
@@ -29,8 +31,7 @@ Add the following content to the file
 Insert the sd-card if you have removed it. Do a reboot of the system (for both options needed).
 
 
-
-Scanner Configuration File
+FabScanPi Configuration File
 --------------------------
 
 .. _how-edit-config:
@@ -137,7 +138,7 @@ miss brackets. javascript is really sensitive in it's format.
 In this section you can change the scan output folder and the folder where the ui is located. If
 you don't know what you are doing, it is a good decision to keep this section untouched.
 
-.. code-block:: javascript
+.. code-block:: JSON
    :linenos:
 
     "folders": {
@@ -146,26 +147,24 @@ you don't know what you are doing, it is a good decision to keep this section un
     }
 
 
-
-
 **Laser**
 
 
 This section describes the laser stepper motor values. The numbers defines how many lasers you
 are using (recommented values are 1 and 2). The color defines the color of the Laser. Green
 should work also with a value of  "G (RGB)". The interleaved setting on True means that the
-scanner will calculate a background difference image while it is detecting the laser. This
-value on True will increases the scanning time but scanners without a case (e.g. ciclop, cowtech atlas etc.)
-will work with the interleaved value on True.
+scanner will calculate a background difference image while it is detecting the laser. The interleaved
+setting should be used for scanners without a housing (cicclop, cowtech, atlas etc.). Keep in mind
+that interleaved processing will increase the scan time.
 
-.. code-block:: javascript
+.. code-block:: JSON
    :linenos:
 
-    "laser": {
-        "numbers": 1,
-        "color": "R (RGB)"
-        "interleaved": False
-    }
+      "laser":{
+         "numbers": 1,
+         "color": "R (RGB)",
+         "interleaved": False,
+      }
 
 
 If you want to use the second laser you should increase the value "numbers" to 2.
@@ -174,8 +173,9 @@ If you want to use the second laser you should increase the value "numbers" to 2
 
 
 ​In this section you can change the path for the converter which transforms the scanned pixel data into another format (e.g. .stl).
+It is not supported in FabScanPi-Server versions >= 9.3.0
 
-.. code-block:: javascript
+.. code-block:: JSON
    :linenos:
 
     "meshlab": {
@@ -188,7 +188,7 @@ If you want to use the second laser you should increase the value "numbers" to 2
 
 In this section you can change the turntable settings. The radius of the turntable is in millimeters (mm). In the default case the motor is set to 1/16 step mode. A motor with 200 steps per turn can then perform 3200 steps. Radius is the radius of the turntable in millimeters (mm).
 
-.. code-block:: javascript
+.. code-block:: JSON
    :linenos:
 
     "process_numbers": 4,
@@ -203,7 +203,7 @@ In this section you can change the turntable settings. The radius of the turntab
 
 Preview Resolution is the resolution value for the settings window. Resolution is the resolution for the picamera python module. You can have a look to the documentation of picamera. If you set this to other values please be sure what you are doing, not all resolutions are supportedby the picam. Some might lead to slower image capturing.
 
-.. code-block:: javascript
+.. code-block:: JSON
    :linenos:
 
 
@@ -222,7 +222,10 @@ Preview Resolution is the resolution value for the settings window. Resolution i
         "type": "PICAM"
     }
 
-
+Rotate can be used to rotate the image by 90 degree. The values hflip and vflip can be used for horizontal and
+vertical image flipping. The default camera type is PICAM. The FabScanPi-Server does not support other camera types until now.
+The default resolutions do work best with the FabScanPi-Server. You can try to change the resolution but not every
+value will work. Have a look at the `supported Raspberry Pi Camera modes <https://picamera.readthedocs.io/en/release-1.13/fov.html#sensor-modes>`_.
 
 
 **Serial**
@@ -233,27 +236,34 @@ In this section you can set your port. By default this value is not set, because
 The autoflash option is True by default, that means that the firmware is flashed automatically to the Arduino or FabScanPi HAT. If you want to use a custom board e.g. sanguinololu, you can set thisto False and flash the Firmware manually to your board.
 ​
 
-.. code-block:: javascript
+.. code-block:: JSON
    :linenos:
 
-    "serial": {
+    "connector": {
+        "type": "serial",
+        "firmware": "fabscanpi",
         "baudrate": 115200,
         "autoflash": "True",
+        "flash_baudrate": 115200,
         "port": "/dev/ttyAMA0"
-    }
+    },
 
 The default firmware flashing baudrate can be changed by adding  "flash_baudrate" to the serial settings.
+Possible values for fimrware are fabsccanpi, ciclop, cncshield, snguinololu. The current version of FabScanPi-Server
+supports only one connector type which is serial. The baudrate is a fixed value and depends on how the baudrate is
+set in the fimrware. All firmwares work with 115200 baud, except the ciclop fimrware which works only with 14400 baud.
+
 
 **Texture illumination**
 
 
 In this section you can change the pre-set brightness level of the LED-Ring during texture scan.
 
-.. code-block:: javascript
+.. code-block:: JSON
    :linenos:
 
     "texture_illumination": 140
-    }
+
 
 
 **Calibration Values**
@@ -265,7 +275,7 @@ In this section you can change the parameters of the configuration sheet. If you
 .. note:: There is a new " 8x6 Calibration Pattern". If you are still using the old 9x6 Pattern you'll need to modify the columns value:
 
 
-.. code-block:: javascript
+.. code-block:: JSON
    :linenos:
 
     "scanner_type": "laserscanner",
@@ -302,7 +312,7 @@ In this section you can change the parameters of the configuration sheet. If you
 In this section you can check the calibration parameters. Please make sure you have performed the auto-calibration before starting your first scan.
 Do not change these values manually. This values are generated by the autocalibration process.
 
-.. code-block:: javascript
+.. code-block:: JSON
    :linenos:
 
         "camera_matrix": [
@@ -369,7 +379,7 @@ Do not change these values manually. This values are generated by the autocalibr
 
 This setting can be used for keeping the raw images.
 
-.. code-block:: javascript
+.. code-block:: JSON
    :linenos:
 
     "keep_raw_images": "True",
@@ -381,7 +391,7 @@ the "discoverable" flag can be used to make the fabscan discoverable
 on find.fabscan.org. This will help you to discover the ip address
 of your fabscan.
 
-.. code-block:: javascript
+.. code-block:: JSON
    :linenos:
 
     "discoverable": "True",
@@ -390,7 +400,7 @@ The "online_lookuo_ip" setting is used to check if the fabscan is
 online or not. This will prevent long timeouts when the user interface
 is called. The default value is a google dns ip address.
 
-.. code-block:: javascript
+.. code-block:: JSON
    :linenos:
 
     "online_lookup_ip": "8.8.8.8"

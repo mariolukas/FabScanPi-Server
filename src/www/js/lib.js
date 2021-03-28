@@ -83803,21 +83803,21 @@ THREE.DefaultLoadingManager = new THREE.LoadingManager();
  * Limitations: ASCII decoding assumes file is UTF-8.
  *
  * Usage:
- *      var loader = new THREE.PLYLoader();
- *      loader.load('./models/ply/ascii/dolphins.ply', function (geometry) {
+ *	var loader = new THREE.PLYLoader();
+ *	loader.load('./models/ply/ascii/dolphins.ply', function (geometry) {
  *
- *              scene.add( new THREE.Mesh( geometry ) );
+ *		scene.add( new THREE.Mesh( geometry ) );
  *
- *      } );
+ *	} );
  *
  * If the PLY file uses non standard property names, they can be mapped while
  * loading. For example, the following maps the properties
- * 鈥渄iffuse_(red|green|blue)鈥 in the file to standard color names.
+ * “diffuse_(red|green|blue)” in the file to standard color names.
  *
  * loader.setPropertyNameMapping( {
- *      diffuse_red: 'red',
- *      diffuse_green: 'green',
- *      diffuse_blue: 'blue'
+ *	diffuse_red: 'red',
+ *	diffuse_green: 'green',
+ *	diffuse_blue: 'blue'
  * } );
  *
  */
@@ -83968,44 +83968,44 @@ THREE.PLYLoader.prototype = {
 
 			switch ( lineType ) {
 
-				case "format":
+			case "format":
 
-					header.format = lineValues[0];
-					header.version = lineValues[1];
+				header.format = lineValues[0];
+				header.version = lineValues[1];
 
-					break;
+				break;
 
-				case "comment":
+			case "comment":
 
-					header.comments.push(line);
+				header.comments.push(line);
 
-					break;
+				break;
 
-				case "element":
+			case "element":
 
-					if ( !(currentElement === undefined) ) {
+				if ( !(currentElement === undefined) ) {
 
-						header.elements.push(currentElement);
+					header.elements.push(currentElement);
 
-					}
+				}
 
-					currentElement = Object();
-					currentElement.name = lineValues[0];
-					currentElement.count = parseInt( lineValues[1] );
-					currentElement.properties = [];
+				currentElement = Object();
+				currentElement.name = lineValues[0];
+				currentElement.count = parseInt( lineValues[1] );
+				currentElement.properties = [];
 
-					break;
+				break;
 
-				case "property":
+			case "property":
 
-					currentElement.properties.push( make_ply_element_property( lineValues, this.propertyNameMapping ) );
+				currentElement.properties.push( make_ply_element_property( lineValues, this.propertyNameMapping ) );
 
-					break;
+				break;
 
 
-				default:
+			default:
 
-					console.log("unhandled", lineType, lineValues);
+				console.log("unhandled", lineType, lineValues);
 
 			}
 
@@ -84025,14 +84025,14 @@ THREE.PLYLoader.prototype = {
 
 		switch ( type ) {
 
-			case 'char': case 'uchar': case 'short': case 'ushort': case 'int': case 'uint':
-			case 'int8': case 'uint8': case 'int16': case 'uint16': case 'int32': case 'uint32':
+		case 'char': case 'uchar': case 'short': case 'ushort': case 'int': case 'uint':
+		case 'int8': case 'uint8': case 'int16': case 'uint16': case 'int32': case 'uint32':
 
-				return parseInt( n );
+			return parseInt( n );
 
-			case 'float': case 'double': case 'float32': case 'float64':
+		case 'float': case 'double': case 'float32': case 'float64':
 
-				return parseFloat( n );
+			return parseFloat( n );
 
 		}
 
@@ -84090,7 +84090,7 @@ THREE.PLYLoader.prototype = {
 		var lines = body.split( '\n' );
 		var currentElement = 0;
 		var currentElementCount = 0;
-		geometry.useColor = false;
+		geometry.useColor = true;
 
 		for ( var i = 0; i < lines.length; i ++ ) {
 
@@ -84187,21 +84187,21 @@ THREE.PLYLoader.prototype = {
 		switch ( type ) {
 
 			// corespondences for non-specific length types here match rply:
-			case 'int8':            case 'char':     return [ dataview.getInt8( at ), 1 ];
+		case 'int8':		case 'char':	 return [ dataview.getInt8( at ), 1 ];
 
-			case 'uint8':           case 'uchar':    return [ dataview.getUint8( at ), 1 ];
+		case 'uint8':		case 'uchar':	 return [ dataview.getUint8( at ), 1 ];
 
-			case 'int16':           case 'short':    return [ dataview.getInt16( at, little_endian ), 2 ];
+		case 'int16':		case 'short':	 return [ dataview.getInt16( at, little_endian ), 2 ];
 
-			case 'uint16':  case 'ushort': return [ dataview.getUint16( at, little_endian ), 2 ];
+		case 'uint16':	case 'ushort': return [ dataview.getUint16( at, little_endian ), 2 ];
 
-			case 'int32':           case 'int':              return [ dataview.getInt32( at, little_endian ), 4 ];
+		case 'int32':		case 'int':		 return [ dataview.getInt32( at, little_endian ), 4 ];
 
-			case 'uint32':  case 'uint':     return [ dataview.getUint32( at, little_endian ), 4 ];
+		case 'uint32':	case 'uint':	 return [ dataview.getUint32( at, little_endian ), 4 ];
 
-			case 'float32': case 'float':    return [ dataview.getFloat32( at, little_endian ), 4 ];
+		case 'float32': case 'float':	 return [ dataview.getFloat32( at, little_endian ), 4 ];
 
-			case 'float64': case 'double': return [ dataview.getFloat64( at, little_endian ), 8 ];
+		case 'float64': case 'double': return [ dataview.getFloat64( at, little_endian ), 8 ];
 
 		}
 
@@ -84276,6 +84276,7 @@ THREE.PLYLoader.prototype = {
 };
 
 THREE.EventDispatcher.prototype.apply( THREE.PLYLoader.prototype );
+
 /**
  * @author aleeper / http://adamleeper.com/
  * @author mrdoob / http://mrdoob.com/

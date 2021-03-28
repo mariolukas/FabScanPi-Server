@@ -66,26 +66,32 @@ class ImageProcessor(ImageProcessorInterface):
         self.refinement_method = 'SGF' #possible  RANSAC, SGF
         self.image_height = self.config.file.camera.resolution.width
         self.image_width = self.config.file.camera.resolution.height
-        self._weight_matrix = self._compute_weight_matrix()
+        self.high_resolution = (self.config.file.camera.resolution.height, self.config.file.camera.resolution.width)
+        self.preview_resolution = (self.config.file.camera.preview_resolution.height, self.config.file.camera.preview_resolution.width)
+
+        #aruco.DICT_5X5_250
+        # Note: Pattern generated using the following link
+        # https://calib.io/pages/camera-calibration-pattern-generator
+        self.aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_100)
+        self.charuco_board = cv2.aruco.CharucoBoard_create(11, 9, 1, 0.5, self.aruco_dict)
+
+        self._full_res_weight_matrix = self._compute_weight_matrix(resolution=self.high_resolution)
+        self._preview_res_weight_matrix = self._compute_weight_matrix(resolution=self.preview_resolution)
+
         self._criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
         self.object_pattern_points = self.create_object_pattern_points()
 
-    def init(self, resolution):
+    def get_aruco_board(self):
+        return self.charuco_board
 
-        if self.config.file.camera.rotate == "True":
-            self.image_height = resolution[0]
-            self.image_width = resolution[1]
-        else:
-            self.image_height = resolution[1]
-            self.image_width = resolution[0]
+    def get_aruco_dict(self):
+        return self.aruco_dict
 
-        self._weight_matrix = self._compute_weight_matrix()
-
-    def _compute_weight_matrix(self):
+    def _compute_weight_matrix(self, resolution):
 
         _weight_matrix = np.array(
-            (np.matrix(np.linspace(0, self.image_width - 1, self.image_width)).T *
-             np.matrix(np.ones(self.image_height))).T)
+            (np.matrix(np.linspace(0, resolution[0] - 1, resolution[0])).T *
+             np.matrix(np.ones(resolution[1]))).T)
         return _weight_matrix
 
     def create_object_pattern_points(self):
@@ -186,24 +192,15 @@ class ImageProcessor(ImageProcessorInterface):
         elif self.laser_color_channel == 'U (YUV)':
             ret = cv2.split(cv2.cvtColor(image, cv2.COLOR_RGB2YUV))[1]
 
-        elif self.laser_color_detector == 'R (HSV)':
-            ret = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-            # lower mask (0-10)
-            # TODO: Use separate threshold value or 0 for 'V'
-            lower_red = np.array([0,50,self.threshold_value])
-            upper_red = np.array([10,255,255])
-            mask0 = cv2.inRange(ret, lower_red, upper_red)
+        elif self.laser_color_channel == 'R (HSV)':
+            hsv_frame = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-            # upper mask (170-180)
-            lower_red = np.array([160,50,self.threshold_value])
-            upper_red = np.array([180,255,255])
-            mask1 = cv2.inRange(ret, lower_red, upper_red)
-
-            # join masks
-            mask = mask0+mask1
-
-            ret = cv2.split(ret)[2]
-            ret[np.where(mask==0)] = 0
+            redHueArea = 30
+            redRange = ((hsv_frame[:, :, 0] + 360 + redHueArea) % 360)
+            hsv_frame[np.where((2 * redHueArea) > redRange)] = [0, 0, 0]
+            hsv_frame[np.where(hsv_frame[:, :, 1] < 95)] = [0, 0, 0]
+            rgb = cv2.cvtColor(hsv_frame, cv2.COLOR_HSV2RGB)
+            ret = cv2.split(rgb)[2]
 
         return ret
 
@@ -246,15 +243,21 @@ class ImageProcessor(ImageProcessorInterface):
             u = (dr - v * math.sin(thetar)) / math.cos(thetar)
         return u, v
 
-    def compute_2d_points(self, image, index=0, roi_mask=True, refinement_method='SGF'):
-        if image is not None:
+    def compute_2d_points(self, image, index=0, roi_mask=True, preview=False, refinement_method='SGF'):
 
+        if preview:
+            _weight_matrix = self._preview_res_weight_matrix
+        else:
+            _weight_matrix = self._full_res_weight_matrix
+
+        if image is not None:
+            image = cv2.GaussianBlur(image, (11,11), 0)
             image = self.compute_line_segmentation(image, index, roi_mask=roi_mask)
 
             # Peak detection: center of mass
             s = image.sum(axis=1)
             v = np.where(s > 0)[0]
-            u = (self._weight_matrix * image).sum(axis=1)[v] / s[v]
+            u = (_weight_matrix * image).sum(axis=1)[v] / s[v]
 
             if refinement_method == 'SGF':
                 # Segmented gaussian filter
@@ -269,12 +272,18 @@ class ImageProcessor(ImageProcessorInterface):
         return cam_image
 
     def get_settings_stream_frame(self, cam_image):
-        # cam_image = self.decode_image(cam_image)
+        cam_image = self.decode_image(cam_image)
         return cam_image
 
     def get_calibration_stream_frame(self, cam_image):
         cam_image = self.decode_image(cam_image)
-        cam_image = self.drawCorners(cam_image)
+        gray_image = cv2.cvtColor(cam_image, cv2.COLOR_RGB2GRAY)
+        corners = cv2.goodFeaturesToTrack(gray_image, self.config.file.calibration.pattern.columns*self.config.file.calibration.pattern.rows, 0.01, 10)
+        corners = np.int0(corners)
+        for i in corners:
+            x, y = i.ravel()
+            cv2.circle(cam_image, (x, y), 3, (0, 0, 255), -1)
+
         return cam_image
 
     def get_adjustment_stream_frame(self, cam_image):
@@ -290,37 +299,42 @@ class ImageProcessor(ImageProcessorInterface):
         return image
 
     def get_laser_stream_frame(self, image, type='CAMERA'):
-        image = self.decode_image(image)
-        if bool(self.settings.file.show_laser_overlay):
-            points, ret_img = self.compute_2d_points(image, roi_mask=False)
-            u, v = points
-            c = list(zip(u, v))
+        try:
 
-            for t in c:
-                cv2.line(image, (int(t[0]) - 1, int(t[1])), (int(t[0]) + 1, int(t[1])), (255, 0, 0), thickness=1,
-                         lineType=8, shift=0)
+            image = self.decode_image(image, decode=False)
 
-        if bool(self.settings.file.show_calibration_pattern):
-            cv2.line(image, (int(0.5*image.shape[1]), 0), (int(0.5*image.shape[1]), image.shape[0]), (0, 255, 0), thickness=1, lineType=8, shift=0)
-            cv2.line(image, (0, int(0.5*image.shape[0])), (image.shape[1], int(0.5*image.shape[0])), (0, 255, 0), thickness=1, lineType=8, shift=0)
+            if bool(self.settings.file.show_laser_overlay):
+                points, ret_img = self.compute_2d_points(image, roi_mask=False, preview=True)
+                u, v = points
+                c = list(zip(u, v))
 
+                for t in c:
+                    cv2.line(image, (int(t[0]) - 1, int(t[1])), (int(t[0]) + 1, int(t[1])), (255, 0, 0), thickness=1,
+                             lineType=8, shift=0)
+
+            if bool(self.settings.file.show_calibration_pattern):
+                cv2.line(image, (int(0.5*image.shape[1]), 0), (int(0.5*image.shape[1]), image.shape[0]), (0, 255, 0), thickness=1, lineType=8, shift=0)
+                cv2.line(image, (0, int(0.5*image.shape[0])), (image.shape[1], int(0.5*image.shape[0])), (0, 255, 0), thickness=1, lineType=8, shift=0)
+        except Exception as e:
+            self._logger.exception(e)
 
         return image
 
-    def decode_image(self, image):
-        image = cv2.imdecode(image, 1)
+    def decode_image(self, image, decode=True):
+        #if decode:
+        #    image = cv2.imdecode(image, 1)
         if self.config.file.camera.rotate == "True":
             image = cv2.transpose(image)
         if self.config.file.camera.hflip == "True":
             image = cv2.flip(image, 1)
         if self.config.file.camera.vflip == "True":
             image = cv2.flip(image, 0)
-
         return image
 
     #FIXME: rename color_image into texture_image
     def process_image(self, angle, laser_image, color_image=None, index=0):
         ''' Takes picture and angle (in degrees).  Adds to point cloud '''
+
 
         #laser_image = self.decode_image(laser_image)
 
@@ -425,27 +439,40 @@ class ImageProcessor(ImageProcessorInterface):
         return d / np.dot(n, x) * x
 
 
-    def detect_corners(self, image, flags=None):
-        corners = self._detect_chessboard(image, flags)
-        return corners
+    def detect_corners(self, image, flags=None, type="chessboard"):
+        ret = None
+        corners = None
+        ids = None
+        imsize = None
+
+        if type == "chessboard":
+            ret, corners = self._detect_chessboard(image, flags)
+        elif type == "charucoboard":
+            ret, corners, ids, imsize = self._detect_charucoboard(image)
+
+        return ret, corners, ids, imsize
 
     def detect_pose(self, image, flags=None):
-        corners = self._detect_chessboard(image, flags)
+
+        _, corners, ids, imsize = self.detect_corners(image, flags=flags, type=self.config.file.calibration.pattern.type )
         if corners is not None:
             ret, rvecs, tvecs = cv2.solvePnP(
                 self.object_pattern_points, corners,
-                self.config.file.calibration.camera_matrix, self.config.file.calibration.distortion_vector)
+                np.array(self.config.file.calibration.camera_matrix), np.array(self.config.file.calibration.distortion_vector))
             if ret:
                 return (cv2.Rodrigues(rvecs)[0], tvecs, corners)
 
     def detect_pattern_plane(self, pose):
-        if pose is not None:
-            R = pose[0]
-            t = pose[1].T[0]
-            c = pose[2]
-            n = R.T[2]
-            d = np.dot(n, t)
-            return (d, n, c)
+            if pose is not None:
+                R = pose[0]
+                t = pose[1].T[0]
+                c = pose[2]
+                n = R.T[2]
+                d = np.dot(n, t)
+                return (d, n, c)
+            else:
+                return None
+
 
 
     def pattern_mask(self, image, corners):
@@ -463,7 +490,28 @@ class ImageProcessor(ImageProcessorInterface):
                 image = cv2.bitwise_and(image, image, mask=mask)
         return image
 
+    def _detect_charucoboard(self, image):
+        """
+        Charuco base pose estimation.
+        """
+
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        corners, ids, _ = cv2.aruco.detectMarkers(gray, self.aruco_dict)
+
+        if len(corners) > 0:
+            ret, c_corners, c_ids = cv2.aruco.interpolateCornersCharuco(markerCorners=corners, markerIds=ids, image=gray, board=self.charuco_board, minMarkers=0)
+            # ret is the number of detected corners
+            if ret > 0:
+                imsize = gray.shape
+                return ret, c_corners, c_ids, imsize
+        else:
+            self._logger.debug('Charuco detection Failed!')
+            return None, None
+
+
+
     def _detect_chessboard(self, image, flags=None):
+
 
         if image is not None:
             if self.config.file.calibration.pattern.rows > 2 and self.config.file.calibration.pattern.columns > 2:
@@ -477,4 +525,6 @@ class ImageProcessor(ImageProcessorInterface):
 
                 if ret:
                     cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), self._criteria)
-                    return corners
+                    return ret, corners
+                else:
+                    return None, None

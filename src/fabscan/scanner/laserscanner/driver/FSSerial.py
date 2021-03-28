@@ -26,7 +26,7 @@ class FSSerialCom(FSHardwareConnectorInterface):
 
         if hasattr(self.config.file.connector, 'port'):
             self._port = self.config.file.connector.port
-            self._logger.debug("Port in Config found")
+            self._logger.debug("Port in Config found using: {0}".format(self._port))
         else:
             self._port = "/dev/ttyAMA0"
 
@@ -216,10 +216,11 @@ class FSSerialCom(FSHardwareConnectorInterface):
 
         gcode = "01"
 
-        if blocking:
+        if bool(blocking) is True:
             gcode = "02"
 
         command = "G{0} T{1} F{2}".format(gcode, steps, speed)
+        #self._logger.debug(command)
         self.send_and_receive(command)
 
     def laser_on(self, laser):
@@ -227,7 +228,7 @@ class FSSerialCom(FSHardwareConnectorInterface):
             command = "M21"
         else:
             command = "M19"
-        self._logger.debug("Laser {0} Switched on".format(laser))
+        #self._logger.debug("Laser {0} Switched on".format(laser))
         self.send_and_receive(command)
 
     def laser_off(self, laser):
@@ -235,7 +236,7 @@ class FSSerialCom(FSHardwareConnectorInterface):
             command = "M22"
         else:
             command = "M20"
-        self._logger.debug("Laser {0} Switched off".format(laser))
+        #self._logger.debug("Laser {0} Switched off".format(laser))
         self.send_and_receive(command)
 
     def light_on(self, red, green, blue):
