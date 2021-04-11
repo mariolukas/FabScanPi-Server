@@ -45,6 +45,9 @@ class FSScanServer(object):
             self.upgrade = True
             self.upgrade_server()
 
+        if command == FSCommand.SHUTDOWN_SERVER:
+            self.shutdown_server()
+
     def restart(self, override_sys=False):
         message = {
             "message": "RESTARTING_SERVER",
@@ -95,8 +98,10 @@ class FSScanServer(object):
        except Exception as e:
          self._logger.error(e)
 
-       #os._exit(os.EX_OK)
 
+    def shutdown_server(self):
+        self.exit_services()
+        os._exit(os.EX_OK)
 
     def run(self):
         self._logger.info("FabScanPi-Server " + str(__version__))

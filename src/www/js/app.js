@@ -1060,12 +1060,15 @@
     host,
     http,
     localDebug,
+    port,
     ws;
       localDebug = $location.host() === 'localhost';
+      //localDebug = false
       config = null;
       host = $location.host();
       http = 'http';
       ws = 'ws';
+      port = $location.port();
       //console.log($location.protocol())
       if ($location.protocol() === 'https') {
         http = 'https';
@@ -1085,10 +1088,10 @@
         config = {
           installation: {
             host: host,
-            websocketurl: ws + '://' + host + ':8080/websocket',
-            httpurl: http + '://' + host + ':8080/',
+            websocketurl: ws + '://' + host + ':' + port + '/websocket',
+            httpurl: http + '://' + host + ':' + port + '/',
             newsurl: 'https://fabscanpi-server.readthedocs.io/en/latest/news/',
-            apiurl: http + '://' + host + ':8080/'
+            apiurl: http + '://' + host + ':' + port + '/'
           }
         };
       }

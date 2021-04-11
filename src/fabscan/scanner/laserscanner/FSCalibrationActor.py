@@ -66,6 +66,7 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         self.finish_camera_calibration = False
         self.estimated_t = [-5, 90, 320]
 
+        self.raw_image_count = 0
         self._point_cloud = [None, None]
         self.x = []
         self.y = []
@@ -82,10 +83,25 @@ class FSCalibrationActor(FSCalibrationActorInterface):
     def on_receive(self, event):
         if event[FSEvents.COMMAND] == "START_CALIBRATION":
             self._logger.debug("Calibration Mode: {0}".format(event['mode']))
-            self.reset_calibration_values()
+
+            if (event['mode'] == FSCalibrationMode.MODE_AUTO_CALIBRATION):
+                self.reset_calibration_values()
+                self.start_hardware_components()
 
             self.current_calibtation_mode = event['mode']
-            self.on_calbration_start()
+
+            if self.current_calibtation_mode:
+                self.on_calbration_start()
+            else:
+                message = {
+                    "message": "CALIBRATION_MODE_NOT_DEFINED",
+                    "level": "error"
+                }
+                self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+                event = FSEvent()
+
+                event.command = 'STOP'
+                self._eventmanager.publish(FSEvents.COMMAND, event)
 
         if event[FSEvents.COMMAND] == "STOP_CALIBRATION":
             self.on_calibtation_stop()
@@ -106,6 +122,7 @@ class FSCalibrationActor(FSCalibrationActorInterface):
             self.on_manual_calibration_trigger()
 
         if event[FSEvents.COMMAND] == "CALIBRATION_COMPLETE":
+            self.raw_image_count = 0
             self.on_calbration_complete()
 
     def reset_calibration_values(self):
@@ -126,6 +143,8 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         self._stop_calibration = False
         self.finish_camera_calibration = False
         self.position = 0
+        self._hardwarecontroller.reset_devices()
+
 
     def on_calbration_start(self):
 
@@ -144,12 +163,11 @@ class FSCalibrationActor(FSCalibrationActorInterface):
 
         try:
 
-            self.start_hardware_components()
-
-            if ( self.current_calibtation_mode == FSCalibrationMode.MODE_AUTO_CALIBRATION ):
+            if (self.current_calibtation_mode == FSCalibrationMode.MODE_AUTO_CALIBRATION):
                 self.on_auto_calibration_trigger(self._capture_camera_calibration, self._calculate_camera_calibration)
 
-            if ( self.current_calibtation_mode == FSCalibrationMode.MODE_SCANNER_CALIBRATION ):
+            if (self.current_calibtation_mode == FSCalibrationMode.MODE_SCANNER_CALIBRATION):
+                self.position = 0
                 self.on_auto_calibration_trigger(self._capture_scanner_calibration, self._calculate_scanner_calibration)
 
         except Exception as e:
@@ -163,17 +181,14 @@ class FSCalibrationActor(FSCalibrationActorInterface):
     def start_hardware_components(self):
         self._hardwarecontroller.turntable.enable_motors()
 
-        if self.config.file.laser.interleaved == "False":
-            self._logger.debug("Turning Leds on in non interleaved mode.")
-            self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
+        #if self.config.file.laser.interleaved == "False":
+        self._logger.debug("Turning Leds on in non interleaved mode.")
+        self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
         self._hardwarecontroller.start_camera_stream(mode="calibration")
 
     def stop_hardware_components(self):
-        self._hardwarecontroller.stop_camera_stream()
-
-        self._hardwarecontroller.led.off()
-        self._hardwarecontroller.turntable.disable_motors()
+        self._hardwarecontroller.reset_devices()
 
     def on_calibtation_stop(self):
         self.stop_hardware_components()
@@ -187,7 +202,7 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
     def on_calbration_complete(self):
-        self.stop_hardware_components()
+        #self.stop_hardware_components()
         event = FSEvent()
 
         event.command = 'CALIBRATION_COMPLETE'
@@ -228,6 +243,7 @@ class FSCalibrationActor(FSCalibrationActorInterface):
             # the calibration was stopped or just started.
             if not self._stop_calibration and self.position == 0:
                 self._hardwarecontroller.move_to_next_position(steps=self.quater_turn, speed=5000)
+                time.sleep(3)
 
             if abs(self.position) < self.quater_turn * 2:
                 self._logger.debug("Step {0} of {1} in {2}.".format(self.current_position, self.total_positions, self.current_calibtation_mode))
@@ -337,7 +353,12 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         image = self._capture_pattern()
         self.shape = image[:, :, 0].shape
 
-        #TODO: find out if it is better and try this...again.
+        if bool(self.config.file.keep_calibration_raw_images):
+            fs_image = FSImage()
+            fs_image.save_image(image, self.raw_image_count, "calibration", dir_name="calib_test")
+            self.raw_image_count += 1
+
+            #TODO: find out if it is better and try this...again.
         if (position > self.laser_calib_start and position < self.laser_calib_end):
            flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
         else:
@@ -361,11 +382,14 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         else:
             self._logger.debug("No corners detected moving on.")
 
-
-
     def _capture_scanner_calibration(self, position):
 
         pattern_image = self._capture_pattern()
+
+        if bool(self.config.file.keep_calibration_raw_images):
+            fs_image = FSImage()
+            fs_image.save_image(pattern_image, self.raw_image_count, "calibration", dir_name="calib_test")
+            self.raw_image_count += 1
 
         if (position >= self.laser_calib_start and position <= self.laser_calib_end):
             flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
@@ -400,6 +424,11 @@ class FSCalibrationActor(FSCalibrationActorInterface):
                     for i in range(self.config.file.laser.numbers):
 
                         image = self._capture_laser(i)
+
+                        if bool(self.config.file.keep_calibration_raw_images):
+                            fs_image = FSImage()
+                            fs_image.save_image(image, self.raw_image_count, "calibration", dir_name="calib_test")
+                            self.raw_image_count += 1
 
                         if self.config.file.laser.interleaved == "True":
                             image = cv2.subtract(image, pattern_image)
@@ -499,7 +528,7 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         # Return response
         result = True
 
-        if self.t is not None and np.linalg.norm(self.t - self.estimated_t) < 190:
+        if self.t is not None and np.linalg.norm(self.t - self.estimated_t) < 200:
             response_platform_extrinsics = (
                 self.R, self.t, center, point, normal, [self.x, self.y, self.z], circle)
         else:

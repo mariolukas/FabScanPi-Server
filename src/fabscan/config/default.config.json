@@ -16,7 +16,8 @@
             "square_size": 10,
             "rows": 6,
             "columns": 8,
-            "origin_distance": 37.2
+            "origin_distance": 37.2,
+            "type": "chessboard"
         },
         "camera_matrix": [],
         "distortion_vector": [],
@@ -68,7 +69,8 @@
         "port": "/dev/ttyAMA0"
     },
     "texture_illumination": 160,
-    "keep_raw_images": "True",
+    "keep_raw_images": "False",
+    "keep_calibration_raw_images": "False",
     "discoverable": "True",
     "online_lookup_ip": "8.8.8.8"
 }

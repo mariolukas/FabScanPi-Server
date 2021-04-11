@@ -125,11 +125,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         #self.turntable.start_turning()
 
     def settings_mode_off(self):
-        self.turntable.stop_turning()
-        self.led.off()
-        self.laser.off(laser=0)
-        self.laser.off(laser=1)
-        self.camera.stop_stream()
+        self.reset_hardware()
         self._settings_mode_is_off = True
 
     def get_picture(self, flush=False, preview=False):
@@ -154,9 +150,10 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self.led.off()
 
         for i in range(self.config.file.laser.numbers):
-            self.hardwareController.laser.off(i)
+            self.laser.off(i)
 
         self.turntable.stop_turning()
+        self.turntable.disable_motors()
 
     def get_laser_image(self, index):
             self.laser.on(laser=index)

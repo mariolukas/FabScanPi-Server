@@ -49,6 +49,7 @@ class FSCommand(object):
     RESTART_SERVER = "RESTART_SERVER"
     REBOOT_SYSTEM = "REBOOT_SYSTEM"
     SHUTDOWN_SYSTEM = "SHUTDOWN_SYSTEM"
+    SHUTDOWN_SERVER = "SHUTDOWN_SERVER"
     CALIBRATION_COMPLETE = "CALIBRATION_COMPLETE"
     NETCONNECT = "NETCONNECT"
     GET_SETTINGS = "GET_SETTINGS"
@@ -141,7 +142,7 @@ class FSScanner(threading.Thread):
         ## Start Scan Process
         elif command == FSCommand.START:
             if self._state is FSState.SETTINGS:
-                #if self.config.file.camera.type == 'dummy':
+
                 self.eventManager.publish(FSEvents.ON_STOP_MJPEG_STREAM, "STOP_MJPEG")
                 self._logger.info("Start command received...")
                 self.set_state(FSState.SCANNING)
@@ -193,19 +194,16 @@ class FSScanner(threading.Thread):
             self.set_state(FSState.CALIBRATING)
             #self.calibrationActor = self.calibrationActor.start()
             self.calibrationActor.tell({FSEvents.COMMAND: FSScanActorCommand.START_CALIBRATION, 'mode': event.mode})
-            #self.scanActor.tell({FSEvents.COMMAND: FSScanActorCommand.START_CALIBRATION, 'mode': event.mode})
             return
 
         elif command == FSCommand.TRIGGER_CAMERA_CALIBRATION_STEP:
             if self._state is FSState.CALIBRATING:
                 self.calibrationActor.tell({FSEvents.COMMAND: "TRIGGER_MANUAL_CAMERA_CALIBRATION_STEP"})
-                #self.scanActor.ask({FSEvents.COMMAND: FSScanActorCommand.NEXT_CALIBTATION_STEP})
                 return
 
         elif command == FSCommand.FINISH_MANUAL_CAMERA_CALIBRATION:
             if self._state is FSState.CALIBRATING:
                 self.calibrationActor.tell({FSEvents.COMMAND: "FINISH_MANUAL_CAMERA_CALIBRATION"})
-                #self.scanActor.ask({FSEvents.COMMAND: FSScanActorCommand.NEXT_CALIBTATION_STEP})
                 return
 
         elif command == FSCommand.CALIBRATION_COMPLETE:

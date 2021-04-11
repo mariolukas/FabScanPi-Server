@@ -16,7 +16,7 @@
             "square_size": 7,
             "rows": 8,
             "columns": 10,
-            "origin_distance": 47.2,
+            "origin_distance": 12,
             "type": "chessboard"
         },
         "camera_matrix": [],
@@ -70,6 +70,7 @@
     },
     "texture_illumination": 250,
     "keep_raw_images": "True",
+    "keep_calibration_raw_images": "True",
     "discoverable": "True",
     "online_lookup_ip": "8.8.8.8"
 }
