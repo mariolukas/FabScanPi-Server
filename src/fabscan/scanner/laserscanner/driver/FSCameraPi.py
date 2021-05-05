@@ -18,8 +18,9 @@ from fabscan.FSSettings import SettingsInterface
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from fabscan.scanner.interfaces.driver.FSCamera import FSRingBuffer, FPS
 import picamera
+from picamera.array import bytes_to_rgb
 
-NUMBER_OF_CAMERA_THREADS=1
+NUMBER_OF_CAMERA_THREADS=3
 
 @inject(
     config=ConfigInterface,
@@ -56,7 +57,7 @@ class CamProcessor(threading.Thread):
                 try:
                     self.stream.seek(0)
                     image = np.fromstring(self.stream.getvalue(), dtype=np.uint8)
-
+                    #image = bytes_to_rgb(self.stream.getvalue(), (self.config.file.camera.resolution.width, self.config.file.camera.resolution.height) )
                     image = cv2.imdecode(image, 1)
 
                     resolution = image.shape[:2]
@@ -163,11 +164,10 @@ class FSCameraPi(threading.Thread):
         self.low_res_buffer = FSRingBuffer(3)
 
         self.idle = True
-        self.resolution = (
-        self.config.file.camera.resolution.width, self.config.file.camera.resolution.height)
+        self.resolution = (self.config.file.camera.resolution.width, self.config.file.camera.resolution.height)
         self.camera = picamera.PiCamera(resolution=self.resolution)
 
-        self.camera.framerate = 30
+        #self.camera.framerate = 30
         # Wait for the automatic gain control to settle
         self.start()
 

@@ -15,6 +15,7 @@ from fabscan.FSConfig import ConfigInterface
 from fabscan.lib.util.FSInject import inject
 from fabscan.FSVersion import __version__
 
+
 class PointCloudError(Exception):
 
     def __init__(self):
@@ -107,7 +108,7 @@ class FSPointCloud():
                  os.makedirs(self._dir_name)
             file_name = self._dir_name +'/scan_' +filename + '.ply'
             self.file_path = file_name
-            file = open(file_name, 'wb')
+            file = open(file_name, 'wb', buffering=1)
             self.file_handler = file
             self.writeHeader()
             self._logger.info('File opened for writing ' + file_name)

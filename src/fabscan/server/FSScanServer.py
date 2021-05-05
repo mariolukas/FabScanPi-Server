@@ -22,7 +22,6 @@ from fabscan.FSSettings import SettingsInterface, SettingsSingleton, Settings
 from fabscan.scanner.interfaces import FSScannerFactory
 from fabscan.lib.util.FSUpdate import do_upgrade
 
-
 class FSScanServer(object):
     def __init__(self, args):
         self.system_exit = FSSystemExit()

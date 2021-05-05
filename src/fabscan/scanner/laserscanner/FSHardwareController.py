@@ -43,9 +43,10 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self._settings_mode_is_off = True
         self.camera = None
         self._image_processor = imageprocessor
-        self.camera = FSCameraFactory.create(self.config.file.camera.type)
+
 
         self.hardware_connector = FSHardwareConnectorFactory.create(self.config.file.connector.type)
+
 
         self.turntable = Turntable(hardware_connector=self.hardware_connector)
         self.laser = Laser(self.hardware_connector)
@@ -91,10 +92,11 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
             self.laser.off(laser_index)
         self.led.off()
         self.turntable.stop_turning()
-        self.camera.stop_stream()
+        #self.camera.stop_stream()
 
     def flush(self):
-        self.camera.high_res_buffer.flush()
+        pass
+       # self.camera.high_res_buffer.flush()
 
     def get_devices_as_json(self):
 
@@ -118,9 +120,8 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def settings_mode_on(self):
         #while not self.camera.is_idle():
         #    time.sleep(0.1)
-        self.camera.start_stream(mode="settings")
         self._settings_mode_is_off = False
-        self.camera.flush_stream()
+        #self.camera.flush_stream()
         self.laser.on(laser=0)
         #self.turntable.start_turning()
 
@@ -129,9 +130,8 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self._settings_mode_is_off = True
 
     def get_picture(self, flush=False, preview=False):
-        if flush:
-            self.camera.flush_stream()
-            time.sleep(0.4)
+        if not self.camera:
+            self.camera = FSCameraFactory.create(self.config.file.camera.type).start_stream()
         try:
             img = self.camera.get_frame(preview=preview)
         except Exception as e:
@@ -154,10 +154,12 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
         self.turntable.stop_turning()
         self.turntable.disable_motors()
+        #if self.camera:
+        #    self.camera.stop_stream()
 
     def get_laser_image(self, index):
             self.laser.on(laser=index)
-            time.sleep(0.2)
+            time.sleep(0.3)
             laser_image = self.get_picture(flush=True)
             self.laser.off(laser=index)
             return laser_image
@@ -191,12 +193,14 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
        #TODO: implement this
        #return self.camera.is_connected()
 
-    def start_camera_stream(self, mode="default"):
-        self.camera.start_stream(mode)
+    def start_camera_stream(self):
+       self.camera = FSCameraFactory.create(self.config.file.camera.type).start_stream()
 
     def stop_camera_stream(self):
-        self.camera.stop_stream()
+       self.camera.stop_stream()
+       self.camera = None
 
     def destroy_camera_device(self):
-        self.camera.destroy_camera()
+        pass
+        #self.camera.destroy_camera()
 

@@ -157,6 +157,7 @@ class FSSerialCom(FSHardwareConnectorInterface):
         self.send(message)
         self._serial.flush()
         while True:
+
             try:
                 command = self.readline()
                 command = self.readline()
@@ -164,6 +165,8 @@ class FSSerialCom(FSHardwareConnectorInterface):
             except Exception as e:
                 self._logger.debug("Send/Receive Error: {0}".format(e))
                 break
+
+            del command
 
 
     def readline(self):
@@ -188,6 +191,8 @@ class FSSerialCom(FSHardwareConnectorInterface):
                 if i >= 0:
                     r = self.buf + data[:i+1]
                     self.buf[0:] = data[i+1:]
+
+                    del data
                     return r
                 else:
                     self.buf.extend(data)

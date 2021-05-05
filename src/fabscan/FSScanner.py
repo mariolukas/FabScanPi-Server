@@ -7,10 +7,8 @@ __email__ = "info@mariolukas.de"
 import time
 import threading
 import logging
-import os
 import multiprocessing
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 
 from fabscan.FSVersion import __version__
 
@@ -24,6 +22,7 @@ from fabscan.lib.util.FSInject import inject
 from fabscan.lib.util.FSUpdate import upgrade_is_available, do_upgrade
 from fabscan.lib.util.FSDiscovery import register_to_discovery
 from fabscan.lib.util.FSSystemWatch import get_cpu_temperature
+
 
 class FSState(object):
     IDLE = "IDLE"
@@ -67,7 +66,7 @@ class FSCommand(object):
 )
 class FSScanner(threading.Thread):
     def __init__(self, settings, config, eventmanager, scanActor, calibrationActor):
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, name=__name__+'-Thread')
 
         self._logger = logging.getLogger(__name__)
         self.settings = settings

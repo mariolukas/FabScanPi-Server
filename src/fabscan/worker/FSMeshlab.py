@@ -45,6 +45,7 @@ class FSMeshlabTask(threading.Thread):
                     if param.attributes['name'].value == "SampleNum":
                         param.setAttribute('value', str(int(pointcloud_size/3)))
 
+
             except xml.parsers.expat.ExpatError as ex:
                 print(ex)
 

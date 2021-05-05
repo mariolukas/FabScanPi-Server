@@ -185,7 +185,7 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         self._logger.debug("Turning Leds on in non interleaved mode.")
         self._hardwarecontroller.led.on(self.calibration_brightness[0], self.calibration_brightness[1], self.calibration_brightness[2])
 
-        self._hardwarecontroller.start_camera_stream(mode="calibration")
+        #self._hardwarecontroller.start_camera_stream(mode="calibration")
 
     def stop_hardware_components(self):
         self._hardwarecontroller.reset_devices()

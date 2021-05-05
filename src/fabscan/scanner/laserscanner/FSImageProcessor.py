@@ -8,6 +8,7 @@ import math
 import logging, os
 import numpy as np
 import scipy.ndimage
+import gc
 import cv2
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
@@ -81,6 +82,7 @@ class ImageProcessor(ImageProcessorInterface):
         self._criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
         self.object_pattern_points = self.create_object_pattern_points()
 
+
     def get_aruco_board(self):
         return self.charuco_board
 
@@ -92,6 +94,7 @@ class ImageProcessor(ImageProcessorInterface):
         _weight_matrix = np.array(
             (np.matrix(np.linspace(0, resolution[0] - 1, resolution[0])).T *
              np.matrix(np.ones(resolution[1]))).T)
+        gc.collect()
         return _weight_matrix
 
     def create_object_pattern_points(self):
@@ -157,6 +160,7 @@ class ImageProcessor(ImageProcessorInterface):
                 mask[i, _min[i]:_max[i]] = 255
                 # Apply mask
         image = cv2.bitwise_and(image, mask)
+        del mask
 
         return image
 
@@ -259,6 +263,8 @@ class ImageProcessor(ImageProcessorInterface):
             v = np.where(s > 0)[0]
             u = (_weight_matrix * image).sum(axis=1)[v] / s[v]
 
+            del _weight_matrix
+
             if refinement_method == 'SGF':
                 # Segmented gaussian filter
                 u, v = self._sgf(u, v, s)
@@ -283,6 +289,8 @@ class ImageProcessor(ImageProcessorInterface):
         for i in corners:
             x, y = i.ravel()
             cv2.circle(cam_image, (x, y), 3, (0, 0, 255), -1)
+
+        del gray_image
 
         return cam_image
 
@@ -315,14 +323,19 @@ class ImageProcessor(ImageProcessorInterface):
             if bool(self.settings.file.show_calibration_pattern):
                 cv2.line(image, (int(0.5*image.shape[1]), 0), (int(0.5*image.shape[1]), image.shape[0]), (0, 255, 0), thickness=1, lineType=8, shift=0)
                 cv2.line(image, (0, int(0.5*image.shape[0])), (image.shape[1], int(0.5*image.shape[0])), (0, 255, 0), thickness=1, lineType=8, shift=0)
+            del u
+            del v
+            del points
+
         except Exception as e:
-            self._logger.exception(e)
+           pass
+           # self._logger.exception(e)
 
         return image
 
+
     def decode_image(self, image, decode=True):
-        #if decode:
-        #    image = cv2.imdecode(image, 1)
+
         if self.config.file.camera.rotate == "True":
             image = cv2.transpose(image)
         if self.config.file.camera.hflip == "True":
@@ -334,9 +347,6 @@ class ImageProcessor(ImageProcessorInterface):
     #FIXME: rename color_image into texture_image
     def process_image(self, angle, laser_image, color_image=None, index=0):
         ''' Takes picture and angle (in degrees).  Adds to point cloud '''
-
-
-        #laser_image = self.decode_image(laser_image)
 
         try:
             _theta = np.deg2rad(-angle)
@@ -360,6 +370,11 @@ class ImageProcessor(ImageProcessorInterface):
             u, v = points_2d
 
             texture = color_image[v, np.around(u).astype(int)].T
+
+            del points_2d
+            del image
+            del color_image
+            del point_cloud
 
             return masked_point_cloud, texture
         except Exception as e:

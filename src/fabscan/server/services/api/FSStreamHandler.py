@@ -3,6 +3,7 @@ import tornado.web
 import tornado.gen
 import time
 import logging
+import threading
 import cv2
 import numpy as np
 from fabscan.scanner.interfaces.FSScanActor import FSScanActorCommand
@@ -10,7 +11,7 @@ from fabscan.FSEvents import FSEvents, FSEventManagerSingleton
 from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor   # `pip install futures` for python2
 
-MAX_WORKERS = 16
+MAX_WORKERS = 1
 
 class FSStreamHandler(tornado.web.RequestHandler):
     executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
@@ -21,6 +22,9 @@ class FSStreamHandler(tornado.web.RequestHandler):
         self.eventmanager = eventmanager.get_instance()
         self.served_image_timestamp = 0
         self.stop_mjpeg = False
+
+        for thread in threading.enumerate():
+            print(thread.name)
 
         self.types = {
             'laser':       FSScanActorCommand.GET_LASER_STREAM,

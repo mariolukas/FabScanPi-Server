@@ -63,7 +63,7 @@ class FSWebSocketHandler(tornado.websocket.WebSocketHandler):
     def on_socket_broadcast(self, events, message):
 
         try:
-            self.io_loop.add_callback_from_signal(self.write_message, message)
+            yield self.io_loop.add_callback_from_signal(self.write_message, message)
             del message
             gc.collect()
 
@@ -79,7 +79,7 @@ class FSWebSocketHandler(tornado.websocket.WebSocketHandler):
             del message['data']['client']
 
             json_encoded_message = json.dumps(message)
-            self.io_loop.add_callback_from_signal(self.write_message, json_encoded_message)
+            yield self.io_loop.add_callback_from_signal(self.write_message, json_encoded_message)
             del message
             del json_encoded_message
             gc.collect()
