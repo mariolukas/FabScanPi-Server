@@ -4,6 +4,7 @@ __license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 import time
+from memory_profiler import profile
 
 class Laser:
     def __init__(self, hardware_connector):

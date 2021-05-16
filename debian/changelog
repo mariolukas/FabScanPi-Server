@@ -8,6 +8,8 @@ fabscanpi-server (0.10.0) UNRELEASED; urgency=medium
   * added development documenation
   * added docker for FabScanPi-Server simulation ( makes development easier without the need of hardware )
   * added new firmware for ciclop scanner, supports WS2812 now
+  * fixed memory leaks
+
 
  -- Mario Lukas <info@fabscan.org>  Mar, 28 Oct 2021 21:46:00 +0100
 

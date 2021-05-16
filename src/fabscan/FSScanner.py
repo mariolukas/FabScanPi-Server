@@ -22,6 +22,7 @@ from fabscan.lib.util.FSInject import inject
 from fabscan.lib.util.FSUpdate import upgrade_is_available, do_upgrade
 from fabscan.lib.util.FSDiscovery import register_to_discovery
 from fabscan.lib.util.FSSystemWatch import get_cpu_temperature
+from fabscan.lib.util.FSMemoryProfiler import FSMemoryProfiler
 
 
 class FSState(object):
@@ -99,7 +100,10 @@ class FSScanner(threading.Thread):
             self.scheduler.add_job(self.run_discovery_service, 'interval', minutes=30, id='register_discovery_service')
             self._logger.info("Added discovery scheduling job.")
 
-        #self.scheduler.add_job(self.run_temperature_watch_service, 'interval', minutes=1, id='cpu_temperature_service')
+        #mem_debugger = FSMemoryProfiler()
+        #self.scheduler.add_job(mem_debugger.debug_memory, 'interval', minutes=1, id='memory_profiler')
+
+        self.scheduler.add_job(self.run_temperature_watch_service, 'interval', minutes=1, id='cpu_temperature_service')
 
     def run(self):
         while not self.exit:

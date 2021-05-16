@@ -23,9 +23,6 @@ class FSStreamHandler(tornado.web.RequestHandler):
         self.served_image_timestamp = 0
         self.stop_mjpeg = False
 
-        for thread in threading.enumerate():
-            print(thread.name)
-
         self.types = {
             'laser':       FSScanActorCommand.GET_LASER_STREAM,
             'adjustment':  FSScanActorCommand.GET_ADJUSTMENT_STREAM,
@@ -55,6 +52,7 @@ class FSStreamHandler(tornado.web.RequestHandler):
                 return jpeg.tobytes() #jpeg.tostring()
             else:
                 return np.zeros((1, 1, 3), np.uint8)
+
 
         except Exception as e:
            self._logger.warning("Error while trying to trigger the scan processor: {0}".format(e))

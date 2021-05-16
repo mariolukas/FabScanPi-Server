@@ -5,7 +5,6 @@ __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
 import cv2
-import numpy as np
 import time
 import logging
 import threading
@@ -79,6 +78,8 @@ class FSScanActor(FSScanActorInterface):
         if not "TBB" in cv_build_info:
             self._logger.warning("OpenCV does not support TBB. Falling back to single processing.")
             self.config.file.process_numbers = 1
+
+
 
     def get_steps_for_resolution(self, resolution_degree):
 
@@ -261,7 +262,6 @@ class FSScanActor(FSScanActorInterface):
     def create_laser_stream(self):
         try:
             image = self.hardwareController.get_picture()
-
             #image = self.image_processor.get_laser_stream_frame(image)
             return image
         except Exception as e:
@@ -324,6 +324,7 @@ class FSScanActor(FSScanActorInterface):
     ## general start sequence
 
     def start_scan(self):
+
         self.settings_mode_off()
         self._logger.info("Scan started")
         self._stop_scan = False
@@ -389,9 +390,9 @@ class FSScanActor(FSScanActorInterface):
         self._scan_contrast = self.settings.file.camera.contrast
         self._scan_saturation = self.settings.file.camera.saturation
         self.hardwareController.led.on(self.config.file.texture_illumination, self.config.file.texture_illumination, self.config.file.texture_illumination)
-        # wait until camera is settled
+
+        #let thee camera settle after turning on the led
         time.sleep(1)
-        self.hardwareController.camera.flush_stream()
 
 
     def scan_next_texture_position(self):
@@ -407,7 +408,7 @@ class FSScanActor(FSScanActorInterface):
                         self.init_texture_scan()
 
                     color_image = self.hardwareController.get_picture(flush=flush)
-                    color_image = self.image_processor.decode_image(color_image)
+                    color_image = self.image_processor.reorientate_image(color_image)
                     self.hardwareController.move_to_next_position(steps=self._resolution, speed=1200)
 
                     task = ImageTask(color_image, self._prefix, self.current_position, self._number_of_pictures, task_type="PROCESS_COLOR_IMAGE")
@@ -420,9 +421,7 @@ class FSScanActor(FSScanActorInterface):
 
                     if self.actor_ref.is_alive():
                         time.sleep(0.1)
-                        #self.self.texture_lock_event.clear()
                         self.actor_ref.tell({FSEvents.COMMAND: FSScanActorCommand._SCAN_NEXT_TEXTURE_POSITION})
-
                     else:
                         self._logger.error("Worker Pool died.")
                         self.stop_scan()
@@ -448,7 +447,7 @@ class FSScanActor(FSScanActorInterface):
 
     ## object scan callbacks
     def init_object_scan(self):
-        #self.hardwareController.start_camera_stream()
+
         if self._worker_pool is None or not self._worker_pool.is_alive():
             self._worker_pool = FSImageWorkerPool.start(scanActor=self.actor_ref)
         self._logger.info("Started object scan initialisation")
@@ -464,28 +463,23 @@ class FSScanActor(FSScanActorInterface):
             self.hardwareController.led.off()
 
     def scan_next_object_position(self):
+
         if not self._stop_scan:
             if self.current_position <= self._number_of_pictures and self.actor_ref.is_alive():
                 if self.current_position == 0:
                     self.init_object_scan()
 
-                #self._logger.debug('Start creating Task.')
                 for laser_index in range(self.config.file.laser.numbers):
                     laser_image = self.hardwareController.get_image_at_position(index=laser_index)
-
-                    #shared_mem = shared_memory.SharedMemory(create=True, size=laser_image.nbytes)
-                    #laser_image_shm = np.ndarray(laser_image.shape, dtype=laser_image.dtype, buffer=shared_mem.buf)
-                    #laser_image_shm[:] = laser_image[:]
-
-                    task = ImageTask(laser_image,self._prefix, self.current_position, self._number_of_pictures, index=laser_index)
+                    task = ImageTask(laser_image, self._prefix, self.current_position, self._number_of_pictures, index=laser_index)
 
                     self._worker_pool.tell(
                         {FSEvents.COMMAND: FSSWorkerPoolCommand.ADD_TASK, 'TASK': task}
                     )
+                    laser_image = None
 
                 self.current_position += 1
                 self.hardwareController.move_to_next_position(steps=self._resolution, speed=1200)
-                #self._logger.debug('New Image Task created.')
 
                 if self.actor_ref.is_alive():
                     self.actor_ref.tell({FSEvents.COMMAND: FSScanActorCommand._SCAN_NEXT_OBJECT_POSITION})
@@ -493,8 +487,7 @@ class FSScanActor(FSScanActorInterface):
                     self._logger.error("Worker Pool died.")
                     self.stop_scan()
 
-                #self._logger.debug('End creating Task.')
-
+        return
 
     def on_laser_detection_failed(self):
 
@@ -512,7 +505,7 @@ class FSScanActor(FSScanActorInterface):
         self.stop_scan()
 
         #self.hardwareController.destroy_camera_device()
-        self.finishFiles()
+        #self.finishFiles()
 
         self.hardwareController.turntable.stop_turning()
         self.hardwareController.led.off()
@@ -521,6 +514,7 @@ class FSScanActor(FSScanActorInterface):
 
     # on stop command by user
     def stop_scan(self):
+
         self._stop_scan = True
 
         self._starttime = 0
@@ -531,7 +525,6 @@ class FSScanActor(FSScanActorInterface):
 
         self.reset_scanner_state()
         self._logger.info("Scan stoped")
-        #self.hardwareController.stop_camera_stream()
 
         message = {
             "message": "SCAN_CANCELED",
@@ -549,56 +542,43 @@ class FSScanActor(FSScanActorInterface):
     def image_processed(self, result):
         if not self._stop_scan:
             if self._progress <= self._total and self.actor_ref.is_alive():
-                points = []
-
-                if not 'laser_index' in list(result.keys()):
-                    result['laser_index'] = -1
 
                 try:
                     scan_state = 'texture_scan'
+                    if not 'laser_index' in list(result.keys()):
+                        result['laser_index'] = -1
+
                     if result['image_type'] == 'depth' and result['point_cloud'] is not None:
                         scan_state = 'object_scan'
+                        self.append_points(result['point_cloud'], result['laser_index'])
+                        result['point_cloud'] = self.to_json(result['point_cloud'])
+                    else:
+                        result['point_cloud'] = []
 
-                        point_cloud = zip(result['point_cloud'][0], result['point_cloud'][1], result['point_cloud'][2],
-                                          result['texture'][0], result['texture'][1], result['texture'][2])
+                    message = {
+                        "laser_index": result['laser_index'],
+                        "points": result['point_cloud'],
+                        "progress": self._progress,
+                        "resolution": self._total,
+                        "starttime": self._starttime,
+                        "timestamp": self.get_time_stamp(),
+                        "state": scan_state
+                    }
 
-                        #for x, y, z, b, g, r in point_cloud:
-
-                        #   new_point = {"x": str(x), "y": str(z), "z": str(y), "r": str(r), "g": str(g), "b": str(b)}
-                        #   points.append(new_point)
-
-                        #   self.append_points((x, y, z, r, g, b,), result['laser_index'])
-
-                    # cleanup shred memory object
-                    #processed_shm = shared_memory.SharedMemory(name=result['shared_mem_id'])
-                    #processed_shm.close()
-                    #processed_shm.unlink()
+                    self.eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
+                    self._logger.debug("Step {0} of {1}".format(self._progress, self._total))
+                    result = None
+                    self._progress += 1
 
                 except Exception as err:
                     self._logger.warning("Image processing Failure: {0}".format(err))
 
-                message = {
-                    "laser_index": result['laser_index'],
-                    "points": points,
-                    "progress": self._progress,
-                    "resolution": self._total,
-                    "starttime": self._starttime,
-                    "timestamp": self.get_time_stamp(),
-                    "state": scan_state
-                }
-
-                #self.eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
-
-                del points
-                del message
-                del result
-
-                self._logger.debug("Step {0} of {1}".format(self._progress, self._total))
-
-                self._progress += 1
-
                 if self._progress-1 == self._total:
                     self.scan_complete()
+        return
+
+    def to_json(self, point_cloud):
+        return [{"x": str(x), "y": str(z), "z": str(y), "r": str(int(r)), "g": str(int(g)), "b": str(int(b))} for x, y, z, b, g, r in point_cloud]
 
 
     def scan_complete(self):
@@ -648,6 +628,7 @@ class FSScanActor(FSScanActorInterface):
             self.point_clouds[index].append_points(points)
         if len(self.point_clouds) > 1:
             self.both_cloud.append_points(points)
+        return
 
     def finishFiles(self):
 

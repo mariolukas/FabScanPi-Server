@@ -46,17 +46,18 @@ class FSPointCloud():
     def get_points(self):
         return self.points
 
+    def to_lines(self, point_cloud, binary=False):
+        if binary:
+            return [str(struct.pack("<fffBBB", x, y, z, int(r), int(g), int(b))) for x, y, z, b, g, r in point_cloud]
+        else:
+            return ["{0} {1} {2} {3} {4} {5}\n".format(str(x), str(y), str(z), str(int(r)), str(int(g)), str(int(b))) for x, y, z, b, g, r in point_cloud]
+
     def append_points(self, points):
 
-        x, y, z, r, g, b = points
-
-        if self.binary:
-            frame = str(struct.pack("<fffBBB", x, y, z, int(r), int(g), int(b)))
-        else:
-            frame = "{0} {1} {2} {3} {4} {5}\n".format(str(x), str(y), str(z), str(r), str(g), str(b))
-
-        self.file_handler.write(frame.encode(encoding='UTF-8'))
-        self.line_count += 1
+        for line in self.to_lines(points):
+            self.file_handler.write(line.encode(encoding='UTF-8'))
+            self.line_count += 1
+        return
 
     def append_texture(self, texture):
         texture = np.array(texture)
@@ -96,7 +97,6 @@ class FSPointCloud():
     def calculateNormals(self):
         pass
 
-
     def openFile(self, filename, postfix=''):
         basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self._dir_name = self.config.file.folders.scans+filename
@@ -108,7 +108,7 @@ class FSPointCloud():
                  os.makedirs(self._dir_name)
             file_name = self._dir_name +'/scan_' +filename + '.ply'
             self.file_path = file_name
-            file = open(file_name, 'wb', buffering=1)
+            file = open(file_name, 'wb')
             self.file_handler = file
             self.writeHeader()
             self._logger.info('File opened for writing ' + file_name)
@@ -152,7 +152,6 @@ class FSPointCloud():
         del self.points[:]
         self.points = None
         self.texture = None
-        gc.collect()
 
     def save_scene_stream(self, stream, binary=False):
 

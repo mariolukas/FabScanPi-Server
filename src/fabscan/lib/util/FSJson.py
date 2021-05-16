@@ -39,4 +39,3 @@ class YAMLobj(dict):
     def __delitem__(self, key):
         super(YAMLobj, self).__delitem__(key)
         del self.__dict__[key]
-        gc.collect()

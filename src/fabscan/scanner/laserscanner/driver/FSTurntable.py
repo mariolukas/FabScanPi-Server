@@ -4,7 +4,6 @@ __license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
-import time
 from fabscan.lib.util.FSInject import inject
 from fabscan.FSConfig import ConfigInterface
 

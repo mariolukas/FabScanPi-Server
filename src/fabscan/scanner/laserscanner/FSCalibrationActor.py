@@ -439,7 +439,7 @@ class FSCalibrationActor(FSCalibrationActorInterface):
                         fs_image = FSImage()
                         fs_image.save_image(image, alpha, "laser_"+str(i), dir_name="calibration")
 
-                        points_2d, _ = self._imageprocessor.compute_2d_points(image, roi_mask=False, refinement_method='RANSAC')
+                        points_2d = self._imageprocessor.compute_2d_points(image, roi_mask=False, refinement_method='RANSAC')
                         point_3d = self._imageprocessor.compute_camera_point_cloud(points_2d, distance, normal)
 
                         if self._point_cloud[i] is None:
@@ -477,13 +477,13 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         #pattern_image = self._hardwarecontroller.get_pattern_image()
         time.sleep(1.5)
         pattern_image = self._hardwarecontroller.get_picture()
-        pattern_image = self._imageprocessor.decode_image(pattern_image)
+        pattern_image = self._imageprocessor.reorientate_image(pattern_image)
         return pattern_image
 
     def _capture_laser(self, index):
         self._logger.debug("Capturing laser {0}".format(index))
         laser_image = self._hardwarecontroller.get_laser_image(index)
-        laser_image = self._imageprocessor.decode_image(laser_image)
+        laser_image = self._imageprocessor.reorientate_image(laser_image)
         return laser_image
 
     def _calculate_scanner_calibration(self):

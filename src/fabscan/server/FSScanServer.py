@@ -8,8 +8,6 @@ import time
 import logging
 import sys
 import os
-import json
-
 
 from .FSWebServer import FSWebServer
 from fabscan.FSVersion import __version__
@@ -22,8 +20,10 @@ from fabscan.FSSettings import SettingsInterface, SettingsSingleton, Settings
 from fabscan.scanner.interfaces import FSScannerFactory
 from fabscan.lib.util.FSUpdate import do_upgrade
 
+
 class FSScanServer(object):
     def __init__(self, args):
+        self._logger = logging.getLogger(__name__)
         self.system_exit = FSSystemExit()
         self.config_file = args.config
         self.settings_file = args.settings
@@ -35,7 +35,7 @@ class FSScanServer(object):
         self.scanner = None
         self.webserver = None
         self.eventManager = None
-        self._logger = logging.getLogger(__name__)
+
 
     def on_server_command(self, mgr, event):
         command = event.command

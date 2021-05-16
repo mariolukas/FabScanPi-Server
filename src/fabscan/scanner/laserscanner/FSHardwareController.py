@@ -7,7 +7,7 @@ __email__ = "info@mariolukas.de"
 import logging
 import time
 import cv2
-import numpy as np
+
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
 from fabscan.lib.util.FSInject import singleton
@@ -20,6 +20,7 @@ from fabscan.scanner.laserscanner.driver.FSLaser import Laser
 from fabscan.scanner.laserscanner.driver.FSLed import Led
 from fabscan.scanner.interfaces.FSHardwareConnectorFactory import FSHardwareConnectorFactory
 from fabscan.scanner.interfaces.FSCameraFactory import FSCameraFactory
+from memory_profiler import profile
 
 @singleton(
     config=ConfigInterface,
@@ -43,14 +44,16 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         self._settings_mode_is_off = True
         self.camera = None
         self._image_processor = imageprocessor
-
-
         self.hardware_connector = FSHardwareConnectorFactory.create(self.config.file.connector.type)
-
-
         self.turntable = Turntable(hardware_connector=self.hardware_connector)
         self.laser = Laser(self.hardware_connector)
         self.led = Led(self.hardware_connector)
+
+        self.led.on(255, 255, 255)
+        time.sleep(0.5)
+        self.camera = FSCameraFactory.create(self.config.file.camera.type).start_stream()
+        self.led.off()
+
         self._logger.debug("Reset FabScanPi HAT...")
         self.reset_devices()
 
@@ -92,11 +95,9 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
             self.laser.off(laser_index)
         self.led.off()
         self.turntable.stop_turning()
-        #self.camera.stop_stream()
 
     def flush(self):
         pass
-       # self.camera.high_res_buffer.flush()
 
     def get_devices_as_json(self):
 
@@ -108,22 +109,16 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
         return devices
 
-
     def call_test_function(self, device):
         device_name = str(device.name)
         device_value = str(device.function)
-        #self._logger.debug(device)
         call_function = self.hardware_test_functions.get(device_name).get("FUNCTIONS").get(device_value)
         call_function()
 
 
     def settings_mode_on(self):
-        #while not self.camera.is_idle():
-        #    time.sleep(0.1)
         self._settings_mode_is_off = False
-        #self.camera.flush_stream()
         self.laser.on(laser=0)
-        #self.turntable.start_turning()
 
     def settings_mode_off(self):
         self.reset_hardware()
@@ -154,15 +149,18 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
 
         self.turntable.stop_turning()
         self.turntable.disable_motors()
-        #if self.camera:
-        #    self.camera.stop_stream()
+
 
     def get_laser_image(self, index):
             self.laser.on(laser=index)
-            time.sleep(0.3)
+            time.sleep(0.4)
             laser_image = self.get_picture(flush=True)
             self.laser.off(laser=index)
             return laser_image
+
+    def get_camera(self):
+        return self.camera
+
 
     def get_image_at_position(self, index=0):
         '''
@@ -176,7 +174,7 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
         if self.config.file.laser.interleaved == "True":
             backrgound_image = self.get_picture(flush=True)
             laser_image = cv2.absdiff(backrgound_image, laser_image)
-
+            del backrgound_image
         return laser_image
 
     def move_to_next_position(self, steps=180, speed=2000, blocking=True):
@@ -199,8 +197,4 @@ class FSHardwareControllerSingleton(FSHardwareControllerInterface):
     def stop_camera_stream(self):
        self.camera.stop_stream()
        self.camera = None
-
-    def destroy_camera_device(self):
-        pass
-        #self.camera.destroy_camera()
 

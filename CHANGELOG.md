@@ -18,14 +18,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.11.0] - tbd
 ### TODO
+- add gpio connector for crickit HAT
 - introduce new user interface
 
-## [0.10.0] - tbd
+## [0.10.0]
+### Added
+- added factory for camera and serial driver
+- added serial dummy driver
+- added development documenation
+- added docker for FabScanPi-Server simulation ( makes development easier without the need of hardware )
+- added new firmware for ciclop scanner, supports WS2812 now
 
-### TODO
+### Changed
 - refactor serial driver make it more abstract to general connector interface
-- add connector for GPIO's
-- add connector for adafruit crickit board
+- refactored camera driver
+- refactored calibration processor, and introduced calibration actor instead
+- additional code cleanup
+- restructured whole documentation
+
+### Fixed
+- fixed memory leaks
 
 ## [0.9.4] - 2020-10-06
 

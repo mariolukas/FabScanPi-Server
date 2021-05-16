@@ -6,14 +6,12 @@ __email__ = "info@mariolukas.de"
 
 import linecache
 import os
-import tracemalloc
 
 from queue import Empty
 import multiprocessing
 import logging
 import time
 import numpy as np
-import threading
 
 from fabscan.worker.FSImageTask import ImageTask, FSTaskType
 from fabscan.scanner.interfaces.FSScanActor import FSScanActorCommand, FSScanActorInterface
@@ -24,33 +22,7 @@ from fabscan.lib.file.FSImage import FSImage
 from fabscan.scanner.interfaces.FSImageProcessor import ImageProcessorInterface
 from pykka import ThreadingActor
 from fabscan.FSEvents import FSEvents
-# memory debug
-tracemalloc.start()
 
-def display_top(snapshot, key_type='lineno', limit=3):
-    snapshot = snapshot.filter_traces((
-        tracemalloc.Filter(False, "<frozen importlib._bootstrap>"),
-        tracemalloc.Filter(False, "<unknown>"),
-    ))
-    top_stats = snapshot.statistics(key_type)
-
-    print("Top %s lines" % limit)
-    for index, stat in enumerate(top_stats[:limit], 1):
-        frame = stat.traceback[0]
-        # replace "/path/to/module/file.py" with "module/file.py"
-        filename = os.sep.join(frame.filename.split(os.sep)[-2:])
-        print("#%s: %s:%s: %.1f MB"
-              % (index, filename, frame.lineno, stat.size / 1024 / 1024))
-        line = linecache.getline(frame.filename, frame.lineno).strip()
-        if line:
-            print('    %s' % line)
-
-    other = top_stats[limit:]
-    if other:
-        size = sum(stat.size for stat in other)
-        print("%s other: %.1f MB" % (len(other), size / 1024 / 1024))
-    total = sum(stat.size for stat in top_stats)
-    print("Total allocated size: %.1f MB" % (total / 1024 / 1024))
 
 class FSSWorkerPoolCommand(object):
     CREATE = "CREATE"
@@ -68,12 +40,11 @@ class FSImageWorkerPool(ThreadingActor):
 
     def __init__(self, config, settings, scanActor):
         super(FSImageWorkerPool, self).__init__(self, config, settings, scanActor)
+        self._logger = logging.getLogger(__name__)
         self.input_muted = False
         self.scanActor = scanActor
         self.config = config
         self.settings = settings
-
-        self._logger = logging.getLogger(__name__)
 
         self._task_q = multiprocessing.Queue(self.config.file.process_numbers)
         self._output_q = multiprocessing.Queue(self.config.file.process_numbers)
@@ -189,8 +160,9 @@ class FSImageWorkerPool(ThreadingActor):
     imageprocessor=ImageProcessorInterface,
 )
 class FSImageWorkerProcess(multiprocessing.Process):
-    def __init__(self, image_task_q, output_q,   config, settings, scanActor, imageprocessor):
+    def __init__(self, image_task_q, output_q, config, settings, scanActor, imageprocessor):
         super(FSImageWorkerProcess, self).__init__(group=None)
+
         self.image_task_q = image_task_q
         self.output_q = output_q
         self.settings = settings
@@ -208,7 +180,6 @@ class FSImageWorkerProcess(multiprocessing.Process):
     def kill(self):
         self.exit = True
 
-
     def run(self):
         '''
             Image Process runner
@@ -218,7 +189,6 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
 
         while not self.exit:
-
 
             if not self.image_task_q.empty():
 
@@ -233,7 +203,6 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             self.exit = True
                             break
 
-
                         if (image_task.task_type == "PROCESS_COLOR_IMAGE"):
 
                             #image = self.image_processor.decode_image(image_task.image)
@@ -242,9 +211,7 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             data['points'] = []
                             data['image_type'] = 'color'
                             data['laser_index'] = None
-
                             self.output_q.put(data)
-
 
                         if (image_task.task_type == "PROCESS_DEPTH_IMAGE"):
                             #self._logger.debug('Image Processing starts.')
@@ -252,39 +219,25 @@ class FSImageWorkerProcess(multiprocessing.Process):
                                 #TODO: Save image here for creating debug information.
                                 #self.image.save_image(image_task.image, image_task.progress, image_task.prefix,
                                 #                      dir_name=image_task.prefix + '/raw_' + image_task.raw_dir)
-
-                                #existing_shm = shared_memory.SharedMemory(name=image_task.image)
-                                #laser_img = np.ndarray(image_task.shape, dtype=np.uint8, buffer=existing_shm.buf)
-                                #laser_img = self.image_processor.decode_image(laser_img)
-                                image_task.image = self.image_processor.decode_image(image_task.image)
+                                color_image = None
+                                image_task.image = self.image_processor.reorientate_image(image_task.image)
                                 angle = float(image_task.progress * 360) / float(image_task.resolution)
-                                color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
-                                point_cloud, texture = self.image_processor.process_image(angle, image_task.image, color_image, index=image_task.index)
 
+                                if bool(self.settings.file.color):
+                                    color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
+
+                                point_cloud = self.image_processor.process_image(angle, image_task.image, color_image, index=image_task.index)
 
                                 data['point_cloud'] = point_cloud
-                                data['texture'] = texture
                                 data['image_type'] = 'depth'
                                 data['laser_index'] = image_task.index
-                                #data['shared_mem_id'] = image_task.image
-
-                                # take memory snapshot
-                                #snapshot = tracemalloc.take_snapshot()
-                                #display_top(snapshot)
+                                image_task = None
+                                point_cloud = None
+                                color_image = None
 
                             except Exception as e:
                                 self._logger.exception(e)
                             self.output_q.put(data)
-
-                            del point_cloud
-                            del texture
-                            del angle
-                            del color_image
-
-                        del data
-                        del image_task
-
-                            #self._logger.debug('Image Processing finished.')
 
                 except Empty:
                     time.sleep(0.1)

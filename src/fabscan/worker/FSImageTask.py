@@ -12,8 +12,6 @@ class FSTaskType(object):
 
 class ImageTask():
 
-    #__slots__ = ["image", "raw_dir", "resolution", "task_type", "prefix", "index", "progress", "settings"]
-
     color_image = None
     laser_image = None
     progress = 0

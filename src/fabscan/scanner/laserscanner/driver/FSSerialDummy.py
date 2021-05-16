@@ -24,18 +24,22 @@ class FSSerialDummy(FSHardwareConnectorInterface):
     def _connect(self):
         self._connected = True
         self._logger.debug("Trying to connect Dummy Connector")
+        return
 
     def _close(self):
         self._connected = False
         self._logger.debug("Dummy Connector closed.")
+        return
 
     def _openSerial(self):
         self._connected = True
         self._logger.debug("Dummy Connector connected.")
+        return
 
     def send_and_receive(self, message):
         self.send(message)
         self._logger.debug("Message Received: {0}".format(message))
+        return
 
     def flush(self):
         pass
@@ -58,6 +62,7 @@ class FSSerialDummy(FSHardwareConnectorInterface):
 
         command = "G{0} T{1} F{2}".format(gcode, steps, speed)
         self.send_and_receive(command)
+        return
 
     def laser_on(self, laser):
         if laser == 0:
@@ -65,6 +70,7 @@ class FSSerialDummy(FSHardwareConnectorInterface):
         else:
             command = "M19"
         self.send_and_receive(command)
+        return
 
     def laser_off(self, laser):
         if laser == 0:
@@ -73,11 +79,14 @@ class FSSerialDummy(FSHardwareConnectorInterface):
             command = "M20"
         self._logger.debug("Laser {0} Switched off".format(laser))
         self.send_and_receive(command)
+        return
 
     def light_on(self, red, green, blue):
         command = "M05 R{0} G{1} B{2}".format(red, green, blue)
         self.send_and_receive(command)
+        return
 
     def light_off(self):
         command = "M05 R0 G0 B0"
         self.send_and_receive(command)
+        return

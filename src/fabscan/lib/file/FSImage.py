@@ -43,7 +43,7 @@ class FSImage(object):
         prefix = os.path.join(dir_name, "%s_{0}" % prefix)
         number = str(number).zfill(3)
         if os.path.isfile(prefix.format(number) + ".jpg"):
-            image = cv2.imread(prefix.format(number) + ".jpg")
+            image = cv2.imread(prefix.format(number) + ".jpg", cv2.COLOR_BGR2RGB)
             return image
         else:
             return None

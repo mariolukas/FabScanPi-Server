@@ -48,6 +48,8 @@ class FSWebSocketHandler(tornado.websocket.WebSocketHandler):
         except Exception as e:
             traceback.print_exc(file=sys.stdout)
             self._logger.exception("Runtime error in Websocket message handler: " + str(e))
+        message = None
+        return
 
     def on_close(self):
         """
@@ -59,27 +61,32 @@ class FSWebSocketHandler(tornado.websocket.WebSocketHandler):
         self._logger.debug("Client disconnected")
        # self.io_loop.stop()
 
-    @tornado.gen.coroutine
+    #@tornado.gen.coroutine
     def on_socket_broadcast(self, events, message):
 
         try:
-            yield self.io_loop.add_callback_from_signal(self.write_message, message)
-            del message
-            gc.collect()
-
+            message = json.dumps(message)
+            #yield self.io_loop.add_callback_from_signal(self.write_message, message)
+            self.write_message(message)
+            message = None
         except Exception as e:
+            message = None
             traceback.print_exc(file=sys.stdout)
             self._logger.exception("Runtime error in Websocket message handler:" + str(e))
 
-    @tornado.gen.coroutine
+        return
+
+    #@tornado.gen.coroutine
     def on_socket_send(self, events, message):
 
         client = message['data']['client']
         if client and (client == self.request):
+            message['data']['client'] = None
             del message['data']['client']
 
-            json_encoded_message = json.dumps(message)
-            yield self.io_loop.add_callback_from_signal(self.write_message, json_encoded_message)
-            del message
-            del json_encoded_message
-            gc.collect()
+            message = json.dumps(message)
+            #yield self.io_loop.add_callback_from_signal(self.write_message, message)
+            self.write_message(message)
+            message = None
+
+        return

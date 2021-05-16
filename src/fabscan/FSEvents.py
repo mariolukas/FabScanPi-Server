@@ -100,6 +100,7 @@ class FSEventManager(FSEventManagerInterface):
 
         for subscriber in self.subscriptions[key]:
             subscriber['callback'](self, *args, **kwargs)
+        return
 
     def send_client_message(self, type, data):
         event_message = dict()
@@ -107,14 +108,15 @@ class FSEventManager(FSEventManagerInterface):
         event_message['data'] = data
 
         self.publish(FSEvents.ON_SOCKET_SEND, event_message)
+        return
 
     def broadcast_client_message(self, type, data):
         event_message = dict()
         event_message['type'] = type
         event_message['data'] = data
-
-        event_message = json.dumps(event_message)
         self.publish(FSEvents.ON_SOCKET_BROADCAST, event_message)
+
+        return
 
     def reset(self):
         self.subscriptions = {}

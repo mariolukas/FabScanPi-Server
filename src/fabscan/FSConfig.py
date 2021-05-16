@@ -1,4 +1,5 @@
 import json
+import numpy as np
 from fabscan.lib.util.FSInject import inject, singleton
 from fabscan.lib.util.FSJson import YAMLobj,  NumpyEncoder
 
@@ -11,6 +12,8 @@ class Config(ConfigInterface):
         self.file_name = file_name
         self.file = self.load_json(file_name)
         self.file = YAMLobj(self.file)
+        self.low_weighted_matrix = np.array([])
+        self.high_weighted_matrix = np.array([])
 
     def load_json(self, file):
         with open(file) as json_data_file:

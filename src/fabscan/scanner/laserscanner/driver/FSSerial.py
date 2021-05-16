@@ -14,6 +14,7 @@ from fabscan.lib.util.FSUtil import FSSystem
 from fabscan.lib.util.FSInject import inject
 from fabscan.FSConfig import ConfigInterface
 from fabscan.scanner.interfaces.FSHardwareConnector import FSHardwareConnectorInterface
+from memory_profiler import profile
 
 @inject(
     config=ConfigInterface
@@ -154,6 +155,7 @@ class FSSerialCom(FSHardwareConnectorInterface):
             return "None"
 
     def send_and_receive(self, message):
+
         self.send(message)
         self._serial.flush()
         while True:
@@ -191,7 +193,7 @@ class FSSerialCom(FSHardwareConnectorInterface):
                 if i >= 0:
                     r = self.buf + data[:i+1]
                     self.buf[0:] = data[i+1:]
-
+                    self._serial.flush()
                     del data
                     return r
                 else:
