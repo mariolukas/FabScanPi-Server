@@ -57,7 +57,7 @@
         "rotate": "True",
         "hflip": "True",
         "vflip": "False",
-        "type": "PICAMx",
+        "type": "PICAM",
         "undistort": "False"
     },
     "connector": {

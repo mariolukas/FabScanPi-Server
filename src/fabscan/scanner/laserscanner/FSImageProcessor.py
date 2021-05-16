@@ -392,10 +392,9 @@ class ImageProcessor(ImageProcessorInterface):
         if point_cloud is not None and len(point_cloud) > 0:
             rho = np.sqrt(np.square(point_cloud[0, :]) + np.square(point_cloud[1, :]))
             z = point_cloud[2, :]
-            SCAN_VOLUME_HEIGHT = 120
             turntable_radius = int(self.config.file.turntable.radius)
             idx = np.where((z >= 0) &
-                           (z <= SCAN_VOLUME_HEIGHT) &
+                           (z <= self.config.file.turntable.height) &
                            (rho >= -turntable_radius) &
                            (rho <= turntable_radius))[0]
             z = None

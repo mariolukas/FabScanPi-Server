@@ -10,8 +10,7 @@ fabscanpi-server (0.10.0) UNRELEASED; urgency=medium
   * added new firmware for ciclop scanner, supports WS2812 now
   * fixed memory leaks
 
-
- -- Mario Lukas <info@fabscan.org>  Mar, 28 Oct 2021 21:46:00 +0100
+ -- Mario Lukas <info@fabscan.org>  Sun, 16 May 2021 16:12:00 +0100
 
 fabscanpi-server (0.9.4) UNRELEASED; urgency=medium
   * fixed user interface connection issue when scanner is offline
