@@ -222,6 +222,7 @@ class ImageProcessor(ImageProcessorInterface):
 
             return image
 
+    # Savitzky-Golay-Filter
     def _sgf(self, u, v, s):
         if len(u) > 1:
             i = 0
@@ -242,7 +243,6 @@ class ImageProcessor(ImageProcessorInterface):
             return u, v
 
     # RANSAC implementation: https://github.com/ahojnnes/numpy-snippets/blob/master/ransac.py
-
     def _ransac(self, u, v):
         if len(u) > 1:
             data = np.vstack((v.ravel(), u.ravel())).T

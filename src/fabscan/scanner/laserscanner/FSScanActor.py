@@ -392,7 +392,8 @@ class FSScanActor(FSScanActorInterface):
         self.hardwareController.led.on(self.config.file.texture_illumination, self.config.file.texture_illumination, self.config.file.texture_illumination)
 
         #let thee camera settle after turning on the led
-        time.sleep(1)
+        self._logger.debug("Waiting for camera while settling...")
+        time.sleep(3)
 
 
     def scan_next_texture_position(self):

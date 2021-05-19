@@ -14,7 +14,6 @@ from fabscan.lib.util.FSUtil import FSSystem
 from fabscan.lib.util.FSInject import inject
 from fabscan.FSConfig import ConfigInterface
 from fabscan.scanner.interfaces.FSHardwareConnector import FSHardwareConnectorInterface
-from memory_profiler import profile
 
 @inject(
     config=ConfigInterface

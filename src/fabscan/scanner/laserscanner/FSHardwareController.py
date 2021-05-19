@@ -20,7 +20,6 @@ from fabscan.scanner.laserscanner.driver.FSLaser import Laser
 from fabscan.scanner.laserscanner.driver.FSLed import Led
 from fabscan.scanner.interfaces.FSHardwareConnectorFactory import FSHardwareConnectorFactory
 from fabscan.scanner.interfaces.FSCameraFactory import FSCameraFactory
-from memory_profiler import profile
 
 @singleton(
     config=ConfigInterface,

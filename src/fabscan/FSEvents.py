@@ -5,8 +5,6 @@ __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
 import multiprocessing
-import json
-from memory_profiler import profile
 
 try:
    from queue import Empty
