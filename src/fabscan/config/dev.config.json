@@ -43,7 +43,12 @@
     "turntable": {
         "steps": 6400,
         "radius": 70,
-        "height": 155
+        "height": 155,
+        "degree_per_step": {
+            "low": 3.6,
+            "medium": 1.8,
+            "high": 0.8
+        }
     },
     "camera": {
         "resolution": {

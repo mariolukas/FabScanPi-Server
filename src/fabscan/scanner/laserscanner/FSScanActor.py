@@ -86,11 +86,11 @@ class FSScanActor(FSScanActorInterface):
         degrees = 3.6
 
         if resolution_degree == 1:
-            degrees = 3.6
+            degrees = self.config.file.turntable.degree_per_step.low
         if resolution_degree == 2:
-            degrees = 1.8
+            degrees = self.config.file.turntable.degree_per_step.medium
         if resolution_degree == 3:
-            degrees = 0.8
+            degrees = self.config.file.turntable.degree_per_step.high
 
         self.steps_by_degree = int(degrees / (360 / self.config.file.turntable.steps))
 
