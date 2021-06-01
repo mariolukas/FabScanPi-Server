@@ -24,6 +24,7 @@ class Config(ConfigInterface):
             data = json.load(json_data_file)
             # fill config with default values when not set
             self._logger.debug("Checking for valid config values.")
+
             if 'type' not in data['calibration']:
                 data['calibration']['type'] = "chessboard"
 
@@ -33,16 +34,20 @@ class Config(ConfigInterface):
             if 'keep_raw_images' not in data:
                 data['keep_raw_images'] = False
 
-            if 'keep_raw_images' not in data:
-                data['keep_raw_images'] = False
-
             if 'height' not in data['turntable']:
                 data['turntable']['height'] = 155
 
-            if not self.keys_exists(data, 'turntable', 'degree_per_step'):
-                data['turntable']['degree_per_step']['low'] = 3.6
-                data['turntable']['degree_per_step']['medium'] = 1.8
-                data['turntable']['degree_per_step']['high'] = 0.8
+            # turntable resolution defaults
+            if 'degree_per_step' not in data['turntable']:
+                data['turntable']['degree_per_step'] = dict()
+                if 'low' not in data['turntable']['degree_per_step']:
+                    data['turntable']['degree_per_step']['low'] = 3.6
+
+                if 'medium' not in data['turntable']['degree_per_step']:
+                    data['turntable']['degree_per_step']['medium'] = 1.8
+
+                if 'high' not in data['turntable']['degree_per_step']:
+                    data['turntable']['degree_per_step']['high'] = 0.8
 
             return data
 

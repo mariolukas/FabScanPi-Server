@@ -17,42 +17,39 @@ from fabscan.FSSettings import SettingsInterface
 from fabscan.FSEvents import FSEventManagerSingleton, FSEvents, FSEvent
 from fabscan.FSScanner import FSCommand
 
-@singleton(
+@inject(
     config=ConfigInterface,
-    settings=SettingsInterface,
-    eventmanager=FSEventManagerSingleton,
+    settings=SettingsInterface
 )
-class FSCameraDummy(threading.Thread):
-
-    def __init__(self, config, settings, eventmanager):
-        threading.Thread.__init__(self)
+class DummyVideoStream:
+    def __init__(self, config, settings, framerate, eventmanager, **kwargs):
         self._logger = logging.getLogger(__name__)
-
         self.config = config
         self.settings = settings
+        self.framerate = framerate
+        self.eventmanager = eventmanager.instance
+
         self.timestamp = int(round(time.time() * 1000))
         self.frame_count = 0
         self.idle = True
         self.resolution = self.settings.file.resolution
-        self.eventmanager = eventmanager.instance
         self.eventmanager.subscribe(FSEvents.COMMAND, self.on_command)
-        self.eventmanager.subscribe(FSEvents.ON_SOCKET_SEND, self.on_socket_send)
         self.scanner_state = "IDLE"
-        self.start()
 
-    def run(self):
-        while True:
-           time.sleep(0.05)
+        self.stopped = False
+
 
     def on_command(self, mgr, event):
          command = event.command
          self.scanner_state = command
 
-    def on_socket_send(self, mgr, event):
-        self._logger.debug(event)
 
+    def update(self):
+        while not self.stopped:
+            time.sleep(0.1)
+        self.frame_count = 0
 
-    def get_frame(self, preview=False):
+    def get_frame(self,preview=False):
         #curframe = inspect.currentframe()
         #calframe = inspect.getouterframes(curframe, 2)
         calframe = inspect.stack()
@@ -91,38 +88,47 @@ class FSCameraDummy(threading.Thread):
             self._logger.debug(filename)
             self.frame_count += 1
 
-        #time.sleep(0.1)
         return img
 
-
-    def start_stream(self, mode="default"):
+    def start_stream(self):
         self.frame_count = 0
-
-        if self.is_idle():
-            try:
-                self.idle = False
-                self._logger.debug("Cam Stream with Resolution {0} started".format(self.resolution))
-            except Exception as e:
-                self._logger.error("Not able to initialize Raspberry Pi Camera. {0}".format(e))
-                self._logger.error(e)
+        # start the thread to read frames from the video stream
+        t = threading.Thread(target=self.update, name=__name__ + '-Thread', args=())
+        t.daemon = True
+        t.start()
+        return self
 
     def stop_stream(self):
-        if not self.idle:
-            try:
-                self.idle = True
-                self._logger.debug("Cam Stream with Resolution {0} stopped".format(self.resolution))
+        self.stopped = True
 
-            except Exception as e:
-                self._logger.error("Not able to stop camera: {0}".format(e))
-                self._logger.error(e)
-        self.frame_count = 0
 
-    def destroy_camera(self):
-        self.frame_count = 0
-        pass
+@singleton(
+    config=ConfigInterface,
+    settings=SettingsInterface,
+    eventmanager=FSEventManagerSingleton,
+)
+class FSCameraDummy:
+
+    def __init__(self, config, settings, eventmanager):
+        self._logger = logging.getLogger(__name__)
+        self.config = config
+        self.settings = settings
+        self.stream = DummyVideoStream(config=self.config, settings=self.settings, framerate=32, eventmanager=eventmanager)
+
+        self.config = config
+        self.settings = settings
+
+    def get_frame(self, preview=False):
+        return self.stream.get_frame(preview=preview)
+
+    def start_stream(self):
+        return self.stream.start_stream()
+
+    def stop_stream(self):
+        self.stream.stop_stream()
 
     def is_idle(self):
-        return self.idle
+        pass
 
     def flush_stream(self):
         pass

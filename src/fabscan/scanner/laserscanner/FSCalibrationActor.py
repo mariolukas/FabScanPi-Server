@@ -477,13 +477,13 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         #pattern_image = self._hardwarecontroller.get_pattern_image()
         time.sleep(1.5)
         pattern_image = self._hardwarecontroller.get_picture()
-        pattern_image = self._imageprocessor.reorientate_image(pattern_image)
+        pattern_image = self._imageprocessor.rotate_image(pattern_image)
         return pattern_image
 
     def _capture_laser(self, index):
         self._logger.debug("Capturing laser {0}".format(index))
         laser_image = self._hardwarecontroller.get_laser_image(index)
-        laser_image = self._imageprocessor.reorientate_image(laser_image)
+        laser_image = self._imageprocessor.rotate_image(laser_image)
         return laser_image
 
     def _calculate_scanner_calibration(self):

@@ -11,6 +11,7 @@ import zipfile
 from fabscan.FSConfig import ConfigInterface
 from fabscan.lib.util.FSInject import inject
 from fabscan.lib.util.FSJson import YAMLobj
+import threading
 
 class FSSystemExit(object):
 
@@ -69,21 +70,22 @@ class FSSystem(object):
             return False
 
 
-    def delete_folder(self, folder):
-        if os.path.isdir(folder):
-            shutil.rmtree(folder, ignore_errors=True)
+    def delete_folder(self, path):
+        if os.path.isdir(path):
+            shutil.rmtree(path, ignore_errors=True)
 
+    def delete_folder_async(self, path):
+        if os.path.isdir(path):
+            threading.Thread(target=lambda: shutil.rmtree(path, ignore_errors=True)).start()
 
     def delete_image_folders(self,scan_id):
         folder = self.config.file.folders.scans+scan_id+"/color_raw/"
-        self.delete_folder(folder)
+        self.delete_folder_async(folder)
 
         folder = self.config.file.folders.scans+scan_id+"/laser_raw/"
-        self.delete_folder(folder)
-
+        self.delete_folder_async(folder)
 
     def delete_scan(self, scan_id, ignore_errors=True):
-
         #basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         folder = self.config.file.folders.scans+scan_id+"/"
 

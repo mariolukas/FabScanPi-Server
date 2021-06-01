@@ -274,15 +274,15 @@ class ImageProcessor(ImageProcessorInterface):
             return (u, v)
 
     def get_texture_stream_frame(self, cam_image):
-        cam_image = self.reorientate_image(cam_image)
+        cam_image = self.rotate_image(cam_image)
         return cam_image
 
     def get_settings_stream_frame(self, cam_image):
-        cam_image = self.reorientate_image(cam_image)
+        cam_image = self.rotate_image(cam_image)
         return cam_image
 
     def get_calibration_stream_frame(self, cam_image):
-        cam_image = self.reorientate_image(cam_image)
+        cam_image = self.rotate_image(cam_image)
         gray_image = cv2.cvtColor(cam_image, cv2.COLOR_RGB2GRAY)
         corners = cv2.goodFeaturesToTrack(gray_image, self.config.file.calibration.pattern.columns*self.config.file.calibration.pattern.rows, 0.01, 10)
         corners = np.int0(corners)
@@ -294,7 +294,7 @@ class ImageProcessor(ImageProcessorInterface):
         return cam_image
 
     def get_adjustment_stream_frame(self, cam_image):
-        cam_image = self.reorientate_image(cam_image)
+        cam_image = self.rotate_image(cam_image)
         cv2.resize(cam_image, (self.config.file.camera.preview_resolution.width, self.config.file.camera.preview_resolution.height))
         cv2.line(cam_image, (int(0.5*cam_image.shape[1]),0), (int(0.5*cam_image.shape[1]), cam_image.shape[0]), (0,255,0), thickness=3, lineType=8, shift=0)
         return cam_image
@@ -308,7 +308,7 @@ class ImageProcessor(ImageProcessorInterface):
     def get_laser_stream_frame(self, image, type='CAMERA'):
         try:
 
-            image = self.reorientate_image(image)
+            image = self.rotate_image(image)
 
             if bool(self.settings.file.show_laser_overlay):
                 points = self.compute_2d_points(image, roi_mask=False, preview=True)
@@ -325,7 +325,7 @@ class ImageProcessor(ImageProcessorInterface):
 
         return image
 
-    def reorientate_image(self, image):
+    def rotate_image(self, image):
         if self.config.file.camera.rotate == "True":
             image = cv2.transpose(image)
         if self.config.file.camera.hflip == "True":
@@ -334,8 +334,8 @@ class ImageProcessor(ImageProcessorInterface):
             image = cv2.flip(image, 0)
         return image
 
-    #FIXME: rename color_image into texture_image
-    def process_image(self, angle, laser_image, color_image=None, index=0):
+    #FIXME: rename texture_image into texture_image
+    def process_image(self, angle, laser_image, texture_image=None, index=0):
         ''' Takes picture and angle (in degrees).  Adds to point cloud '''
 
         res = np.array([])
@@ -347,24 +347,26 @@ class ImageProcessor(ImageProcessorInterface):
 
             if type(point_cloud) is np.ndarray:
 
-                if bool(self.settings.file.color):
+                if bool(self.settings.file.color) and texture_image is not None:
                     u, v = points_2d
-                    color = color_image[v, np.around(u).astype(int)].T
-                    point_cloud, color = self.mask_point_cloud(point_cloud, color)
+                    point_color = texture_image[v, np.around(u).astype(int)].T
+                    point_cloud, point_color = self.mask_point_cloud(point_cloud, point_color)
                 else:
                     if index == 0: #laser 1
-                        color = np.array([255, 255, 255], np.uint8).T
+                        point_color = np.array([255, 255, 255], np.uint8).T
                     else: #laser 2
-                        color = np.array([200, 200, 200], np.uint8).T
+                        point_color = np.array([200, 200, 200], np.uint8).T
 
                     point_cloud, _ = self.mask_point_cloud(point_cloud, None)
 
                 num_rows, num_cols = point_cloud.shape
                 res = np.zeros((num_cols, 6), np.float32)
 
-                res[:, 3:] = color.T
+                res[:, 3:] = point_color.T
                 res[:, :3] = point_cloud.T
                 color = None
+                texture_image = None
+                point_cloud = None
             else:
                 point_cloud = None
                 color = None
@@ -374,7 +376,7 @@ class ImageProcessor(ImageProcessorInterface):
         except Exception as e:
             res = None
             laser_image = None
-            color = None
+            point_color = None
             self._logger.exception("Process Error: {0}".format(e))
             return np.array([])
 

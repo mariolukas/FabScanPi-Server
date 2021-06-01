@@ -21,7 +21,8 @@ from fabscan.scanner.interfaces.FSCalibrationActor import FSCalibrationActorInte
 from fabscan.lib.util.FSInject import inject
 from fabscan.lib.util.FSUpdate import upgrade_is_available, do_upgrade
 from fabscan.lib.util.FSDiscovery import register_to_discovery
-from fabscan.lib.util.FSSystemWatch import get_cpu_temperature
+from fabscan.lib.util.FSSystemWatch import get_cpu_temperature, get_throttle_state
+from fabscan.lib.util.FSMemoryProfiler import FSMemoryProfiler
 
 class FSState(object):
     IDLE = "IDLE"
@@ -99,6 +100,9 @@ class FSScanner(threading.Thread):
             self._logger.info("Added discovery scheduling job.")
 
         self.scheduler.add_job(self.run_temperature_watch_service, 'interval', minutes=1, id='cpu_temperature_service')
+        self.scheduler.add_job(self.run_throttle_watch_service, 'interval', minutes=1, id='cpu_throttle_watch_service')
+        #self.mem_prof = FSMemoryProfiler()
+        #self.scheduler.add_job(self.mem_prof.debug_memory, 'interval', minutes=3, id='memory_profiling')
 
     def run(self):
         while not self.exit:
@@ -294,6 +298,9 @@ class FSScanner(threading.Thread):
 
     def get_state(self):
         return self._state
+
+    def run_throttle_watch_service(self):
+        get_throttle_state()
 
     ## Scheduled functions see init function!!
     def run_temperature_watch_service(self):

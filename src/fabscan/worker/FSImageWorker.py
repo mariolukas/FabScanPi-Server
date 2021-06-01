@@ -58,7 +58,8 @@ class FSImageWorkerPool(ThreadingActor):
         self._logger.info("Worker Pool Actor initilized")
 
     def on_stop(self):
-        self.kill()
+        if len(self.workers) > 0:
+            self.kill()
 
     def on_receive(self, event):
         if event[FSEvents.COMMAND] == FSSWorkerPoolCommand.CREATE:
@@ -150,6 +151,7 @@ class FSImageWorkerPool(ThreadingActor):
             self._workers_active = False
             self.input_muted = False
 
+
     def workers_active(self):
         return self._workers_active
 
@@ -199,7 +201,6 @@ class FSImageWorkerProcess(multiprocessing.Process):
 
                         data = dict()
                         if image_task.task_type == "KILL":
-                            self._logger.debug("Killed Worker Process with PID "+str(self.pid))
                             self.exit = True
                             break
 
@@ -217,22 +218,28 @@ class FSImageWorkerProcess(multiprocessing.Process):
                             #self._logger.debug('Image Processing starts.')
                             try:
                                 #TODO: Save image here for creating debug information.
-                                if bool(self.config.file.keep_raw_images):
-                                    self.image.save_image(image_task.image, image_task.progress, image_task.prefix,
-                                                          dir_name=image_task.prefix + '/raw_laser_' + image_task.raw_dir)
+                                if self.config.file.keep_raw_images == True:
+                                     self.image.save_image(image_task.image, image_task.progress, image_task.prefix,
+                                                           dir_name=image_task.prefix + '/raw_laser_' + image_task.raw_dir)
+
                                 color_image = None
-                                image_task.image = self.image_processor.reorientate_image(image_task.image)
+                                image_task.image = self.image_processor.rotate_image(image_task.image)
                                 angle = float(image_task.progress * 360) / float(image_task.resolution)
 
                                 if bool(self.settings.file.color):
-                                    color_image = self.image.load_image(image_task.progress, image_task.prefix, dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
+                                    color_image = self.image.load_image(image_task.progress,
+                                                                        image_task.prefix,
+                                                                        dir_name=image_task.prefix+'/color_'+image_task.raw_dir)
 
-                                point_cloud = self.image_processor.process_image(angle, image_task.image, color_image, index=image_task.index)
+                                point_cloud = self.image_processor.process_image(angle,
+                                                                                 image_task.image,
+                                                                                 color_image,
+                                                                                 index=image_task.index)
 
                                 data['point_cloud'] = point_cloud
                                 data['image_type'] = 'depth'
                                 data['laser_index'] = image_task.index
-                                image_task = None
+
                                 point_cloud = None
                                 color_image = None
 
@@ -240,9 +247,12 @@ class FSImageWorkerProcess(multiprocessing.Process):
                                 self._logger.exception(e)
                             self.output_q.put(data)
 
+                    image_task = None
                 except Empty:
                     time.sleep(0.1)
                     pass
             else:
                 # thread idle
                 time.sleep(0.1)
+
+        self._logger.debug("Killed Worker Process with PID " + str(self.pid))

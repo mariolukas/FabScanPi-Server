@@ -15,6 +15,7 @@ from PIL import Image
 from fabscan.lib.util.FSUtil import json2obj
 from fabscan.FSConfig import ConfigInterface
 from fabscan.lib.util.FSInject import inject
+import threading
 
 @inject(
     config=ConfigInterface
@@ -96,10 +97,12 @@ class FSScans():
 
         return scan
 
+    def delete_async(self, path):
+        threading.Thread(target=lambda: shutil.rmtree(path, ignore_errors=True)).start()
 
     def delete_file(self, scan_id, file_name):
         file = self.config.file.folders.scans + scan_id + "/" + file_name
-
+        #self.delete_async(file)
         os.unlink(file)
 
         if len(self.get_scan_files(scan_id)) == 0:
@@ -112,11 +115,10 @@ class FSScans():
 
         return response
 
-
     def delete_scan(self, id):
         dir_name = self.config.file.folders.scans + id
-        shutil.rmtree(dir_name, ignore_errors=True)
-
+        self.delete_async(dir_name)
+        #shutil.rmtree(dir_name, ignore_errors=True)
         response = dict()
         response['scan_id'] = id
         response['response'] = "SCAN_DELETED"

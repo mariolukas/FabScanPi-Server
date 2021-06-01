@@ -46,7 +46,7 @@ class FSSerialDummy(FSHardwareConnectorInterface):
 
     def send(self, message):
         try:
-            self._logger.error("Message sent: {0}".format(message))
+            self._logger.debug("Message sent: {0}".format(message))
         except Exception as e:
             self._logger.error("Error while sending: {0}".format(e))
 

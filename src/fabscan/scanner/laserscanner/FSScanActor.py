@@ -55,7 +55,7 @@ class FSScanActor(FSScanActorInterface):
         self.point_clouds = []
         self.both_cloud = []
 
-        self.current_position = 0
+        self.current_position = 1
         self._stop_scan = False
         self._current_laser_position = 1
         self._starttime = 0
@@ -341,7 +341,7 @@ class FSScanActor(FSScanActorInterface):
         self._resolution = self.get_steps_for_resolution(self.settings.file.resolution)
 
         self._number_of_pictures = int((self.config.file.turntable.steps // self._resolution))
-        self.current_position = 0
+        self.current_position = 1
         self._starttime = self.get_time_stamp()
 
         # TODO: rename prefix to scan_id
@@ -404,12 +404,12 @@ class FSScanActor(FSScanActorInterface):
 
                     flush = False
 
-                    if self.current_position == 0:
+                    if self.current_position == 1:
                         flush = True
                         self.init_texture_scan()
 
                     color_image = self.hardwareController.get_picture(flush=flush)
-                    color_image = self.image_processor.reorientate_image(color_image)
+                    color_image = self.image_processor.rotate_image(color_image)
                     self.hardwareController.move_to_next_position(steps=self._resolution, speed=1200)
 
                     task = ImageTask(color_image, self._prefix, self.current_position, self._number_of_pictures, task_type="PROCESS_COLOR_IMAGE")
@@ -438,7 +438,7 @@ class FSScanActor(FSScanActorInterface):
 
     def finish_texture_scan(self):
         self._logger.info("Finishing texture scan.")
-        self.current_position = 0
+        self.current_position = 1
 
         self.hardwareController.led.off()
 
@@ -458,7 +458,7 @@ class FSScanActor(FSScanActorInterface):
             "level": "info"
         }
         self.eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
-        self.current_position = 0
+        self.current_position = 1
 
         if self.config.file.laser.interleaved == "False":
             self.hardwareController.led.off()
@@ -467,7 +467,7 @@ class FSScanActor(FSScanActorInterface):
 
         if not self._stop_scan:
             if self.current_position <= self._number_of_pictures and self.actor_ref.is_alive():
-                if self.current_position == 0:
+                if self.current_position == 1:
                     self.init_object_scan()
 
                 for laser_index in range(self.config.file.laser.numbers):
@@ -522,7 +522,7 @@ class FSScanActor(FSScanActorInterface):
         self.finishFiles()
 
         if self._prefix:
-            self.utils.delete_folder(str(self.config.file.folders.scans)+'/'+str(self._prefix))
+            self.utils.delete_folder_async(str(self.config.file.folders.scans)+'/'+str(self._prefix))
 
         self.reset_scanner_state()
         self._logger.info("Scan stoped")
@@ -538,7 +538,6 @@ class FSScanActor(FSScanActorInterface):
         if self._worker_pool and self._worker_pool.is_alive():
             self._logger.debug("Stopping worker Pool.")
             self._worker_pool.stop()
-
 
     def image_processed(self, result):
         if not self._stop_scan:
@@ -568,19 +567,18 @@ class FSScanActor(FSScanActorInterface):
 
                     self.eventmanager.broadcast_client_message(FSEvents.ON_NEW_PROGRESS, message)
                     self._logger.debug("Step {0} of {1}".format(self._progress, self._total))
-                    result = None
                     self._progress += 1
+                    result = None
 
                 except Exception as err:
                     self._logger.warning("Image processing Failure: {0}".format(err))
 
-                if self._progress-1 == self._total:
+                if self._progress == self._total:
                     self.scan_complete()
         return
 
     def to_json(self, point_cloud):
         return [{"x": str(x), "y": str(z), "z": str(y), "r": str(int(r)), "g": str(int(g)), "b": str(int(b))} for x, y, z, b, g, r in point_cloud]
-
 
     def scan_complete(self):
 
@@ -601,10 +599,6 @@ class FSScanActor(FSScanActorInterface):
 
             settings_filename = self.config.file.folders.scans+self._prefix+"/"+self._prefix+".fab"
             self.settings.save_json(settings_filename)
-
-
-        #if bool(self.config.file.keep_raw_images):
-        #    self.utils.zipdir(str(self._prefix))
 
         self.utils.delete_image_folders(self._prefix)
         self.reset_scanner_state()
@@ -682,7 +676,7 @@ class FSScanActor(FSScanActorInterface):
         self.clear_and_stop_worker_pool()
 
         self._progress = 1
-        self.current_position = 0
+        self.current_position = 1
         self._number_of_pictures = 0
         self._total = 0
         self._starttime = 0
