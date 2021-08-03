@@ -210,7 +210,7 @@ class FSScanActor(FSScanActorInterface):
                     "level": "warn"
                 }
 
-                self._logger.debug("Clients informaed")
+                self._logger.debug("Clients informed")
 
                 event = FSEvent()
                 event.command = "STOP"
