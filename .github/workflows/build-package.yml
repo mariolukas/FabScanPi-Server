@@ -20,8 +20,9 @@ jobs:
         run: CURRENT_DATE=$(date +%Y%m%d%H%M)
       - run: VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}')
       - name: check if push was tagged
-        needs: test
-        if: !(startsWith(github.ref, 'refs/tags/v'))
-        run: sed -i -e 's/'"$VERSION"'/'"$VERSION"'+'"$CURRENT_DATE"'/g' debian/changelog
-      - name: 📦🔨 Build Debian package
+        run: |
+          if [[ ${github.ref} == *"refs/tags/v"* ]]; then
+            sed -i -e 's/'"$VERSION"'/'"$VERSION"'+'"$CURRENT_DATE"'/g' debian/changelog;
+          fi;
+      - name: 🔨 Build Debian package
       - run: sudo make deb
