@@ -10,6 +10,9 @@ jobs:
       - run: pip3 install virtualenv
       - name: Create virtual python env
         run: virtualenv -p /usr/bin/python3.8 hotspot-env
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Activate virtual python env
         run: source hotspot-env/bin/activate
       - name: Set DATE ENV var
