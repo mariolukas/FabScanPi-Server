@@ -15,7 +15,7 @@ jobs:
       - name: ⬇ Checkout code
         uses: actions/checkout@v2
         with:
-         fetch-depth: 0
+          fetch-depth: 0
       - name: 🏗 Set DATE ENV var
         run: CURRENT_DATE=$(date +%Y%m%d%H%M)
       - run: VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}')
@@ -25,4 +25,4 @@ jobs:
             sed -i -e 's/'"$VERSION"'/'"$VERSION"'+'"$CURRENT_DATE"'/g' debian/changelog; \
           fi
       - name: 🔨 Build Debian package
-      - run: sudo make deb
+        run: sudo make deb
