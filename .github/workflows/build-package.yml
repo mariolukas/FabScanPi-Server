@@ -6,7 +6,7 @@ jobs:
     steps:
       - name: Install build dependencies
         run: sudo apt-get update
-      - run: sudo apt-get install python3.7 python3.7-dev libcurl3 build-essential python3-tornado python3-setuptools debhelper dh-systemd cdbs dh-python fakeroot python3-pip rsync locales
+      - run: sudo apt-get install python3.7 python3.7-dev libcurl4 build-essential python3-tornado python3-setuptools debhelper dh-systemd cdbs dh-python fakeroot python3-pip rsync locales
       - name: Create virtual python env
         run: virtualenv -p /usr/bin/python3.7 hotspot-env
       - name: Activate virtual python env
