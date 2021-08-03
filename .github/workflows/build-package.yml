@@ -12,6 +12,18 @@ jobs:
         run: virtualenv -p /usr/bin/python3.8 hotspot-env
       - name: Activate virtual python env
         run: source hotspot-env/bin/activate
+      - name: Define build related environment variables
+          run: |
+            echo $SOURCE_NAME
+            echo $SOURCE_BRANCH
+            echo $SOURCE_TAG
+          env:
+            SOURCE_NAME: ${{ steps.branch_name.outputs.SOURCE_NAME }}
+            SOURCE_BRANCH: ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
+            SOURCE_TAG: ${{ steps.branch_name.outputs.SOURCE_TAG }}
+      - run: echo $SOURCE_NAME
+      - run: echo $SOURCE_BRANCH
+      - run: echo $SOURCE_TAG
       - uses: actions/checkout@v2
         with:
          fetch-depth: 0
