@@ -21,7 +21,7 @@ jobs:
       - run: VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}')
       - name: check if push was tagged
         run: |
-          if [[ ${github.ref} == *"refs/tags/v"* ]]; then \
+          if [[ $GITHUB_REF == *"refs/tags/v"* ]]; then \
             sed -i -e 's/'"$VERSION"'/'"$VERSION"'+'"$CURRENT_DATE"'/g' debian/changelog; \
           fi
       - name: 🔨 Build Debian package
