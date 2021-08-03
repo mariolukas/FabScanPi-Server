@@ -16,7 +16,7 @@ jobs:
       - name: ⬇ Checkout code
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+         fetch-depth: 0
       - name: check if push was tagged
         if: !(startsWith(github.ref, 'refs/tags/v'))
         run: |
