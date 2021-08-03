@@ -17,8 +17,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - if: !(startsWith(github.ref, 'refs/tags/v'))
-        name: check if push was tagged
+      - name: check if push was tagged
+        if: !(startsWith(github.ref, 'refs/tags/v'))
         run: |
           CURRENT_DATE=$(date +%Y%m%d%H%M) \
           VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}') \
