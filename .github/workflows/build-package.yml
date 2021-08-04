@@ -21,6 +21,6 @@ jobs:
         run: |
           CURRENT_DATE=$(date +%Y%m%d%H%M) \
           VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}') \
-          sed -i -e 's/'"$VERSION"'/'"$VERSION"'+'"$CURRENT_DATE"'/g' debian/changelog
+          sed -i -e "s/$VERSION/$VERSION+$CURRENT_DATE/g" debian/changelog
       - name: 🔨 Build Debian package
         run: sudo make deb
