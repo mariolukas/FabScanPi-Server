@@ -16,11 +16,12 @@ jobs:
         uses: actions/checkout@v2
         with:
          fetch-depth: 0
-      - name: check if push was tagged
+      - name: Replace version Number for testing build
         if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
         run: |
           CURRENT_DATE=$(date +%Y%m%d%H%M) \
           VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}') \
           sed -i -e "s/$VERSION/$VERSION+$CURRENT_DATE/g" debian/changelog
+        shell: bash
       - name: 🔨 Build Debian package
         run: sudo make deb
