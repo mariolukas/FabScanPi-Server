@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.x.x] - tbd
 ### TODO
 - implement a plugin system
+- new user interface 
+- suppoert for sls
 
 ## [0.12.0] - tbd
 ### TODO
