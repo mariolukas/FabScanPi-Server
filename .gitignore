@@ -68,3 +68,4 @@ docs/_build/
 target/
 
 .idea/
+.github/act/my.secrets

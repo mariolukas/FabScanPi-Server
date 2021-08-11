@@ -6,7 +6,7 @@ jobs:
     steps:
       - name: 🏗 Install build dependencies
         run: sudo apt-get -qq update
-      - run: sudo apt-get install python3.8 python3.8-dev python3-pip libcurl4 build-essential python3-tornado python3-setuptools debhelper dh-systemd cdbs dh-python fakeroot python3-pip rsync locales
+      - run: sudo apt-get -y install python3.8 python3.8-dev python3-pip libcurl4 build-essential python3-tornado python3-setuptools debhelper dh-systemd cdbs dh-python fakeroot python3-pip rsync locales
       - run: pip3 install virtualenv
       - name: 🏗 Create virtual python env
         run: virtualenv -p /usr/bin/python3.8 hotspot-env
@@ -16,12 +16,22 @@ jobs:
         uses: actions/checkout@v2
         with:
          fetch-depth: 0
+      - name: Add current Date to env vars
+        run: echo "CURRENT_DATE=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+      - name: Add Version to env vars
+        run: echo "VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}')" >> $GITHUB_ENV
       - name: Replace version Number for testing build
         if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
-        run: |
-          CURRENT_DATE=$(date +%Y%m%d%H%M) \
-          VERSION=$(head -1 debian/changelog | awk -F'[()]' '{print $2}') \
-          sed -i -e "s/$VERSION/$VERSION+$CURRENT_DATE/g" debian/changelog
-        shell: bash
+        run: sed -i -e "s/${{ env.VERSION }}/${{ env.VERSION }}+${{ env.CURRENT_DATE }}/g" debian/changelog
       - name: 🔨 Build Debian package
         run: sudo make deb
+      - name: Add Package Name to env var
+        run: echo "FILE_NAME=$(ls -a ../*.deb)" >> $GITHUB_ENV
+      - name: Decrypt fabscan key secret
+        run: ./.github/scripts/decrypt_file.sh
+        env:
+          FABSCAN_KEY_PASSPHRASE: ${{ secrets.FABSCAN_KEY_PASSPHRASE }}
+      - name: change keyfile permission
+        run: chmod 600 $HOME/secrets/fabscan.key
+      - name: deploy build artifact
+        run: LC_ALL=C scp -o StrictHostKeyChecking=no -i $HOME/secrets/fabscan.key ${{ env.FILE_NAME }} ${{ secrets.FABSCAN_DEPLOY_USER }}@mariolukas.de:/var/deploy/release/.
