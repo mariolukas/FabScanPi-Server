@@ -40,4 +40,13 @@ The FabScan documentation can be found at [http://www.fabscan.org](http://www.fa
 ## This project is supported by
 <a href="www.watterott.com"><img src="http://learn.watterott.com/images/banner.png" alt="Drawing"/></a> <a href="www.jetbrains.com"><img src="https://github.com/mariolukas/FabScanPi-Server/blob/master/docs/images/jetbrains.png" alt="Drawing" width="150"/></a>
 
+### Donations
+
+If you like my work and want to support it, feel free to leave a donation.
+
+<center>
+<a href="https://www.paypal.com/donate?hosted_button_id=FHPTBZ43KZGSU">
+  <img width="200" src="https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png" alt="Donate with PayPal" />
+</a>
+</center>
 
