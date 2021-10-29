@@ -1,4 +1,4 @@
-opencv-python~=3.2
+opencv-python~=4.2.0.32
 pyserial
 pillow
 Pykka~=1.2
