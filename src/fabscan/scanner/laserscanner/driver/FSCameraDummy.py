@@ -10,6 +10,8 @@ import time
 import threading
 import glob
 import inspect
+import numpy as np
+import os, os.path
 
 from fabscan.lib.util.FSInject import inject, singleton
 from fabscan.FSConfig import ConfigInterface
@@ -24,6 +26,7 @@ from fabscan.FSScanner import FSCommand
 class DummyVideoStream:
     def __init__(self, config, settings, framerate, eventmanager, **kwargs):
         self._logger = logging.getLogger(__name__)
+
         self.config = config
         self.settings = settings
         self.framerate = framerate
@@ -36,6 +39,8 @@ class DummyVideoStream:
         self.eventmanager.subscribe(FSEvents.COMMAND, self.on_command)
         self.scanner_state = "IDLE"
 
+        self.current_mode_is_preview = True
+
         self.stopped = False
 
 
@@ -43,62 +48,75 @@ class DummyVideoStream:
          command = event.command
          self.scanner_state = command
 
+         if command == "START" or command == "SCAN":
+             self.frame_count = 1
+
+         self._logger.debug("dummy command received: {} ".format(command))
+
 
     def update(self):
+        self._logger.debug("Dummy camera stream started.")
         while not self.stopped:
             time.sleep(0.1)
-        self.frame_count = 0
+        self.frame_count = 1
 
-    def get_frame(self,preview=False):
-        #curframe = inspect.currentframe()
-        #calframe = inspect.getouterframes(curframe, 2)
+    def get_frame(self, preview=False):
+
         calframe = inspect.stack()
-        #self._logger.debug('caller name: {0}'.format(calframe[2][3]))
-        # self._logger.debug("SCANNER_STATE: {0}".format(self.scanner_state))
-        #  self._logger.debug(self.scanner_state == FSCommand.CALIBRATE)
-        if self.scanner_state == FSCommand.CALIBRATE:
-            frame_count_max = 133
-            image_path = self.config.file.camera.image_path + "calibration_8x10"
-        else:
-            frame_count_max = 200
-            image_path = self.config.file.camera.image_path + str(self.resolution) + "_" + str(self.config.file.laser.numbers)
 
-        if self.frame_count == frame_count_max:
-            self.frame_count = 0
-
-        self.resolution = self.settings.file.resolution
         if preview:
-            self.resolution = 3
+           self.resolution = 3
 
+        if self.scanner_state == FSCommand.CALIBRATE:
+            image_path = self.config.file.camera.image_path + "calibration_6x8"
+        else:
+            image_path = self.config.file.camera.image_path + "res" + str(self.settings.file.resolution) + "_laser#" + str(self.config.file.laser.numbers)
+
+        frame_count_max = len([name for name in os.listdir(image_path) if os.path.isfile(os.path.join(image_path, name))])
+
+        # if preview mode return only image for first laser.
+        if self.config.file.laser.numbers > 1 and preview:
+            frame_count_max = frame_count_max / self.config.file.laser.numbers
+
+        # start again...
+        if self.frame_count == frame_count_max:
+            self.frame_count = 1
+
+        # get image for current count
         for filename in glob.glob(image_path + "/*_{:03d}.jpg".format(self.frame_count)):
-            # self._logger.debug(filename)
+            self._logger.debug("frame: {}".format(filename))
             img = cv2.imread(filename, 1)
 
-        if preview:
-            low_res_size = (self.config.file.camera.preview_resolution.width, self.config.file.camera.preview_resolution.height)
-            img = cv2.resize(img, low_res_size)
-
-        # check if we need to move on or not (e.g. preview stream should not move on
-        # when calibration is running... next frame after frame is processed...
+        # calculate next frame
         if self.scanner_state == FSCommand.CALIBRATE:
+            # hacky but works so far
             if calframe[2][3] == "_capture_pattern":
                 self._logger.debug(filename)
                 self.frame_count += 1
         else:
-            self._logger.debug(filename)
-            self.frame_count += 1
+            # next frame
+            if (self.config.file.laser.numbers > 1 and preview):
+                self.frame_count += self.config.file.laser.numbers
+            else:
+                self.frame_count += 1
+
+        if preview:
+           low_res_size = (self.config.file.camera.preview_resolution.width, self.config.file.camera.preview_resolution.height)
+           img = cv2.resize(img, low_res_size)
 
         return img
 
     def start_stream(self):
-        self.frame_count = 0
+        self.frame_count = 1
         # start the thread to read frames from the video stream
         t = threading.Thread(target=self.update, name=__name__ + '-Thread', args=())
         t.daemon = True
         t.start()
+        self._logger.debug("dummy camera stream started")
         return self
 
     def stop_stream(self):
+        self._logger.debug("dummy camera stream stopped")
         self.stopped = True
 
 

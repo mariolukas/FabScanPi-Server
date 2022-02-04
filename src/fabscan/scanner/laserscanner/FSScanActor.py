@@ -40,6 +40,7 @@ class FSScanActor(FSScanActorInterface):
         self.settings = settings
         self.config = config
         self._logger = logging.getLogger(__name__)
+        self.raw_image_count = 0
 
         self.eventmanager = eventmanager.instance
         self._worker_pool = None
@@ -472,11 +473,14 @@ class FSScanActor(FSScanActorInterface):
 
                 for laser_index in range(self.config.file.laser.numbers):
                     laser_image = self.hardwareController.get_image_at_position(index=laser_index)
-                    task = ImageTask(laser_image, self._prefix, self.current_position, self._number_of_pictures, index=laser_index)
+                    self.raw_image_count += 1
+                    task = ImageTask(laser_image, self._prefix, self.current_position, self._number_of_pictures, index=laser_index, raw_image_count=self.raw_image_count)
 
-                    self._worker_pool.tell(
-                        {FSEvents.COMMAND: FSSWorkerPoolCommand.ADD_TASK, 'TASK': task}
-                    )
+                    if self._worker_pool.is_alive():
+                        self._worker_pool.tell(
+                            {FSEvents.COMMAND: FSSWorkerPoolCommand.ADD_TASK, 'TASK': task}
+                        )
+
                     laser_image = None
 
                 self.current_position += 1
@@ -582,10 +586,6 @@ class FSScanActor(FSScanActorInterface):
 
     def scan_complete(self):
 
-        self._worker_pool.tell(
-            {FSEvents.COMMAND: FSSWorkerPoolCommand.KILL}
-        )
-
         end_time = self.get_time_stamp()
         duration = int((end_time - self._starttime)//1000)
         self._logger.debug("Time Total: {0} sec.".format(duration))
@@ -602,6 +602,7 @@ class FSScanActor(FSScanActorInterface):
 
         self.utils.delete_image_folders(self._prefix)
         self.reset_scanner_state()
+
 
         event = FSEvent()
         event.command = 'COMPLETE'
@@ -680,7 +681,7 @@ class FSScanActor(FSScanActorInterface):
         self._number_of_pictures = 0
         self._total = 0
         self._starttime = 0
-
+        self.raw_image_count = 0
 
     def get_time_stamp(self):
         return int(datetime.now().strftime("%s%f"))/1000

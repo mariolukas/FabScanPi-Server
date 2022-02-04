@@ -1,3 +1,11 @@
+fabscanpi-server (0.10.1) UNRELEASED; urgency=medium
+  * fixed scan finishing procedure ( scanner hangs after scan with 1 laser )
+  * fixed calibration issue
+  * fixed camera dummy driver
+  * added better calibration error handler
+
+ -- Mario Lukas <info@fabscan.org>  Fri, 4 Feb 2022 23:32:00 +0100
+
 fabscanpi-server (0.10.0) UNRELEASED; urgency=medium
   * refactored camera driver
   * added factory for camera and serial driver

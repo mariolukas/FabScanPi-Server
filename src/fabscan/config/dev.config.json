@@ -5,7 +5,7 @@
     },
     "laser": {
         "interleaved": "False",
-        "numbers": 2,
+        "numbers": 1,
         "color": "R (RGB)"
     },
     "scanner_type": "laserscanner",
@@ -13,33 +13,84 @@
         "weight_matrix": [],
         "dist_camera_matrix": [],
         "pattern": {
-            "square_size": 7,
-            "rows": 8,
-            "columns": 10,
-            "origin_distance": 12,
+            "square_size": 10,
+            "rows": 6,
+            "columns": 8,
+            "origin_distance": 32,
             "type": "chessboard"
         },
-        "camera_matrix": [],
-        "distortion_vector": [],
+        "camera_matrix": [
+            [
+                1335.593,
+                0.0,
+                593.676
+            ],
+            [
+                0.0,
+                1338.617,
+                819.686
+            ],
+            [
+                0.0,
+                0.0,
+                1.0
+            ]
+        ],
+        "distortion_vector": [
+            0.239,
+            -0.624,
+            -0.002,
+            -0.006,
+            0.424
+        ],
         "laser_planes": [
             {
-                "deviation": 0,
-                "distance": 0,
-                "normal": []
+                "distance": 91.69445350902312,
+                "normal": [
+                    0.7664628120700226,
+                    -0.04057676158234707,
+                    0.6410056818259898
+                ],
+                "deviation": 0.061102157279656476
             },
             {
-                "deviation": 0,
-                "distance": 0,
-                "normal": []
+                "distance": 70.95739928381782,
+                "normal": [
+                    -0.8532240605437,
+                    -0.04117396429301304,
+                    0.5199167309999922
+                ],
+                "deviation": 0.052153712397172654
             }
         ],
-        "platform_translation": [],
-        "platform_rotation": []
+        "platform_translation": [
+            0.7711752828437922,
+            32.836607141397074,
+            143.63527282100952
+        ],
+        "platform_rotation": [
+            [
+                0.0,
+                0.9999473510325503,
+                0.010261343137517368
+            ],
+            [
+                0.06676782255610815,
+                0.01023844535282737,
+                -0.997716007743623
+            ],
+            [
+                -0.9977685392269673,
+                0.0006851275377930977,
+                -0.0667643072991917
+            ]
+        ],
+        "type": "chessboard"
     },
     "meshlab": {
         "path": "/usr/bin/"
     },
-    "process_numbers": 3,
+    "process_numbers": 2,
     "turntable": {
         "steps": 6400,
         "radius": 70,

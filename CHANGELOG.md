@@ -23,6 +23,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - add gpio connector for crickit HAT
 - introduce new user interface
 
+## [0.10.1]
+### Fixed
+- fixed scan finishing procedure ( scanner hangs after scan with 1 laser )
+- fixed calibration issue
+- fixed camera dummy driver
+- added better calibration error handler
+
 ## [0.10.0]
 ### Added
 - added factory for camera and serial driver
