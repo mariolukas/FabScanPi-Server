@@ -3,29 +3,24 @@ import re
 import urllib.request, urllib.error, urllib.parse
 import ssl
 import socket
-import subprocess
-
-
-REMOTE_SERVER = "archive.fabscan.org"
-
 import semver
 import logging
 from fabscan.FSVersion import __version__
 
 __author__ = 'mariolukas'
 
-
+REMOTE_SERVER = "archive.fabscan.org"
 PACKAGE_PATTERN = re.compile('^Package: fabscanpi-server$')
 
 VERSION_PATTERN = re.compile('^Version: (.+)$')
 _logger = logging.getLogger(__name__)
 
 def get_build(version):
-    match = semver._REGEX.match(version)
-    if match is None:
+
+    if semver.Version.isvalid(version):
         raise ValueError('%s is not valid SemVer string' % version)
 
-    verinfo = match.groupdict()
+    verinfo = semver.Version.parse(version)
 
     if verinfo['build']:
         return verinfo['build']
