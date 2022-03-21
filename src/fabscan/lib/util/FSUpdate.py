@@ -17,10 +17,10 @@ _logger = logging.getLogger(__name__)
 
 def get_build(version):
 
-    if semver.Version.isvalid(version):
+    if semver.VersionInfo.isvalid(version):
         raise ValueError('%s is not valid SemVer string' % version)
 
-    verinfo = semver.Version.parse(version)
+    verinfo = semver.VersionInfo.parse(version)
 
     if verinfo['build']:
         return verinfo['build']
