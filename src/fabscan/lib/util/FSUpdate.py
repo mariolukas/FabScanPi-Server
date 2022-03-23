@@ -3,32 +3,26 @@ import re
 import urllib.request, urllib.error, urllib.parse
 import ssl
 import socket
-import subprocess
-
-
-REMOTE_SERVER = "archive.fabscan.org"
-
 import semver
 import logging
 from fabscan.FSVersion import __version__
 
 __author__ = 'mariolukas'
 
-
+REMOTE_SERVER = "archive.fabscan.org"
 PACKAGE_PATTERN = re.compile('^Package: fabscanpi-server$')
 
 VERSION_PATTERN = re.compile('^Version: (.+)$')
 _logger = logging.getLogger(__name__)
 
 def get_build(version):
-    match = semver._REGEX.match(version)
-    if match is None:
+
+    if not semver.VersionInfo.isvalid(version):
         raise ValueError('%s is not valid SemVer string' % version)
 
-    verinfo = match.groupdict()
-
-    if verinfo['build']:
-        return verinfo['build']
+    verinfo = semver.parse_version_info(version)
+    if verinfo.build:
+        return verinfo.build
     else:
         return "0"
 
@@ -80,8 +74,9 @@ def get_latest_version_tag():
                                 # ignore invalid version number
                                 pass
                             break
-            return latest_version
+            return latest_version.strip()
         except (Exception, urllib.error.URLError) as e:
+            _logger.error(e)
             _logger.exception("Error while getting latest version tag: ")
             return __version__
 
@@ -118,7 +113,6 @@ def upgrade_is_available(current_version, online_lookup_ip):
         return False, str(__version__)
 
     return is_upgradeable(latest_version, current_version), latest_version
-
 
 def do_upgrade():
     try:

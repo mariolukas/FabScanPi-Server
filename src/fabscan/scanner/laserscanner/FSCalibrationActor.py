@@ -201,6 +201,15 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         }
         self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
 
+    def handle_calibration_error(self, message):
+        message = {
+            "message": message, #"SCANNER_CALIBRATION_FAILED",
+            "level": "error"
+        }
+
+        self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
+        self.actor_ref.tell({FSEvents.COMMAND: "STOP_CALIBRATION"})
+
     def on_calbration_complete(self):
         #self.stop_hardware_components()
         event = FSEvent()
@@ -287,7 +296,9 @@ class FSCalibrationActor(FSCalibrationActorInterface):
                     self.actor_ref.tell({FSEvents.COMMAND: "TRIGGER_AUTO_LASER_CALIBRATION_STEP"})
 
         except Exception as e:
+            self.handle_calibration_error("GENERAL_CALIBRATION_ERROR")
             self._logger.exception("Calibration Error: {0}".format(e))
+
 
 
     def _calculate_camera_calibration(self):
@@ -336,7 +347,6 @@ class FSCalibrationActor(FSCalibrationActorInterface):
 
                     error /= len(self.object_points)
 
-
                 self.config.file.calibration.camera_matrix = copy.deepcopy(np.round(cmat, 3))
                 self.config.file.calibration.distortion_vector = copy.deepcopy(np.round(dvec.ravel(), 3))
 
@@ -345,20 +355,19 @@ class FSCalibrationActor(FSCalibrationActorInterface):
                 self._logger.debug("Total Error {0}".format(error))
             return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
         except Exception as e:
-            self._logger.error("Error while laser calibration calculations: {0}".format(e))
+            self._logger.error("Error while Camera calibration calculations: {0}".format(e))
+            self.handle_calibration_error("CAMERA_CALIBRATION_ERROR")
+
+
 
         return ret, error, np.round(cmat, 3), np.round(dvec.ravel(), 3), rvecs, tvecs
 
     def _capture_camera_calibration(self, position):
         image = self._capture_pattern()
+
         self.shape = image[:, :, 0].shape
 
-        if bool(self.config.file.keep_calibration_raw_images):
-            fs_image = FSImage()
-            fs_image.save_image(image, self.raw_image_count, "calibration", dir_name="calib_test")
-            self.raw_image_count += 1
-
-            #TODO: find out if it is better and try this...again.
+        #TODO: find out if it is better and try this...again.
         if (position > self.laser_calib_start and position < self.laser_calib_end):
            flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
         else:
@@ -382,14 +391,14 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         else:
             self._logger.debug("No corners detected moving on.")
 
+    def _save_raw_image(self, image):
+        fs_image = FSImage()
+        fs_image.save_image(image, self.raw_image_count, "calibration", dir_name="calib_test")
+        self.raw_image_count += 1
+
     def _capture_scanner_calibration(self, position):
 
         pattern_image = self._capture_pattern()
-
-        if bool(self.config.file.keep_calibration_raw_images):
-            fs_image = FSImage()
-            fs_image.save_image(pattern_image, self.raw_image_count, "calibration", dir_name="calib_test")
-            self.raw_image_count += 1
 
         if (position >= self.laser_calib_start and position <= self.laser_calib_end):
             flags = cv2.CALIB_CB_FAST_CHECK | cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE
@@ -404,7 +413,9 @@ class FSCalibrationActor(FSCalibrationActorInterface):
 
         except Exception as e:
             plane = None
+            self.handle_calibration_error("PLANE_CALIBRATION_ERROR")
             self._logger.error("Error while Scanner Calibration Capture: {0}".format(e))
+
 
         if plane is not None:
 
@@ -424,11 +435,6 @@ class FSCalibrationActor(FSCalibrationActorInterface):
                     for i in range(self.config.file.laser.numbers):
 
                         image = self._capture_laser(i)
-
-                        if bool(self.config.file.keep_calibration_raw_images):
-                            fs_image = FSImage()
-                            fs_image.save_image(image, self.raw_image_count, "calibration", dir_name="calib_test")
-                            self.raw_image_count += 1
 
                         if self.config.file.laser.interleaved == "True":
                             image = cv2.subtract(image, pattern_image)
@@ -457,11 +463,6 @@ class FSCalibrationActor(FSCalibrationActorInterface):
             except Exception as e:
                 self._logger.exception(e)
                 self._logger.error("Laser Capture Error: {0}".format(e))
-                message = {
-                    "message": "LASER_CALIBRATION_ERROR",
-                    "level": "error"
-                }
-            #    #self._eventmanager.broadcast_client_message(FSEvents.ON_INFO_MESSAGE, message)
                 t = None
 
 
@@ -477,12 +478,20 @@ class FSCalibrationActor(FSCalibrationActorInterface):
         #pattern_image = self._hardwarecontroller.get_pattern_image()
         time.sleep(1.5)
         pattern_image = self._hardwarecontroller.get_picture()
+
+        if bool(self.config.file.keep_calibration_raw_images):
+            self._save_raw_image(pattern_image)
+
         pattern_image = self._imageprocessor.rotate_image(pattern_image)
         return pattern_image
 
     def _capture_laser(self, index):
         self._logger.debug("Capturing laser {0}".format(index))
         laser_image = self._hardwarecontroller.get_laser_image(index)
+
+        if bool(self.config.file.keep_calibration_raw_images):
+            self._save_raw_image(laser_image)
+
         laser_image = self._imageprocessor.rotate_image(laser_image)
         return laser_image
 

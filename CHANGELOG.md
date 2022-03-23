@@ -7,21 +7,31 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.x.x] - tbd
 ### TODO
 - implement a plugin system
-- new user interface 
-- suppoert for sls
-
-## [0.12.0] - tbd
-### TODO
 - add a more precise camera calibration (lens distortion)
 - make calibration more robust
 - split camera calibration for combo and seperate camera calibration
 - add independent chooseable settings for texture and object scan
   saturation, contrast, brightness, lights etc..
 
+## [0.12.0] - tbd
+### TODO
+- new user interface 
+- pre-release with support for sls
+
 ## [0.11.0] - tbd
 ### TODO
 - add gpio connector for crickit HAT
-- introduce new user interface
+
+## [0.10.2]
+### Fixed
+- fixed semver, replaced deprecaded function calls
+
+## [0.10.1]
+### Fixed
+- fixed scan finishing procedure ( scanner hangs after scan with 1 laser )
+- fixed calibration issue
+- fixed camera dummy driver
+- added better calibration error handler
 
 ## [0.10.0]
 ### Added

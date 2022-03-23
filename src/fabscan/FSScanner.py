@@ -13,7 +13,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from fabscan.FSVersion import __version__
 
 from fabscan.FSEvents import FSEventManagerInterface, FSEvents
-from fabscan.worker.FSMeshlab import FSMeshlabTask
+
 from fabscan.FSSettings import SettingsInterface
 from fabscan.FSConfig import ConfigInterface
 from fabscan.scanner.interfaces.FSScanActor import FSScanActorCommand, FSScanActorInterface
@@ -229,8 +229,7 @@ class FSScanner(threading.Thread):
 
         # Meshing
         elif command == FSCommand.MESHING:
-            meshlab_task = FSMeshlabTask(event.scan_id, event.filter, event.format, event.file)
-            meshlab_task.start()
+            # not implemented yet
             return
 
         elif command == FSCommand.HARDWARE_TEST_FUNCTION:
