@@ -65,6 +65,7 @@ class FSWebServer(threading.Thread):
             (r"/(.*)", FSStaticFileHandler, {"path": self.www_folder, "default_filename": "index.html"})
         ])
 
+
     def run(self):
 
         self._logger.debug("Server listening on port %d", self.server_port)
