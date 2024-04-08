@@ -118,7 +118,7 @@
     },
     "connector": {
         "type": "serial",
-        "firmware": "fabscanpi",
+        "firmware": "fabscanpiv2",
         "baudrate": 115200,
         "autoflash": "True",
         "flash_baudrate": 115200,

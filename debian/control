@@ -9,6 +9,6 @@ Standards-Version: 3.9.3
 Package: fabscanpi-server
 Architecture: all
 Homepage: http://fabscan.org
-Depends: ${python3:Depends}, ${misc:Depends} python3-opencv, python3-funcsigs, python3-apscheduler, python3-tornado, libtbb2, python3-pil, python3-serial, python3-pykka, python3-picamera, python3-requests, python3-rpi.gpio, python3-semver, xvfb, strace, avrdude, python3-scipy
+Depends: ${python3:Depends}, ${misc:Depends} python3-opencv, python3-funcsigs, python3-apscheduler, python3-tornado, libtbb12, python3-pil, python3-serial, python3-pykka, python3-picamera, python3-requests, python3-rpi.gpio, python3-semver, xvfb, strace, avrdude, python3-scipy
 Description:
  FabScanPi Server ist the backend of the Stand-alone, Web-enabled, Open Source 3D laser scanner.
