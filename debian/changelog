@@ -1,3 +1,9 @@
+fabscanpi-server (0.10.3) UNRELEASED; urgency=medium
+  * added new firmware for FabScan HAT v2
+  * fixed package dependencies
+
+ -- Mario Lukas <info@fabscan.org>  Mon, 8 Apr 2024 17:30:00 +0100
+
 fabscanpi-server (0.10.2) UNRELEASED; urgency=medium
   * fixed semver, replaced deprecaded function calls
 

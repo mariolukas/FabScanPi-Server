@@ -35,3 +35,14 @@ jobs:
         run: chmod 600 $HOME/secrets/fabscan.key
       - name: deploy build artifact
         run: LC_ALL=C scp -o StrictHostKeyChecking=no -i $HOME/secrets/fabscan.key ${{ env.FILE_NAME }} ${{ secrets.FABSCAN_DEPLOY_USER }}@mariolukas.de:/var/deploy/release/.
+      - name: Upload Package to Release Assets
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ env.FILE_NAME }}
+          asset_name: ${{ env.FILE_NAME }}
+          asset_content_type: application/vnd.debian.binary-package
