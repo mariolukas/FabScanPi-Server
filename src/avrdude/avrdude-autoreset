@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ $@ == */dev/ttyS0* ||  $@ == */dev/ttyAMA0* ]];
+if [[ $@ == */dev/serial0 || $@ == */dev/ttyS0* ||  $@ == */dev/ttyAMA0* ]];
 then
 	sudo strace -o "| tail -n +1 | autoreset" -eioctl sudo /usr/bin/avrdude $@;
 else
