@@ -14,27 +14,16 @@ from fabscan.FSSettings import SettingsInterface
 
 class PiVideoStream:
     def __init__(self, config, settings, framerate, **kwargs):
+        self._logger = logging.getLogger(__name__)
         # initialize the camera
-        self.camera = Picamera2()
-        self.camera.start()
+        try:
+            self.camera = Picamera2()
+            self.camera.start()
+        except Exception as e:
+            self._logger.exception(e)
 
         self.settings = settings
-        # set camera parameters
-        #self.camera.resolution = (config.file.camera.resolution.width, config.file.camera.resolution.height)
-        #self.preview_resolution = (config.file.camera.preview_resolution.width, config.file.camera.preview_resolution.height)
-        #self.camera.framerate = framerate
 
-        # set optional camera parameters (refer to PiCamera docs)
-        #for (arg, value) in kwargs.items():
-        #    setattr(self.camera, arg, value)
-
-        # initialize the stream
-
-        #self.rawCapture = PiRGBArray(self.camera, size=(self.camera.resolution.width, self.camera.resolution.height))
-        #self.stream = self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True)
-
-        # initialize the frame and the variable used to indicate
-        # if the thread should be stopped
         self.high_res_frame = None
         self.low_res_frame = None
         self.stopped = False
@@ -56,8 +45,6 @@ class PiVideoStream:
             # if the thread indicator variable is set, stop the thread
             # and resource camera resources
             if self.stopped:
-                self.stream.close()
-                self.rawCapture.close()
                 self.camera.close()
                 break
 
