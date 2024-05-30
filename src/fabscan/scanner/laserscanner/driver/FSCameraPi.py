@@ -7,34 +7,31 @@ __email__ = "info@mariolukas.de"
 import cv2
 import logging
 import threading
+from picamera2 import Picamera2
 from fabscan.lib.util.FSInject import inject, singleton
 from fabscan.FSConfig import ConfigInterface
 from fabscan.FSSettings import SettingsInterface
-import picamera
-import time
-from picamera.array import PiRGBArray
 
 class PiVideoStream:
     def __init__(self, config, settings, framerate, **kwargs):
         # initialize the camera
-        self.camera = picamera.PiCamera()
-        time.sleep(2)
-        self.camera.awb_mode = 'fluorescent'
-        time.sleep(1)
+        self.camera = Picamera2()
+        self.camera.start()
 
         self.settings = settings
         # set camera parameters
-        self.camera.resolution = (config.file.camera.resolution.width, config.file.camera.resolution.height)
-        self.preview_resolution = (config.file.camera.preview_resolution.width, config.file.camera.preview_resolution.height)
-        self.camera.framerate = framerate
+        #self.camera.resolution = (config.file.camera.resolution.width, config.file.camera.resolution.height)
+        #self.preview_resolution = (config.file.camera.preview_resolution.width, config.file.camera.preview_resolution.height)
+        #self.camera.framerate = framerate
 
         # set optional camera parameters (refer to PiCamera docs)
-        for (arg, value) in kwargs.items():
-            setattr(self.camera, arg, value)
+        #for (arg, value) in kwargs.items():
+        #    setattr(self.camera, arg, value)
 
         # initialize the stream
-        self.rawCapture = PiRGBArray(self.camera, size=(self.camera.resolution.width, self.camera.resolution.height))
-        self.stream = self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True)
+
+        #self.rawCapture = PiRGBArray(self.camera, size=(self.camera.resolution.width, self.camera.resolution.height))
+        #self.stream = self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True)
 
         # initialize the frame and the variable used to indicate
         # if the thread should be stopped
@@ -52,17 +49,9 @@ class PiVideoStream:
     def update(self):
         # keep looping infinitely until the thread is stopped
 
-        for fr in self.stream:
-            self.camera.contrast = self.settings.file.camera.contrast
-            self.camera.brightness = self.settings.file.camera.brightness
-            self.camera.brightness = self.settings.file.camera.brightness
-            self.camera.saturation = self.settings.file.camera.saturation
+        while True:
 
-            # grab the frame from the stream and clear the stream in
-            # preparation for the next frame
-            self.high_res_frame = fr.array
-            self.low_res_frame = cv2.resize(self.high_res_frame, self.preview_resolution)
-            self.rawCapture.truncate(0)
+            self.low_res_frame = self.camera.capture_array("main")
 
             # if the thread indicator variable is set, stop the thread
             # and resource camera resources
@@ -70,8 +59,7 @@ class PiVideoStream:
                 self.stream.close()
                 self.rawCapture.close()
                 self.camera.close()
-                return
-
+                break
 
     def get_frame(self, preview=False):
         if preview:
@@ -104,6 +92,7 @@ class FSCameraPi:
 
     def stop_stream(self):
         self.stream.stop_stream()
+        return
 
     def is_idle(self):
         pass

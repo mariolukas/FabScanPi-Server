@@ -33,6 +33,6 @@ class FSScanActorCommand(object):
 
 
 class FSScanActorInterface(ThreadingActor):
-    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, workerpool):
-        super(FSScanActorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller, workerpool)
+    def __init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller):
+        super(FSScanActorInterface, self).__init__(self, config, settings, eventmanager, imageprocessor, hardwarecontroller)
         pass
