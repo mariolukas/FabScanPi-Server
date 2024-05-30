@@ -4,6 +4,8 @@ __license__ = "GPL v2"
 __maintainer__ = "Mario Lukas"
 __email__ = "info@mariolukas.de"
 
+import time
+
 import cv2
 import logging
 import threading
@@ -15,17 +17,26 @@ from fabscan.FSSettings import SettingsInterface
 class PiVideoStream:
     def __init__(self, config, settings, framerate, **kwargs):
         self._logger = logging.getLogger(__name__)
+        self.is_preview = True
         # initialize the camera
         try:
             self.camera = Picamera2()
+            self.preview_config = self.camera.create_preview_configuration(
+                main={"size": (config.file.camera.resolution.width, config.file.camera.resolution.height)}
+            )
+            self.capture_config = self.camera.create_still_configuration(
+                main={"size": (config.file.camera.preview_resolution.width, config.file.camera.preview_resolution.height)}
+            )
+            self.camera.configure(self.preview_config)
+
             self.camera.start()
+
         except Exception as e:
             self._logger.exception(e)
 
         self.settings = settings
 
-        self.high_res_frame = None
-        self.low_res_frame = None
+        self.frame = None
         self.stopped = False
 
     def start_stream(self):
@@ -39,8 +50,7 @@ class PiVideoStream:
         # keep looping infinitely until the thread is stopped
 
         while True:
-
-            self.low_res_frame = self.camera.capture_array("main")
+            self.frame = self.camera.capture_array("main")
 
             # if the thread indicator variable is set, stop the thread
             # and resource camera resources
@@ -49,10 +59,17 @@ class PiVideoStream:
                 break
 
     def get_frame(self, preview=False):
-        if preview:
-            return self.low_res_frame
-        else:
-            return self.high_res_frame
+
+        if self.is_preview != preview:
+            self.is_preview = preview
+            if preview:
+                self.camera.switch_mode(self.preview_config)
+            else:
+                self.camera.switch_mode(self.capture_config)
+            time.sleep(1)
+
+        return self.frame
+
 
     def stop_stream(self):
         # indicate that the thread should be stopped
