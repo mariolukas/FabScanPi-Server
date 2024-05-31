@@ -10,13 +10,13 @@ fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
 dtr = re.compile('.+TIOCM_DTR.+')
 start = time.time()
 pin = 4
-reset = LED(pin)
+reset_trigger = LED(pin)
 
 
 def reset():
-    reset.on()
+    reset_trigger.on()
     time.sleep(0.12)
-    reset.off()
+    reset_trigger.off()
 
 
 def process():
